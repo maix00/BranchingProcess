@@ -39,6 +39,11 @@ pp. 115–116 establish equivalence with the usual metric and completeness.
 - `distortion_le_exp_sub_exp_neg_of_logDistortion_le` converts a bound
   `logDistortion τ ≤ b` into the uniform time displacement bound
   `distortion τ ≤ exp(b) - exp(-b)` for `b ≥ 0`.
+
+For \(s<t\), let \(q_\tau(s,t)=(\tau(t)-\tau(s))/(t-s)\). Then
+\(\operatorname{logDistortion}(\tau)=
+\sup_{s<t}|\log q_\tau(s,t)|\), and a bound by \(b\ge0\) implies
+\(\sup_t|\tau(t)-t|\le e^b-e^{-b}\).
 -/
 
 @[expose] public section

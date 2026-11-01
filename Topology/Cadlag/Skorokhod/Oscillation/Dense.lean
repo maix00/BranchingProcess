@@ -34,6 +34,11 @@ countable measurable description of the same open Skorokhod tube.
 - Subtracting a constant preserves the rational-coordinate tube; rational and
   real margins define the same tube, and positive scaling rescales its width.
   The rational-coordinate tube is measurable.
+
+On rational coordinates the strict tube is
+\(\{f:\exists q\in\mathbb Q_{>0},\ \forall s,t\in\mathbb Q\cap[0,1],\
+|f(s)-f(t)|\le b-q\}\); it equals the full open oscillation tube.
+The terminal rational coordinate is included in the dense-set criterion.
 -/
 
 @[expose] public section

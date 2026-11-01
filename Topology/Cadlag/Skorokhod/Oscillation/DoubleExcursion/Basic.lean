@@ -35,6 +35,13 @@ their implication from finite oscillation partitions directly.
 - forall_mem_admitsOscillationPartition_hasBillingsleyControls gives common
   double-excursion and endpoint controls for a family with uniform partition
   margins.
+
+The double-excursion condition is
+\(s<t<u<1,\ u-s<\delta,\ s\le x\le y\le t\le z\le w\le u
+\Longrightarrow
+\min\{d(f(x),f(y)),d(f(z),f(w))\}\le\varepsilon\).
+The endpoint condition bounds \(d(f(s),f(t))\le\varepsilon\) both when
+\(s,t<\delta\) and when \(1-\delta<s,t<1\).
 -/
 
 @[expose] public section

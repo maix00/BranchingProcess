@@ -42,6 +42,12 @@ public import Topology.Cadlag.Skorokhod.Path.Scaling
 
 The event combines a uniformly interior path corridor with an open condition
 on the terminal value.  Both conditions are open in the `J₁` topology.
+
+Explicitly,
+\(\mathcal O_{a,b;c,d}=\{f:\exists\delta>0,\ \forall t,\
+a+\delta\le f(t)\le b-\delta,\ f(1)\in(c,d)\}\).
+The closed counterpart replaces the uniform-margin condition by
+\(\forall t,\ a\le f(t)\le b\) and uses \(f(1)\in[c,d]\).
 -/
 
 @[expose] public section

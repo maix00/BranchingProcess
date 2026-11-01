@@ -23,6 +23,11 @@ public import Topology.Cadlag.Skorokhod.TimeChange.Limit.LogDistortion
 Every tail of a summably controlled clock sequence has a limiting time
 change. The global cumulative limit factors through each finite prefix and its
 tail limit.
+
+For every starting index \(m\), the cumulative limit factors as
+\(\tau_\infty=\tau_{m,\infty}\circ\tau_{0,m}\), where
+\(\tau_{0,m}\) is the finite prefix composition and
+\(\tau_{m,\infty}\) is the limiting tail time change.
 -/
 
 @[expose] public section

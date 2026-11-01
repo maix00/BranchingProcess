@@ -33,6 +33,13 @@ the full compactness theorem.
 - `HasDoubleExcursionBound.exists_oscillation_partition`: the stated
   double-excursion and endpoint bounds yield `P` with
   `δ / 16 ≤ P.mesh` and `OscillationBoundedOnPartition P f (5 * ε)`.
+
+In formula form, the hypotheses
+\(\operatorname{HasDoubleExcursionBound}(f,\delta,\varepsilon)\) and
+\(\operatorname{HasEndpointOscillationBound}(f,\delta,\varepsilon)\)
+imply that some finite partition \(P\) satisfies
+\(\delta/16\le\operatorname{mesh}(P)\) and
+\(\operatorname{OscillationBoundedOnPartition}(P,f,5\varepsilon)\).
 -/
 
 @[expose] public section

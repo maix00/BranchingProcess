@@ -36,6 +36,9 @@ recover the probe value at the selected time.
 
 - `measurable_apply t`: the evaluation map `path ↦ path t` is Borel measurable
   on the `J₁` path space.
+
+For every fixed \(t\in[0,1]\), the coordinate map
+\(e_t:D([0,1],E)\to E\), \(e_t(f)=f(t)\), is Borel measurable.
 -/
 
 @[expose] public section

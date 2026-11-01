@@ -24,6 +24,11 @@ The one-sided form allows paths starting at zero, as required for the
 Brownian meander corridor in Wang Yiyang, *Asymptotic Speed of the
 N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
 University, 2026), Chapter 3, Lemma 3.5 and Appendix A.2, Lemma A.7.
+
+The events are \(\{f:\exists\delta>0,\ \forall t,\ f(t)\le u-\delta\}\)
+and, with a terminal window,
+\(\{f:\exists\delta>0,\ \forall t,\ f(t)\le u-\delta,\
+f(1)\in(c,d)\}\).
 -/
 
 @[expose] public section

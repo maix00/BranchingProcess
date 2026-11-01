@@ -26,6 +26,12 @@ uniformly Cauchy. This is the uniform-limit step in Patrick Billingsley,
 §14, Theorem 14.2, pp. 115–116
 ([text](https://ru.djvu.online/file/vaaIHv9IWlVeK)); strict monotonicity of
 the limit is treated separately.
+
+If \(\sum_n e_n<\infty\) and each clock satisfies
+\(\operatorname{logDistortion}(\tau_n)\le e_n\), then the cumulative
+compositions converge uniformly to a continuous map from \([0,1]\) to
+\([0,1]\). The endpoint and strict-monotonicity properties are established
+separately.
 -/
 
 @[expose] public section

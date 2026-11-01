@@ -27,6 +27,11 @@ limit path and dominated convergence.
 - `continuousAt_integralAlongTimeChange`: this integral functional is
   continuous at `path` when `φ` is continuous and bounded and `ψ` is
   continuous and injective on `[0,1]`.
+
+The functional is
+\(F(f)=\int_0^1\varphi(f(\psi(u)))\,du\).
+Under the stated bounded-continuity and injectivity assumptions on
+\(\varphi\) and \(\psi\), \(F\) is continuous at every càdlàg path.
 -/
 
 @[expose] public section

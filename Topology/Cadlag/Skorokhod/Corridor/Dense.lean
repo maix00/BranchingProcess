@@ -41,6 +41,11 @@ import Topology.Cadlag.Range
 A positive uniform margin on rational times, including the terminal time,
 extends to every time of a càdlàg path. The margin is essential: rational
 pointwise strict inequalities alone do not control an unattained left limit.
+
+For rational-coordinate paths, the event is
+\(\{x:\exists\delta>0,\ \forall q\in\mathbb Q\cap[0,1],\
+a+\delta\le x(q)\le b-\delta\}\), and positive scaling obeys
+\(cx\in\mathcal O_{a,b}\iff x\in\mathcal O_{a/c,b/c}\) for \(c>0\).
 -/
 
 @[expose] public section

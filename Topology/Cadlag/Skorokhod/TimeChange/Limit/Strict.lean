@@ -22,6 +22,11 @@ public import Topology.Cadlag.Skorokhod.TimeChange.Limit.Convergence
 A summable logarithmic distortion budget bounds every cumulative secant slope
 away from zero. Therefore the uniform limit of cumulative clocks remains a
 strictly increasing endpoint-preserving homeomorphism.
+
+For summable bounds \(\sum_n e_n<\infty\) on the clock distortions,
+the cumulative compositions converge uniformly to a time change
+\(\tau_\infty\), so \(\tau_\infty\) is again an increasing homeomorphism
+of \([0,1]\) fixing both endpoints.
 -/
 
 @[expose] public section

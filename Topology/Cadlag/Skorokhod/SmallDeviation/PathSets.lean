@@ -34,6 +34,14 @@ interval. They do not depend on a process law.
   measurability results specify these path-set operations.
 - `centeredCorridor_subset_rangeTube` embeds the centered corridor
   `(-a,a)` into the zero-start range tube of half-width `a`.
+
+The basic sets are
+\(\{f:f(0)=0,\ \exists\eta>0,\ \forall s,t,\
+|f(s)-f(t)|\le2a-\eta\}\) and
+\(\{f:f(0)=0,\ \exists\delta>0,\ \forall t,\
+l+\delta\le f(t)\le u-\delta\}\).
+An endpoint window intersects a path set with \(l<f(t_0)\le u\), while a
+segment extension agrees with one member throughout \([s,t]\).
 -/
 
 @[expose] public section

@@ -37,6 +37,13 @@ For a càdlàg path, pointwise membership in an open interval need not have a
 positive uniform margin: a left limit may lie on the boundary without being
 attained.  The open event appropriate for the Skorokhod `J₁` topology therefore
 records an explicit positive margin from both boundaries.
+
+The two path sets are
+\(\mathcal O_{a,b}=\{f:\exists\delta>0,\ \forall t,\ a+\delta\le f(t)\le b-\delta\}\)
+and
+\(\mathcal C_{a,b}=\{f:\forall t,\ a\le f(t)\le b\}\).
+For continuous \(f\) and \(a<b\), membership in \(\mathcal O_{a,b}\) is
+equivalent to \(f([0,1])\subset(a,b)\).
 -/
 
 @[expose] public section
