@@ -30,6 +30,19 @@ realized and marked tree conversions are in `BranchingWalk/MarkedTree/`.
 
 ## Public declarations
 
+Each step is an option-valued configuration; absence contributes zero to the
+defaulted value, and the support is exactly the set of present slots:
+
+\[
+\xi:I\to\operatorname{Option}(X),\qquad
+\operatorname{survive}(\xi,i)\Longleftrightarrow \xi(i)\ne\mathrm{none},
+\qquad
+\operatorname{support}(\xi)=\{i:\xi(i)\ne\mathrm{none}\},
+\]
+\[
+\operatorname{value'}(\xi,i)=(\xi(i)).\operatorname{getD}(0).
+\]
+
 - `Step ι X := ι → Option X`; `ξ i = some x` records a child with mark `x`.
 - `value' ξ i = (ξ i).getD 0`; `value'_eq_getD`, `value'_none`, and
   `value'_some` give its coordinate formulas.

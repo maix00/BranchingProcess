@@ -28434,6 +28434,20 @@ tail equivalence. All eight focused modules build successfully in a 3,195-job
 Lake build; no declarations or proofs changed. The same header scan now has 243
 remaining modules for manual formula review out of 1,642 production modules.
 
+## Algebraic and spectral formula headers (2026-11-01)
+
+Added explicit statements to the headers of
+`Algebra/BigOperators/WeightedSum/Cancellation.lean`,
+`Algebra/Order/Monoid/Recurrence.lean`,
+`LinearAlgebra/Spectrum/DiagonalBasis.lean`, and
+`LinearAlgebra/Matrix/FiniteKernel/Eigenfunction.lean`. The formulas record
+normalized finite-sum identities, iteration of a multiplicative lower
+recurrence, the eigenbasis expansion for operator powers, and weighted row-sum
+bounds for powers of a finite nonnegative matrix. All four focused modules
+build successfully in a 1,705-job Lake build; no declarations or proofs
+changed. The same header scan now has 239 remaining modules for manual formula
+review out of 1,642 production modules.
+
 ## Branching structures and genealogy formulas (2026-11-01)
 
 Added mathematical interfaces to the headers of
@@ -28449,16 +28463,13 @@ All eight focused modules build successfully in a 1,787-job Lake build; no
 declarations or proofs changed. The same header scan now has 231 remaining
 modules for manual formula review out of 1,642 production modules.
 
-## Algebraic and spectral formula headers (2026-11-01)
+## Branching-step interface formulas (2026-11-01)
 
-Added explicit statements to the headers of
-`Algebra/BigOperators/WeightedSum/Cancellation.lean`,
-`Algebra/Order/Monoid/Recurrence.lean`,
-`LinearAlgebra/Spectrum/DiagonalBasis.lean`, and
-`LinearAlgebra/Matrix/FiniteKernel/Eigenfunction.lean`. The formulas record
-normalized finite-sum identities, iteration of a multiplicative lower
-recurrence, the eigenbasis expansion for operator powers, and weighted row-sum
-bounds for powers of a finite nonnegative matrix. All four focused modules
-build successfully in a 1,705-job Lake build; no declarations or proofs
-changed. The same header scan now has 239 remaining modules for manual formula
-review out of 1,642 production modules.
+Added formulas to the public headers of
+`Combinatorics/BranchingWalk/Step/{Basic,Map,Relation,Count,Potential}.lean`.
+They state the option-valued step and support, support invariance under mark
+maps, transport of sibling relations, extended child counts, and projected
+path-potential sums. All five focused modules build successfully in a
+1,769-job Lake build; no declarations or proofs changed. The same header scan
+now has 226 remaining modules for manual formula review out of 1,642
+production modules.

@@ -24,6 +24,23 @@ or choice principles.
 
 ## Public declarations
 
+A step satisfies `siblingRel rel` when marks at present slots are related in
+slot order. If `e` transports `rel` exactly to `rel'`, mapping the optional
+marks preserves and reflects that condition:
+
+\[
+\operatorname{siblingRel}(\operatorname{rel},\xi)
+\Longleftrightarrow
+\forall i<j,\ \xi(i)=\mathrm{some}(x),\ \xi(j)=\mathrm{some}(y)
+\Longrightarrow \operatorname{rel}(x,y),
+\]
+\[
+\operatorname{rel'}(e(x),e(y))\Longleftrightarrow\operatorname{rel}(x,y)
+\quad\Longrightarrow\quad
+\operatorname{siblingRel}(\operatorname{rel'},\operatorname{Option.map}(e)\circ\xi)
+\Longleftrightarrow\operatorname{siblingRel}(\operatorname{rel},\xi).
+\]
+
 - `siblingRel rel ξ` means
   `∀ i j x y, i < j → ξ i = some x → ξ j = some y → rel x y`.
 - `siblingRel_optionMap_iff` transports this condition through a map

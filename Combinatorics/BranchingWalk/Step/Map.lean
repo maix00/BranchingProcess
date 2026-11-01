@@ -19,6 +19,20 @@ invariant. Maps of complete step fields live in
 
 ## Public declarations
 
+Relabeling maps only present marks, so it preserves the support. If `f` also
+preserves zero, it commutes with the zero-defaulted value:
+
+\[
+(\xi.\operatorname{map}(f))(i)=\operatorname{Option.map}(f,\xi(i)),
+\qquad
+\operatorname{support}(\xi.\operatorname{map}(f))=\operatorname{support}(\xi),
+\]
+\[
+f(0)=0\quad\Longrightarrow\quad
+\operatorname{value'}(\xi.\operatorname{map}(f),i)
+=f(\operatorname{value'}(\xi,i)).
+\]
+
 - `Step.map f ξ` applies `f` to each present mark and preserves absent slots;
   `Step.map_apply`, `Step.map_id`, and `Step.map_map` give its coordinate,
   identity, and composition laws.

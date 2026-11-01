@@ -17,6 +17,17 @@ the observation.
 
 ## Public declarations
 
+The child count is the extended cardinality of the present-slot set, so it
+retains infinite values and is invariant under mark relabeling:
+
+\[
+\operatorname{childCount}(\xi)=\operatorname{encard}(\operatorname{support}(\xi)),
+\qquad
+\operatorname{childCount}(\xi.\operatorname{map}(f))
+=\operatorname{childCount}(\xi.\operatorname{forgetMark})
+=\operatorname{childCount}(\xi).
+\]
+
 - `Combinatorics.Branching.Step.childCount ξ = (support ξ).encard` is the
   extended cardinality of the surviving slots.
 - `Combinatorics.Branching.Step.childCount_map` and
