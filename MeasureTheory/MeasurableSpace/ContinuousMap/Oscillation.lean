@@ -14,6 +14,16 @@ public import Topology.ContinuousMap.Oscillation
 
 ## Public declarations
 
+The measurable path sets are the range-diameter constraint and the initial
+value constraint:
+
+\[
+\operatorname{rangeOscillationSet}(w)
+=\{f:\forall s,t\in[0,1],\ |f(s)-f(t)|\le w\},
+\qquad
+\operatorname{startsAtZeroSet}=\{f:f(0)=0\}.
+\]
+
 * `ContinuousMap.measurableSet_rangeOscillationSet`: the set of paths with
   range diameter at most `width` is measurable.
 * `ContinuousMap.measurableSet_startsAtZeroSet`: the paths whose value at

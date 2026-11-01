@@ -13,6 +13,15 @@ public import Mathlib.MeasureTheory.OuterMeasure.Basic
 
 ## Public declarations
 
+A finite cover with a factorwise extension into the target set loses at most
+the cardinality of the cover:
+
+\[
+U\subseteq\bigcup_{i\in F}A_i,\quad
+c\,\mu(A_i)\le\mu(A_i\cap B_i),\quad A_i\cap B_i\subseteq T
+\Longrightarrow c\,\mu(U)\le |F|\,\mu(T).
+\]
+
 - `MeasureTheory.measure_mul_le_card_mul_of_finite_cover`: for an outer
   measure `μ`, if each
   cell `A i` of a finite cover `F` has a target extension with

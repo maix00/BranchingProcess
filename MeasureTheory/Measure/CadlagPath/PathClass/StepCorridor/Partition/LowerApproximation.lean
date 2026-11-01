@@ -20,6 +20,18 @@ arbitrarily large finite widths.
 
 ## Public declarations
 
+An open real interval can be placed strictly inside the extended-real
+interval, contain the prescribed compact subinterval, and have width greater
+than any admissible target:
+
+\[
+L<a<b<U,\quad r>0,\quad
+\left(L=-\infty\ \lor\ U=+\infty\ \lor\
+r<U_{\mathbb R}-L_{\mathbb R}\right)
+\Longrightarrow
+\exists \ell<h,\quad L<\ell<a<b<h<U,\quad r<h-\ell.
+\]
+
 - exists_innerRealInterval_with_width finds a real interval strictly inside
   an extended-real interval, containing a prescribed compact interval, with
   any admissible target width.
