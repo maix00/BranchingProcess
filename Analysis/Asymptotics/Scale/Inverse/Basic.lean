@@ -29,6 +29,20 @@ The public declarations are `Asymptotics.inverseScale`,
 `Asymptotics.sub_one_le_scale_inverseScale`,
 `Asymptotics.tendsto_inverseScale_atTop`, and
 `Asymptotics.tendsto_upperInverseScale_atTop`.
+
+Writing
+\[
+  x(n):=\inf\{\delta\in\mathbb N:n\le L(\delta)+1\},
+  \qquad y(n):=x(n+1)-1,
+\]
+the threshold and inverse sandwich are
+\[
+  n\le L(x(n))+1,
+  \qquad
+  x(L(\delta)+1)\le\delta\le y(L(\delta)+1)
+  \quad\text{if }L\text{ is monotone and }L(n)\to\infty.
+\]
+Both `x(n)` and `y(n)` tend to infinity when `L(n)` does.
 -/
 
 public section

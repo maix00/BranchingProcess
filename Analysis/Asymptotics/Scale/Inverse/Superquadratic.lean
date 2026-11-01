@@ -34,6 +34,20 @@ The public declarations are `Asymptotics.IsSuperquadraticScale`,
 `Asymptotics.tendsto_upperInverseScale_div_sqrt_atTop_zero`,
 `Asymptotics.isSmallDeviationScale_inverseScale`, and
 `Asymptotics.isSmallDeviationScale_upperInverseScale`.
+
+The scale condition and the diffusive consequences are
+\[
+  \forall K\in\mathbb N,\quad K\delta^2\le L(\delta)
+    \quad\text{eventually as }\delta\to\infty,
+\]
+\[
+  \frac{x(n)^2}{n}\to0,\quad \frac{y(n)^2}{n}\to0,
+  \qquad
+  \frac{x(n)}{\sqrt n}\to0,\quad
+  \frac{y(n)}{\sqrt n}\to0,
+\]
+where `x = inverseScale L` and `y = upperInverseScale L`, assuming also
+`L(n) → ∞`.
 -/
 
 public section

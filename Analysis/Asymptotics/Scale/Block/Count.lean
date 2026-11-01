@@ -28,6 +28,16 @@ Public declarations: `blockCount`, `blockCount_mul_blockLength_le`,
 `tendsto_blockCount_mul_blockLength_div_nat`,
 `tendsto_quotientBlockCount_mul_blockLength_div_nat`, and
 `tendsto_div_nat_mul_quotientBlockCount`.
+
+For block length `\ell_n>0`, the count `c_n=\lfloor n/\ell_n\rfloor` obeys
+\[
+  c_n\ell_n\le n<(c_n+1)\ell_n.
+\]
+If `\ell_n/n → 0`, then `c_n\ell_n/n → 1`; more generally, for
+`H_n/n → τ`, `\ell_n/n → 0`, and eventually positive `\ell_n`,
+\[
+  \frac{\lfloor H_n/\ell_n\rfloor\ell_n}{n}\longrightarrow\tau.
+\]
 -/
 
 public section

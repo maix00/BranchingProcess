@@ -23,6 +23,19 @@ The public declarations are `Asymptotics.levelMultiplicity`,
 `Asymptotics.HasEventuallyBoundedLevelMultiplicity`,
 `Asymptotics.finite_levelSet_of_tendsto_atTop`, and
 `Asymptotics.tendsto_width_div_inverseScales_of_boundedLevelMultiplicity`.
+
+The multiplicity condition and both inverse-width limits are
+\[
+  \#\{\eta\in\mathbb N:L(\eta)=L(\delta)\}\le C
+    \quad\text{eventually in }\delta,
+\]
+\[
+  \frac{\delta}{x(L(\delta)+1)}\longrightarrow1,
+  \qquad
+  \frac{\delta}{y(L(\delta)+1)}\longrightarrow1,
+\]
+where `x = inverseScale L` and `y = upperInverseScale L`; the conclusions
+assume that `L` is monotone and tends to infinity.
 -/
 
 public section
