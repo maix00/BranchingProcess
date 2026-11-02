@@ -45,15 +45,6 @@ example {α radiusMultiplier thresholdMultiplier δ : ℝ}
   eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_lt_one
     hnorm hα₀ hα₁ htail hradius hthreshold hδ hsmall length hlength hlengthRatio
 
-example {radius scale : ℝ} {ν : Measure ℝ} [IsProbabilityMeasure ν]
-    (hradius : 0 < radius) (hscale : 0 < scale) :
-    |truncatedIncrementMean ν (radius * scale)| / scale ≤
-      |∫ x, Real.sin (x / scale) ∂ν| +
-        (radius / 6) * truncatedSecondMoment ν (radius * scale) / scale ^ 2 +
-        ν.real {x : ℝ | radius * scale < |x|} :=
-  abs_truncatedIncrementMean_div_le_sineIntegral_add_truncatedMoment_tail
-    ν hradius hscale
-
 example {radiusMultiplier : ℝ}
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization : ℕ → ℝ} (hnorm : IsStableNorming 1 ν normalization)
@@ -94,7 +85,6 @@ example {radiusMultiplier thresholdMultiplier δ : ℝ}
 #print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.IsStableNorming.tendsto_nat_mul_cappedAbsFirstMoment_div_normalization_of_regularlyVaryingTail
 #print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_truncatedIncrementBias_le_of_stableNorming_of_index_lt_one
 #print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_lt_one
-#print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.abs_truncatedIncrementMean_div_le_sineIntegral_add_truncatedMoment_tail
 #print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.IsStableNorming.eventually_nat_mul_abs_truncatedIncrementMean_div_le_of_index_one
 #print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_truncatedIncrementBias_le_of_stableNorming_of_index_one
 #print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_one

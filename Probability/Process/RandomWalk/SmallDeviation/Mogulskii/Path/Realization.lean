@@ -15,6 +15,7 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.MeasureTheory.Measure.QuasiMeasurePreserving
+import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Path.Lemmas
 
 /-!
 # Mogul'skii rates under arbitrary i.i.d. realizations
@@ -51,49 +52,6 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk
-
-/-- A finite-union corridor event has the same probability under any i.i.d.
-realization and the canonical sequence law. The induced path law makes the
-corridor event null-measurable, enabling `Measure.map_apply₀` to transfer its
-probability between these laws. -/
-private lemma measure_sourceFiniteCorridorUnionEvent_eq_of_iid
-    {Ω : Type*} [MeasurableSpace Ω]
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    {ν : Measure ℝ} [IsProbabilityMeasure ν]
-    {coordinate : ℕ → Ω → ℝ}
-    (hindep : iIndepFun coordinate P)
-    (hmeasurable : ∀ k, Measurable (coordinate k))
-    (hlaw : ∀ k, HasLaw (coordinate k) ν P)
-    (scale : ℕ → ℝ) (n : ℕ) {α : ℝ} (C : FiniteCorridorUnion α) :
-    P {ω | terminalLeftNormalizedStepCadlagPathIcc scale n
-        (fun k => coordinate k ω) ∈ C.toSet} =
-      iidSequenceLaw ν {increment |
-        terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet} := by
-  let pathMap : (ℕ → ℝ) → CadlagPath unitInterval ℝ :=
-    terminalLeftNormalizedStepCadlagPathIcc scale n
-  let pathLaw : Measure (CadlagPath unitInterval ℝ) :=
-    (iidSequenceLaw ν).map pathMap
-  let realizedPath : Ω → CadlagPath unitInterval ℝ := fun ω =>
-    pathMap (fun k => coordinate k ω)
-  have hrealizedLaw : HasLaw realizedPath pathLaw P := by
-    simpa [realizedPath, pathLaw, pathMap] using
-      hasLaw_terminalLeftNormalizedStepCadlagPathIcc_of_iid
-        hindep hmeasurable hlaw scale n
-  have hpathEvent : NullMeasurableSet C.toSet pathLaw := by
-    dsimp [pathLaw]
-    exact ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.FiniteCorridorUnion.nullMeasurableSet_toSet C _
-  have hrealizedPathEvent : NullMeasurableSet C.toSet (P.map realizedPath) := by
-    rw [hrealizedLaw.map_eq]
-    exact hpathEvent
-  calc
-    P {ω | realizedPath ω ∈ C.toSet} = P.map realizedPath C.toSet :=
-      (Measure.map_apply₀ hrealizedLaw.aemeasurable hrealizedPathEvent).symm
-    _ = pathLaw C.toSet := by rw [hrealizedLaw.map_eq]
-    _ = iidSequenceLaw ν {increment | pathMap increment ∈ C.toSet} := by
-      dsimp [pathLaw]
-      exact Measure.map_apply₀
-        (measurable_terminalLeftNormalizedStepCadlagPathIcc scale n).aemeasurable
-        (by simpa [pathLaw, pathMap] using hpathEvent)
 
 /-- The inner and outer probabilities of any terminal-left path set in class M
 have the same unique logarithmic rate under an arbitrary i.i.d. realization.

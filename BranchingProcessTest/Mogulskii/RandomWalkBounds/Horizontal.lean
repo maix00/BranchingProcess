@@ -1,4 +1,5 @@
 import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.Blocks.UpperBound
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Bounds.Upper
 import Probability.Sequence.IID.Blocks.Consecutive
 #check ProbabilityTheory.iidSequenceLaw_measure_forall_consecutiveBlockEvent
 #check ProbabilityTheory.RandomWalk.measurableSet_blockOscillationLTEvent
@@ -7,3 +8,4 @@ import Probability.Sequence.IID.Blocks.Consecutive
 
 #print axioms ProbabilityTheory.iidSequenceLaw_measure_forall_consecutiveBlockEvent
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.openHorizontalTubeProbability_le_pow_blockOscillationLT_of_completeBlocks
+#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_horizontalTubeProbability_le_pow_fixedCover_uniformOffset

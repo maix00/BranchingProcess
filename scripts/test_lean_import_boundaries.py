@@ -456,6 +456,12 @@ class LeanAxiomCheckTests(unittest.TestCase):
         output = "'Example.theorem' depends on axioms: [Classical.choice]\n"
         self.assertEqual(axioms.check_output(output, ["Example.theorem"]), [])
 
+    def test_declaration_name_can_contain_a_prime(self):
+        output = "'Example.value'_theorem' depends on axioms: [propext]\n"
+        self.assertEqual(
+            axioms.check_output(output, ["Example.value'_theorem"]), []
+        )
+
     def test_unexpected_axiom_is_rejected(self):
         output = "'Example.theorem' depends on axioms: [propext, sorryAx]\n"
         self.assertTrue(axioms.check_output(output, ["Example.theorem"]))

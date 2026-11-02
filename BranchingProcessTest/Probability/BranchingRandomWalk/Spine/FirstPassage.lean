@@ -8,7 +8,6 @@ module
 
 
 import Probability.BranchingRandomWalk.Spine.FirstPassage
-import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.Bounds.Lemmas.SharpUpper.BlockEstimate
 
 /-!
 # Axiom audit for the raw `a = 1` endpoint sublevel input
@@ -26,6 +25,3 @@ no-large-drop estimate or the selected-population transfer in (4.16).
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.Spine.measure_hasEndpointBelowByHorizon_le_sum_exp
-
-#print axioms
-  ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.eventually_horizontalTubeProbability_le_pow_fixedCover_uniformOffset

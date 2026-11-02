@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Restart.Trial.FirstSplit
+public import Probability.BranchingProcess.Offspring.FieldLaw
 import all Probability.BranchingRandomWalk.Restart.RootedTrial.Completion.Lemmas.FiniteSplit
 import Mathlib.Analysis.SpecificLimits.Basic
 
@@ -39,6 +40,8 @@ surely:
 open MeasureTheory ProbabilityTheory
 open Filter Topology
 open scoped ENNReal
+
+@[expose] public section
 
 section
 
