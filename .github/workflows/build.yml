@@ -81,9 +81,9 @@ jobs:
           python3 scripts/run-all-lean-tests.py --output-dir "$RUNNER_TEMP/lean-tests"
           : > "$RUNNER_TEMP/positive-definite-axioms.txt"
           cat \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/PositiveDefinite.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/Fourier/PositiveDefinite.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/PositiveDefinite.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/Bochner.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/Fourier/Bochner.lean.log" \
             >> "$RUNNER_TEMP/positive-definite-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/positive-definite-axioms.txt" --expected \
@@ -108,7 +108,7 @@ jobs:
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Attraction/CharacteristicFunctionLimit.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/NormingRatios.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/TruncatedTailIntegral.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/CosineTauberian.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/Fourier/CosineTauberian.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/Tauberian.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/InverseTauberian.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Rates/PathClassRate.lean.log" \
