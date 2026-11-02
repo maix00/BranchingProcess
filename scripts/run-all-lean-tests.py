@@ -2,6 +2,7 @@
 """Compile tracked and non-ignored untracked Lean tests under BranchingProcessTest."""
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 import re
 import subprocess
@@ -632,7 +633,16 @@ def main() -> int:
         type=Path,
         help="save combined stdout and stderr per test for later CI checks",
     )
+    parser.add_argument(
+        "--jobs",
+        type=int,
+        default=2,
+        help="number of independent Lean test files to compile concurrently (default: 2)",
+    )
     args = parser.parse_args()
+
+    if args.jobs < 1:
+        parser.error("--jobs must be positive")
 
     tests = working_tree_tests()
     if not tests:
@@ -646,7 +656,7 @@ def main() -> int:
             print(f"  {test}", file=sys.stderr)
         return 1
 
-    for index, test in enumerate(tests, start=1):
+    def compile_test(index: int, test: Path) -> tuple[Path, subprocess.CompletedProcess[str]]:
         print(f"[{index}/{len(tests)}] lake env lean {test}", flush=True)
         result = subprocess.run(
             ["lake", "env", "lean", str(test)],
@@ -654,50 +664,63 @@ def main() -> int:
             stderr=subprocess.STDOUT,
             text=True,
         )
-        if args.output_dir is not None:
-            log_path = args.output_dir / f"{test}.log"
-            log_path.parent.mkdir(parents=True, exist_ok=True)
-            log_path.write_text(result.stdout)
-        if result.stdout:
-            print(result.stdout, end="", flush=True)
-        if result.returncode:
-            print(f"Lean test failed: {test}", file=sys.stderr)
-            return result.returncode
-        # Explicit entries keep a reviewed inventory for the main theorem
-        # chains. For every other test, audit every declaration whose
-        # transitive axioms the source asks Lean to print. This prevents a new
-        # `#print axioms` test from compiling without actually checking its
-        # result.
-        expected = AXIOM_EXPECTATIONS.get(test)
-        if expected is None:
-            expected = tuple(AXIOM_PRINT.findall(test.read_text()))
-        if expected:
+        return test, result
+
+    with ThreadPoolExecutor(max_workers=args.jobs) as executor:
+        futures = {
+            executor.submit(compile_test, index, test): test
+            for index, test in enumerate(tests, start=1)
+        }
+        for future in as_completed(futures):
+            test, result = future.result()
             if args.output_dir is not None:
-                axiom_log = args.output_dir / f"{test}.log"
-            else:
-                temporary = tempfile.NamedTemporaryFile(
-                    mode="w", encoding="utf-8", suffix=".log", delete=False
-                )
-                axiom_log = Path(temporary.name)
-                temporary.close()
-                axiom_log.write_text(result.stdout)
-            try:
-                checked = subprocess.run(
-                    [
-                        sys.executable,
-                        "scripts/check-lean-axioms.py",
-                        str(axiom_log),
-                        "--expected",
-                        *expected,
-                    ],
-                    text=True,
-                )
-            finally:
-                if args.output_dir is None:
-                    axiom_log.unlink(missing_ok=True)
-            if checked.returncode:
-                print(f"Axiom check failed: {test}", file=sys.stderr)
-                return checked.returncode
+                log_path = args.output_dir / f"{test}.log"
+                log_path.parent.mkdir(parents=True, exist_ok=True)
+                log_path.write_text(result.stdout)
+            if result.stdout:
+                print(result.stdout, end="", flush=True)
+            if result.returncode:
+                print(f"Lean test failed: {test}", file=sys.stderr)
+                for pending in futures:
+                    pending.cancel()
+                return result.returncode
+            # Explicit entries keep a reviewed inventory for the main theorem
+            # chains. For every other test, audit every declaration whose
+            # transitive axioms the source asks Lean to print. This prevents a new
+            # `#print axioms` test from compiling without actually checking its
+            # result.
+            expected = AXIOM_EXPECTATIONS.get(test)
+            if expected is None:
+                expected = tuple(AXIOM_PRINT.findall(test.read_text()))
+            if expected:
+                if args.output_dir is not None:
+                    axiom_log = args.output_dir / f"{test}.log"
+                else:
+                    temporary = tempfile.NamedTemporaryFile(
+                        mode="w", encoding="utf-8", suffix=".log", delete=False
+                    )
+                    axiom_log = Path(temporary.name)
+                    temporary.close()
+                    axiom_log.write_text(result.stdout)
+                try:
+                    checked = subprocess.run(
+                        [
+                            sys.executable,
+                            "scripts/check-lean-axioms.py",
+                            str(axiom_log),
+                            "--expected",
+                            *expected,
+                        ],
+                        text=True,
+                    )
+                finally:
+                    if args.output_dir is None:
+                        axiom_log.unlink(missing_ok=True)
+                if checked.returncode:
+                    print(f"Axiom check failed: {test}", file=sys.stderr)
+                    for pending in futures:
+                        pending.cancel()
+                    return checked.returncode
 
     print(f"All {len(tests)} working-tree Lean tests compiled successfully.")
     return 0
