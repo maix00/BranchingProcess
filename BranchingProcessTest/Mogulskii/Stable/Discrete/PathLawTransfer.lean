@@ -1,5 +1,5 @@
 import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow.PathLawTransfer
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.StablePathLaw
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.PathLaw
 import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow.Scale
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow.iidSequenceLaw_endpointWindowBlockEvent_scale
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow.eventually_forall_endpointWindowReturnBlockProbability_ge_of_pathLawLimit

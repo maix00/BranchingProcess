@@ -17,7 +17,7 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
 import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointBand.Basic
 import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointBand.Iteration
 import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWindow.Iteration
-import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.BandTransfer.Lower.Lemmas.EndpointMass
+import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.BandTransfer.Lower.Lemmas.Mass
 import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.BandTransfer.Lower.Lemmas.PathLimit
 import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.BandTransfer.Lower.Lemmas.BalancedBlocks
 

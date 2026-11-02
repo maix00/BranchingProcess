@@ -14,7 +14,7 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Tightness.Re
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.BlockLength
 public import Probability.Process.Stable.Levy
 public import Mathlib.Probability.CDF
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.StablePathLaw
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.PathLaw
 /-! # Stable-domain input for the discrete endpoint-return bound
 
 This adapter connects a zero-centered stable domain-of-attraction limit and
