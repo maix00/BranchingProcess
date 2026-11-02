@@ -29023,11 +29023,11 @@ the fixed-horizon interfaces in `Basic.lean`, `Closure.lean`, and
 
 ## Current-tree verification (2026-11-02)
 
-The source tree contains 1,782 Lean files outside `.lake/` and `Vendor/`: 1,644
+The source tree contains 1,784 Lean files outside `.lake/` and `Vendor/`: 1,646
 production modules, 137 `BranchingProcessTest` modules, and the Lean helper
-script `scripts/parse_lean_imports.lean`. The production paths match all 1,644
+script `scripts/parse_lean_imports.lean`. The production paths match all 1,646
 rows in `MODULE_AUDIT_LEDGER.csv`; every row records a passing structural scan,
-semantic review, and Lake build. A fresh path scan across all 1,782 files found
+semantic review, and Lake build. A fresh path scan across all 1,784 files found
 zero direct-module directories with more than eight files, same-level
 file/directory stem collisions, parent-prefixed file stems, paired or multiple
 `Lemmas` entries, `Proof/` or `Source/` directories, and public imports from
@@ -29060,3 +29060,22 @@ but `scripts/run-all-lean-tests.py` still listed the former
 `...squareQuotient...` name. The allowlist now matches the current declaration;
 the remaining pull-request run was still executing when this correction was
 made, so the corrected preflight head requires a fresh CI run.
+
+## Internal `Lemmas` inventory update (2026-11-02)
+
+Two proof-only modules were added under the owning topics and registered in
+`MODULE_AUDIT_LEDGER.csv`. `Path/Lemmas.lean` contains the finite-corridor-union
+law transfer used only by `Path/Realization.lean`; its assumptions specialize
+the IID path-law identification and null-measurability to that realization
+argument. `TerminalLeft/Lemmas/ContinuousBoundary.lean` contains the compact
+cell cutoffs, finite-coordinate event characterization, and measurability
+steps used only by `TerminalLeft/ContinuousBoundary.lean`. Neither module
+adds a reusable public API, and each entry module imports its proof support
+internally.
+
+The inventory now has 1,646 production modules and 1,784 Lean files in total.
+The full 137-module Lean test script and all 32 import-boundary unit checks
+pass. A fresh structural scan found no overfull direct-module directories,
+same-level file/directory stem collisions, parent-prefixed file stems,
+duplicate `Lemmas` entries, `Proof/` or `Source/` directories, or public
+imports from `Lemmas/` modules.
