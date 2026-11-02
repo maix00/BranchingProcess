@@ -31,7 +31,7 @@ together with selection along the whole address:
 \operatorname{selectedAlong}(v,[])&=\mathrm{True},\\
 \operatorname{selectedAlong}(v,i::p)
 &\Longleftrightarrow
-  i\in R(\omega(v))\ \wedge\ 
+  i\in R(\omega(v))\,\wedge\,
   \operatorname{selectedAlong}(v\mathbin{+\!\!+}[i],p),\\
 u\in P_n&\Longleftrightarrow
   |u|=n\ \wedge\ \operatorname{selectedAlong}([],u).
