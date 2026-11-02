@@ -32,6 +32,8 @@ jobs:
         with:
           path: Vendor/Mathlib/.lake/build
           key: mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib-revision.outputs.sha }}
+          restore-keys: |
+            mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-
 
       # A pull_request run cannot restore a cache saved by a push to its head
       # branch. Transfer the build through a short-lived artifact from preflight.
