@@ -1,0 +1,82 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+public import Probability.Process.RandomWalk.Path.Corridor.Interpolation.Basic
+public import Probability.Process.RandomWalk.Path.Interpolation.Core
+
+/-!
+# Corridor laws for polygonally interpolated random walks
+
+This file lifts the deterministic grid/corridor equivalence to the canonical
+IID path law.  It introduces no second probability notion for tubes: the
+right-hand side is simply the measure of the strict finite tube event.
+
+## Public declarations
+
+For an IID increment law `ν`, positive scale `scale n`, and `n>0`,
+`normalizedLinearPathLaw_apply_rangeInOpenInterval` identifies the mass of the
+continuous polygonal path in `(-a,1-a)` with the IID probability of the strict
+width-`scale n` tube. The corresponding
+`normalizedLinearPathLaw_apply_rangeInClosedInterval` identifies the mass of
+the closed corridor `[-a,1-a]` with the weak tube probability. The open result
+assumes `0<a<1`; the closed result assumes `0≤a≤1`.
+
+Thus, with \(Y_n\) the normalized polygonal path and \(S_k\) the partial
+sums of IID increments with law \(\nu\), the two identities read
+\(\mathbb P\{Y_n([0,1])\subset(-a,1-a)\}
+=\mathbb P_{\mathrm{iid}(\nu)}\{-a c_n<S_k<(1-a)c_n,\ 1\le k\le n\}\),
+and the closed-interval identity replaces both strict inequalities by weak
+ones.
+-/
+
+open MeasureTheory
+
+@[expose] public section
+
+namespace ProbabilityTheory.RandomWalk
+
+
+/-- The mass assigned by the polygonal path law to an open horizontal
+corridor is exactly the IID increment probability of the corresponding
+strict grid tube. -/
+theorem normalizedLinearPathLaw_apply_rangeInOpenInterval
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n) (hscale : 0 < scale n)
+    {a : ℝ} (ha : 0 < a) (haOne : a < 1) :
+    normalizedLinearPathLaw nu scale n
+        (ContinuousMap.rangeInOpenInterval (-a) (1 - a)) =
+      iidSequenceLaw nu
+        {increment | InOpenHorizontalTube a (scale n) n increment} := by
+  rw [normalizedLinearPathLaw, Measure.map_apply]
+  · congr 1
+    ext increment
+    exact normalizedLinearContinuousPathIcc_mem_horizontalCorridor_iff
+      scale hn hscale ha haOne increment
+  · exact measurable_normalizedLinearContinuousPathIcc scale n
+  · exact ContinuousMap.measurableSet_rangeInOpenInterval (by linarith)
+
+/-- The mass assigned by the polygonal path law to a closed horizontal
+corridor is exactly the IID increment probability of the corresponding weak
+grid tube. -/
+theorem normalizedLinearPathLaw_apply_rangeInClosedInterval
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n) (hscale : 0 < scale n)
+    {a : ℝ} (ha : 0 ≤ a) (haOne : a ≤ 1) :
+    normalizedLinearPathLaw nu scale n
+        (ContinuousMap.rangeInClosedInterval (-a) (1 - a)) =
+      iidSequenceLaw nu
+        {increment | InHorizontalTube a (scale n) n increment} := by
+  rw [normalizedLinearPathLaw, Measure.map_apply]
+  · congr 1
+    ext increment
+    exact normalizedLinearContinuousPathIcc_mem_closedHorizontalCorridor_iff
+      scale hn hscale ha haOne increment
+  · exact measurable_normalizedLinearContinuousPathIcc scale n
+  · exact ContinuousMap.measurableSet_rangeInClosedInterval (-a) (1 - a)
+
+end ProbabilityTheory.RandomWalk

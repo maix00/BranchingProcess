@@ -32,7 +32,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
 
     def test_finite_time_entrance_is_allowed(self):
         self.assertIsNone(imports.forbidden_import_reason(
-            "Probability.Process.Stable.SmallDeviation.Blocks.Lower.FiniteTimeEntrance"
+            "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FiniteTime"
         ))
 
     def test_unit_time_all_indices_entrance_is_forbidden(self):
@@ -43,7 +43,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
     def test_escape_rate_layers_are_public_entries(self):
         for name in (
             "Probability.Process.Stable.Corridor.Law",
-            "Probability.Process.Stable.SmallDeviation.EscapeRate",
+            "Probability.Process.Stable.SmallDeviation.EscapeRate.Basic",
             "Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor",
             "Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint",
             "Probability.Process.Stable.SmallDeviation.EscapeRate.Law",
@@ -204,7 +204,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
 
     def test_generic_mogulskii_path_classes_avoid_random_walk_layer(self):
         modules = (
-            "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary",
+            "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary.Basic",
             "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Basic",
             "MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy",
             "MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Approximation",
@@ -233,10 +233,18 @@ class ImportBoundaryCheckTests(unittest.TestCase):
 
     def test_recently_lowered_measure_and_analysis_layers_are_protected(self):
         expected = {
-            "Analysis.Asymptotics.Scale": ("Probability",),
-            "Analysis.Asymptotics.InverseScale": ("Probability",),
-            "Analysis.Asymptotics.BlockScale": ("Probability",),
-            "MeasureTheory.Measure.LevyMeasure": ("Probability",),
+            "Analysis.Asymptotics.Scale.Basic": ("Probability",),
+            "Analysis.Asymptotics.Scale.Inverse.Basic": ("Probability",),
+            "Analysis.Asymptotics.Scale.Inverse.LevelMultiplicity": (
+                "Probability",
+            ),
+            "Analysis.Asymptotics.Scale.Inverse.Superquadratic": (
+                "Probability",
+            ),
+            "Analysis.Asymptotics.Scale.Block.Length": ("Probability",),
+            "Analysis.Asymptotics.Scale.Block.Partition": ("Probability",),
+            "Analysis.Asymptotics.Scale.Block.Count": ("Probability",),
+            "MeasureTheory.Measure.Levy.Basic": ("Probability",),
             "MeasureTheory.Measure.CharacteristicFunction.Convolution": (
                 "Probability",
             ),
@@ -261,7 +269,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
             "MeasureTheory.MeasurableSpace.ContinuousMap.Oscillation": (
                 "Probability",
             ),
-            "MeasureTheory.Measure.ContinuousMap.Oscillation": (
+            "MeasureTheory.Measure.ContinuousMap.RangeOscillation": (
                 "Probability",
             ),
             "Probability.ConvergenceInDistribution.ContinuousMap.Corridor": (
@@ -276,13 +284,20 @@ class ImportBoundaryCheckTests(unittest.TestCase):
             "MeasureTheory.Measure.ContinuousMap.Tightness.Criteria": (
                 "Probability",
             ),
-            "MeasureTheory.Measure.Recurrence.BlockBounds": ("Probability",),
         }
         for module, forbidden in expected.items():
             with self.subTest(module=module):
                 self.assertEqual(
                     imports.GENERAL_LAYER_BOUNDARIES[module], forbidden
                 )
+
+    def test_generic_recurrence_layer_avoids_probability_imports(self):
+        self.assertEqual(
+            imports.GENERAL_LAYER_BOUNDARIES[
+                "Algebra.Order.Monoid.Recurrence"
+            ],
+            ("Probability",),
+        )
 
     def test_offspring_modules_are_covered_by_application_boundaries(self):
         for module in (
@@ -335,18 +350,24 @@ class ImportBoundaryCheckTests(unittest.TestCase):
             )
         self.assertTrue(any("GaltonWatson" in issue for issue in issues))
 
-    def test_stable_characteristic_function_layers_avoid_levy_and_branching(self):
+    def test_stable_distribution_characteristic_function_layers_avoid_levy_and_branching(
+        self,
+    ):
         boundaries = {
-            "Probability.Distributions.Stable.CharacteristicFunction": (
-                "Probability.Distributions.Stable.Exponent",
-                "Probability.Distributions.Stable.LevyKhintchine",
+            "Probability.Distributions.Stable.Basic": (
+                "Probability.Distributions.Stable.Levy.Khintchine",
+                "Probability.Process.Stable.JumpModel",
+                "Probability.BranchingRandomWalk",
+                "Combinatorics.BranchingWalk",
+            ),
+            "Probability.Distributions.Stable.CharacteristicFunction.Modulus": (
+                "Probability.Distributions.Stable.Levy.Khintchine",
                 "Probability.Process.Stable.JumpModel",
                 "Probability.BranchingRandomWalk",
                 "Combinatorics.BranchingWalk",
             ),
             "Probability.Distributions.Stable.Attraction.CharacteristicFunction": (
-                "Probability.Distributions.Stable.Exponent",
-                "Probability.Distributions.Stable.LevyKhintchine",
+                "Probability.Distributions.Stable.Levy.Khintchine",
                 "Probability.Process.Stable.JumpModel",
                 "Probability.BranchingRandomWalk",
                 "Combinatorics.BranchingWalk",
@@ -400,10 +421,10 @@ class ImportBoundaryCheckTests(unittest.TestCase):
 
     def test_poisson_general_layers_are_covered(self):
         for module in (
-            "Probability.Distributions.Poisson.Basic",
-            "Probability.RandomMeasure.Poisson.PointFamily",
-            "Probability.RandomMeasure.Poisson.Basic",
-            "Probability.RandomMeasure.Poisson.Integral",
+            "Probability.Distributions.Poisson.Moments",
+            "Probability.RandomMeasure.Poisson.PointFamily.Basic",
+            "Probability.RandomMeasure.Poisson.RandomMeasure.Basic",
+            "Probability.RandomMeasure.Poisson.Integration.Integral",
         ):
             with self.subTest(module=module):
                 self.assertIn(module, imports.GENERAL_LAYER_BOUNDARIES)
@@ -411,7 +432,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
     def test_poisson_boundary_checks_transitive_process_imports(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            entry = root / "Probability" / "RandomMeasure" / "Poisson" / "Integral.lean"
+            entry = root / "Probability" / "RandomMeasure" / "Poisson" / "Integration" / "Integral.lean"
             dep = root / "Shared" / "Dep.lean"
             entry.parent.mkdir(parents=True)
             dep.parent.mkdir(parents=True)
@@ -419,7 +440,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
             dep.write_text("import Probability.Process.Stable.JumpModel\n")
             issues = imports.inspect_general_layer_boundaries(
                 {
-                    "Probability.RandomMeasure.Poisson.Integral": (
+                    "Probability.RandomMeasure.Poisson.Integration.Integral": (
                         "Probability.Process.Stable",
                     ),
                 },
@@ -434,6 +455,12 @@ class LeanAxiomCheckTests(unittest.TestCase):
     def test_allowlist_is_a_ceiling_not_an_exact_requirement(self):
         output = "'Example.theorem' depends on axioms: [Classical.choice]\n"
         self.assertEqual(axioms.check_output(output, ["Example.theorem"]), [])
+
+    def test_declaration_name_can_contain_a_prime(self):
+        output = "'Example.value'_theorem' depends on axioms: [propext]\n"
+        self.assertEqual(
+            axioms.check_output(output, ["Example.value'_theorem"]), []
+        )
 
     def test_unexpected_axiom_is_rejected(self):
         output = "'Example.theorem' depends on axioms: [propext, sorryAx]\n"

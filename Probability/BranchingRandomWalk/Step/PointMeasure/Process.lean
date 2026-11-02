@@ -1,0 +1,58 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+public import Probability.BranchingRandomWalk.Step.Presentation.Basic
+public import Probability.BranchingRandomWalk.Step.PointMeasure.Basic
+public import Probability.PointProcess.Basic
+
+/-!
+# Point-process observations of a random step
+
+A branching random walk starts from `S : Ω → Step ι X`. Its point process is
+the deterministic Dirac sum of that step. This module is an adapter to the
+generic `ProbabilityTheory.PointProcess` interface; it never reconstructs or
+orders a step from a measure.
+
+The process associated with a random step presentation \(S\) is its point
+measure observation, with local finiteness on the selected family supplied
+samplewise:
+
+\[\Xi_\omega=\operatorname{stepPointMeasure}(S(\omega)),\qquad
+  \operatorname{IsFiniteOnFamily}(\Xi_\omega,\mathcal A).\]
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.StepPresentation.toPointProcess`:
+  packages the point-measure observation of a random step as a point process
+  when its local finiteness on the selected family is supplied samplewise.
+
+-/
+
+@[expose] public section
+
+open MeasureTheory
+
+namespace ProbabilityTheory.BranchingRandomWalk
+
+open Combinatorics.Branching
+
+/-- Package the point-measure observation of `S` as an abstract point process
+once its local finiteness has been verified samplewise. Its integer-valuedness
+is inherited from the Dirac-sum representation. -/
+noncomputable def StepPresentation.toPointProcess
+    {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    [Countable ι]
+    (S : StepPresentation Ω ι X) (𝒜 : Set (Set X))
+    (hfinite : ∀ ω, IsFiniteOnFamily (S.pointMeasure ω) 𝒜) :
+    PointProcess Ω X 𝒜 where
+  toMeasure := S.pointMeasure
+  measurable_toMeasure := S.pointMeasure_measurable
+  counting := fun ω => stepPointMeasure_isIntegerValued (S ω)
+  finiteOn := hfinite
+
+end ProbabilityTheory.BranchingRandomWalk

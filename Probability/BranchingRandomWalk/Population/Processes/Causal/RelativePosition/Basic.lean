@@ -4,17 +4,44 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.Causal.Predicate
-import Probability.BranchingRandomWalk.Population.Processes.Causal.Genealogy
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.RelativePosition
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Predicate
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Genealogy
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.RelativePosition
+public import Probability.Process.Path.Restart.Basic
 
 /-!
 # Basic causal relative-position constructions
 
+## Public declarations
+
+- `RootIndexed.CausalPopulation.ofRelativePositionSets`: recursively retain
+  children whose displacement from the ancestor at `anchor n` lies in
+  `window n`; it applies to an additive measurable position space and assumes
+  the resulting child slice is finite at every step.
+- `RootIndexed.CausalPopulation.ofRestartedPositionSets`: the specialization
+  with `anchor n = 0` when `n ≤ cutoff` and `anchor n = cutoff` otherwise, so
+  positions are measured from the initial root through the cutoff and from the
+  cutoff ancestor thereafter.
+
 This file defines the general set-valued killed populations obtained from
 ancestral relative-position windows.  Finiteness and real-valued weights are
 separate layers.
+
+For a label `q` at generation `n` and an anchor `a≤n`, the relative position
+is its position minus that of its length-`a` prefix. The restarted construction
+uses the anchor
+
+\[\begin{aligned}
+\operatorname{relPos}_{a,n}(q,\omega)
+&=\operatorname{positionAtGeneration}(q,\omega)
+ -\operatorname{positionAtGeneration}(q_{\le a},\omega),\\
+a_c(n)&=\begin{cases}0,&n\le c,\\c,&c<n.\end{cases}
+\end{aligned}\]
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
@@ -23,7 +50,7 @@ namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed.CausalPopulation
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open ProbabilityTheory.RandomWalk
+open ProbabilityTheory.Process.Path
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 attribute [local instance] Classical.propDecidable Classical.decEq
@@ -45,7 +72,7 @@ noncomputable def ofRelativePositionSets
     (hfinite : ∀ (n : ℕ)
         (parents : Finset (RootIndexed.TreeNode Root α))
         (field : RootIndexed.StepField Root α Mark),
-      {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
+      {q | q ∈ Combinatorics.Branching.Population.childrenAtGeneration n parents field ∧
         RootIndexed.relativePositionAtGeneration initialPosition d
           (anchor (n + 1)) (n + 1) q field ∈ window (n + 1)}.Finite) :
     RootIndexed.CausalPopulation
@@ -83,7 +110,7 @@ noncomputable def ofRestartedPositionSets
     (hfinite : ∀ (n : ℕ)
         (parents : Finset (RootIndexed.TreeNode Root α))
         (field : RootIndexed.StepField Root α Mark),
-      {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
+      {q | q ∈ Combinatorics.Branching.Population.childrenAtGeneration n parents field ∧
         RootIndexed.relativePositionAtGeneration initialPosition d
           (restartAnchor cutoff (n + 1)) (n + 1) q field ∈
             window (n + 1)}.Finite) :

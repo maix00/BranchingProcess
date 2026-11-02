@@ -6,8 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Cloud.Order.Basic
-public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling
+public import Combinatorics.BranchingWalk.Cloud.Order.Domination
+public import Combinatorics.BranchingWalk.Cloud.Order.DynamicSelection
+public import Combinatorics.Selection.NSelection.Mechanism.Finite.Threshold
+public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Step
+public import Combinatorics.Selection.NSelection.Mechanism.Finite.AtRank
 
 /-!
 # Domination under leftmost selection
@@ -16,6 +19,47 @@ The finite counting lemma for `selectFirstN` is lifted here to the existing clou
 orders.  Positions may be abstract; comparison takes place after an ordered
 observation `φ`. Equal observed positions retain their distinct particle
 identities.
+
+## Public declarations
+
+Suppose \(C\) rankwise dominates \(D\), each retained slice \(R_t\) is a
+subset of \(C_t\) with at most \(N\) particles, and the observed values
+\(\phi(\operatorname{position}_C(p))\) and
+\(\phi(\operatorname{position}_D(q))\) are nondecreasing in their respective
+address orders. Write \(D_t^{[N]}\) for the first \(N\) addresses of \(D_t\)
+in its address order, and \(C_R\) for \(C\) restricted to \(R_t\). Then
+the retained cloud rankwise dominates this selected target cloud:
+
+\[C\succeq_{\mathrm{rank},\phi}D,\quad R_t\subseteq C_t,\quad |R_t|\le N,
+\quad \phi(\operatorname{position}_C(p))\le
+\phi(\operatorname{position}_C(p'))\ (p<p'\in C_t),\quad
+\phi(\operatorname{position}_D(q))\le
+\phi(\operatorname{position}_D(q'))\ (q<q'\in D_t)
+\Longrightarrow C_R\succeq_{\mathrm{rank},\phi}D^{[N]}.\]
+
+In addition, if \(N>0\), every source particle has a selected target
+particle with no larger observed value:
+
+\[N>0,\quad p\in C_t
+\Longrightarrow\exists q\in D_t^{[N]},\quad
+  \phi(\operatorname{position}_D(q))
+  \le\phi(\operatorname{position}_C(p)).\]
+
+- `Cloud.rankwiseDominatesBy_leftmost_of_subset` proves
+  `(C.withFinsetParticles retained).RankwiseDominatesBy φ
+  (D.withFinsetParticles right) t`, where
+  `right t = selectFirstN N (hDfinite t).toFinset`, when each retained slice
+  is a subset of `C.particles t` of size at most `N`, `C` rankwise dominates
+  `D`, and `φ` is monotone along both index orders.
+- `Cloud.dominatesBy_leftmost_of_subset` gives the corresponding
+  measure-level relation
+  `(C.withFinsetParticles retained).DominatesBy φ
+  (D.withFinsetParticles right)` when the particle type is countable and
+  observed values have measurable singletons.
+- `Cloud.exists_leftmost_le_of_mem` proves
+  `∀ p ∈ C.particles t, ∃ q ∈ selectFirstN N (D.particles t),
+  φ (D.position q.1 q.2) ≤ φ (C.position p.1 p.2)` when `N > 0` and `C`
+  rankwise dominates `D` at `t`.
 -/
 
 open Combinatorics.UlamHarris
@@ -24,7 +68,7 @@ open Combinatorics.UlamHarris
 
 namespace Combinatorics.Branching
 
-open Selection
+open _root_.Combinatorics.Branching.Selection
 
 set_option linter.style.haveILetI false
 

@@ -7,11 +7,42 @@ module
 
 public import Analysis.Fourier.CosineTauberian.FrequencyAverage
 public import Probability.Distributions.CharacteristicFunction.CosineDefect
-public import Probability.Distributions.CharacteristicFunction.Symmetrization
-public import Mathlib.MeasureTheory.Integral.Prod
+public import Probability.Distributions.CharacteristicFunction.Symmetrization.Basic
+import Mathlib.MeasureTheory.Integral.Prod
 
 /-!
 # Frequency averaging for probability cosine defects
+
+## Public declarations
+
+- `intervalIntegral_four_cosineDefect_sub_double` expresses the averaged
+  second difference of the cosine defect as twice the integral of the squared
+  cosine defect.
+- `exists_pos_closedAbsTail_le_cosineDefectFrequencyAverage` bounds the
+  closed two-sided tail of a probability measure by its frequency-averaged
+  cosine defect, with a positive constant.
+- `exists_pos_symmetrizedClosedAbsTail_le_normDefectFrequencyAverage` gives
+  the corresponding bound for the law of the difference of two independent
+  samples, expressed through the squared-modulus characteristic defect.
+
+Set
+\[
+  D_\mu(u)=\int (1-\cos(uy))\,\mu(dy),
+  \qquad
+  Q(z)=\int_1^2(1-\cos(tz))^2\,dt.
+\]
+The exact averaging identity and the uniform tail coercivity take the forms
+\[
+  \int_1^2\!\left(4D_\mu(t/x)-D_\mu(2t/x)\right)dt
+    =2\int Q(y/x)\,\mu(dy),
+  \qquad
+  2c_\mu\,\mu\{|y|\ge x\}
+    \le \int_1^2\!\left(4D_\mu(t/x)-D_\mu(2t/x)\right)dt
+    \quad(x>0),
+\]
+for some `c_μ > 0`. Applying this to the difference law replaces
+`D_μ(u)` by `1 - ‖charFun ν u‖²` and the tail by that of
+`symmetrizedMeasure ν`.
 
 The averaged squared cosine kernel detects the tail of the measure whose
 cosine defect is being averaged. For an increment law's squared-modulus
@@ -111,12 +142,12 @@ theorem intervalIntegral_four_cosineDefect_sub_double
     _ = 2 * ∫ y, cosineSquareFrequencyAverage (y / x) ∂μ := by
           congr 1
 
-private theorem cosineSquareFrequencyAverage_nonneg (z : ℝ) :
+private lemma cosineSquareFrequencyAverage_nonneg (z : ℝ) :
     0 ≤ cosineSquareFrequencyAverage z := by
   exact intervalIntegral.integral_nonneg_of_forall (by norm_num)
     (fun t => sq_nonneg (1 - Real.cos (t * z)))
 
-private theorem cosineSquareFrequencyAverage_le_four (z : ℝ) :
+private lemma cosineSquareFrequencyAverage_le_four (z : ℝ) :
     cosineSquareFrequencyAverage z ≤ 4 := by
   let f : ℝ → ℝ := fun t => (1 - Real.cos (t * z)) ^ 2
   have hfcont : Continuous f := by fun_prop

@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import MeasureTheory.Measure.InnerOuter
+public import MeasureTheory.Measure.InnerMeasure
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
 
 import Topology.Order.Limit
@@ -19,6 +19,21 @@ measurable subsets.  An `M₃` approximation sandwiches these two values, so
 both have the common logarithmic rate even when the target event itself is not
 measurable.  This result does not infer null-measurability from the energy
 approximation.
+
+## Public declarations
+
+* `tendsto_inner_outer_log_probability_ratio_of_FiniteCorridorUnionApproximation`
+  gives eventual positivity and the common limits
+  `log P.innerMeasure(paths ∈ G)/g → κ * H` and
+  `log P(paths ∈ G)/g → κ * H`, with `0 < H ≤ E(A.inner 0)`.
+* `exists_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation`
+  obtains such an approximation and matching inner- and outer-measure rates
+  from the vanishing-energy-gap hypothesis.
+
+The common-rate conclusion is
+`\(\log(P.innerMeasure(G).toReal)/g\to\kappa H\)` and
+`\(\log(P(G).toReal)/g\to\kappa H\)`,
+with `\(0<H\le E(A.inner(0))\)`.
 -/
 
 open Filter MeasureTheory
@@ -31,7 +46,7 @@ open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 
 namespace ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 
-private theorem energyBounds_of_probabilityRate
+private lemma energyBounds_of_probabilityRate
     {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P]
     {α κ : ℝ} {I : Type*} {l : Filter I} [NeBot l]

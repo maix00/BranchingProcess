@@ -14,6 +14,16 @@ public import Probability.BranchingRandomWalk.Spine.GenerationBranching.Measurab
 
 The pathwise first-generation decomposition is integrated against the
 independent root/subtree law to obtain the iterated endpoint operators.
+
+## Public declarations
+
+- `weightedGenerationEndpoint_succ` and `generationEndpoint_succ`: decompose
+  the generation-$(n+1)$ endpoint observable into the sum over surviving
+  first-generation subtrees, in weighted and unweighted forms.
+- `lintegral_weightedGenerationEndpoint_eq_iterate` and
+  `lintegral_generationEndpoint_eq_iterate`: integrate the recursion against
+  the branching-field law to identify the actual generation observables with
+  the iterated endpoint operators.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -21,6 +31,8 @@ open MeasureTheory ProbabilityTheory
 @[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
@@ -234,7 +246,7 @@ theorem lintegral_weightedGenerationEndpoint_eq_iterate
     [IsProbabilityMeasure μ]
     {f : ℝ → ENNReal} (hf : Measurable f) :
     ∀ (n : ℕ) (x : ℝ),
-      (∫⁻ ω, weightedGenerationEndpoint φ n f x ω ∂stepFieldLaw μ) =
+      (∫⁻ ω, weightedGenerationEndpoint φ n f x ω ∂offspringFieldLaw μ) =
         weightedBranchingEndpointIterate φ μ n f x
   | 0, x => by
       simp [weightedBranchingEndpointIterate]
@@ -266,14 +278,14 @@ theorem lintegral_weightedGenerationEndpoint_eq_iterate
             (∫⁻ ω, realizedPotentialWeight φ (-1) (ω []) i *
                 weightedGenerationEndpoint φ n f
                   (x + (ω []).potentialValue' φ i)
-                  (subtreeStepField [i] ω) ∂stepFieldLaw μ) =
-                ∫⁻ z, H z ∂(stepFieldLaw μ).map
+                  (subtreeStepField [i] ω) ∂offspringFieldLaw μ) =
+                ∫⁻ z, H z ∂(offspringFieldLaw μ).map
                   (fun ω => (ω ([] : TreeNode ι),
                     subtreeStepField [i] ω)) := by
               exact (lintegral_map hH hpair).symm
-            _ = ∫⁻ z, H z ∂μ.prod (stepFieldLaw μ) := by
+            _ = ∫⁻ z, H z ∂μ.prod (offspringFieldLaw μ) := by
               rw [root_subtreeStepField_joint_law μ i]
-            _ = ∫⁻ ξ, ∫⁻ η, H (ξ, η) ∂stepFieldLaw μ ∂μ := by
+            _ = ∫⁻ ξ, ∫⁻ η, H (ξ, η) ∂offspringFieldLaw μ ∂μ := by
               exact lintegral_prod H hH.aemeasurable
             _ = ∫⁻ ξ, realizedPotentialWeight φ (-1) ξ i *
                   weightedBranchingEndpointIterate φ μ n f
@@ -282,7 +294,7 @@ theorem lintegral_weightedGenerationEndpoint_eq_iterate
               intro ξ
               change (∫⁻ η, realizedPotentialWeight φ (-1) ξ i *
                   weightedGenerationEndpoint φ n f
-                    (x + ξ.potentialValue' φ i) η ∂stepFieldLaw μ) = _
+                    (x + ξ.potentialValue' φ i) η ∂offspringFieldLaw μ) = _
               rw [lintegral_const_mul _
                 (weightedGenerationEndpoint_measurable φ n hf
                   (x + ξ.potentialValue' φ i))]
@@ -321,7 +333,7 @@ theorem lintegral_generationEndpoint_eq_iterate
     [IsProbabilityMeasure μ]
     {f : ℝ → ENNReal} (hf : Measurable f) :
     ∀ (n : ℕ) (x : ℝ),
-      (∫⁻ ω, generationEndpoint φ n f x ω ∂stepFieldLaw μ) =
+      (∫⁻ ω, generationEndpoint φ n f x ω ∂offspringFieldLaw μ) =
         branchingEndpointIterate φ μ n f x
   | 0, x => by
       simp [branchingEndpointIterate]
@@ -353,14 +365,14 @@ theorem lintegral_generationEndpoint_eq_iterate
             (∫⁻ ω, survivingPotentialTest φ
                 (fun y => generationEndpoint φ n f (x + y)
                   (subtreeStepField [i] ω)) (ω []) i
-                ∂stepFieldLaw μ) =
-                ∫⁻ z, H z ∂(stepFieldLaw μ).map
+                ∂offspringFieldLaw μ) =
+                ∫⁻ z, H z ∂(offspringFieldLaw μ).map
                   (fun ω => (ω ([] : TreeNode ι),
                     subtreeStepField [i] ω)) := by
               exact (lintegral_map hH hpair).symm
-            _ = ∫⁻ z, H z ∂μ.prod (stepFieldLaw μ) := by
+            _ = ∫⁻ z, H z ∂μ.prod (offspringFieldLaw μ) := by
               rw [root_subtreeStepField_joint_law μ i]
-            _ = ∫⁻ ξ, ∫⁻ η, H (ξ, η) ∂stepFieldLaw μ ∂μ := by
+            _ = ∫⁻ ξ, ∫⁻ η, H (ξ, η) ∂offspringFieldLaw μ ∂μ := by
               exact lintegral_prod H hH.aemeasurable
             _ = ∫⁻ ξ, survivingPotentialTest φ
                   (fun y => branchingEndpointIterate φ μ n f (x + y)) ξ i

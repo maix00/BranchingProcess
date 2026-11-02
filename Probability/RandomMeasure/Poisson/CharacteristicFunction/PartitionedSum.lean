@@ -12,9 +12,25 @@ import Mathlib.Probability.Independence.CharacteristicFunction
 /-!
 # Characteristic function of finite Poisson partition sums
 
-The prefix-versus-next-block independence theorem is stronger than pairwise
-independence. It lets the single-piece characteristic formula multiply across
-any finite prefix of the canonical σ-finite partition.
+## Public declarations
+
+- `ProbabilityTheory.IsPoissonPointFamily.charFun_prefixPieceSum_eq_exp_setIntegrals`: for a
+  Poisson point family with intensity `m` and measurable `f : E → ℝ`,
+  `charFun (P.map (∑ k ∈ range (n + 1), pieceSum K X f k)) ξ` equals
+  `exp (∑ k ∈ range (n + 1), ∫ x in prmPiece m k,
+  (exp (i ξ f x) - 1) ∂m)`.
+
+The proof multiplies the independent single-piece characteristic functions
+across a finite prefix of the canonical σ-finite partition.
+
+Write `S_n(\omega)=\sum_{k=0}^{n}\operatorname{pieceSum}(K,X,f,k,\omega)` for
+the sum over the first `n+1` partition pieces. Its characteristic function is
+
+\[
+\operatorname{charFun}\bigl(P.\mathrm{map}(S_n),\xi\bigr)
+=\exp\!\left(\sum_{k=0}^{n}\int_{\operatorname{prmPiece}(m,k)}
+  \bigl(e^{i\xi f(x)}-1\bigr)\,m(dx)\right).
+\]
 -/
 
 @[expose] public section
@@ -23,24 +39,10 @@ namespace ProbabilityTheory
 
 open MeasureTheory Complex
 
-/-- Integration over the canonical σ-finite partition recovers the full
-intensity integral. -/
-theorem hasSum_integral_prmPiece
-    {E : Type} [MeasurableSpace E]
-    {m : Measure E} [SigmaFinite m]
-    {g : E → ℂ} (hg : Integrable g m) :
-    HasSum (fun k => ∫ x in prmPiece m k, g x ∂m)
-      (∫ x, g x ∂m) := by
-  have h := hasSum_integral_iUnion
-    (s := prmPiece m) (f := g) (μ := m)
-    (fun k => measurableSet_prmPiece)
-    pairwise_disjoint_prmPiece (by simpa [iUnion_prmPiece] using hg)
-  simpa only [iUnion_prmPiece, setIntegral_univ] using h
-
 /-- A finite-intensity Poisson piece contributes the integral of `w - 1`
 against the original intensity. This also covers zero-mass pieces, whose
 normalized law is an arbitrary Dirac probability measure. -/
-theorem pieceExponent_eq_integral
+private theorem pieceExponent_eq_integral
     {E : Type} [MeasurableSpace E]
     {m : Measure E} [SigmaFinite m] [Nonempty E]
     (k : ℕ) {w : E → ℂ} (hw : Measurable w)
@@ -62,7 +64,7 @@ theorem pieceExponent_eq_integral
     rw [hsub, Complex.real_smul] at h
     exact h
 
-theorem IsPoissonPointFamily.charFun_prefixPieceSum
+private theorem IsPoissonPointFamily.charFun_prefixPieceSum
     {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]
     {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → E}
     {m : Measure E} [SigmaFinite m] [Nonempty E]

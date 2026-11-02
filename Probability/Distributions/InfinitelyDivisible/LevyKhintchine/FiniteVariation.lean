@@ -6,8 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.MeasureTheory.Integral.IntegrableOn
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Scaling
+public import MeasureTheory.Measure.Levy.Cutoff
+import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 
 /-!
 # The uncompensated drift in a finite-variation Lévy exponent
@@ -15,6 +16,31 @@ public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Scali
 The truncation used by the canonical Lévy–Khintchine triple is the open unit
 ball.  When the small-jump displacement is integrable, its integral can be
 removed from the canonical drift.
+
+## Public declarations
+
+* `compensationDifference_eq_smallJumpDisplacement` identifies the scaling
+  correction with `i(h(ax) - a h(x))`, where `h(x)=x 1_{|x|<1}`.
+* `LevyKhintchineTriple.smallJumpMean` defines the canonical small-jump first
+  moment, and `.uncompensatedDrift` subtracts it from the canonical drift.
+* `IsLevyMeasure.integral_compensationDifference_im` expresses the correction's
+  imaginary integral as the change in the truncated first moment.
+* `levyUncompensatedIntegrand ξ x = exp(i x ξ) - 1`, and
+  `levyUncompensatedIntegrand_eq` relates it to the compensated integrand by
+  adding `i ξ h(x)`.
+* `IsLevyMeasure.integrable_uncompensatedIntegrand` and
+  `IsLevyMeasure.integral_uncompensatedIntegrand` give integrability and the
+  corresponding integral identity under `Integrable h ν`.
+
+Let `h(x)=x\mathbf 1_{\{|x|<1\}}` be the small-jump displacement. Under its
+integrability, removing the compensation term changes the drift and jump
+integrand according to
+
+\[\begin{aligned}
+b_{\mathrm{uncomp}}&=b-\int h(x)\,d\nu(x),\\
+e^{ix\xi}-1
+&=\left(e^{ix\xi}-1-ix\xi\mathbf 1_{\{|x|<1\}}\right)+i\xi h(x).
+\end{aligned}\]
 -/
 
 @[expose] public section
@@ -23,30 +49,17 @@ namespace ProbabilityTheory
 
 open MeasureTheory Set
 
-/-- The displacement kept by the canonical radius-one compensation. -/
-noncomputable def smallJumpDisplacement (x : ℝ) : ℝ :=
-  if |x| < 1 then x else 0
+/-- The first moment of the canonical small-jump displacement. When the
+displacement is integrable, this is the drift correction in the
+finite-variation representation. -/
+noncomputable def LevyKhintchineTriple.smallJumpMean
+    (T : LevyKhintchineTriple) : ℝ :=
+  ∫ x, smallJumpDisplacement x ∂T.levyMeasure
 
-/-- The small-jump displacement is integrable under the usual finite-variation
-condition. -/
-theorem integrable_smallJumpDisplacement {ν : Measure ℝ}
-    (h : IntegrableOn (fun x : ℝ => x) {x : ℝ | |x| ≤ 1} ν) :
-    Integrable smallJumpDisplacement ν := by
-  have hsub : Ioo (-1 : ℝ) 1 ⊆ {x : ℝ | |x| ≤ 1} := by
-    intro x hx
-    simp only [mem_Ioo, mem_ofPred_eq] at hx ⊢
-    exact abs_le.mpr ⟨by linarith, by linarith⟩
-  have hint := h.mono_set hsub
-  have hs : MeasurableSet (Ioo (-1 : ℝ) 1) := measurableSet_Ioo
-  have heq : smallJumpDisplacement = (Ioo (-1 : ℝ) 1).indicator id := by
-    funext x
-    by_cases hx : |x| < 1
-    · have hmem : x ∈ Ioo (-1 : ℝ) 1 := abs_lt.mp hx
-      simp [smallJumpDisplacement, hx, Set.indicator_of_mem hmem]
-    · have hmem : x ∉ Ioo (-1 : ℝ) 1 := by simpa [abs_lt] using hx
-      simp [smallJumpDisplacement, hx, Set.indicator_of_notMem hmem]
-  rw [heq]
-  exact hint.integrable_indicator hs
+/-- The canonical drift after removing the first moment of the small jumps. -/
+noncomputable def LevyKhintchineTriple.uncompensatedDrift
+    (T : LevyKhintchineTriple) : ℝ :=
+  T.drift - T.smallJumpMean
 
 /-- The correction caused by scaling the canonical truncation is the
 difference of two small-jump displacements. -/

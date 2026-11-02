@@ -6,16 +6,44 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.UlamHarris.Tree.Borel
-public import Combinatorics.UlamHarris.Tree.Metric
+public import Combinatorics.UlamHarris.Tree.Topology.Borel
+public import Combinatorics.UlamHarris.Tree.Topology.Metric
 
 /-!
 # The single-root specialization of root-indexed trees
 
-`RootIndexed.Tree Root α` is an indexed family of `UlamHarris.Tree α`.  For a
-unique root the family is identified with its only coordinate.  The family
+`RootIndexed.Tree Root α` is an indexed family of `UlamHarris.Tree α`. Under
+`[LT α]` and `[Unique Root]`, the family is identified with its only
+coordinate. The family
 definition and its topology, metric, and measurable-space interfaces are in
 the corresponding `Tree/` modules; this file records only the specialization.
+
+## Public declarations
+
+- `equivOfUnique` identifies a family indexed by a unique root with its sole
+  tree: `RootIndexed.Tree Root α ≃ UlamHarris.Tree α`.
+- `equivOfUnique_apply T = T default` and
+  `equivOfUnique_symm_apply T = fun _ => T` give the equivalence on each side.
+- `treeDist_apply` states that the family distance is the distance of the
+  unique coordinates, and `preimage_truncationBall_eq_uniformBall` pulls a
+  single-tree truncation ball back to the corresponding uniform ball:
+  `treeDist T T' = Tree.treeDist (T default) (T' default)` and
+  `equivOfUnique ⁻¹' Tree.truncationBall (equivOfUnique T) n =
+  uniformBall T n`.
+- `measurableSpace_eq_comap`, `pointwiseTopology_eq_induced`,
+  `productTruncationTopology_eq_induced`, `uniformTopology_eq_induced`, and
+  `metricTopology_eq_induced` identify the corresponding structures under the
+  equivalence. For example,
+  `uniformTopology = TopologicalSpace.induced equivOfUnique
+  Tree.treeTruncationTopology`, and `borel_uniformTopology_eq_comap` states
+  `@borel (RootIndexed.Tree Root α) uniformTopology =
+  (@borel (UlamHarris.Tree α) Tree.treeTruncationTopology).comap equivOfUnique`.
+
+Under a unique root, `\(equivOfUnique(T)(default)=T\)` and
+`\(equivOfUnique^{-1}(T)(r)=T\)`. The distance and truncation-ball
+identities are `\(treeDist\ T\ T' = Tree.treeDist\ (T\ default)\ (T'\ default)\)`
+and `\(equivOfUnique ⁻¹' Tree.truncationBall (equivOfUnique T) n =
+uniformBall T n\)`.
 -/
 
 open MeasureTheory
@@ -55,7 +83,13 @@ theorem treeDist_apply (T T' : RootIndexed.Tree Root α) :
   haveI : Nonempty Root := ⟨default⟩
   rw [treeDist]
   exact le_antisymm (ciSup_le fun r => by rw [Unique.eq_default r])
-    (le_ciSup (treeDist_bddAbove T T') default)
+    (le_ciSup
+      (show BddAbove (Set.range fun r : Root =>
+          UlamHarris.Tree.treeDist (T r) (T' r)) from
+        ⟨1, by
+          rintro _ ⟨r, rfl⟩
+          exact UlamHarris.Tree.treeDist_le_one _ _⟩)
+      default)
 
 theorem preimage_truncationBall_eq_uniformBall (T : RootIndexed.Tree Root α) (n : ℕ) :
     equivOfUnique (Root := Root) (α := α) ⁻¹'

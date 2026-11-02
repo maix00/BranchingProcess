@@ -1,6 +1,7 @@
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.UpperEndpoint
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointReturn
+module
 
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.Upper
+import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.Lemmas.Return
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_le_pow_stableBlock_endpointMass
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeProbability_ge_pow_stableEndpointBands
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeProbability_ge_pow_stableEndpointBands_of_quotientBlockCount

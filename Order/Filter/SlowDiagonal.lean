@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Order.Filter.AtTopBot.Basic
 
 /-!
@@ -16,6 +16,22 @@ If each fixed natural parameter eventually satisfies a predicate, one can let
 the parameter grow to infinity slowly enough that the predicate still holds
 along the diagonal. This is a general order/filter construction and does not
 depend on asymptotic growth theory.
+
+## Public declarations
+
+* `Filter.exists_tendsto_slowDiagonal`: if
+  `∀ k, ∀ᶠ n : ℕ in atTop, P k n`, then there is a monotone
+  `d : ℕ → ℕ` with `Tendsto d atTop atTop` and
+  `∀ᶠ n : ℕ in atTop, P (d n) n`.
+
+In threshold form, the selection principle is
+\[
+  \bigl(\forall k\in\mathbb N,\ \exists N_k\in\mathbb N,\ \forall n\ge N_k,\ P(k,n)\bigr)
+  \Longrightarrow
+  \exists d:\mathbb N\to\mathbb N,\quad
+  d\text{ monotone},\quad d(n)\to\infty,\quad
+  \exists N\in\mathbb N,\ \forall n\ge N,\ P(d(n),n).
+\]
 -/
 
 @[expose] public section

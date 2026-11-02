@@ -11,6 +11,29 @@ public import Combinatorics.BranchingWalk.Basic.Map
 /-!
 # Mapping a branching walk to its genealogy
 
+Forgetting marks applies the optional-map induced by the constant map to the
+singleton mark, so child presence and survival along every finite address are
+preserved:
+
+\[
+\operatorname{toBranching}(\beta).\operatorname{step}(r)
+=\operatorname{forgetMarks}(\beta.\operatorname{step}(r)),
+\qquad
+\operatorname{surviveAlong}(\operatorname{toBranching}(\beta).\operatorname{step}(r),v,p)
+\Longleftrightarrow
+\operatorname{surviveAlong}(\beta.\operatorname{step}(r),v,p).
+\]
+
+## Public declarations
+
+* `Combinatorics.Branching.RootIndexed.BranchingWalk.toBranching β` forgets
+  the spatial marks while retaining the offspring slots and root indexing.
+  Its step satisfies
+  `β.toBranching.step r = (β.step r).forgetMarks`.
+  `Combinatorics.Branching.RootIndexed.BranchingWalk.surviveAlong_toBranching_iff`
+  states
+  `surviveAlong (β.toBranching.step r) v p ↔ surviveAlong (β.step r) v p`.
+
 Forgetting spatial marks turns a branching walk into the corresponding
 unit-marked branching process. This is a projection from the spatial model to
 its genealogy.

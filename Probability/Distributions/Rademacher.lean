@@ -8,12 +8,32 @@ module
 
 public import Mathlib.Probability.Distributions.Bernoulli
 public import Mathlib.Topology.UnitInterval
+public import Probability.Distributions.Moments.Truncated.Basic
 
 /-!
 # The Rademacher distribution
 
 The Rademacher law is the equal mixture of the point masses at `-1` and `1`.
 It is defined as a specialization of mathlib's `bernoulliMeasure`.
+
+## Public declarations
+
+- `ProbabilityTheory.rademacherMeasure` and
+  `ProbabilityTheory.rademacherMeasure.instIsProbabilityMeasure`:
+  the probability law with mass $1/2$ at each of $-1$ and $1$.
+- `ProbabilityTheory.rademacherOfBool`,
+  `ProbabilityTheory.measurable_rademacherOfBool`,
+  `ProbabilityTheory.fairBoolMeasure`,
+  `ProbabilityTheory.fairBoolMeasure.instIsProbabilityMeasure`, and
+  `ProbabilityTheory.map_fairBernoulli_rademacherOfBool`: the measurable
+  Boolean encoding of this law and its fair-Bernoulli pushforward
+  representation.
+- `ProbabilityTheory.fairBoolMeasure_singleton`: each Boolean atom has mass $1/2$.
+- `ProbabilityTheory.integral_rademacherMeasure`: for every
+  $f : \mathbb R\to\mathbb R$,
+  $\int f\,d(\operatorname{rademacherMeasure})=(f(-1)+f(1))/2$.
+- `ProbabilityTheory.truncatedSecondMoment_rademacher_eq_one_of_one_le`: for
+  $u\ge1$, the second moment restricted to $[-u,u]$ equals $1$.
 -/
 
 open MeasureTheory unitInterval
@@ -26,6 +46,7 @@ namespace ProbabilityTheory
 noncomputable def rademacherMeasure : Measure ℝ :=
   Ber((-1 : ℝ), 1, ⟨1 / 2, by constructor <;> norm_num⟩)
 
+/-- The Rademacher law is a probability measure. -/
 noncomputable instance rademacherMeasure.instIsProbabilityMeasure :
     IsProbabilityMeasure rademacherMeasure := by
   unfold rademacherMeasure
@@ -35,6 +56,7 @@ noncomputable instance rademacherMeasure.instIsProbabilityMeasure :
 def rademacherOfBool (step : Bool) : ℝ :=
   if step then 1 else -1
 
+/-- The Boolean encoding of a Rademacher step is measurable. -/
 theorem measurable_rademacherOfBool : Measurable rademacherOfBool :=
   measurable_of_countable _
 
@@ -42,11 +64,13 @@ theorem measurable_rademacherOfBool : Measurable rademacherOfBool :=
 noncomputable def fairBoolMeasure : Measure Bool :=
   Ber(false, true, ⟨1 / 2, by constructor <;> norm_num⟩)
 
+/-- The fair Boolean law is a probability measure. -/
 noncomputable instance fairBoolMeasure.instIsProbabilityMeasure :
     IsProbabilityMeasure fairBoolMeasure := by
   unfold fairBoolMeasure
   infer_instance
 
+/-- Each of the two Boolean outcomes has mass `1 / 2` under `fairBoolMeasure`. -/
 @[simp] theorem fairBoolMeasure_singleton (step : Bool) :
     fairBoolMeasure {step} = ENNReal.ofReal (1 / 2 : ℝ) := by
   cases step <;> simp [fairBoolMeasure]
@@ -57,7 +81,7 @@ noncomputable instance fairBoolMeasure.instIsProbabilityMeasure :
     rw [ENNReal.ofReal_div_of_pos (by norm_num : (0 : ℝ) < 2)]
     norm_num
 
-/-- The fair Boolean Bernoulli law pushes forward to the Rademacher law. -/
+/-- Mapping a fair Boolean outcome to its sign gives the Rademacher law. -/
 theorem map_fairBernoulli_rademacherOfBool :
     fairBoolMeasure.map rademacherOfBool = rademacherMeasure := by
   unfold fairBoolMeasure
@@ -70,6 +94,31 @@ theorem integral_rademacherMeasure (f : ℝ → ℝ) :
   rw [rademacherMeasure, integral_bernoulliMeasure]
   norm_num [smul_eq_mul]
   ring
+
+/-- Once the truncation interval contains the support, its second moment is
+the full unit second moment of the Rademacher law. -/
+theorem truncatedSecondMoment_rademacher_eq_one_of_one_le {u : ℝ}
+    (hu : 1 ≤ u) :
+    truncatedSecondMoment rademacherMeasure u = 1 := by
+  rw [truncatedSecondMoment]
+  have hset : MeasurableSet (Set.Icc (-u) u) := measurableSet_Icc
+  have hmass : rademacherMeasure (Set.Icc (-u) u) = 1 := by
+    simpa [rademacherMeasure] using
+      (bernoulliMeasure_apply_of_mem_of_mem
+        (x := (-1 : ℝ)) (y := (1 : ℝ))
+        (p := (⟨1 / 2, by norm_num⟩ : unitInterval))
+        (s := Set.Icc (-u) u) hset
+        (by constructor <;> linarith)
+        (by constructor <;> linarith))
+  have hae : ∀ᵐ x ∂rademacherMeasure, x ∈ Set.Icc (-u) u :=
+    (mem_ae_iff_prob_eq_one hset).2 hmass
+  have hzero : ∀ᵐ x ∂rademacherMeasure,
+      x ∉ Set.Icc (-u) u → x ^ 2 = 0 := by
+    filter_upwards [hae] with x hx hnot
+    exact (hnot hx).elim
+  rw [setIntegral_eq_integral_of_ae_compl_eq_zero hzero,
+    integral_rademacherMeasure]
+  norm_num
 
 end ProbabilityTheory
 

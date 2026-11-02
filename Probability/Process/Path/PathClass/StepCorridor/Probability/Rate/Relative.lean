@@ -18,6 +18,28 @@ The source path space can be a proper subset of the ambient càdlàg path
 space. This file lets an `M₃` approximation sandwich a target only relative
 to that domain, and transfers the sandwich to probabilities when every
 sample path lies in the domain.
+
+## Public declarations
+
+* `FiniteCorridorUnion.realEnergy_antitone_of_eventSubset_of_probabilityRate`
+  derives `E(B) ≤ E(A)` from inclusion of the corresponding path events and
+  their logarithmic probability rates.
+* `RelativeFiniteCorridorUnionApproximation.energyLimits_of_probabilityRate`
+  gives common limits of the inner and outer energies from the finite-union
+  rate hypotheses, with all sample paths constrained to the domain.
+* `RelativeFiniteCorridorUnionEnergyLimits.commonEnergy_eq_of_approximation`
+  shows the common energy is independent of the relative approximation.
+* `tendsto_inner_outer_log_probability_ratio_of_RelativeFiniteCorridorUnionApproximation`
+  gives matching inner-measure and outer-probability limits
+  `log(·)/g → κ * H`, together with `0 < H ≤ E(A.inner 0)`.
+* `existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEnergyGapApproximation`
+  obtains the unique common rate and matching inner- and outer-measure limits
+  for a relative approximation with vanishing energy gap.
+
+For an approximation relative to the path domain, the limits are
+`\(\log(P.innerMeasure(G_n).toReal)/g_n\to\kappa H\)` and
+`\(\log(P(G_n).toReal)/g_n\to\kappa H\)`,
+with `\(0<H\le E(A.inner(0))\)`.
 -/
 
 open Filter MeasureTheory

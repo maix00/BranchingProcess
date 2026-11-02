@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Basic.BranchingWalk
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 
 /-!
@@ -15,6 +15,18 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 `WalkLaw` is an arbitrary probability law on the space of branching walks.
 It records no independence or homogeneity property; those belong to specific
 constructions such as `iid`.
+
+## Public declarations
+
+- `WalkLaw α Mark Position` is the type of probability measures on
+  `BranchingWalk α Mark Position`; it imposes no independence or branching
+  assumptions.
+  In symbols,
+  \[
+  \operatorname{WalkLaw}(\alpha,\mathrm{Mark},\mathrm{Position})
+  \coloneqq \operatorname{ProbabilityMeasure}
+  (\operatorname{BranchingWalk}(\alpha,\mathrm{Mark},\mathrm{Position})).
+  \]
 -/
 
 @[expose] public section

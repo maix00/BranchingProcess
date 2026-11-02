@@ -6,66 +6,55 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.CyclicPath
-public import Probability.Process.RandomWalk.SmallDeviation.Entrance.FunctionalLimit
-public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
-public import Probability.Process.RandomWalk.FunctionalLimit.Stable.ProcessExistence
+import all Probability.Process.RandomWalk.SmallDeviation.Entrance.Lemmas.Rotation.FinitePath
+public import Probability.Process.RandomWalk.SmallDeviation.Entrance.NormalDomainEvent
+public import Mathlib.MeasureTheory.Constructions.Pi
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Probability.Distributions.Moments.Real
+public import Probability.Sequence.IID.Basic
+public import Probability.Process.RandomWalk.Path.Representation.Cadlag
+import all Probability.Process.RandomWalk.SmallDeviation.Entrance.Lemmas.Rotation.FiniteProduct
+import all Probability.Process.RandomWalk.SmallDeviation.Entrance.Lemmas.Rotation.OffsetCorridorEvent
+import Probability.Process.RandomWalk.FunctionalLimit.Normal.PathLimit.LinearTube
+import all Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness.Basic
+import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLaw.Process
+public import Topology.Cadlag.Skorokhod.Path.Linear
+
+import Probability.Distributions.Stable.Attraction.Normal.Basic
 
 /-!
 # Normal-domain entrance lower bound
 
-This file transfers the normal-domain functional limit to the first
-diffusive-time entrance event. The source path is normalized by
+## Public declarations
+
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measure_pi_finiteMovingEntranceEvent_ge_div_of_uniformLinearBall`:
+  a uniform path-ball probability $q$ gives
+  $\mathbb P(E_n(u))\ge q/n$ for each offset $u\in[0,1]$.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_eventually_measure_pi_finiteMovingEntranceEvent_ge_div_of_centeredSecondMoment`:
+  centered finite variance supplies the same $q/n$ bound for
+  $n=\lfloor\Delta^2\rfloor$ and all starting positions.
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.exists_eventually_iidSequenceLaw_finiteMovingEntranceEvent_ge_div_of_centeredSecondMoment`:
+  the preceding bound holds under the infinite IID increment law.
+
+`NormalDomainEvent.lean` defines the entrance events and their measurable
+drift-removed form. This file transfers the normal-domain functional limit to
+the first diffusive-time entrance event. The source path is normalized by
 `sigma * sqrt n`, while the moving corridor is normalized by `Delta`; a
 spatial-scaling estimate in the J₁ topology accounts for their ratio.
+The principal probability conclusion is $\mathbb P(E_n(u))\ge q/n$ with
+$n=\lfloor\Delta^2\rfloor$ and a positive path-ball lower bound $q$.
+This is the normal-domain entrance estimate used in Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(master's thesis, Fudan University, 2026), Appendix A.2, Lemma A.7, in the
+proof of Chapter 3, Lemma 3.5.
 -/
 
-@[expose] public section
+public section
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
-
-/-- The finite-step entrance event in the original moving corridor. Time is
-normalized to `[0,1]`; `drift` is the boundary displacement per step in these
-spatial units, and the endpoint window is the central third of the corridor. -/
-def finiteMovingEntranceEvent {n : ℕ} (scale drift u : ℝ) :
-    Set (Fin n → ℝ) :=
-  {x | (∀ j : Fin (n + 1),
-      finiteNormalizedStepKnots scale x j ∈
-        Set.Icc (-u + drift * (j.val : ℝ))
-          (1 - u + drift * (j.val : ℝ))) ∧
-    finiteNormalizedStepKnots scale x (Fin.last n) ∈
-      Set.Icc (1 / 3 - u + drift * (n : ℝ))
-        (2 / 3 - u + drift * (n : ℝ))}
-
-/-- Subtracting the linear boundary drift identifies the static rotated
-corridor event with the original moving entrance event, including its
-time-`n` central endpoint window. -/
-theorem finiteDriftRemovedOffsetCorridorEvent_iff_finiteMovingEntranceEvent
-    {n : ℕ} (scale drift u : ℝ) (x : Fin n → ℝ) :
-    x ∈ finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u ↔
-      x ∈ finiteMovingEntranceEvent (n := n) scale drift u := by
-  change offsetCorridorPath u
-      (removeLinearDrift drift (finiteNormalizedStepKnots scale x)) ↔ _
-  unfold offsetCorridorPath removeLinearDrift finiteMovingEntranceEvent
-  have hlastVal : ((Fin.last n).val : ℝ) = (n : ℝ) := by simp
-  constructor
-  · rintro ⟨hpath, hend⟩
-    refine ⟨fun j => ?_, ?_⟩
-    · rcases Set.mem_Icc.mp (hpath j) with ⟨hlo, hhi⟩
-      exact Set.mem_Icc.mpr ⟨by linarith, by linarith⟩
-    · rcases Set.mem_Icc.mp hend with ⟨hlo, hhi⟩
-      rw [hlastVal] at hlo hhi
-      exact Set.mem_Icc.mpr ⟨by linarith, by linarith⟩
-  · rintro ⟨hpath, hend⟩
-    refine ⟨fun j => ?_, ?_⟩
-    · rcases Set.mem_Icc.mp (hpath j) with ⟨hlo, hhi⟩
-      exact Set.mem_Icc.mpr ⟨by linarith, by linarith⟩
-    · rcases Set.mem_Icc.mp hend with ⟨hlo, hhi⟩
-      rw [hlastVal]
-      exact Set.mem_Icc.mpr ⟨by linarith, by linarith⟩
 
 /-- A uniform linear-ball lower bound on all slopes needed by the offset
 rotation yields the factor-`n` lower bound for every offset in the corridor. -/
@@ -78,8 +67,6 @@ theorem measure_pi_finiteMovingEntranceEvent_ge_div_of_uniformLinearBall
     (hsmall : 2 * (max 1 |ratio| * radius) +
       |drift| * (n : ℝ) < 1 / 16)
     (hboundRatio : 1 / 2 ≤ bound * ratio)
-    (rotate : Fin n → Fin n ≃ Fin n)
-    (hrotate : IsCyclicPartialSumReindex rotate)
     {q : ℝ≥0∞}
     (hq : ∀ slope ∈ Set.Icc (-bound) bound,
       q ≤ iidSequenceLaw ν
@@ -115,7 +102,7 @@ theorem measure_pi_finiteMovingEntranceEvent_ge_div_of_uniformLinearBall
     measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets_of_normalizationRatio
       hn ν targetScale sourceScale ratio drift ((1 / 2 - u) / ratio)
       radius u htargetScale hsourceScale hratio hcenter hradius hsmall hu
-      rotate hrotate hsafe hqsource
+      hsafe hqsource
   have hevent : finiteDriftRemovedOffsetCorridorEvent
       (n := n) targetScale drift u =
         finiteMovingEntranceEvent (n := n) targetScale drift u := by
@@ -144,13 +131,9 @@ theorem exists_eventually_measure_pi_finiteMovingEntranceEvent_ge_div_of_centere
   let radius : ℝ := 1 / (128 * max 1 sigma)
   let νunit := ν.map (fun x => x / sigma)
   have hνunit : IsCenteredUnitSecondMoment νunit := hν.map_div hsigma
-  have hsquare : Integrable (fun x : ℝ => x ^ 2) νunit := by
-    apply (memLp_two_iff_integrable_sq
-      stronglyMeasurable_id.aestronglyMeasurable).1
-    exact IsCenteredUnitSecondMoment.memLp_two hνunit
   have hunitDOA' :=
-    isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq
-      νunit hνunit.1 hsquare (by rw [hνunit.2]; norm_num)
+    isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_posSecondMoment
+      νunit hνunit.1 (by rw [hνunit.2]; norm_num)
   have hunitDOA : IsInDomainOfAttractionAlong νunit (gaussianReal 0 1)
       (fun n => Real.sqrt n) (fun _ => 0) := by
     simpa [hνunit.2] using hunitDOA'
@@ -168,7 +151,7 @@ theorem exists_eventually_measure_pi_finiteMovingEntranceEvent_ge_div_of_centere
   have hbound : 0 < bound := by dsimp [bound]; positivity
   have hradius : 0 < radius := by dsimp [radius]; positivity
   obtain ⟨q, hqpos, hqevent⟩ :=
-    eventually_measure_normalizedStep_linearBall_pos_on_Icc_of_centeredSecondMoment
+    ProbabilityTheory.RandomWalk.FunctionalLimit.Normal.eventually_measure_normalizedStep_linearBall_pos_on_Icc_of_centeredSecondMoment
       hν hsigma hP bound radius hbound hradius
   obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 hqevent
   refine ⟨q, hqpos, max (max 2 (Real.sqrt (N : ℝ) + 1)) (64 * c + 1), ?_⟩
@@ -320,8 +303,7 @@ theorem exists_eventually_measure_pi_finiteMovingEntranceEvent_ge_div_of_centere
     measure_pi_offsetCorridor_ge_div_of_linearTube_allOffsets_of_normalizationRatio
       hnpos ν Delta sourceScale ratio (c / Delta ^ 3) sourceSlope radius
       (-r₀ / Delta) (by positivity) (ne_of_gt hsourceScale) hratio hcenter
-      hradius hsmall hu (fun k => cyclicCoordinateReindex hnpos k)
-      (cyclicCoordinateReindex_isCyclicPartialSumReindex hnpos) hsafe hqsource
+      hradius hsmall hu hsafe hqsource
   have hevent : finiteDriftRemovedOffsetCorridorEvent
       (n := n) Delta (c / Delta ^ 3) (-r₀ / Delta) =
         finiteMovingEntranceEvent (n := n) Delta (c / Delta ^ 3)
@@ -343,8 +325,7 @@ theorem exists_eventually_iidSequenceLaw_finiteMovingEntranceEvent_ge_div_of_cen
       ∀ r₀ ∈ Set.Icc (-Delta) 0,
         q / (⌊Delta ^ 2⌋₊ : ℕ) ≤
           iidSequenceLaw ν
-            {increment | finitePrefixVector
-              (n := ⌊Delta ^ 2⌋₊) increment ∈
+            {increment | (Combinatorics.Sequence.blockCoordinates 0 ⌊Delta ^ 2⌋₊) increment ∈
                 finiteMovingEntranceEvent (n := ⌊Delta ^ 2⌋₊)
                   Delta (c / Delta ^ 3) (-r₀ / Delta)} := by
   obtain ⟨q, hq, Delta₀, hbound⟩ :=
@@ -369,12 +350,12 @@ theorem exists_eventually_iidSequenceLaw_finiteMovingEntranceEvent_ge_div_of_cen
         (-r₀ / Delta)) := by
     rw [← hevent]
     exact hsafe
-  have hprefix := iidSequenceLaw_measure_finitePrefix_preimage_eq_pi ν
-    (finiteMovingEntranceEvent (n := n) Delta (c / Delta ^ 3)
+  have hprefix := iidSequenceLaw_measure_blockCoordinates_preimage_eq_pi
+    ν 0 n (finiteMovingEntranceEvent (n := n) Delta (c / Delta ^ 3)
       (-r₀ / Delta)) hmeasurable
   have hpi := hbound Delta hDelta r₀ hr₀
   change q / (n : ℝ≥0∞) ≤ iidSequenceLaw ν
-    (finitePrefixVector (n := n) ⁻¹'
+    ((Combinatorics.Sequence.blockCoordinates 0 n) ⁻¹'
       finiteMovingEntranceEvent (n := n) Delta (c / Delta ^ 3)
         (-r₀ / Delta))
   rw [hprefix]

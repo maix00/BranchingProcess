@@ -16,6 +16,23 @@ This file builds the independent-increment part of the full-time process by
 concatenating iid unit-time path blocks. The block product is Mathlib's
 `Measure.infinitePi`; blockwise and within-block independence are combined
 using Mathlib's process-independence APIs.
+## Public declarations
+
+The public theorems show that concatenated i.i.d. unit-interval stable path
+blocks form a full stable Lévy process: increments on disjoint time intervals
+are independent, each increment has its clock-scaled stable law, and every
+finite increment vector has the corresponding product law. The final theorem
+identifies the canonical unit-interval path-law restriction with the given
+block law. Measurability of individual block coordinates remains private.
+
+For \(0\le t_0\le\cdots\le t_n\), the finite increment vector has law
+\[
+  \mathcal L\bigl((X_{t_{i+1}}-X_{t_i})_{i<n}\bigr)
+  =\bigotimes_{i<n}\operatorname{stableTimeLaw}
+       (\alpha,\mu,t_{i+1}-t_i),
+  \qquad \mathcal L(X|_{[0,1]})=P.
+\]
+
 -/
 
 @[expose] public section
@@ -26,13 +43,13 @@ open scoped NNReal
 namespace ProbabilityTheory
 
 private noncomputable def unitBlockGrid {n : ℕ} (t : Fin (n + 1) → ℝ≥0) (k : ℕ) :
-    Fin (n + 1) → unitInterval := fun i => Topology.unitBlockParameter k (t i)
+    Fin (n + 1) → unitInterval := fun i => unitInterval.blockParameter k (t i)
 
 private noncomputable def unitBlockIncrement {n : ℕ} (t : Fin (n + 1) → ℝ≥0)
     (k : ℕ) (i : Fin n) (ω : ℕ → CadlagPath unitInterval ℝ) : ℝ :=
   ω k (unitBlockGrid t k i.succ) - ω k (unitBlockGrid t k i.castSucc)
 
-private theorem measurable_unitBlockIncrement {n : ℕ}
+private lemma measurable_unitBlockIncrement {n : ℕ}
     (t : Fin (n + 1) → ℝ≥0) (k : ℕ) (i : Fin n) :
     Measurable (unitBlockIncrement t k i) := by
   exact ((Skorokhod.measurable_apply (unitBlockGrid t k i.succ)).comp
@@ -40,7 +57,7 @@ private theorem measurable_unitBlockIncrement {n : ℕ}
       ((Skorokhod.measurable_apply (unitBlockGrid t k i.castSucc)).comp
         (measurable_pi_apply k))
 
-private theorem measurable_unitBlockIncrementVector {n : ℕ}
+private lemma measurable_unitBlockIncrementVector {n : ℕ}
     (t : Fin (n + 1) → ℝ≥0) (k : ℕ) :
     Measurable (fun ω : ℕ → CadlagPath unitInterval ℝ =>
       fun i : Fin n => unitBlockIncrement t k i ω) := by
@@ -54,7 +71,7 @@ interval before taking the finite block sums. -/
 theorem iidUnitPathBlockProcess_hasIndepIncrements
     {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
     [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P) :
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P) :
     HasIndepIncrements
       (fun t ω => iidUnitPathBlockProcess ω t) (iidUnitPathBlockLaw P) := by
   intro n t ht
@@ -76,14 +93,14 @@ theorem iidUnitPathBlockProcess_hasIndepIncrements
       (fun i : Fin n => fun ω : ℕ → CadlagPath unitInterval ℝ =>
         unitBlockIncrement t k i ω) Q := by
     have hgrid : Monotone (unitBlockGrid t k) :=
-      Topology.monotone_unitBlockParameter k |>.comp ht
+      unitInterval.monotone_blockParameter k |>.comp ht
     have hlaw := hP.increments_hasLaw_pi n (unitBlockGrid t k) hgrid
     let coordLaw : Fin n → Measure ℝ := fun i =>
       stableTimeLaw α μ
         ((unitBlockGrid t k i.succ : unitInterval) -
           (unitBlockGrid t k i.castSucc : unitInterval))
     have hlaw' : HasLaw (blockVector k) (Measure.pi coordLaw) P := by
-      simpa [blockVector, coordLaw, unitBlockIncrement, UnitInterval.clock,
+      simpa [blockVector, coordLaw, unitBlockIncrement, unitInterval.clock,
         stableTimeLaw] using hlaw
     have heval : HasLaw (fun ω : ℕ → CadlagPath unitInterval ℝ => ω k) P Q :=
       (measurePreserving_eval_infinitePi (fun _ : ℕ => P) k).hasLaw
@@ -226,15 +243,15 @@ theorem iidUnitPathBlockProcess_hasIndepIncrements
   exact (iIndepFun.congr (fun i => (hEq i).symm)) hglobal
 
 private noncomputable def unitBlockTimeDuration (s t : ℝ≥0) (k : ℕ) : ℝ :=
-  (Topology.unitBlockParameter k t : ℝ) - (Topology.unitBlockParameter k s : ℝ)
+  (unitInterval.blockParameter k t : ℝ) - (unitInterval.blockParameter k s : ℝ)
 
-private theorem measurable_unitBlockTimeIncrement
+private lemma measurable_unitBlockTimeIncrement
     (s t : ℝ≥0) (k : ℕ) :
     Measurable (fun ω : ℕ → CadlagPath unitInterval ℝ =>
-      ω k (Topology.unitBlockParameter k t) - ω k (Topology.unitBlockParameter k s)) := by
-  exact ((Skorokhod.measurable_apply (Topology.unitBlockParameter k t)).comp
+      ω k (unitInterval.blockParameter k t) - ω k (unitInterval.blockParameter k s)) := by
+  exact ((Skorokhod.measurable_apply (unitInterval.blockParameter k t)).comp
       (measurable_pi_apply k)).sub
-    ((Skorokhod.measurable_apply (Topology.unitBlockParameter k s)).comp
+    ((Skorokhod.measurable_apply (unitInterval.blockParameter k s)).comp
       (measurable_pi_apply k))
 
 /-- The increment of the concatenated process over an arbitrary time interval
@@ -244,7 +261,7 @@ sum of clamped block durations combine these contributions. -/
 theorem iidUnitPathBlockProcess_increment_hasLaw
     {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
     [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (s t : ℝ≥0) (hst : s ≤ t) :
     HasLaw
       (fun ω : ℕ → CadlagPath unitInterval ℝ =>
@@ -254,7 +271,7 @@ theorem iidUnitPathBlockProcess_increment_hasLaw
   let Q := iidUnitPathBlockLaw P
   let delta : ℕ → ℝ := unitBlockTimeDuration s t
   let blockIncrement : ℕ → (ℕ → CadlagPath unitInterval ℝ) → ℝ := fun k ω =>
-    ω k (Topology.unitBlockParameter k t) - ω k (Topology.unitBlockParameter k s)
+    ω k (unitInterval.blockParameter k t) - ω k (unitInterval.blockParameter k s)
   let blocks := Finset.range (Nat.floor (t : ℝ) + 1)
   have hStable := hP.strictlyStable
   have hμ : IsProbabilityMeasure μ := hStable.isProbabilityMeasure
@@ -262,34 +279,34 @@ theorem iidUnitPathBlockProcess_increment_hasLaw
   letI : IsProbabilityMeasure Q := iidUnitPathBlockLaw_isProbabilityMeasure P
   have hblockIndep : iIndepFun blockIncrement Q := by
     exact iIndepFun_infinitePi (P := fun _ : ℕ => P)
-      (X := fun k f => f (Topology.unitBlockParameter k t) -
-        f (Topology.unitBlockParameter k s)) (fun k => by
-          exact (Skorokhod.measurable_apply (Topology.unitBlockParameter k t)).sub
-            (Skorokhod.measurable_apply (Topology.unitBlockParameter k s)))
+      (X := fun k f => f (unitInterval.blockParameter k t) -
+        f (unitInterval.blockParameter k s)) (fun k => by
+          exact (Skorokhod.measurable_apply (unitInterval.blockParameter k t)).sub
+            (Skorokhod.measurable_apply (unitInterval.blockParameter k s)))
   have hblockMeas (k : ℕ) : Measurable (blockIncrement k) := by
     exact measurable_unitBlockTimeIncrement s t k
   have hduration_nonneg (k : ℕ) : 0 ≤ delta k := by
     dsimp [delta, unitBlockTimeDuration]
     apply sub_nonneg.mpr
-    exact_mod_cast (Topology.monotone_unitBlockParameter k hst)
+    exact_mod_cast (unitInterval.monotone_blockParameter k hst)
   have hblockLaw (k : ℕ) : HasLaw (blockIncrement k)
       (stableTimeLaw α μ (delta k)) Q := by
-    have hu : Topology.unitBlockParameter k s ≤ Topology.unitBlockParameter k t :=
-      Topology.monotone_unitBlockParameter k hst
+    have hu : unitInterval.blockParameter k s ≤ unitInterval.blockParameter k t :=
+      unitInterval.monotone_blockParameter k hst
     have hsingle := hP.increment_hasLaw
-      (Topology.unitBlockParameter k s) (Topology.unitBlockParameter k t) hu
+      (unitInterval.blockParameter k s) (unitInterval.blockParameter k t) hu
     have heval : MeasurePreserving (Function.eval k) Q P := by
       dsimp [Q, iidUnitPathBlockLaw]
       exact measurePreserving_eval_infinitePi (fun _ : ℕ => P) k
     have hlaw := hsingle.fun_comp heval.hasLaw
     have hfun : blockIncrement k =ᵐ[Q]
         (fun ω => (fun f : CadlagPath unitInterval ℝ =>
-          f (Topology.unitBlockParameter k t) - f (Topology.unitBlockParameter k s))
+          f (unitInterval.blockParameter k t) - f (unitInterval.blockParameter k s))
             (ω k)) := by
       exact ae_of_all _ fun _ => rfl
     have hlaw' := hlaw.congr hfun
     convert hlaw' using 1 <;> simp [delta, unitBlockTimeDuration,
-      stableTimeLaw, UnitInterval.clock]
+      stableTimeLaw, unitInterval.clock]
   have hsumLaw (m : ℕ) :
       HasLaw (∑ k ∈ Finset.range m, blockIncrement k)
         (stableTimeLaw α μ (∑ k ∈ Finset.range m, delta k)) Q := by
@@ -331,7 +348,7 @@ theorem iidUnitPathBlockProcess_increment_hasLaw
           simp [Finset.sum_range_succ]
         exact hadd.congr (ae_of_all _ fun ω => congrFun hfun ω)
   have htotalDuration : (∑ k ∈ blocks, delta k) = (t : ℝ) - (s : ℝ) := by
-    exact Topology.sum_unitBlockParameter_increment_eq_time_sub hst
+    exact unitInterval.sum_blockParameter_increment_eq_time_sub hst
   have hsumLaw' := hsumLaw (Nat.floor (t : ℝ) + 1)
   rw [htotalDuration] at hsumLaw'
   have hstarts := iidUnitPathBlockLaw_ae_blocks_start_eq_zero hP
@@ -357,7 +374,7 @@ witness. -/
 theorem iidUnitPathBlockProcess_isStableLevyProcess
     {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
     [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P) :
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P) :
     IsStableLevyProcess α μ
       (fun t ω => iidUnitPathBlockProcess ω t) (iidUnitPathBlockLaw P) := by
   let Q := iidUnitPathBlockLaw P
@@ -384,7 +401,7 @@ product law of stable increments at the corresponding elapsed times. -/
 theorem iidUnitPathBlockProcess_increments_hasLaw_pi
     {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
     [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (n : ℕ) (t : Fin (n + 1) → ℝ≥0) (ht : Monotone t) :
     HasLaw
       (fun ω (i : Fin n) =>
@@ -402,11 +419,13 @@ path law. -/
 theorem iidUnitPathBlockProcess_isStableLevyProcess_unitIntervalPathLaw_eq
     {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
     [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P) :
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P) :
     (iidUnitPathBlockProcess_isStableLevyProcess hP).unitIntervalPathLaw =
       ⟨P, inferInstance⟩ := by
   apply Subtype.ext
-  exact ProbabilityTheory.iidUnitPathBlockProcess_unitIntervalPathLaw_eq hP
+  simpa [IsStableLevyProcess.unitIntervalPathLaw,
+    IsLevyProcess.unitIntervalPathLaw, Process.Path.Cadlag.pathLaw] using
+    ProbabilityTheory.iidUnitPathBlockProcess_unitIntervalPathLaw_eq hP
 
 end ProbabilityTheory
 

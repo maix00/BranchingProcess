@@ -4,23 +4,49 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Measurability.Field
+module
+
+public import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Measurability.Field
 
 /-!
 # Measurable observables of the recursive matched field
 
 Concrete first-`N` populations and observed positions are measurable after the
-matched field has been shown filtration-measurable.
+matched field has been shown measurable for the generation domain flow.
+
+## Public declarations
+
+For `F_n = rankInstalledField n`, define the selected population
+`P_n(ω) = selectedPopulationTotalized N roots initial d φ n (F_n ω)` and the
+observed position `X_n(ω,p) = observedPositionAtGeneration initial d φ n
+(F_n ω) p`. The declarations prove that `P_n` and `X_n(·,p)` are measurable
+for the generation-`n` domain flow. Thus
+
+\[\begin{aligned}
+P_n(\omega)&=\operatorname{selectedPopulationTotalized}(
+N,\mathrm{roots},\mathrm{initial},d,\phi,n,F_n(\omega)),\\
+P_n&\text{ is measurable for the generation-}n\text{ domain flow},\\
+X_n(\omega,p)&=\operatorname{observedPositionAtGeneration}(
+\mathrm{initial},d,\phi,n,F_n(\omega))(p),\\
+\omega&\mapsto X_n(\omega,p)\text{ is measurable for that domain flow}.
+\end{aligned}\]
+
+* `RootIndexed.selectedPopulationTotalized_rankInstalledField_measurable_of_lt`
+  proves the selected-population assertion from hypotheses on the strictly
+  earlier generation coordinate maps.
+* `RootIndexed.observedPosition_rankInstalledField_measurable_of_lt` proves
+  the observed-position assertion under the same hypotheses.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 /-- The totalized selected population evaluated on a stage-`n` matched field
 is measurable using only the measurable lower-finite selector. -/
@@ -62,7 +88,7 @@ theorem RootIndexed.selectedPopulationTotalized_rankInstalledField_measurable_of
       (fun field => RootIndexed.selectedPopulationTotalized N roots initial d φ n
         (RootIndexed.rankInstalledField sourceValue targetValue source target
           RootIndexed.StepField.left RootIndexed.StepField.right n field)) := by
-  have hprior := RootIndexed.rankInstalledField_filtration_measurable_of_lt
+  have hprior := RootIndexed.rankInstalledField_domainFlow_measurable_of_lt
     sourceValue targetValue source target hsourceDepth n hcount hfiber
   have hselected := RootIndexed.selectedPopulationTotalized_adapted
     (Root := Root) (α := α) (Mark := Mark) (Position := Position)
@@ -105,7 +131,7 @@ theorem RootIndexed.observedPosition_rankInstalledField_measurable_of_lt
       (fun field => RootIndexed.observedPositionAtGeneration initial d φ n
         (RootIndexed.rankInstalledField sourceValue targetValue source target
           RootIndexed.StepField.left RootIndexed.StepField.right n field) p) := by
-  have hprior := RootIndexed.rankInstalledField_filtration_measurable_of_lt
+  have hprior := RootIndexed.rankInstalledField_domainFlow_measurable_of_lt
     sourceValue targetValue source target hsourceDepth n hcount hfiber
   exact hφ.comp ((RootIndexed.positionAtGeneration_measurable
     initial d hd n p.1 p.2).comp hprior)

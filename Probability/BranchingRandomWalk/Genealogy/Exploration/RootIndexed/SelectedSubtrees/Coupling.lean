@@ -14,6 +14,28 @@ An injective cumulative address map sends any finite population in the
 iterated field to a population in the original field.  The resulting clouds
 have exactly equal positions, hence the iterated cloud injectively dominates
 its embedded original copy for every ordered observation.
+## Public declarations
+
+For an injective cumulative address map \(\Phi_j\), a finite population
+\(A\) in the iterated field maps to its original-address image, with the
+same positions and an injective spatial comparison:
+
+\[\begin{aligned}
+\operatorname{position}_{\mathrm{iterated}}(p)
+  &=\operatorname{position}_{\mathrm{original}}(\Phi_j(p))\quad(p\in A),\\
+\operatorname{Cloud}_{\phi}(\operatorname{field}_j,A)
+  &\succeq_{\mathrm{inj}}\operatorname{Cloud}_{\phi}
+    (\operatorname{field}_0,\Phi_j(A)).
+\end{aligned}\]
+
+* `RootIndexed.iteratedSelectedPopulation` maps a finite particle population
+  to its original addresses; `mem_iteratedSelectedPopulation` characterizes
+  membership in this image.
+* `RootIndexed.iteratedPopulation_injectivelyDominatesBy_original` gives the
+  injective spatial comparison between a population in the iterated subtree
+  field and its image in the original field.
+* `RootIndexed.iteratedOriginalInjection` constructs the reverse spatial
+  matching from the embedded original population to the iterated labels.
 -/
 
 namespace ProbabilityTheory.BranchingRandomWalk
@@ -161,35 +183,5 @@ noncomputable def RootIndexed.iteratedOriginalInjection
         (address (back q)).1 (address (back q)).2) ≤
       φ (RootIndexed.position initial d step q.1 q.2)
     rw [hback hq]
-
-/-- Compose the inverse original-address embedding with any coupling out of
-the iterated population. -/
-noncomputable def RootIndexed.iteratedOriginalInjection.trans
-    {Root α Mark Position Value : Type*}
-    [AddCommMonoid Position] [Preorder Value]
-    (φ : Position → Value) (initial : Root → Position)
-    (d : Mark → Position)
-    (chosen : ℕ → RootIndexed.StepField Root α Mark →
-      Root → Root × TreeNode α)
-    (j : ℕ) (step : RootIndexed.StepField Root α Mark)
-    (hinj : Function.Injective
-      (RootIndexed.iteratedSelectedAddress chosen j step))
-    (population : Finset (RootIndexed.TreeNode Root α))
-    (target : Cloud Unit Root α Position)
-    (coupling : Cloud.SliceDominatingMap φ
-      (populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField
-          (RootIndexed.iteratedSelectedInitialPosition
-            initial d chosen j step)
-          (RootIndexed.iteratedSelectedSubtreeStepField chosen j step))
-        population) target ()) :
-    Cloud.SliceDominatingMap φ
-      (populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField initial step)
-        (RootIndexed.iteratedSelectedPopulation
-          chosen j step hinj population))
-      target () :=
-  (RootIndexed.iteratedOriginalInjection φ initial d chosen j step hinj
-    population).trans coupling
 
 end ProbabilityTheory.BranchingRandomWalk

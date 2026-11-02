@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-import Analysis.Asymptotics.LogSum
+import Analysis.Asymptotics.Sequence.LogSum
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy
 
@@ -16,6 +16,19 @@ This is the finite-union step for class `M₃`.  It turns component `M₂`
 corridor rates into the rate of their union.  The component rate and
 measurability of each corridor event are explicit inputs; the theorem does not
 assume or conceal the still separate `M₂` probability estimate.
+
+## Public declarations
+
+* `tendsto_log_finiteCorridorUnion_preimage_probability_ratio` states that
+  if every component corridor has positive probability and
+  `log P(Cᵢ) / g → κ E(Cᵢ)`, then the finite union satisfies
+  `log P(⋃ᵢ Cᵢ) / g → κ * minᵢ E(Cᵢ)` under the displayed positivity and rate
+  assumptions.
+
+Precisely, the component limits
+`\(\log\mathbb P(C_i)/g\to\kappa E(C_i)\)` give
+`\(\log\mathbb P(\bigcup_i C_i)/g\to
+\kappa\min_i E(C_i)\)` for the finite union.
 -/
 
 open Filter MeasureTheory
@@ -146,10 +159,10 @@ theorem tendsto_log_finiteCorridorUnion_preimage_probability_ratio
   have hrateEq : κ * (energy i₀).toReal = κ * G.realEnergy := by
     rw [← hEnergyMin]
   have hmain := Asymptotics.tendsto_log_finite_union_ratio
-    (Finset.univ : Finset (Fin G.count)) huniv i₀ (Finset.mem_univ i₀)
+    (Finset.univ : Finset (Fin G.count)) i₀ (Finset.mem_univ i₀)
     g unionProbability componentProbability
     (fun i => κ * (energy i).toReal) (κ * G.realEnergy)
-    hg hqpos (Filter.Eventually.of_forall hupper) hlowerEventually
+    hg (Filter.Eventually.of_forall hupper) hlowerEventually
     (fun i hi => hcomponentPos i) (fun i hi => hcomponentRate i)
     (fun i hi => hrateLower i) hrateEq
   refine ⟨?_, hqpos, ?_⟩

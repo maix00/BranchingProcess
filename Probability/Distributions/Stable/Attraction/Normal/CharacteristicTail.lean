@@ -8,7 +8,7 @@ module
 
 public import Probability.Distributions.CharacteristicFunction.Tauberian.FrequencyAverageLimit
 public import Probability.Distributions.CharacteristicFunction.Symmetrization.Tail
-public import Probability.Distributions.Stable.Attraction.Normal
+public import Probability.Distributions.Stable.Attraction.Normal.Basic
 
 /-!
 # Characteristic-defect tails in the normal domain of attraction
@@ -17,6 +17,24 @@ Gaussian attraction makes the squared-modulus defect regularly varying with
 index two. The frequency-averaged Tauberian estimate therefore gives a
 little-o tail bound for the symmetrized increment law, without a moment
 assumption.
+
+Let `D(u)=1-|\widehatν(u)|²`, and let `ν_s` be the law of the difference of
+two independent samples with law `ν`. Both `ν_s` and `ν` satisfy the tail
+conclusion without moment or centering assumptions:
+
+\[
+\frac{ν_s\{|y|\ge x\}}{D(x^{-1})}\longrightarrow0,
+\qquad
+\frac{ν\{|y|\ge x\}}{D(x^{-1})}\longrightarrow0.
+\]
+
+## Public declarations
+
+- `IsInDomainOfAttractionAlong.tendsto_symmetrizedClosedAbsTail_div_normDefect_atTop_of_gaussian`:
+  if $D(u)=1-|\widehat\nu(u)|^2$, the closed absolute tail of the
+  symmetrized law is $o(D(1/x))$ as $x\to\infty$.
+- `IsInDomainOfAttractionAlong.tendsto_closedAbsTail_div_normDefect_atTop_of_gaussian`:
+  the same conclusion holds for the original increment law.
 -/
 
 open Filter MeasureTheory
@@ -29,8 +47,8 @@ namespace ProbabilityTheory
 /-- In the standard Gaussian domain of attraction, the closed tail of the
 symmetrized increment law is little-o of the squared-modulus characteristic
 defect. The tail here is for `X - X'`, where `X'` is an independent copy; this
-does not assert the corresponding truncated-moment or Feller condition for
-the original increment law. -/
+does not assert the corresponding quadratic-tail ratio condition for the
+original increment law. -/
 theorem IsInDomainOfAttractionAlong.tendsto_symmetrizedClosedAbsTail_div_normDefect_atTop_of_gaussian
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {scale center : ℕ → ℝ}
@@ -54,9 +72,9 @@ theorem IsInDomainOfAttractionAlong.tendsto_symmetrizedClosedAbsTail_div_normDef
 /-- In the standard Gaussian domain of attraction, the original increment
 law also has a closed-tail little-o bound relative to its squared-modulus
 characteristic defect. This transfers the symmetrized estimate through the
-law of `X-X'` using the elementary two-sided-tail comparison. It is still
-weaker than Feller's condition, whose denominator is the truncated second
-moment. -/
+law of `X-X'` using the elementary two-sided-tail comparison. The bound is
+weaker than the quadratic-tail ratio criterion, whose denominator is the
+truncated second moment. -/
 theorem IsInDomainOfAttractionAlong.tendsto_closedAbsTail_div_normDefect_atTop_of_gaussian
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {scale center : ℕ → ℝ}

@@ -12,6 +12,26 @@ public import Probability.Process.IndepIncrements.FiniteDimensional
 /-!
 # Finite-dimensional laws of stable-increment processes
 
+## Public declarations
+
+- `HasStableClockIncrements.finiteDimensional_identDistrib` states that
+  matching stable increment specifications imply
+  \(\operatorname{Law}((X_{t_j})_{j=1}^n)=
+  \operatorname{Law}((Y_{t_j})_{j=1}^n)\) on each finite monotone grid.
+- `HasStableClockIncrements.finiteRestriction_identDistrib` gives the same
+  equality for \((X_t)_{t\in I}\) and \((Y_t)_{t\in I}\) on every finite
+  \(I\) in a linearly ordered time type.
+- `HasStableClockIncrements.aemeasurable_eval` states that every coordinate
+  \(\omega\mapsto X_t(\omega)\) is almost-everywhere measurable.
+- `HasStableClockIncrements.process_identDistrib_of_aemeasurable` and
+  `HasStableClockIncrements.process_identDistrib` give equality in law of
+  the whole time-indexed processes, under joint almost-everywhere
+  measurability or countable time, respectively.
+- `IsStableLevyProcess.timeSpaceScale_positions_identDistrib` states the
+  finite-grid self-similarity identity
+  \(\operatorname{Law}((X_{t_j})_j)=
+  \operatorname{Law}((r^{-1/\alpha}X_{rt_j})_j)\).
+
 The finite-dimensional arguments are proved generically from independent
 increments in `Probability.Process.IndepIncrements.FiniteDimensional`. This
 file only supplies the stable-process increment-law specialization.
@@ -26,39 +46,43 @@ namespace ProbabilityTheory
 
 variable {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω']
 
-/-- Stable-increment processes with the same stable clock specification have
-the same position-vector law on every finite monotone grid. The conclusion
-uses only the generic independent-increment theorem; stability enters through
-the matching one-step increment laws.
--/
+/-- Stable-increment processes on possibly different probability spaces with
+the same stable clock specification have the same position-vector law on every
+finite monotone grid. The conclusion uses only the generic independent-
+increment theorem; stability enters through the matching one-step increment
+laws. -/
 theorem HasStableClockIncrements.finiteDimensional_identDistrib
     {Time : Type*} [Preorder Time] [OrderBot Time]
     {α : ℝ} {μ : Measure ℝ} {clock : Time → ℝ}
-    {X Y : Time → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
+    {X : Time → Ω → ℝ} {Y : Time → Ω' → ℝ}
+    {P : Measure Ω} {Q : Measure Ω'}
+    [IsProbabilityMeasure P] [IsProbabilityMeasure Q]
     (hX : HasStableClockIncrements α μ clock X P)
-    (hY : HasStableClockIncrements α μ clock Y P)
+    (hY : HasStableClockIncrements α μ clock Y Q)
     (n : ℕ) (grid : Fin (n + 1) → Time) (hgrid : Monotone grid)
     (hstart : grid 0 = ⊥) :
     IdentDistrib
       (fun ω (i : Fin n) => X (grid i.succ) ω)
-      (fun ω (i : Fin n) => Y (grid i.succ) ω) P P := by
+      (fun ω (i : Fin n) => Y (grid i.succ) ω) P Q := by
   exact HasIndepIncrements.finiteDimensional_identDistrib
     hX.indepIncrements hY.indepIncrements hX.ae_start_eq_zero hY.ae_start_eq_zero
     (fun s t hst => (hX.increment_hasLaw s t hst).identDistrib
       (hY.increment_hasLaw s t hst)) n grid hgrid hstart
 
-/-- Stable-increment processes with the same clock specification have the
-same position law on every finite subset of a linearly ordered time axis.
--/
+/-- Stable-increment processes on possibly different probability spaces with
+the same clock specification have the same position law on every finite
+subset of a linearly ordered time axis. -/
 theorem HasStableClockIncrements.finiteRestriction_identDistrib
     {Time : Type*} [LinearOrder Time] [OrderBot Time]
     {α : ℝ} {μ : Measure ℝ} {clock : Time → ℝ}
-    {X Y : Time → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
+    {X : Time → Ω → ℝ} {Y : Time → Ω' → ℝ}
+    {P : Measure Ω} {Q : Measure Ω'}
+    [IsProbabilityMeasure P] [IsProbabilityMeasure Q]
     (hX : HasStableClockIncrements α μ clock X P)
-    (hY : HasStableClockIncrements α μ clock Y P)
+    (hY : HasStableClockIncrements α μ clock Y Q)
     (I : Finset Time) :
     IdentDistrib (fun ω => I.restrict (X · ω))
-      (fun ω => I.restrict (Y · ω)) P P := by
+      (fun ω => I.restrict (Y · ω)) P Q := by
   apply HasIndepIncrements.finiteRestriction_identDistrib
     hX.indepIncrements hY.indepIncrements hX.ae_start_eq_zero hY.ae_start_eq_zero
   intro s t hst

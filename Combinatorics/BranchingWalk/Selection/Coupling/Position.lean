@@ -6,11 +6,38 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Position
+public import Combinatorics.BranchingWalk.Basic.Position.Basic
 public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Cloud
 
 /-!
 # Propagating position order through shared offspring
+
+## Public declarations
+
+For a parent \(p\) and surviving child slot \(i\), the observed child value is
+the observation of the updated position. Under a finite parent injection,
+matched slots and increments preserve the lower-tail count comparison:
+
+\[
+\psi_C(p,i)=\phi\!\left(x_C(p)+\xi_C(p,i)\right),\qquad
+\bigl|\{(p,i)\in P_C:\psi_C(p,i)\le a\}\bigr|
+\le
+\bigl|\{(q,i)\in P_D:\psi_D(q,i)\le a\}\bigr|.
+\]
+
+The declarations are in namespace
+`Combinatorics.Branching.Selection.Coupling`.
+
+- `childValue`: the observed position after one step,
+  `φ (position p + value' ((step p).map d) i)`.
+- `childValue_filter_card_le_of_injectivelyDominatesBy`: under a finite
+  slice-dominating parent injection, inclusion of matched slot sets, equality
+  of mapped increments, and translation monotonicity,
+  `card (P_C.filter (childValue_C ≤ a)) ≤
+  card (P_D.filter (childValue_D ≤ a))`, where `P_C` and `P_D` are the
+  offspring-pair sets built from the source and target slices.
+- `childValue_eq_branchingWalk_position_child`: the abstract update equals
+  `φ (β.position d p.1 (p.2 ++ [i]))` for a child of a branching walk.
 
 This file instantiates the abstract multi-root offspring matching with the
 actual one-step position update.  Raw child marks, accumulated positions, and

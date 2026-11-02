@@ -17,6 +17,26 @@ lower-rate estimate. A real interval can be chosen inside an extended-real
 interval, outside prescribed compact endpoint cores, and with width as close
 to the full interval width as desired. Infinite boundary levels allow
 arbitrarily large finite widths.
+
+## Public declarations
+
+An open real interval can be placed strictly inside the extended-real
+interval, contain the prescribed compact subinterval, and have width greater
+than any admissible target:
+
+\[
+L<a<b<U,\quad r>0,\quad
+\left(L=-\infty\ \lor\ U=+\infty\ \lor\
+r<U_{\mathbb R}-L_{\mathbb R}\right)
+\Longrightarrow
+\exists \ell<h,\quad L<\ell<a<b<h<U,\quad r<h-\ell.
+\]
+
+- exists_innerRealInterval_with_width finds a real interval strictly inside
+  an extended-real interval, containing a prescribed compact interval, with
+  any admissible target width.
+- The common-partition variants choose such inner intervals cell by cell and
+  assemble them into a corridor geometry with the requested width bounds.
 -/
 
 open Filter MeasureTheory

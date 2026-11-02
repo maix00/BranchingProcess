@@ -12,11 +12,43 @@ public import Mathlib.Probability.Process.Stopping
 /-!
 # Strong Markov processes at finite stopping times
 
+## Public declarations
+
+- `ProbabilityTheory.IsStrongMarkovProcess`: a process is strong Markov when,
+  at every finite stopping time `τ` and duration `d`, the conditional law of
+  `X (advance (τ ω) d)` given the stopping-time σ-algebra is the transition
+  law from `X (τ ω)`, with `τ ω ≤ advance (τ ω) d`.
+- `ProbabilityTheory.IsStrongMarkovProcess.advance_ge`: every supplied
+  duration advances time.
+- `ProbabilityTheory.IsStrongMarkovChain`: the discrete-time specialization,
+  with `advance n d = n + d`.
+- `ProbabilityTheory.isMarkovProcess_of_exists_duration`: a transition-kernel
+  identity at every pair of deterministic times yields the Markov-process
+  property.
+- `ProbabilityTheory.IsStrongMarkovProcess.isMarkovProcess` and
+  `ProbabilityTheory.IsStrongMarkovChain.isStrongMarkovProcess`: the strong
+  Markov conditions imply the corresponding ordinary Markov conditions.
+- `ProbabilityTheory.IsMarkovChain.isStrongMarkovChain`: an ordinary discrete
+  Markov chain is strong Markov at every finite-valued stopping time.
+
 The stopping-time σ-algebra is mathlib's
 `MeasureTheory.IsStoppingTime.measurableSpace`.  We quantify directly over
 ordinary time-valued stopping times, embedded into `WithTop Time`; no second
 stopping-time structure is introduced.  Discrete homogeneous chains are a
 specialization of the general two-time transition-kernel formulation.
+
+For every finite stopping time `τ`, duration `d`, and measurable state set
+`A`, the conditional law at the advanced time is the transition law from the
+stopped state:
+
+\[
+\mathbb E\!\left[
+  \mathbf 1_{\{X_{\operatorname{advance}(\tau,d)}\in A\}}
+  \,\middle|\,\mathcal F_\tau\right](\omega)
+=K_{\tau(\omega),\operatorname{advance}(\tau(\omega),d)}
+  \bigl(X_{\tau(\omega)}(\omega),A\bigr).\operatorname{toReal}
+\quad\text{almost surely}.
+\]
 -/
 
 open MeasureTheory
@@ -38,16 +70,19 @@ state at `advance (τ ω) d`, conditionally on the stopping-time σ-algebra at
 the deterministic time shift; for discrete chains it is natural-number
 addition, while continuous-time processes can use addition on `ℝ≥0`.
 
-The definition includes adaptedness, matching `IsMarkovProcess`.  Infinite
+The definition includes adaptedness, a probability measure, and the causal
+condition `t ≤ advance t d` for every time and duration, matching the meaning
+of a future-time shift. Infinite
 stopping times remain expressible through mathlib's `WithTop` API and can be
 handled on their finite locus; this core property quantifies over time-valued
 stopping times so every displayed stopped state is defined. -/
 def IsStrongMarkovProcess (X : Time → Ω → State)
     (F : Filtration Time (inferInstance : MeasurableSpace Ω))
-    (P : Measure Ω) (advance : Time → Duration → Time)
+    (P : Measure Ω) [IsProbabilityMeasure P]
+    (advance : Time → Duration → Time)
     (transition : Time → Time → Kernel State State)
     [∀ s t, IsMarkovKernel (transition s t)] : Prop :=
-  Adapted F X ∧
+  Adapted F X ∧ (∀ t d, t ≤ advance t d) ∧
     ∀ (τ : Ω → Time)
       (hτ : IsStoppingTime F (fun ω => (τ ω : WithTop Time)))
       (d : Duration) (A : Set State), MeasurableSet A →
@@ -61,13 +96,18 @@ namespace IsStrongMarkovProcess
 
 variable {X : Time → Ω → State}
   {F : Filtration Time (inferInstance : MeasurableSpace Ω)}
-  {P : Measure Ω} {advance : Time → Duration → Time}
+  {P : Measure Ω} [IsProbabilityMeasure P]
+  {advance : Time → Duration → Time}
   {transition : Time → Time → Kernel State State}
   [∀ s t, IsMarkovKernel (transition s t)]
 
 theorem adapted (h : IsStrongMarkovProcess X F P advance transition) :
     Adapted F X :=
   h.1
+
+theorem advance_ge (h : IsStrongMarkovProcess X F P advance transition)
+    (t : Time) (d : Duration) : t ≤ advance t d :=
+  h.2.1 t d
 
 theorem condExp_preimage_ae_eq
     (h : IsStrongMarkovProcess X F P advance transition)
@@ -79,7 +119,7 @@ theorem condExp_preimage_ae_eq
           fun _ => (1 : ℝ)) =ᵐ[P]
       fun ω =>
         (transition (τ ω) (advance (τ ω) d) (X (τ ω) ω) A).toReal :=
-  h.2 τ hτ d A hA
+  h.2.2 τ hτ d A hA
 
 /-- If every later deterministic time is obtained by advancing through some
 duration, strong Markov at finite stopping times implies ordinary Markov. -/
@@ -106,14 +146,16 @@ end IsStrongMarkovProcess
 /-- A time-homogeneous discrete strong Markov process. -/
 def IsStrongMarkovChain (X : ℕ → Ω → State)
     (F : Filtration ℕ (inferInstance : MeasurableSpace Ω))
-    (P : Measure Ω) (K : Kernel State State) [IsMarkovKernel K] : Prop :=
+    (P : Measure Ω) [IsProbabilityMeasure P]
+    (K : Kernel State State) [IsMarkovKernel K] : Prop :=
   IsStrongMarkovProcess X F P (· + ·) (fun m n => K ^ (n - m))
 
 namespace IsStrongMarkovChain
 
 variable {X : ℕ → Ω → State}
   {F : Filtration ℕ (inferInstance : MeasurableSpace Ω)}
-  {P : Measure Ω} {K : Kernel State State} [IsMarkovKernel K]
+  {P : Measure Ω} [IsProbabilityMeasure P]
+  {K : Kernel State State} [IsMarkovKernel K]
 
 theorem adapted (h : IsStrongMarkovChain X F P K) : Adapted F X :=
   h.1
@@ -155,7 +197,7 @@ stopping time, whose level sets partition the sample space. -/
 theorem isStrongMarkovChain [IsProbabilityMeasure P]
     (h : IsMarkovChain X F P K) :
     IsStrongMarkovChain X F P K := by
-  refine ⟨h.adapted, ?_⟩
+  refine ⟨h.adapted, (fun n k => Nat.le_add_right n k), ?_⟩
   intro τ hτ k A hA
   simp only [Nat.add_sub_cancel_left]
   let f : Ω → ℝ :=

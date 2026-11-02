@@ -7,16 +7,17 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Probability.BrownianMotion.Basic
+public import Probability.Process.Stable.Brownian.Basic
 public import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Independence
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.MeasureTheory.Measure.OpenPos
 public import Probability.Process.Stable.PathLaw.FullProcess
 public import Probability.Process.Stable.PathLaw.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.FullCorridor
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
-public import Probability.Process.Path.Cadlag.MeasurableMap
-public import Topology.Cadlag.Skorokhod.LinearPath
+public import Probability.Process.Path.Representation.Cadlag
+public import Topology.Cadlag.Skorokhod.Path.Linear
 
 import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
 import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
@@ -29,6 +30,14 @@ positive probability in every linear path tube. The bridge/endpoint
 independence is a finite-dimensional Gaussian fact; centered corridor
 positivity is transferred from the path law itself through its iid unit-block
 extension. No Brownian process witness is part of the hypothesis.
+## Public declarations
+
+For a Gaussian stable path law and every continuous linear path $\ell$ and
+radius $\epsilon>0$, the public theorems give positive mass to the uniform
+path ball $\{f:\|f-\ell\|_\infty<\epsilon\}$. The statements cover an
+actual stable Lévy process, its path law, and an abstract stable-clock path
+law. The Brownian bridge and endpoint independence calculations are private.
+
 -/
 
 @[expose] public section
@@ -37,40 +46,6 @@ open MeasureTheory ProbabilityTheory
 open scoped NNReal
 
 namespace ProbabilityTheory
-
-private theorem IsStableLevyProcess.isPreBrownianReal_of_standardGaussian
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
-    {B : ℝ≥0 → Ω → ℝ}
-    (hB : IsStableLevyProcess 2 (gaussianReal 0 (1 : ℝ≥0)) B P) :
-    IsPreBrownianReal B P := by
-  let hInc := hB.increments
-  have hLaw : ∀ t, HasLaw (B t) (gaussianReal 0 t) P := by
-    intro t
-    let c : ℝ := (t : ℝ) ^ (1 / (2 : ℝ))
-    have hc2 : c ^ 2 = (t : ℝ) := by
-      dsimp [c]
-      convert Real.rpow_inv_natCast_pow (NNReal.coe_nonneg t)
-        (by norm_num : (2 : ℕ) ≠ 0) using 1 <;> norm_num
-    have hscale :
-        (gaussianReal 0 (1 : ℝ≥0)).map (fun x : ℝ => c * x) =
-          gaussianReal 0 t := by
-      rw [gaussianReal_map_const_mul, mul_zero]
-      congr 1
-      apply NNReal.eq
-      simp only [NNReal.coe_mul, NNReal.coe_mk, NNReal.coe_one]
-      simpa using hc2
-    have hdiff : HasLaw (fun ω => B t ω - B 0 ω)
-        ((gaussianReal 0 (1 : ℝ≥0)).map (fun x : ℝ => c * x)) P := by
-      simpa [c] using hInc.increment_hasLaw (0 : ℝ≥0) t (by simp)
-    have hzero : B 0 =ᵐ[P] fun _ => (0 : ℝ) := by
-      filter_upwards [hInc.ae_start_eq_zero] with ω hω
-      exact hω
-    have hfun : (fun ω => B t ω - B 0 ω) =ᵐ[P] fun ω => B t ω := by
-      filter_upwards [hzero] with ω hω
-      simp [hω]
-    rw [hscale] at hdiff
-    exact hdiff.congr hfun.symm
-  exact HasIndepIncrements.isPreBrownianReal_of_hasLaw hLaw hInc.indepIncrements
 
 private def rationalBrownianBridge {Ω : Type*}
     (B : ℝ≥0 → Ω → ℝ) (q : RationalCoordinate.UnitInterval) : Ω → ℝ :=
@@ -81,7 +56,7 @@ private def brownianEndpointProcess {Ω : Type*}
     (B : ℝ≥0 → Ω → ℝ) (_ : Unit) : Ω → ℝ :=
   fun ω => B 1 ω
 
-private theorem rationalBrownianBridge_indep_endpoint
+private lemma rationalBrownianBridge_indep_endpoint
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P) :
     IndepFun (fun ω q => rationalBrownianBridge B q ω)
@@ -149,7 +124,7 @@ private theorem rationalBrownianBridge_indep_endpoint
   exact IsGaussianProcess.indepFun_of_covariance_eq_zero
     joint hmBridge hmEnd hcov
 
-private theorem gaussianReal_measure_Ioo_pos
+private lemma gaussianReal_measure_Ioo_pos
     (a radius : ℝ) (hradius : 0 < radius) :
     0 < gaussianReal 0 (1 : ℝ≥0) (Set.Ioo (a - radius) (a + radius)) := by
   have hvolume : (volume : Measure ℝ) ≪ gaussianReal 0 (1 : ℝ≥0) :=
@@ -199,19 +174,19 @@ theorem IsStableLevyProcess.measure_linearTube_pos
       filter_upwards [hPre.eval_zero_ae_eq_zero] with ω hzero
       intro hω
       obtain ⟨margin, hmargin, hpath⟩ := hω
-      have htop := hpath (⊤ : unitInterval)
+      have hpathTop := hpath (⊤ : unitInterval)
+      have htop : unitInterval.toNNReal ⊤ = 1 := unitInterval.toNNReal_one
       have htopBounds : -δ / 2 + margin ≤ B 1 ω ∧
           B 1 ω ≤ δ / 2 - margin := by
-        simpa [segmentIncrement, hzero] using htop
+        simpa [segmentIncrement, hzero, htop] using hpathTop
       have hB1 : |B 1 ω| ≤ δ / 2 := by
         rw [abs_le]
         constructor <;> linarith [htopBounds.1, htopBounds.2, hmargin]
       change (fun q => rationalBrownianBridge B q ω) ∈
         Skorokhod.rationalCoordinateCorridorWithMargin (-2 * δ) (2 * δ)
-      rw [Skorokhod.rationalCoordinateCorridorWithMargin_eq_real]
       refine ⟨δ, hδ, fun q => ?_⟩
       have hq := hpath (RationalCoordinate.toUnitInterval q)
-      have hqtime : UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q) =
+      have hqtime : unitInterval.toNNReal (RationalCoordinate.toUnitInterval q) =
           RationalCoordinate.toNNReal q := rfl
       have hqBounds : -δ / 2 + margin ≤
           B (RationalCoordinate.toNNReal q) ω ∧
@@ -290,7 +265,6 @@ theorem IsStableLevyProcess.measure_linearTube_pos
       exact hcadlag.sub (continuous_const.mul continuous_subtype_val).isCadlag
     apply (mem_fullSegmentCorridorEvent_iff_rational
       (fun t ω => B t ω - slope * (t : ℝ)) 0 1 (-width) width ω hpathCadlag).2
-    rw [Skorokhod.rationalCoordinateCorridorWithMargin_eq_real]
     refine ⟨width / 4, by dsimp [δ] at *; linarith, fun q => ?_⟩
     have hbridgeq := hbridge q
     have hW : |rationalBrownianBridge B q ω| < 2 * δ := by
@@ -357,13 +331,13 @@ theorem IsStableLevyProcess.measure_pathLaw_linearBall_pos
     (hB : IsStableLevyProcess 2 (gaussianReal 0 (1 : ℝ≥0)) B P)
     (slope radius : ℝ) (hradius : 0 < radius) :
     0 < Process.Path.Cadlag.pathLaw P
-      (fun t ω => B (UnitInterval.toNNReal t) ω)
-      (fun t => hB.increments.aemeasurable_eval (UnitInterval.toNNReal t))
+      (fun t ω => B (unitInterval.toNNReal t) ω)
+      (fun t => hB.increments.aemeasurable_eval (unitInterval.toNNReal t))
       (Metric.ball (Skorokhod.linearPath slope) radius) := by
-  let X : unitInterval → Ω → ℝ := fun t ω => B (UnitInterval.toNNReal t) ω
+  let X : unitInterval → Ω → ℝ := fun t ω => B (unitInterval.toNNReal t) ω
   have hX : ∀ t, AEMeasurable (X t) P := by
     intro t
-    exact hB.increments.aemeasurable_eval (UnitInterval.toNNReal t)
+    exact hB.increments.aemeasurable_eval (unitInterval.toNNReal t)
   let pathLaw := Process.Path.Cadlag.pathLaw P X hX
   let width : ℝ := radius / 4
   have hwidth : 0 < width := by dsimp [width]; positivity
@@ -384,7 +358,7 @@ theorem IsStableLevyProcess.measure_pathLaw_linearBall_pos
     obtain ⟨margin, hmargin, hpath⟩ := htube
     have hXcadlag : IsCadlag (fun t : unitInterval => X t ω) :=
       hcadlag.comp_monotone_continuous (fun _ _ h => h)
-        UnitInterval.continuous_toNNReal
+        unitInterval.toNNReal_continuous
     let p : CadlagPath unitInterval ℝ := ⟨fun t => X t ω, hXcadlag⟩
     have hcoords :
         (fun q : RationalCoordinate.UnitInterval =>
@@ -400,7 +374,7 @@ theorem IsStableLevyProcess.measure_pathLaw_linearBall_pos
         (fun q : RationalCoordinate.UnitInterval =>
           X (RationalCoordinate.toUnitInterval q) ω) = p
       rw [hcoords]
-      exact Process.Path.Cadlag.rationalEvaluationEmbedding.injective.extend_apply
+      exact Skorokhod.measurableEmbedding_rationalEvaluation.injective.extend_apply
         _ _ _
     have hpoint (t : unitInterval) :
         |X t ω - slope * (t : ℝ)| ≤ width := by
@@ -409,12 +383,12 @@ theorem IsStableLevyProcess.measure_pathLaw_linearBall_pos
           X t ω - slope * (t : ℝ) ∧
           X t ω - slope * (t : ℝ) ≤ width - margin := by
         have ht' : -width + margin ≤
-            B (UnitInterval.toNNReal t) ω -
-              slope * (UnitInterval.toNNReal t : ℝ) ∧
-            B (UnitInterval.toNNReal t) ω -
-              slope * (UnitInterval.toNNReal t : ℝ) ≤ width - margin := by
+            B (unitInterval.toNNReal t) ω -
+              slope * (unitInterval.toNNReal t : ℝ) ∧
+            B (unitInterval.toNNReal t) ω -
+              slope * (unitInterval.toNNReal t : ℝ) ≤ width - margin := by
           simpa [segmentIncrement, one_mul, zero_add, hBzero] using ht
-        have htimeId : (UnitInterval.toNNReal t : ℝ) = (t : ℝ) := rfl
+        have htimeId : (unitInterval.toNNReal t : ℝ) = (t : ℝ) := rfl
         rw [htimeId] at ht'
         simpa [X] using ht'
       rw [abs_le]
@@ -464,15 +438,22 @@ law, so this statement has no external Brownian-witness hypothesis. -/
 theorem IsStableClockProcessLaw.measure_linearPathBall_pos
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hP : IsStableClockProcessLaw 2 (gaussianReal 0 (1 : ℝ≥0))
-      UnitInterval.clock P)
+      unitInterval.clock P)
     (slope radius : ℝ) (hradius : 0 < radius) :
     0 < P (Metric.ball (Skorokhod.linearPath slope) radius) := by
   let hB := iidUnitPathBlockProcess_isStableLevyProcess hP
   have hpos := hB.measure_pathLaw_linearBall_pos slope radius hradius
   have hLawEq :=
     iidUnitPathBlockProcess_isStableLevyProcess_unitIntervalPathLaw_eq hP
-  change 0 < (hB.unitIntervalPathLaw : Measure (CadlagPath unitInterval ℝ))
-    (Metric.ball (Skorokhod.linearPath slope) radius) at hpos
+  have hPathLawEq :
+      Process.Path.Cadlag.pathLaw (iidUnitPathBlockLaw P)
+        (fun t ω => iidUnitPathBlockProcess ω (unitInterval.toNNReal t))
+        (fun t => (measurable_iidUnitPathBlockProcess_eval P
+          (unitInterval.toNNReal t)).aemeasurable) =
+      (hB.unitIntervalPathLaw : Measure (CadlagPath unitInterval ℝ)) := by
+    simp [IsStableLevyProcess.unitIntervalPathLaw,
+      IsLevyProcess.unitIntervalPathLaw, Process.Path.Cadlag.pathLaw]
+  rw [hPathLawEq] at hpos
   rw [hLawEq] at hpos
   exact hpos
 

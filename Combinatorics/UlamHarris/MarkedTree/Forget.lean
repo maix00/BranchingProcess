@@ -13,6 +13,8 @@ public import Combinatorics.UlamHarris.Tree.Singleton
 /-!
 # Forgetting the marks of a marked tree
 
+## Public declarations
+
 `MarkedTree α X` pairs a tree with a mark on each realized node, so forgetting
 the marks is the projection on the tree. This is the single-root case of the
 connection from marked trees to trees; the root-indexed counterpart is below
@@ -20,6 +22,36 @@ in the `RootIndexed.MarkedTree` namespace.
 
 The map is measurable for the σ-algebras induced by the tree and by the pair
 `(tree, mark?)`, because the tree is one of the coordinates.
+
+The public declarations are:
+
+* `Combinatorics.UlamHarris.MarkedTree.forgetMark` is the projection
+  `M ↦ M.tree`; `Combinatorics.UlamHarris.MarkedTree.forgetMark_apply` and
+  `Combinatorics.UlamHarris.MarkedTree.forgetMark_carrier` state the
+  definitional tree and carrier equalities, and
+  `Combinatorics.UlamHarris.MarkedTree.forgetMark_root_mem` states
+  `[] ∈ M.forgetMark.carrier`.
+* Under `[MeasurableSpace X]`,
+  `Combinatorics.UlamHarris.MarkedTree.measurable_forgetMark` states that
+  `M ↦ M.forgetMark` is measurable.
+* `Combinatorics.UlamHarris.RootIndexed.MarkedTree.forgetMark` applies the
+  projection at every root;
+  `Combinatorics.UlamHarris.RootIndexed.MarkedTree.forgetMark_apply` and
+  `Combinatorics.UlamHarris.RootIndexed.MarkedTree.forgetMark_eq_tree` give
+  its coordinate and family equations.
+  `Combinatorics.UlamHarris.RootIndexed.MarkedTree.forgetMark_comp` states
+  that `forgetMark (M ∘ f) = forgetMark M ∘ f` for every root map `f`.
+* Under `[MeasurableSpace X]`,
+  `Combinatorics.UlamHarris.RootIndexed.MarkedTree.measurable_forgetMark`
+  states measurability of the family projection.
+* Under `[Unique Root]`,
+  `Combinatorics.UlamHarris.RootIndexed.MarkedTree.forgetMark_equivOfUnique`
+  identifies the family projection with the single-tree projection through
+  the unique-root equivalences.
+
+The projections satisfy `\(forgetMark(M)=M.tree\)` and
+`\(forgetMark(M)(r)=(M(r)).tree\)`. Consequently, for every map `f` on
+roots, `\(forgetMark(M\circ f)=forgetMark(M)\circ f\)`.
 -/
 
 @[expose] public section
@@ -76,11 +108,11 @@ already carries. -/
 @[simp] theorem forgetMark_eq_tree (M : RootIndexed.MarkedTree Root α X) :
     M.forgetMark = M.tree := rfl
 
-/-- Forgetting the marks commutes with reindexing the initial ancestors. -/
+/-- The forgetful map commutes with precomposition of the root index. -/
 @[simp]
-theorem forgetMark_reindex (f : NewRoot → Root)
-    (M : RootIndexed.MarkedTree Root α X) :
-    (M.reindex f).forgetMark = M.forgetMark.reindex f := rfl
+theorem forgetMark_comp (M : RootIndexed.MarkedTree Root α X)
+    (f : NewRoot → Root) :
+    forgetMark (M ∘ f) = forgetMark M ∘ f := rfl
 
 section Measurable
 

@@ -14,6 +14,29 @@ public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Finite
 
 This file lifts the finite parent-slot comparison to injective and rankwise
 domination of multi-root clouds.
+
+## Public declarations
+
+For each threshold \(a\), an injective parent match with compatible offspring
+slots and no larger target child values gives the lower-tail comparison
+\[
+\bigl|\{(p,i)\in P_C:\psi_C(p,i)\le a\}\bigr|
+\le
+\bigl|\{(q,i)\in P_D:\psi_D(q,i)\le a\}\bigr|.
+\]
+The same inequality follows when the parent populations are related by
+injective or rankwise spatial domination.
+
+* `Combinatorics.Branching.Selection.Coupling.offspringPairs_filter_card_le`
+  compares the cardinalities of the source and target parent-slot pairs whose
+  values are at most `a`, assuming an injective parent match, compatible slots,
+  and `targetValue (matchParent p) i ≤ sourceValue p i`.
+* `Combinatorics.Branching.Selection.Coupling.offspringPairs_filter_card_le_of_injectivelyDominatesBy`
+  obtains that comparison from injective domination of finite multi-root
+  clouds and a shared-slot value comparison.
+* `Combinatorics.Branching.Selection.Coupling.offspringPairs_filter_card_le_of_rankwiseDominatesBy`
+  obtains the same comparison from rankwise domination and a shared-slot
+  value comparison for matched ranks.
 -/
 
 @[expose] public section

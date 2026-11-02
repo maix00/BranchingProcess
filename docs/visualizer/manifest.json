@@ -79,8 +79,8 @@
       "kind": "definition",
       "title": "survivingParticlesAt",
       "leanName": "Combinatorics.Branching.survivingParticlesAt",
-      "module": "Combinatorics.BranchingWalk.Basic.Survival",
-      "source": "Combinatorics/BranchingWalk/Basic/Survival.lean",
+      "module": "Combinatorics.BranchingWalk.Basic.Survival.Basic",
+      "source": "Combinatorics/BranchingWalk/Basic/Survival/Basic.lean",
       "status": "verified",
       "tags": [
         "branching",

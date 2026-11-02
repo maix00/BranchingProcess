@@ -6,9 +6,10 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
-public import Topology.Cadlag.Skorokhod.ContinuousMap
-public import Topology.Cadlag.Skorokhod.Corridor
-public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary
+public import Topology.Cadlag.Skorokhod.Maps.Continuous
+public import Topology.Cadlag.Skorokhod.Corridor.Basic
+public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary.Basic
+import Mathlib.Data.Finset.Max
 import Mathlib.Topology.Semicontinuity.Michael
 
 /-!
@@ -16,15 +17,48 @@ import Mathlib.Topology.Semicontinuity.Michael
 
 This file defines strict corridors between finite right-continuous step
 boundaries and the subclass that contains a continuous path. These are
-deterministic subsets of path space. The source is A. A. Mogul'skii,
-“Small deviations in the space of trajectories”, Teor. Veroyatnost. i Primenen.
-19:4 (1974), 755–765; English translation, Theory Probab. Appl. 19:1
-(1975), 726–736, doi:10.1137/1119081. In §1, the corresponding classes
+deterministic subsets of path space, corresponding to the classes $M_1$ and
+$M_2$ in Section 1 of A. A. Mogul'skii,
+“Small deviations in the sample function space,” *Teoriya Veroyatnostei i ee
+Primeneniya* 19(4) (1974), 755–765; English translation, “Small Deviations in
+a Space of Trajectories,” *Theory of Probability and Its Applications* 19(4)
+(1975), 726–736, DOI 10.1137/1119081. In §1, the corresponding classes
 are denoted `M₁` and `M₂`; the library uses descriptive names instead. The
-source's two-sided trace-separation condition is proved equivalent to the
+two-sided trace-separation condition corresponding to Mogul'skii's §1
+admissibility definition is proved equivalent to the
 continuous-path witness, with a separate start condition because paths are
 pinned to zero. Endpoint traces use the convention defined in
 `PathClass.Boundary`.
+
+## Public declarations
+
+The public interface is in namespace `Skorokhod.PathClass.StepCorridor`:
+
+- `corridorSet` assigns to boundaries $\ell,r$ the paths $f$ with
+  $f(0)=0$ and $\ell(t)<f(t)<r(t)$ for every $t\in[0,1]$;
+  `HasContinuousAdmissiblePath` requires such a path to be continuous.
+- `FiniteStepCorridor` packages the two boundaries, and
+  `FiniteStepCorridor.toSet` gives its path set. `IsStepCorridor` states that
+  a path set has this form.
+- `StartAdmissible` is $\ell(0)<0<r(0)$, and `TraceSeparated` is
+  $\max(\ell_-(t),\ell_+(t))<\min(r_-(t),r_+(t))$ at every time.
+- `ContinuousAdmissibleStepCorridor` packages a finite-step corridor with a
+  continuous admissible path; `ContinuousAdmissibleStepCorridor.toSet` gives
+  its path set, and `IsContinuousAdmissibleStepCorridor` characterizes sets
+  of this form.
+- `isStepCorridor_corridorSet` and
+  `isContinuousAdmissibleStepCorridor_corridorSet` identify the path sets
+  represented by the corresponding corridor constructions.
+- `hasContinuousAdmissiblePath_implies_startAdmissible`,
+  `hasContinuousAdmissiblePath_implies_traceSeparated`, and
+  `hasContinuousAdmissiblePath_implies_startAndTraceSeparated` give the
+  necessary endpoint and two-sided trace conditions.
+- `selValues` is the open real interval between the maximum lower trace and
+  minimum upper trace. `exists_mem_selValues_of_traceSeparated` gives a point
+  in every such interval under `TraceSeparated`.
+- `hasContinuousAdmissiblePath_iff_startAndTraceSeparated` characterizes the
+  existence of a continuous admissible path by the conjunction of
+  `StartAdmissible` and `TraceSeparated`.
 -/
 
 open Filter MeasureTheory Set
@@ -40,7 +74,7 @@ namespace Skorokhod.PathClass.StepCorridor
 
 /-- The path set determined by an upper and a lower finite-step boundary.
 Paths start at zero and satisfy the strict strip constraints on the entire
-closed time interval, matching class `M₁` in the source. -/
+closed time interval, matching class `M₁` in Mogul'skii's §1. -/
 def corridorSet (upper lower : StepBoundary) : Set (CadlagPath unitInterval ℝ) :=
   {f | f ⊥ = 0 ∧ ∀ t : unitInterval,
     lower.eval t < (f t : EReal) ∧ (f t : EReal) < upper.eval t}
@@ -62,7 +96,7 @@ structure FiniteStepCorridor where
 def FiniteStepCorridor.toSet (c : FiniteStepCorridor) : Set (CadlagPath unitInterval ℝ) :=
   corridorSet c.upper c.lower
 
-/-- A path set belongs to the source's class `M₁` when it is a strict corridor
+/-- A path set belongs to Mogul'skii's class `M₁` from §1 when it is a strict corridor
 on `[0,1]` with finite step boundaries, allowing either boundary to take
 infinite values. -/
 def IsStepCorridor (G : Set (CadlagPath unitInterval ℝ)) : Prop :=
@@ -76,13 +110,13 @@ def StartAdmissible (upper lower : StepBoundary) : Prop :=
 
 /-- At every time the left and right traces of the lower boundary lie strictly
 below both traces of the upper boundary. This is the order-theoretic form of
-the source's two-sided trace separation condition. -/
+the two-sided trace separation condition in Mogul'skii's §1. -/
 def TraceSeparated (upper lower : StepBoundary) : Prop :=
   ∀ t : unitInterval,
     max (lower.leftTrace t) (lower.rightTrace t) <
       min (upper.leftTrace t) (upper.rightTrace t)
 
-/-- A corridor together with the source's admissibility condition that its
+/-- A corridor together with the `M₂` admissibility condition that its
 intersection with continuous paths is nonempty. -/
 structure ContinuousAdmissibleStepCorridor extends FiniteStepCorridor where
   hasContinuousAdmissiblePath : HasContinuousAdmissiblePath upper lower
@@ -130,7 +164,12 @@ theorem hasContinuousAdmissiblePath_implies_traceSeparated
     exact hstart.1.trans hstart.2
   · have htpos : (⊥ : unitInterval) < t := bot_lt_iff_ne_bot.mpr htbot
     let knots := lower.knots ∪ upper.knots
-    obtain ⟨p, hpt, hp⟩ := StepBoundary.exists_left_gap_finset knots htpos
+    obtain ⟨p, _, hpt, hpMax⟩ := Finset.exists_next_left
+      (s := insert (⊥ : unitInterval) knots) (x := t)
+      ⟨⊥, Finset.mem_insert_self _ _, htpos⟩
+    have hp : ∀ q ∈ knots, q < t → q ≤ p := by
+      intro q hq hqt
+      exact hpMax q (Finset.mem_insert_of_mem hq) hqt
     have hplower : ∀ q ∈ lower.knots, q < t → q ≤ p := by
       intro q hq hqt
       exact hp q (Finset.mem_union.mpr (Or.inl hq)) hqt
@@ -318,7 +357,7 @@ private lemma not_mem_of_right_gap {knots : Finset unitInterval} {b : StepBounda
   have hrs := hgap s (hsub hs) hts
   exact (not_le_of_gt hsq) hrs
 
-lemma selValues_openLowerSections {upper lower : StepBoundary} :
+private lemma selValues_openLowerSections {upper lower : StepBoundary} :
     HasOpenLowerSections (selValues upper lower) := by
   rw [hasOpenLowerSections_iff_isOpen]
   intro x
@@ -332,8 +371,12 @@ lemma selValues_openLowerSections {upper lower : StepBoundary} :
   have hfour := (mem_selValues_iff x).mp ht
   by_cases hbot : t = ⊥
   · subst t
-    obtain ⟨q, hq, hqgap⟩ := StepBoundary.exists_right_gap_finset knots
-      (show (⊥ : unitInterval) < ⊤ by norm_num)
+    obtain ⟨q, _, hq, hqMin⟩ := Finset.exists_next_right
+      (s := insert (⊤ : unitInterval) knots) (x := ⊥)
+      ⟨⊤, Finset.mem_insert_self _ _, by norm_num⟩
+    have hqgap : ∀ r ∈ knots, ⊥ < r → q ≤ r := by
+      intro r hr hrt
+      exact hqMin r (Finset.mem_insert_of_mem hr) hrt
     refine mem_of_superset (Iio_mem_nhds hq) ?_
     intro s hs
     by_cases hsbot : s = ⊥
@@ -385,8 +428,12 @@ lemma selValues_openLowerSections {upper lower : StepBoundary} :
   · have htpos : ⊥ < t := bot_lt_iff_ne_bot.mpr hbot
     by_cases htop : t = ⊤
     · subst t
-      obtain ⟨p, hp, hpgap⟩ := StepBoundary.exists_left_gap_finset knots
-        (show (⊥ : unitInterval) < ⊤ by norm_num)
+      obtain ⟨p, _, hp, hpMax⟩ := Finset.exists_next_left
+        (s := insert (⊥ : unitInterval) knots) (x := ⊤)
+        ⟨⊥, Finset.mem_insert_self _ _, by norm_num⟩
+      have hpgap : ∀ r ∈ knots, r < ⊤ → r ≤ p := by
+        intro r hr hrt
+        exact hpMax r (Finset.mem_insert_of_mem hr) hrt
       refine mem_of_superset (Ioi_mem_nhds hp) ?_
       intro s hs
       by_cases hstop : s = ⊤
@@ -415,8 +462,18 @@ lemma selValues_openLowerSections {upper lower : StepBoundary} :
           by rw [hleftU]; exact hfour.2.2.1,
           by rw [StepBoundary.rightTrace_eq_eval, hevalU]; exact hfour.2.2.1⟩
     · have httop : t < ⊤ := lt_top_iff_ne_top.mpr htop
-      obtain ⟨p, hpt, hpleft⟩ := StepBoundary.exists_left_gap_finset knots htpos
-      obtain ⟨q, htq, hqright⟩ := StepBoundary.exists_right_gap_finset knots httop
+      obtain ⟨p, _, hpt, hpMax⟩ := Finset.exists_next_left
+        (s := insert (⊥ : unitInterval) knots) (x := t)
+        ⟨⊥, Finset.mem_insert_self _ _, htpos⟩
+      have hpleft : ∀ r ∈ knots, r < t → r ≤ p := by
+        intro r hr hrt
+        exact hpMax r (Finset.mem_insert_of_mem hr) hrt
+      obtain ⟨q, _, htq, hqMin⟩ := Finset.exists_next_right
+        (s := insert (⊤ : unitInterval) knots) (x := t)
+        ⟨⊤, Finset.mem_insert_self _ _, httop⟩
+      have hqright : ∀ r ∈ knots, t < r → q ≤ r := by
+        intro r hr htr
+        exact hqMin r (Finset.mem_insert_of_mem hr) htr
       refine mem_of_superset (Ioo_mem_nhds hpt htq) ?_
       intro s hs
       by_cases hst : s = t
@@ -466,28 +523,6 @@ lemma selValues_openLowerSections {upper lower : StepBoundary} :
             by rw [hleftU]; exact hfour.2.2.2,
             by rw [StepBoundary.rightTrace_eq_eval, hevalU]; exact hfour.2.2.2⟩
 
-/-- Every common trace strip is open as a set of possible real path values. -/
-theorem isOpen_selValues (upper lower : StepBoundary) (t : unitInterval) :
-    IsOpen (selValues upper lower t) := by
-  change IsOpen ((fun x : ℝ => (x : EReal)) ⁻¹'
-    Set.Ioo (max (lower.leftTrace t) (lower.rightTrace t))
-      (min (upper.leftTrace t) (upper.rightTrace t)))
-  exact isOpen_Ioo.preimage continuous_coe_real_ereal
-
-/-- A selected value in a common trace strip has a uniform neighborhood
-inside that strip. -/
-theorem exists_pos_uniformMargin_selValues {upper lower : StepBoundary}
-    {t : unitInterval} {x : ℝ} (hx : x ∈ selValues upper lower t) :
-    ∃ ε : ℝ, 0 < ε ∧ ∀ y : ℝ, |y - x| ≤ ε → y ∈ selValues upper lower t := by
-  obtain ⟨r, hr, hball⟩ := Metric.mem_nhds_iff.mp
-    ((isOpen_selValues upper lower t).mem_nhds hx)
-  refine ⟨r / 2, by positivity, ?_⟩
-  intro y hy
-  have hdist : dist y x < r := by
-    rw [Real.dist_eq]
-    exact lt_of_le_of_lt hy (by linarith)
-  exact hball hdist
-
 private lemma selValues_eval_subset {upper lower : StepBoundary} {t : unitInterval} {x : ℝ}
     (hx : x ∈ selValues upper lower t) :
     lower.eval t < (x : EReal) ∧ (x : EReal) < upper.eval t := by
@@ -495,14 +530,18 @@ private lemma selValues_eval_subset {upper lower : StepBoundary} {t : unitInterv
   exact ⟨by simpa [StepBoundary.rightTrace] using hf.2.1,
     by simpa [StepBoundary.rightTrace] using hf.2.2.2⟩
 
-private theorem hcont_admissible {upper lower : StepBoundary}
+private lemma hcont_admissible {upper lower : StepBoundary}
     (hstart : StartAdmissible upper lower) (hsep : TraceSeparated upper lower) :
     HasContinuousAdmissiblePath upper lower := by
   obtain ⟨g, hg, hgsel⟩ := selValues_openLowerSections.exists_continuous_selection
       (selValues_nonempty hsep) (selValues_convex upper lower)
   let knots := lower.knots ∪ upper.knots
-  obtain ⟨q, hq, hqgap⟩ := StepBoundary.exists_right_gap_finset knots
-      (show (⊥ : unitInterval) < ⊤ by norm_num)
+  obtain ⟨q, _, hq, hqMin⟩ := Finset.exists_next_right
+    (s := insert (⊤ : unitInterval) knots) (x := ⊥)
+    ⟨⊤, Finset.mem_insert_self _ _, by norm_num⟩
+  have hqgap : ∀ r ∈ knots, ⊥ < r → q ≤ r := by
+    intro r hr hrt
+    exact hqMin r (Finset.mem_insert_of_mem hr) hrt
   obtain ⟨δ, hδleft, hδright⟩ := exists_between (show (⊥ : unitInterval) < q by exact hq)
   have hsubL : lower.knots ⊆ knots := by
     intro r hr; exact Finset.mem_union.mpr (Or.inl hr)

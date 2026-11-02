@@ -12,6 +12,26 @@ public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Basic
 # Pulling oscillation partitions back by time changes
 
 A Skorokhod time change transports partition cells. Time distortion weakens the minimum cell length by at most twice the distortion, while a spatial error adds at most twice that error to within-cell oscillation.
+
+## Public declarations
+
+- OscillationPartition.pullback P τ transports P by the inverse time change
+  τ.symm.
+- OscillationBoundedOnPartition.pullback: when the time-change error is less
+  than half the original mesh and the reparameterized path is uniformly
+  within spatial error e, the pulled-back mesh decreases by at most twice the
+  time error and the cellwise oscillation bound increases by at most 2e.
+  If \(\sup_t d(\tau(t),t)\le e\), \(2e<\operatorname{mesh}(P)\),
+  and \(\sup_t d((\tau\cdot f)(t),g(t))\le s\), then
+  \[
+  \operatorname{mesh}(P\mathbin{.pullback}\tau e)
+  =\operatorname{mesh}(P)-2e,
+  \qquad
+  \operatorname{OscillationBoundedOnPartition}(P,f,B)
+  \Longrightarrow
+  \operatorname{OscillationBoundedOnPartition}
+  (P\mathbin{.pullback}\tau e,g,B+2s).
+  \]
 -/
 
 @[expose] public section
@@ -22,32 +42,32 @@ open scoped ENNReal Topology
 namespace Skorokhod
 
 
-private theorem symm_le_iff_apply_le (change : TimeChange) (a b : unitInterval) :
+private lemma symm_le_iff_apply_le (change : TimeChange) (a b : unitInterval) :
     change.symm a ≤ b ↔ a ≤ change b := by
   constructor
   · intro h
     calc
       a = change (change.symm a) := (change.apply_symm_apply a).symm
-      _ ≤ change b := change.strictMono_toHomeomorph.monotone h
+      _ ≤ change b := change.toOrderIso.strictMono.monotone h
   · intro h
     calc
       change.symm a ≤ change.symm (change b) :=
-        change.symm.strictMono_toHomeomorph.monotone h
+        change.symm.toOrderIso.strictMono.monotone h
       _ = b := change.symm_apply_apply b
 
-private theorem lt_symm_iff_apply_lt (change : TimeChange) (a b : unitInterval) :
+private lemma lt_symm_iff_apply_lt (change : TimeChange) (a b : unitInterval) :
     a < change.symm b ↔ change a < b := by
   constructor
   · intro h
     calc
-      change a < change (change.symm b) := change.strictMono_toHomeomorph h
+      change a < change (change.symm b) := change.toOrderIso.strictMono h
       _ = b := change.apply_symm_apply b
   · intro h
     calc
       a = change.symm (change a) := (change.symm_apply_apply a).symm
-      _ < change.symm b := change.symm.strictMono_toHomeomorph h
+      _ < change.symm b := change.symm.toOrderIso.strictMono h
 
-private theorem dist_symm_apply_le (change : TimeChange) {error : ℝ}
+private lemma dist_symm_apply_le (change : TimeChange) {error : ℝ}
     (herror : ∀ t, dist (change t) t ≤ error) (t : unitInterval) :
     dist (change.symm t) t ≤ error := by
   calc
@@ -73,7 +93,7 @@ def OscillationPartition.pullback (partition : OscillationPartition)
     change change.symm (partition.points ⟨partition.size, by omega⟩) = ⊤
     rw [partition.last]
     exact TimeChange.apply_top _
-  strictMono_points := change.symm.strictMono_toHomeomorph.comp
+  strictMono_points := change.symm.toOrderIso.strictMono.comp
     partition.strictMono_points
   index := fun t => partition.index (change t)
   index_lower := by
@@ -157,13 +177,13 @@ theorem OscillationBoundedOnPartition.pullback
   have hindex' : partition.index (change s) = partition.index (change t) := hindex
   have hs' : change s ≠ ⊤ := by
     intro htop
-    have hlt : change s < change ⊤ := change.strictMono_toHomeomorph
+    have hlt : change s < change ⊤ := change.toOrderIso.strictMono
       (lt_top_iff_ne_top.mpr hs)
     rw [TimeChange.apply_top] at hlt
     exact (ne_of_lt hlt) htop
   have ht' : change t ≠ ⊤ := by
     intro htop
-    have hlt : change t < change ⊤ := change.strictMono_toHomeomorph
+    have hlt : change t < change ⊤ := change.toOrderIso.strictMono
       (lt_top_iff_ne_top.mpr ht)
     rw [TimeChange.apply_top] at hlt
     exact (ne_of_lt hlt) htop

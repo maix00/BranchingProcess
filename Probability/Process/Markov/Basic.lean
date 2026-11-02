@@ -17,6 +17,29 @@ This file states the Markov property for a process in the standard
 `Kernel`; conditional probabilities are expressed through conditional
 expectations of indicators.  This avoids introducing a second notion of
 transition kernel.
+
+## Public declarations
+
+- `ProbabilityTheory.IsTransitionFunction`: $K_{s,s}=\mathrm{id}$ and
+  $K_{s,u}=K_{t,u}\circ K_{s,t}$ whenever $s\le t\le u$.
+- `ProbabilityTheory.IsTransitionFunction.refl` and
+  `ProbabilityTheory.IsTransitionFunction.comp`: the two transition-family
+  identities.
+- `ProbabilityTheory.IsMarkovProcess`: $X$ is adapted and, for measurable
+  $A$ under the probability measure $P$ and $s\le t$,
+  $\mathbb E_P[\mathbf 1_{\{X_t\in A\}}\mid\mathcal F_s]
+  =K_{s,t}(X_s,A)$ almost surely.
+- `ProbabilityTheory.IsMarkovProcess.adapted` and
+  `ProbabilityTheory.IsMarkovProcess.condExp_preimage_ae_eq`: projections of
+  adaptedness and the conditional-expectation identity.
+- `ProbabilityTheory.IsMarkovChain`: the discrete-time specialization with
+  transition kernel $K^{n-m}$ from time $m$ to time $n$.
+- `ProbabilityTheory.isTransitionFunction_pow`: these kernel powers form a
+  transition function.
+- `ProbabilityTheory.IsMarkovChain.isMarkovProcess`,
+  `ProbabilityTheory.IsMarkovChain.adapted`, and
+  `ProbabilityTheory.IsMarkovChain.condExp_preimage_ae_eq`: the transition,
+  adaptedness, and conditional-expectation interfaces for a Markov chain.
 -/
 
 open Filter MeasureTheory
@@ -54,16 +77,18 @@ theorem comp (h : IsTransitionFunction transition)
 
 end IsTransitionFunction
 
-/-- A process is Markov with transition kernels `transition s t` when it is
-adapted and, conditionally on the information at time `s`, the law at every
-later time `t` is `transition s t` started from the current state.
+/-- A process is Markov with transition kernels `transition s t` under a
+probability measure `P` when it is adapted and, conditionally on the
+information at time `s`, the law at every later time `t` is `transition s t`
+started from the current state.
 
 The definition is meaningful for discrete and continuous time.  Compatibility
 of the supplied two-time kernels, such as Chapman--Kolmogorov, is kept as a
 separate property of the transition family. -/
 def IsMarkovProcess (X : Time → Omega → State)
     (F : Filtration Time (inferInstance : MeasurableSpace Omega))
-    (P : Measure Omega) (transition : Time → Time → Kernel State State)
+    (P : Measure Omega) [IsProbabilityMeasure P]
+    (transition : Time → Time → Kernel State State)
     [∀ s t, IsMarkovKernel (transition s t)] : Prop :=
   Adapted F X ∧
     (∀ s t, s ≤ t → ∀ A, MeasurableSet A →
@@ -74,7 +99,8 @@ namespace IsMarkovProcess
 
 variable {X : Time → Omega → State}
   {F : Filtration Time (inferInstance : MeasurableSpace Omega)}
-  {P : Measure Omega} {transition : Time → Time → Kernel State State}
+  {P : Measure Omega} [IsProbabilityMeasure P]
+  {transition : Time → Time → Kernel State State}
   [∀ s t, IsMarkovKernel (transition s t)]
 
 theorem adapted (h : IsMarkovProcess X F P transition) : Adapted F X :=
@@ -92,7 +118,8 @@ end IsMarkovProcess
 time `m` to time `n` is the `(n - m)`-th power of one kernel. -/
 def IsMarkovChain (X : ℕ → Omega → State)
     (F : Filtration ℕ (inferInstance : MeasurableSpace Omega))
-    (P : Measure Omega) (K : Kernel State State) [IsMarkovKernel K] : Prop :=
+    (P : Measure Omega) [IsProbabilityMeasure P]
+    (K : Kernel State State) [IsMarkovKernel K] : Prop :=
   IsMarkovProcess X F P (fun m n ↦ K ^ (n - m))
 
 /-- The powers of one kernel form a time-homogeneous transition function. -/
@@ -112,7 +139,8 @@ namespace IsMarkovChain
 
 variable {X : ℕ → Omega → State}
   {F : Filtration ℕ (inferInstance : MeasurableSpace Omega)}
-  {P : Measure Omega} {K : Kernel State State} [IsMarkovKernel K]
+  {P : Measure Omega} [IsProbabilityMeasure P]
+  {K : Kernel State State} [IsMarkovKernel K]
 
 theorem isMarkovProcess (h : IsMarkovChain X F P K) :
     IsMarkovProcess X F P (fun m n ↦ K ^ (n - m)) :=

@@ -4,17 +4,49 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.RandomMeasure.Poisson.CharacteristicFunction.Integral
-import Probability.RandomMeasure.Poisson.TimeMark
-import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.FiniteVariation
+module
+
+public import Probability.RandomMeasure.Poisson.CharacteristicFunction.Integral
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.FiniteVariation
+public import Mathlib.MeasureTheory.Constructions.UnitInterval
+import all Probability.RandomMeasure.Poisson.Intensity.Lemmas.TimeWindowIntegral
 
 /-!
 # Characteristic function of a jump sum in a time window
 
-The time-window exponent is the window's Lebesgue mass times the mark
-exponent. This result uses a general measurable window and does not
-assume that the mark distribution has a global first moment.
+## Public declarations
+
+- `ProbabilityTheory.IsPoissonPointFamily.integral_exp_timeWindow_jumpSum`: for a measurable
+  time window `S`, the characteristic integral of its Poisson jump sum is
+  `exp (|S| ∫ (exp (i ξ x) - 1) dν)`, assuming realized integrability on `S`
+  and integrability of the mark exponent.
+- `ProbabilityTheory.integral_exp_sum_timeWindow_jumpSums`: for two independent Poisson jump
+  sources on the same measurable window, the exponent is
+  `|S| (∫ (exp (i ξ x) - 1) dνₛ + ∫ (exp (i ξ x) - 1) dνᵦ)`.
+
+These statements use arbitrary measurable windows and require no global first
+moment of the mark distribution.
+
+Let `\mathcal N` be a Poisson random measure with intensity
+`\lambda_{[0,1]}\otimes\nu`, and put
+`I(S)=\int_{S\times\mathbb R}x\,\mathcal N(dt,dx)`. For two independent
+sources, denote the corresponding measures and integrals by
+`\mathcal N_s,\mathcal N_b` and `I_s(S),I_b(S)`.
+For a measurable time window `S`, the characteristic exponent of its jump
+sum is the window's Lebesgue measure times the mark exponent; for two
+independent sources the two exponents add:
+
+\[\begin{aligned}
+\mathbb E_P\exp\!\left(i\xi I(S)\right)
+&=\exp\!\left(|S|\int_{\mathbb R}(e^{i\xi x}-1)\,\nu(dx)\right),\\
+\mathbb E_{P_s\otimes P_b}\exp\!\left(i\xi(I_s(S)+I_b(S))\right)
+&=\exp\!\left(|S|\left[
+  \int_{\mathbb R}(e^{i\xi x}-1)\,\nu_s(dx)
+ +\int_{\mathbb R}(e^{i\xi x}-1)\,\nu_b(dx)\right]\right).
+\end{aligned}\]
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

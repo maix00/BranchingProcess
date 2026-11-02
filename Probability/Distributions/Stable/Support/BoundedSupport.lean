@@ -7,10 +7,10 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Stable.Basic
-public import Probability.Distributions.Stable.Gaussian
-public import Probability.Distributions.Stable.Sign
-public import Mathlib.Analysis.SpecificLimits.Basic
-public import Mathlib.Probability.Moments.Variance
+public import Mathlib.Probability.CDF
+import Probability.Distributions.Stable.Support.Sign
+import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.Probability.Moments.Variance
 
 /-!
 # Strictly stable laws do not have bounded support below index two
@@ -18,6 +18,30 @@ public import Mathlib.Probability.Moments.Variance
 A bounded nondegenerate law has finite variance. The strict stability identity
 then forces the scaling exponent to be two. Consequently, a strictly stable
 law of index below two assigns positive mass outside every bounded interval.
+
+For a nondegenerate strictly `α`-stable law with `α<2`, every centered
+bounded interval has mass strictly below one. The same strict mass loss holds
+after positive power scaling:
+
+\[
+\begin{aligned}
+\mu([-r,r])&<1 &&(r\in\mathbb R),\\
+\bigl(\mu\circ(x\mapsto c^{1/\alpha}x)^{-1}\bigr)([-1,1])
+&<1 &&(c>0).
+\end{aligned}
+\]
+
+## Public declarations
+
+* `measure_Icc_lt_one_of_lt_two` and
+  `measure_map_rpow_Icc_lt_one_of_lt_two`: if `α < 2`, every fixed bounded
+  interval, before or after positive power scaling, has mass strictly below one.
+* `measure_Ioi_pos_indexTwo`: for a strictly `2`-stable law with
+  `0 < cdf μ 0 < 1`, every open right half-line has positive mass.
+* `measure_Icc_lt_one_indexTwo` and
+  `measure_map_rpow_Icc_lt_one_indexTwo`: under the same CDF condition, every
+  bounded interval and every positively scaled unit interval has mass below
+  one.
 -/
 
 @[expose] public section
@@ -148,7 +172,7 @@ theorem IsStrictlyAlphaStable.measure_map_rpow_Icc_lt_one_of_lt_two
   exact hinterval
 
 /-- A nondegenerate strictly `2`-stable law has unbounded positive support.
-The source condition `0 < F(0) < 1` gives positive mass above zero; the
+The CDF sign condition `0 < F(0) < 1` gives positive mass above zero; the
 two-copy scaling identity then amplifies every positive tail threshold by a
 factor greater than one. -/
 theorem IsStrictlyAlphaStable.measure_Ioi_pos_indexTwo
@@ -259,7 +283,7 @@ theorem IsStrictlyAlphaStable.measure_Ioi_pos_indexTwo
     exact lt_trans hn hx
   exact lt_of_lt_of_le (hiter n) (measure_mono hsubset)
 
-/-- The source condition `0 < F(0) < 1` makes every bounded interval have
+/-- The CDF sign condition `0 < F(0) < 1` makes every bounded interval have
 strictly less than full mass for a nondegenerate strictly `2`-stable law. -/
 theorem IsStrictlyAlphaStable.measure_Icc_lt_one_indexTwo
     {μ : Measure ℝ} (h : IsStrictlyAlphaStable 2 μ)
@@ -286,7 +310,7 @@ theorem IsStrictlyAlphaStable.measure_Icc_lt_one_indexTwo
     lt_of_lt_of_le htail (measure_mono hsubset)
   exact (ne_of_gt hpositive) hcompl
 
-/-- The source endpoint-mass condition for a positive scale in the strictly
+/-- The endpoint-mass condition for a positive scale in the strictly
 `2`-stable case. -/
 theorem IsStrictlyAlphaStable.measure_map_rpow_Icc_lt_one_indexTwo
     {constant : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable 2 μ)

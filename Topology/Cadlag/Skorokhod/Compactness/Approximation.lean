@@ -6,136 +6,59 @@ Authors: WANG Yiyang
 
 module
 
-public import Topology.Cadlag.Skorokhod.Compactness
+public import Topology.Cadlag.Skorokhod.Compactness.Basic
 public import Topology.Cadlag.Skorokhod.Compactness.StepPath
+import Topology.Cadlag.Skorokhod.Compactness.MovingPartition
 
 /-!
-# Step approximations and total boundedness in `J₁`
+# Step approximations and total boundedness in $J_1$
+
+Write `OscillationBoundedOnPartition P f b` for the condition
+$\forall s,t\ne1, P.index(s)=P.index(t)\implies
+\operatorname{dist}(f(s),f(t))\le b$.
+
+## Public declarations
+
+The declarations are in namespace `Skorokhod`.
+
+- `Skorokhod.totallyBounded_of_uniform_admitsOscillationPartition`: if there
+  is a compact $C$ such that $\forall f\in K,\forall t, f(t)\in C$, and
+  $\forall\varepsilon>0,\exists\delta>0,\forall f\in K,\exists P,b$ with
+  $\delta<\operatorname{mesh}(P)$, $b<\varepsilon$, and
+  `OscillationBoundedOnPartition P f b`, then $K$ is totally bounded.
+- `Skorokhod.isCompact_iff_isComplete_rangeBounded_uniformAdmitsOscillationPartition`:
+  for real-valued paths,
+  $\operatorname{IsCompact}(K)\Longleftrightarrow
+  \operatorname{IsComplete}(K)\land
+  (\exists R\ge0,\forall f\in K,\forall t,|f(t)|\le R)\land
+  (\forall\varepsilon>0,\exists\delta>0,\forall f\in K,\exists P,b,
+  \delta<\operatorname{mesh}(P)\land b<\varepsilon\land
+  \operatorname{OscillationBoundedOnPartition}(P,f,b))$.
+- `isCompact_closure_iff_isComplete_closure_rangeBounded_uniformAdmitsOscillationPartition`:
+  $\operatorname{IsCompact}(\overline K)\Longleftrightarrow
+  \operatorname{IsComplete}(\overline K)\land
+  (\exists R\ge0,\forall f\in K,\forall t,|f(t)|\le R)\land
+  (\forall\varepsilon>0,\exists\delta>0,\forall f\in K,\exists P,b,
+  \delta<\operatorname{mesh}(P)\land b<\varepsilon\land
+  \operatorname{OscillationBoundedOnPartition}(P,f,b))$.
+
+The partition criterion is the finite-partition form of the compactness
+criterion in Patrick Billingsley, *Convergence of Probability Measures*,
+1st ed., Wiley, 1968, Chapter 3, §14, Theorem 14.3, p. 116
+([scan](https://ru.djvu.online/file/vaaIHv9IWlVeK)). Billingsley's modulus
+$w'_f(\delta)$ is expressed here through a partition whose mesh exceeds
+$\delta$ and whose within-cell oscillation is below the tolerance.
 
 Uniform oscillation partitions approximate paths by step paths. When the
-number of cells and value range are uniformly bounded, these approximants lie
-in a compact family. This proves a deterministic total-boundedness criterion
-without assuming completeness of the path metric.
+number of cells and value range are uniformly controlled, these approximants
+lie in a compact family. The completeness hypothesis is stated for the
+relevant path family in its induced $J_1$ metric.
 -/
+
 
 @[expose] public section
 
 namespace Skorokhod
-
-/-- Sampling an existing oscillation partition agrees with rebuilding its step
-path from the ordered vector of its partition points. -/
-theorem OscillationPartition.stepApproximation_eq_ofPoints_stepPath
-    {E : Type*} [TopologicalSpace E]
-    (partition : OscillationPartition) (path : CadlagPath unitInterval E) :
-    partition.stepApproximation path =
-      (TimeChange.FinitePartition.ofPoints partition.size_pos partition.points
-        partition.first partition.last partition.strictMono_points).stepPath
-        (Fin.lastCases (path ⊤)
-          (fun i => path (partition.points i.castSucc))) := by
-  ext t
-  by_cases htop : t = ⊤
-  · subst t
-    simp [OscillationPartition.stepApproximation, OscillationPartition.stepPath]
-  · let rebuilt := TimeChange.FinitePartition.ofPoints partition.size_pos
-      partition.points partition.first partition.last partition.strictMono_points
-    have hindex : rebuilt.index t = partition.index t := by
-      exact rebuilt.index_eq_of_cell (partition.index t) t
-        (partition.index_lower t) (partition.index_upper t)
-    change (partition.stepPath
-        (Fin.lastCases (path ⊤) (fun i => path (partition.points i.castSucc)))) t =
-      (rebuilt.stepPath
-        (Fin.lastCases (path ⊤) (fun i => path (partition.points i.castSucc)))) t
-    simp only [OscillationPartition.stepPath, ite_eq_right htop]
-    rw [← hindex]
-    rfl
-
-/-- Step paths represented with at most `maxCells` cells, a common positive
-gap, and values in a fixed compact subset of the state space form a compact
-family. -/
-def compactRangeMovingPartitionStepPathFamily {E : Type*} [MetricSpace E]
-    (gap : ℝ) (range : Set E) (hgap : 0 < gap)
-    (maxCells : ℕ) : Set (CadlagPath unitInterval E) :=
-  ⋃ n : {n : ℕ // n ∈ Set.Icc 1 maxCells},
-    Set.range (stepPathOfParameters (E := E) (n := n.1)
-      (by
-        have hn := n.2
-        simp only [Set.mem_Icc] at hn
-        omega)
-      range hgap)
-
-/-- Compactness for the finite union over all allowed partition sizes. -/
-theorem isCompact_compactRangeMovingPartitionStepPathFamily
-    {E : Type*} [MetricSpace E] (gap : ℝ) (range : Set E)
-    (hrange : IsCompact range) (hgap : 0 < gap) (maxCells : ℕ) :
-    IsCompact (compactRangeMovingPartitionStepPathFamily gap range hgap maxCells) := by
-  let Index := {n : ℕ // n ∈ Set.Icc 1 maxCells}
-  have hfinite : Finite Index := (Set.finite_Icc 1 maxCells).to_subtype
-  change IsCompact (⋃ n : Index,
-    Set.range (stepPathOfParameters (E := E) (n := n.1)
-      (by
-        have hn := n.2
-        simp only [Set.mem_Icc] at hn
-        omega)
-      range hgap))
-  exact @isCompact_iUnion _ _ Index
-    (fun n => Set.range (stepPathOfParameters (E := E) (n := n.1)
-      (by
-        have hn := n.2
-        simp only [Set.mem_Icc] at hn
-        omega)
-      range hgap))
-    hfinite (fun n => isCompact_stepPathOfParameters_image (n := n.1)
-      (by
-        have hn := n.2
-        simp only [Set.mem_Icc] at hn
-        omega)
-      range hrange hgap)
-
-/-- The step approximation from an oscillation partition belongs to the
-compact finite union of moving-partition step paths whenever its cell values
-lie in the common compact range and its cell count is bounded. -/
-theorem OscillationPartition.stepApproximation_mem_compactRangeMovingPartitionStepPathFamily
-    {E : Type*} [MetricSpace E]
-    (partition : OscillationPartition) (path : CadlagPath unitInterval E)
-    {gap : ℝ} (range : Set E) (hgap : 0 < gap) (hmesh : gap < partition.mesh)
-    (hrange : ∀ t, path t ∈ range) {maxCells : ℕ}
-    (hsize : partition.size ≤ maxCells) :
-    partition.stepApproximation path ∈
-      compactRangeMovingPartitionStepPathFamily gap range hgap maxCells := by
-  let values : Fin (partition.size + 1) → E := Fin.lastCases (path ⊤)
-    (fun i => path (partition.points i.castSucc))
-  have hpoints : IsSeparatedPartitionPoints gap partition.points := by
-    refine ⟨partition.first, partition.last, ?_⟩
-    intro i
-    refine ⟨le_of_lt (partition.strictMono_points i.castSucc_lt_succ), ?_⟩
-    exact (le_of_lt hmesh).trans (partition.gap_lower i)
-  have hvalues : values ∈
-      Set.pi Set.univ (fun _ : Fin (partition.size + 1) => range) := by
-    rw [Set.mem_pi]
-    intro i _
-    refine Fin.lastCases ?_ ?_ i
-    · simpa [values] using hrange ⊤
-    · intro i
-      simpa [values] using hrange (partition.points i.castSucc)
-  have hparameters : StepPathParameters gap range (partition.points, values) :=
-    ⟨hpoints, hvalues⟩
-  have hmem : partition.stepApproximation path ∈
-      ⋃ n : {n : ℕ // n ∈ Set.Icc 1 maxCells},
-        Set.range (stepPathOfParameters (E := E) (n := n.1)
-          (by
-            have hn := n.2
-            simp only [Set.mem_Icc] at hn
-            omega)
-          range hgap) := by
-    refine Set.mem_iUnion.mpr ⟨⟨partition.size, ?_⟩, ?_⟩
-    · exact ⟨Nat.one_le_iff_ne_zero.mpr (Nat.ne_of_gt partition.size_pos), hsize⟩
-    · apply Set.mem_range.mpr
-      let parameter : {p : (Fin (partition.size + 1) → unitInterval) ×
-          (Fin (partition.size + 1) → E) // StepPathParameters gap range p} :=
-        ⟨(partition.points, values), hparameters⟩
-      refine ⟨parameter, ?_⟩
-      exact (partition.stepApproximation_eq_ofPoints_stepPath path).symm
-  exact hmem
 
 /-- A family of càdlàg paths whose ranges lie in a common compact set and
 which have uniformly fine oscillation partitions is totally bounded in the
@@ -214,8 +137,12 @@ theorem totallyBounded_of_uniform_admitsOscillationPartition
 uniform range boundedness, and uniform small-oscillation partitions with a
 positive common gap at each tolerance.
 
-Completeness is stated for the family as a subspace. This theorem does not
-assume that the ambient `J₁` metric is complete. -/
+Completeness is a property of the path family in its inherited `J₁` metric.
+This is the compact-family form of the finite-partition criterion in Patrick
+Billingsley, *Convergence of Probability Measures*, 1st ed., Wiley, 1968,
+Chapter 3, §14, Theorem 14.3, p. 116
+([scan](https://ru.djvu.online/file/vaaIHv9IWlVeK)); the partition condition
+expresses his modulus $w'_f(\delta)$ through a common positive cell gap. -/
 theorem isCompact_iff_isComplete_rangeBounded_uniformAdmitsOscillationPartition
     {K : Set (CadlagPath unitInterval ℝ)} :
     IsCompact K ↔
@@ -228,7 +155,9 @@ theorem isCompact_iff_isComplete_rangeBounded_uniformAdmitsOscillationPartition
   constructor
   · intro hK
     refine ⟨hK.isComplete, ?_, ?_⟩
-    · exact isBounded_pathRange_of_isCompact hK
+    · obtain ⟨bound, hbound, hrange⟩ := isBounded_pathRange_of_isCompact hK 0
+      exact ⟨bound, hbound, fun path hpath t => by
+        simpa [Real.dist_eq] using hrange path hpath t⟩
     · intro tolerance htolerance
       obtain ⟨gap, hgap, hpartitions⟩ :=
         exists_uniform_admitsOscillationPartition_of_isCompact_of_pos hK htolerance
@@ -250,7 +179,12 @@ theorem isCompact_iff_isComplete_rangeBounded_uniformAdmitsOscillationPartition
 
 /-- Relative compactness of an arbitrary path family is characterized by
 completeness of its closure, uniformly bounded ranges, and uniform
-small-oscillation partitions with positive common gaps. -/
+small-oscillation partitions with positive common gaps. This is the closure
+form of the finite-partition criterion in Patrick Billingsley,
+*Convergence of Probability Measures*, 1st ed., Wiley, 1968, Chapter 3, §14,
+Theorem 14.3, p. 116
+([scan](https://ru.djvu.online/file/vaaIHv9IWlVeK)); the partition condition
+expresses his modulus $w'_f(\delta)$ through a common positive cell gap. -/
 theorem isCompact_closure_iff_isComplete_closure_rangeBounded_uniformAdmitsOscillationPartition
     {K : Set (CadlagPath unitInterval ℝ)} :
     IsCompact (closure K) ↔
@@ -263,8 +197,9 @@ theorem isCompact_closure_iff_isComplete_closure_rangeBounded_uniformAdmitsOscil
   constructor
   · intro hK
     refine ⟨hK.isComplete, ?_, ?_⟩
-    · obtain ⟨bound, hbound, hrange⟩ := isBounded_pathRange_of_isCompact hK
-      exact ⟨bound, hbound, fun path hpath => hrange path (subset_closure hpath)⟩
+    · obtain ⟨bound, hbound, hrange⟩ := isBounded_pathRange_of_isCompact hK 0
+      exact ⟨bound, hbound, fun path hpath t => by
+        simpa [Real.dist_eq] using hrange path (subset_closure hpath) t⟩
     · intro tolerance htolerance
       obtain ⟨gap, hgap, hpartitions⟩ :=
         exists_uniform_admitsOscillationPartition_of_isCompact_of_pos hK htolerance

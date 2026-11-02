@@ -4,25 +4,51 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Coupling.Field.Ranked
-import Probability.BranchingRandomWalk.Coupling.Rank.Block
+module
+
+public import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Core
+public import Probability.BranchingRandomWalk.Coupling.Rank.Block.Basic
 
 /-!
 # Recursive rank-matching primitives
 
-Source and fallback copies, the fresh-coordinate map for one generation, and
-its recursive successor identity.  These deterministic interfaces are shared
-by the measurability and product-law layers.
+Source and fallback projections and the fresh-coordinate map for one
+generation. These construction interfaces are shared by the measurability
+and product-law layers.
+
+## Public declarations
+
+The two copies are coordinate restrictions, and the fresh block choice at
+stage `n` uses ranks evaluated on the preceding installed field `F_n`:
+
+\[\begin{aligned}
+\operatorname{left}(F)(r,u)&=F(\operatorname{inl}(r),u),\\
+\operatorname{right}(F)(r,u)&=F(\operatorname{inr}(r),u),\\
+\operatorname{rankInstalledBlockChoice}_n(F)
+&=\operatorname{rankBlockChoice}_n
+  (\operatorname{sourceValue}_n(F),
+   \operatorname{targetValue}_n(F,F_n),
+   \operatorname{source}_n(F),\operatorname{target}_n(F,F_n)).
+\end{aligned}\]
+
+* `RootIndexed.StepField.left` and `RootIndexed.StepField.right` are the
+  projections `f(inl r, u)` and `f(inr r, u)` from a two-copy field.
+* `RootIndexed.rankInstalledBlockChoice` forms the generation-`n` coordinate
+  map by applying `rankBlockChoice` to source and target candidates evaluated
+  on the preceding installed field `F_n`.
+The one-use expansion of a recursive successor as a coordinate gluing is
+internal proof support under `Lemmas/RecursiveStep.lean`.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 /-- The source (left) copy of a joint product field. -/
 def RootIndexed.StepField.left
@@ -62,38 +88,5 @@ noncomputable def RootIndexed.rankInstalledBlockChoice
     (sourceValue n) (fun field => targetValue n field (prior field))
     (source n) (fun field => target n field (prior field))
 
-/-- One recursive successor stage is the predictable coordinate gluing used
-by the product-law theorem. -/
-theorem RootIndexed.rankInstalledField_succ_eq_glue
-    {Root α X Value : Type*}
-    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
-    (sourceValue : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
-      RootIndexed.TreeNode Root α → Value)
-    (targetValue : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
-      RootIndexed.StepField Root α X →
-        RootIndexed.TreeNode Root α → Value)
-    (source : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
-      Finset (RootIndexed.TreeNode Root α))
-    (target : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
-      RootIndexed.StepField Root α X →
-        Finset (RootIndexed.TreeNode Root α))
-    (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α X) :
-    RootIndexed.rankInstalledField sourceValue targetValue source target
-        RootIndexed.StepField.left RootIndexed.StepField.right (n + 1) field =
-      let prior := RootIndexed.rankInstalledField sourceValue targetValue source target
-        RootIndexed.StepField.left RootIndexed.StepField.right n field
-      RootIndexed.StepField.glue n (prior.past n)
-        (RootIndexed.selectedCoordinateField
-          (RootIndexed.rankInstalledBlockChoice sourceValue targetValue source target n)
-          field) := by
-  let prior := RootIndexed.rankInstalledField sourceValue targetValue source target
-    RootIndexed.StepField.left RootIndexed.StepField.right n field
-  rw [RootIndexed.rankInstalledField_succ]
-  symm
-  apply RootIndexed.glue_rankBlockChoice_eq_updateGeneration
-  intro r u hu
-  exact RootIndexed.rankInstalledField_apply_of_le_length sourceValue targetValue
-    source target RootIndexed.StepField.left RootIndexed.StepField.right
-    n field r u hu
 
 end ProbabilityTheory.BranchingRandomWalk.Coupling

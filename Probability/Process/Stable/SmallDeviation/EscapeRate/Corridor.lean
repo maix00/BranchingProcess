@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.EscapeRate
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.Basic
 public import Probability.Process.Stable.SmallDeviation.RangeComparison
 public import Probability.Process.Stable.SmallDeviation.ShiftedCorridor
 
@@ -15,6 +15,17 @@ public import Probability.Process.Stable.SmallDeviation.ShiftedCorridor
 
 The centered and shifted corridor limits follow from the range escape rate and
 Mogulskii's stable-process comparison inequalities.
+## Public declarations
+
+For a stable Lévy process whose increment law has mass on both sides of zero,
+`exists_centeredCorridor_escape_rate` and
+`exists_shiftedCorridor_escape_rate` show that centered and translated
+corridors share the range escape-rate constant $C<0$:
+$a^\alpha\log\mathbb P(X([0,1])\subset I_a)\to C$.
+`tendsto_log_shiftedCorridor_div_log_range` gives the logarithmic comparison
+for the translated event. Positivity and squeeze calculations specific to
+these statements remain private.
+
 -/
 
 @[expose] public section
@@ -24,7 +35,7 @@ namespace ProbabilityTheory
 open Filter MeasureTheory
 open scoped ENNReal NNReal Topology
 
-private theorem centeredCorridorProbability_pos_of_cdf
+private lemma centeredCorridorProbability_pos_of_cdf
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -35,7 +46,7 @@ private theorem centeredCorridorProbability_pos_of_cdf
   dsimp [centeredCorridorProbability]
   exact h.measure_fullSegmentCorridor_pos (-a) a (by linarith) ha hpos hneg
 
-private theorem stableCenteredLogRate_le_range
+private lemma stableCenteredLogRate_le_range
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -229,7 +240,7 @@ theorem IsStableLevyProcess.exists_centeredCorridor_escape_rate
       exact lt_of_le_of_lt hq hr
   exact ⟨C, hC, by simpa [l] using hRange, by simpa [l] using hlim⟩
 
-private theorem shiftedCorridorProbability_pos_of_cdf
+private lemma shiftedCorridorProbability_pos_of_cdf
     {Ω : Type*} [MeasurableSpace Ω]
     {α d a : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -243,7 +254,7 @@ private theorem shiftedCorridorProbability_pos_of_cdf
   dsimp [shiftedCorridorProbability]
   exact h.measure_fullSegmentCorridor_pos _ _ hlo hhi hpos hneg
 
-private theorem stableShiftedCorridorLogRate_le_range
+private lemma stableShiftedCorridorLogRate_le_range
     {Ω : Type*} [MeasurableSpace Ω]
     {α d a : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]

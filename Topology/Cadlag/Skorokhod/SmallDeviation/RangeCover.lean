@@ -15,6 +15,20 @@ public import Order.Bounds.RangeCover
 The range event in Mogulskii's comparison is covered by finitely many
 translated corridors. The argument uses the supremum of the complete path;
 the finite grid is only a cover of its possible location.
+
+## Public declarations
+
+- `rangeTubeStartingAtZero_subset_iUnion_corridors`: the zero-start unit
+  range tube is covered by the finite family of corridors indexed by
+  `j ∈ Finset.range (2k+1)`, each with half-width `1 + 2/k`.
+- `scaledRangeTube_subset_iUnion_scaledCorridors` transports this finite
+  cover through any spatial scaling map.
+
+For every positive integer \(k\), the unit zero-start range tube is covered
+by the \(2k+1\) uniformly interior corridors
+\(\{f:f(0)=0,\ \exists\delta>0,\ \forall t,\
+j/k-2-2/k+\delta\le f(t)\le j/k+2/k-\delta\}\),
+with \(0\le j<2k+1\). Spatial scaling carries this inclusion to any scale.
 -/
 
 @[expose] public section
@@ -34,7 +48,7 @@ theorem rangeTubeStartingAtZero_subset_iUnion_corridors
   obtain ⟨hzero, margin, hmargin, hosc⟩ := hf
   have hosc' : ∀ s t : unitInterval,
       |f.toFun s - f.toFun t| ≤ 2 - margin := by
-    simpa [Skorokhod.OscillationBounded] using hosc
+    simpa [Metric.OscillationBounded, Real.dist_eq] using hosc
   have hgeneral : Order.Bounds.UnitRangeTube (⊥ : unitInterval) f :=
     ⟨hzero, margin, hmargin, hosc'⟩
   obtain ⟨j, hj, margin', hmarg', hcorr⟩ :=

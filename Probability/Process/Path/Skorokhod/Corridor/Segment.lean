@@ -9,6 +9,7 @@ module
 public import Probability.Process.Path.Skorokhod.RationalTime
 public import Topology.Cadlag.Skorokhod.Corridor.Dense
 public import Probability.Process.Corridor.Segment
+public import Mathlib.Topology.UnitInterval
 
 /-!
 # Full-path corridor events on a time segment
@@ -16,6 +17,36 @@ public import Probability.Process.Corridor.Segment
 The statement of a corridor event quantifies over the complete càdlàg
 segment. A countable-coordinate description is used only to establish its
 measurability and independence consequences.
+
+## Public declarations
+
+- `ProbabilityTheory.isCadlag_segmentIncrement`: a càdlàg process path
+  restricts and recenters to a càdlàg path on any finite segment.
+- `ProbabilityTheory.mem_fullSegmentCorridorEvent_iff_rational`:
+  on càdlàg samples, membership in a positive-margin full-segment corridor is
+  equivalent to its rational-coordinate conditions.
+- `ProbabilityTheory.nullMeasurableSet_fullSegmentCorridorEvent`:
+  the full-segment corridor event is null-measurable for a.s. càdlàg paths
+  with a.e.-measurable coordinates.
+- `ProbabilityTheory.mem_fullSegmentCorridorReturnEvent_iff_rational` and
+  `ProbabilityTheory.mem_fullSegmentCorridorIocReturnEvent_iff_rational`:
+  the open and left-open/right-closed terminal-window events have the matching
+  rational-coordinate characterizations.
+- `ProbabilityTheory.measure_fullSegmentCorridorIocReturnEvent_eq_rational`
+  and `ProbabilityTheory.measure_fullSegmentCorridorReturnEvent_eq_rational`:
+  the complete-path and rational-coordinate events have equal probabilities
+  under a.s. càdlàg paths.
+- `ProbabilityTheory.nullMeasurableSet_fullSegmentCorridorReturnEvent` and
+  `ProbabilityTheory.nullMeasurableSet_fullSegmentCorridorIocReturnEvent`:
+  both terminal-window events are null-measurable under the same coordinate
+  measurability and path-regularity hypotheses.
+
+The segment increment is
+`\(\Delta X_{s,\ell}(t)=X_{s+\ell t}-X_s\)`. The full corridor event is
+`\(\{\omega\mid\exists\eta>0,\ \forall t\in[0,1],\
+a+\eta\le\Delta X_{s,\ell}(t,\omega)\le b-\eta\}\)`;
+the return versions additionally impose
+`\(\Delta X_{s,\ell}(1)\in(c,d)\)` or `\((c,d]\)`.
 -/
 
 @[expose] public section
@@ -30,23 +61,23 @@ theorem isCadlag_segmentIncrement {Ω : Type*}
     (hω : IsCadlag (fun t => X t ω)) :
     IsCadlag (segmentIncrement X start length ω) := by
   let clock : unitInterval → ℝ≥0 :=
-    fun t => start + length * UnitInterval.toNNReal t
+    fun t => start + length * unitInterval.toNNReal t
   have hclockMono : Monotone clock := by
     intro s t hst
-    have hst' : UnitInterval.toNNReal s ≤ UnitInterval.toNNReal t := by
+    have hst' : unitInterval.toNNReal s ≤ unitInterval.toNNReal t := by
       exact hst
     simpa [clock, add_comm] using add_le_add_left
       (mul_le_mul_of_nonneg_left hst' length.property) start
   have hclockCont : Continuous clock := by
     dsimp [clock]
     exact continuous_const.add
-      (continuous_const.mul UnitInterval.continuous_toNNReal)
+      (continuous_const.mul unitInterval.toNNReal_continuous)
   have hcomp := hω.comp_monotone_continuous hclockMono hclockCont
   have htranslated : IsCadlag (fun t : unitInterval =>
       X (clock t) ω - X start ω) :=
     hcomp.continuous_comp (g := fun x : ℝ => x - X start ω) (by fun_prop)
   change IsCadlag (fun t : unitInterval =>
-    X (start + length * UnitInterval.toNNReal t) ω - X start ω)
+    X (start + length * unitInterval.toNNReal t) ω - X start ω)
   simpa [clock] using htranslated
 
 /-- At a càdlàg sample, the full-path event agrees exactly with its
@@ -65,7 +96,7 @@ theorem mem_fullSegmentCorridorEvent_iff_rational
     f lower upper
   simpa only [fullSegmentCorridorEvent, Set.mem_ofPred_eq,
     Skorokhod.rangeInOpenInterval, f,
-    segmentIncrement, RationalCoordinate.toNNReal, UnitInterval.toNNReal]
+    segmentIncrement, RationalCoordinate.toNNReal, unitInterval.toNNReal]
     using hbridge.symm
 
 /-- Full-segment corridor events are measurable up to a null set when the
@@ -108,9 +139,7 @@ theorem mem_fullSegmentCorridorReturnEvent_iff_rational
     Skorokhod.rationalCoordinateCorridorReturnWithMargin]
   simp only [Set.mem_inter_iff, Set.mem_ofPred_eq,
     Set.mem_Ioo]
-  have htop : UnitInterval.toNNReal ⊤ = 1 := by
-    apply NNReal.coe_injective
-    rfl
+  have htop : unitInterval.toNNReal ⊤ = 1 := unitInterval.toNNReal_one
   constructor
   · rintro ⟨hcorridor, hend⟩
     exact ⟨(mem_fullSegmentCorridorEvent_iff_rational
@@ -136,9 +165,7 @@ theorem mem_fullSegmentCorridorIocReturnEvent_iff_rational
   rw [fullSegmentCorridorIocReturnEvent,
     Skorokhod.rationalCoordinateCorridorIocReturnWithMargin]
   simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_Ioc]
-  have htop : UnitInterval.toNNReal ⊤ = 1 := by
-    apply NNReal.coe_injective
-    rfl
+  have htop : unitInterval.toNNReal ⊤ = 1 := unitInterval.toNNReal_one
   constructor
   · rintro ⟨hcorridor, hend⟩
     exact ⟨(mem_fullSegmentCorridorEvent_iff_rational
@@ -241,116 +268,6 @@ theorem nullMeasurableSet_fullSegmentCorridorIocReturnEvent
     exact propext ((mem_fullSegmentCorridorIocReturnEvent_iff_rational
       X start length lower upper coreLower coreUpper ω hω).symm)
   exact hrational.congr heq
-
-/-- A constrained first segment and a translated continuation lie in the
-same complete-path corridor. This is the pathwise inclusion behind the
-fixed-cut probability lower bound. -/
-theorem fullEntrance_inter_continuation_subset_fullCorridor
-    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (cut remaining : ℝ≥0) (hcut : 0 < cut) (hremaining : 0 < remaining)
-    (lower upper endpointLower endpointUpper : ℝ) :
-    fullSegmentCorridorReturnEvent X 0 cut
-        lower upper endpointLower endpointUpper ∩
-      fullSegmentCorridorEvent X cut remaining
-        (lower - endpointLower) (upper - endpointUpper) ⊆
-      fullSegmentCorridorEvent X 0 (cut + remaining) lower upper := by
-  intro ω hω
-  rcases hω with ⟨⟨⟨margin₁, hmargin₁, hfirst⟩, hend⟩,
-    margin₂, hmargin₂, hsecond⟩
-  have hendpoint : endpointLower < X cut ω - X 0 ω ∧
-      X cut ω - X 0 ω < endpointUpper := by
-    simpa [segmentIncrement] using hend
-  let margin := min margin₁ (min margin₂
-    (min (X cut ω - X 0 ω - endpointLower)
-      (endpointUpper - (X cut ω - X 0 ω))))
-  have hmargin : 0 < margin := by
-    dsimp [margin]
-    exact lt_min hmargin₁ (lt_min hmargin₂
-      (lt_min (sub_pos.mpr hendpoint.1) (sub_pos.mpr hendpoint.2)))
-  refine ⟨margin, hmargin, ?_⟩
-  intro t
-  let absoluteTime := (cut + remaining) * UnitInterval.toNNReal t
-  by_cases hbefore : absoluteTime ≤ cut
-  · obtain ⟨u, hu⟩ := UnitInterval.exists_mul_eq cut absoluteTime hcut hbefore
-    have hu' := hfirst u
-    have hm : margin ≤ margin₁ := min_le_left _ _
-    dsimp [segmentIncrement] at hu' ⊢
-    simp only [zero_add] at hu' ⊢
-    change cut * UnitInterval.toNNReal u = absoluteTime at hu
-    rw [hu] at hu'
-    constructor <;> linarith
-
-  · have hafter : cut ≤ absoluteTime := le_of_not_ge hbefore
-    have htotal : absoluteTime ≤ cut + remaining := by
-      simpa [absoluteTime] using mul_le_mul_of_nonneg_left
-        (UnitInterval.toNNReal_le_one t) (cut + remaining).property
-    obtain ⟨u, hu⟩ := UnitInterval.exists_add_mul_eq
-      cut remaining absoluteTime hremaining hafter htotal
-    have hu' := hsecond u
-    have hmLow : margin ≤ X cut ω - X 0 ω - endpointLower := by
-      exact le_trans (min_le_right _ _)
-        (le_trans (min_le_right _ _) (min_le_left _ _))
-    have hmUp : margin ≤ endpointUpper - (X cut ω - X 0 ω) := by
-      exact le_trans (min_le_right _ _)
-        (le_trans (min_le_right _ _) (min_le_right _ _))
-    dsimp [segmentIncrement] at hu' ⊢
-    simp only [zero_add] at hu' ⊢
-    change cut + remaining * UnitInterval.toNNReal u = absoluteTime at hu
-    rw [hu] at hu'
-    constructor <;> linarith
-
-/-- Two adjacent endpoint-constrained segments concatenate to an
-endpoint-constrained complete corridor. The second corridor is translated by
-the entire first endpoint window. -/
-theorem fullReturn_inter_return_subset_fullReturn
-    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (cut remaining : ℝ≥0) (hcut : 0 < cut) (hremaining : 0 < remaining)
-    (lower upper firstLower firstUpper secondLower secondUpper : ℝ) :
-    fullSegmentCorridorReturnEvent X 0 cut
-        lower upper firstLower firstUpper ∩
-      fullSegmentCorridorReturnEvent X cut remaining
-        (lower - firstLower) (upper - firstUpper)
-        secondLower secondUpper ⊆
-      fullSegmentCorridorReturnEvent X 0 (cut + remaining)
-        lower upper (firstLower + secondLower) (firstUpper + secondUpper) := by
-  intro ω hω
-  have hpath := fullEntrance_inter_continuation_subset_fullCorridor X
-    cut remaining hcut hremaining lower upper firstLower firstUpper
-    ⟨hω.1, hω.2.1⟩
-  refine ⟨hpath, ?_⟩
-  have hfirst := hω.1.2
-  have hsecond := hω.2.2
-  have htop : UnitInterval.toNNReal ⊤ = 1 := by
-    apply NNReal.coe_injective
-    rfl
-  dsimp [segmentIncrement] at hfirst hsecond ⊢
-  simp only [htop, mul_one, zero_add, Set.mem_Ioo] at hfirst hsecond ⊢
-  constructor <;> linarith
-
-/-- Restricting a complete corridor path to a shorter initial horizon
-preserves its positive uniform spatial margin. -/
-theorem fullSegmentCorridorEvent_mono_length
-    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (start short long : ℝ≥0) (hlong : 0 < long)
-    (hshort : short ≤ long) (lower upper : ℝ) :
-    fullSegmentCorridorEvent X start long lower upper ⊆
-      fullSegmentCorridorEvent X start short lower upper := by
-  intro ω hω
-  rcases hω with ⟨margin, hmargin, hpath⟩
-  refine ⟨margin, hmargin, ?_⟩
-  intro t
-  have htime : short * UnitInterval.toNNReal t ≤ long := by
-    calc
-      short * UnitInterval.toNNReal t ≤ short * 1 :=
-        mul_le_mul_of_nonneg_left (UnitInterval.toNNReal_le_one t) short.property
-      _ = short := mul_one _
-      _ ≤ long := hshort
-  obtain ⟨u, hu⟩ := UnitInterval.exists_mul_eq long
-    (short * UnitInterval.toNNReal t) hlong htime
-  have hb := hpath u
-  dsimp [segmentIncrement] at hb ⊢
-  rw [hu] at hb
-  exact hb
 
 end ProbabilityTheory
 

@@ -14,6 +14,34 @@ public import Probability.Process.RandomWalk.Path.Block.Basic
 Finite path-window and survival predicates depend only on an initial state
 and an increment path.  Measurability and probability laws are developed in
 the corresponding probability layer.
+
+## Public declarations
+
+- `ProbabilityTheory.RandomWalk.InWindows`,
+  `ProbabilityTheory.RandomWalk.InClosedInterval`,
+  `ProbabilityTheory.RandomWalk.FiniteInClosedInterval`, and
+  `ProbabilityTheory.RandomWalk.StaysIn`:
+  finite paths satisfy $path(k)\in window(k)$, or in the real interval case
+  $x+\sum_{j<k}\xi_j\in[l,u]$; `StaysIn` records the positive-time
+  condition $x+\sum_{j<k}\xi_j\in A$.
+- `ProbabilityTheory.RandomWalk.finiteInClosedInterval_translate_by_initial`:
+  $\mathrm{FiniteInClosedInterval}(l,u,x,\xi)\iff\mathrm{FiniteInClosedInterval}(l-x,u-x,0,\xi)$.
+- `ProbabilityTheory.RandomWalk.finiteInClosedInterval_blockCoordinates_iff`:
+  $\mathrm{FiniteInClosedInterval}(l,u,x,(\xi_{s+k})_{k<n})\iff
+  \mathrm{InClosedInterval}(l,u,n,x,(\xi_{s+k})_{k\ge0})$.
+- `ProbabilityTheory.RandomWalk.staysIn_Icc_iff_inClosedInterval`:
+  $x\in[l,u]\implies(\mathrm{StaysIn}([l,u],n,x,\xi)\iff
+  \mathrm{InClosedInterval}(l,u,n,x,\xi))$.
+- `ProbabilityTheory.RandomWalk.staysIn_succ_iff`:
+  $\mathrm{StaysIn}(A,n+1,x,\xi)\iff(x+\xi_0\in A\land\mathrm{StaysIn}(A,n,x+\xi_0,k\mapsto\xi_{k+1}))$.
+- `ProbabilityTheory.RandomWalk.StaysIn.mono_Icc_of_abs_sub_le`,
+  `ProbabilityTheory.RandomWalk.add_mem_Icc_of_add_mem_shrunk_Icc_of_abs_sub_le`,
+  and `ProbabilityTheory.RandomWalk.StaysIn.and_endpoint_mono_Icc_of_abs_sub_le`:
+  if $|x-y|\le m$, then
+  translating a path from $y$ to $x$ maps the interval shrunk by $m$ into the
+  original interval, including a terminal interval constraint.
+- `ProbabilityTheory.RandomWalk.inClosedInterval_add_iff`:
+  $\mathrm{InClosedInterval}(l,u,m+n,x,\xi)\iff(\mathrm{InClosedInterval}(l,u,m,x,\xi)\land\mathrm{InClosedInterval}(l,u,n,x+\sum_{j<m}\xi_j,k\mapsto\xi_{m+k}))$.
 -/
 
 @[expose] public section
@@ -40,6 +68,20 @@ def FiniteInClosedInterval (lower upper initial : ℝ) {n : ℕ}
     ∑ j : Fin k, increment
       ⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩ ∈
         Set.Icc lower upper
+
+/-- Translating the initial position to zero translates both interval
+endpoints by the same amount. -/
+theorem finiteInClosedInterval_translate_by_initial
+    {length : ℕ} (lower upper initial : ℝ)
+    (block : Fin length → ℝ) :
+    FiniteInClosedInterval lower upper initial block ↔
+      FiniteInClosedInterval (lower - initial) (upper - initial) 0 block := by
+  simp only [FiniteInClosedInterval, Set.mem_Icc]
+  constructor <;> intro h k
+  · have hk := h k
+    constructor <;> linarith
+  · have hk := h k
+    constructor <;> linarith
 
 /-- A closed-interval path event factors through its finite coordinate
 block. -/

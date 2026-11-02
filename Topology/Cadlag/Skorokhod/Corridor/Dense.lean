@@ -9,86 +9,59 @@ module
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Topology.Cadlag.Skorokhod.Oscillation.Dense
 import Topology.Order.UnitInterval.Rational
+import Topology.Cadlag.Range
 
 /-!
 # Strict corridors from rational coordinates
 
+## Public declarations
+
+- `Skorokhod.rationalCoordinateCorridorWithMargin`: the countable-coordinate
+  corridor event with a positive real uniform margin.
+- `Skorokhod.mem_rationalCoordinateCorridorWithMargin_smul_iff`: for `c > 0`,
+  `(q ↦ c * x q)` lies in the corridor `(lower, upper)` iff `x` lies in
+  `(lower / c, upper / c)`.
+- `Skorokhod.measurableSet_rationalCoordinateCorridorWithMargin`: the
+  countable-coordinate corridor event is measurable.
+- `Skorokhod.rationalCoordinateCorridorReturnWithMargin`: the uniform-margin
+  corridor together with an open terminal window.
+- `Skorokhod.mem_rationalCoordinateCorridorReturnWithMargin_smul_iff` and
+  `Skorokhod.measurableSet_rationalCoordinateCorridorReturnWithMargin`:
+  positive scaling transports the corridor and terminal window, and the event
+  is measurable.
+- `Skorokhod.rationalCoordinateCorridorIocReturnWithMargin`:
+  the corridor with a left-open, right-closed terminal window.
+- `Skorokhod.mem_rationalCoordinateCorridorIocReturnWithMargin_smul_iff` and
+  `Skorokhod.measurableSet_rationalCoordinateCorridorIocReturnWithMargin`:
+  positive scaling transports this event and it is measurable.
+- `Skorokhod.mem_rationalCoordinateCorridorWithMargin_iff`: restriction of a
+  càdlàg path to rational coordinates belongs to the coordinate event iff
+  the path belongs to the full corridor.
+
 A positive uniform margin on rational times, including the terminal time,
 extends to every time of a càdlàg path. The margin is essential: rational
 pointwise strict inequalities alone do not control an unattained left limit.
+
+For rational-coordinate paths, the event is
+\(\{x:\exists\delta>0,\ \forall q\in\mathbb Q\cap[0,1],\
+a+\delta\le x(q)\le b-\delta\}\), and positive scaling obeys
+\(cx\in\mathcal O_{a,b}\iff x\in\mathcal O_{a/c,b/c}\) for \(c>0\).
 -/
 
 @[expose] public section
 
 namespace Skorokhod
 
-open Filter Set
+open Set
 open scoped Topology
 
-/-- A closed spatial interval bound on a dense time set extends to all times
-for a càdlàg path when the dense set contains the final time. -/
-theorem closedCorridor_on_dense
-    {T : Type*} [LinearOrder T] [TopologicalSpace T] [OrderTopology T]
-    [DenselyOrdered T] [FirstCountableTopology T] [OrderTop T]
-    {D : Set T} (hD : Dense D) (htop : ⊤ ∈ D)
-    (path : T → ℝ) (hpath : IsCadlag path) {lower upper : ℝ}
-    (hDpath : ∀ t ∈ D, lower ≤ path t ∧ path t ≤ upper) :
-    ∀ t, lower ≤ path t ∧ path t ≤ upper := by
-  intro t
-  by_cases ht : t = ⊤
-  · exact ht ▸ hDpath ⊤ htop
-  · have httop : t < ⊤ := lt_of_le_of_ne le_top ht
-    obtain ⟨u, _, huD, huTendsto⟩ :=
-      hD.exists_seq_strictAnti_tendsto_of_lt httop
-    have hwithin : Tendsto u atTop (𝓝[Set.Ioi t] t) := by
-      rw [tendsto_nhdsWithin_iff]
-      exact ⟨huTendsto, Filter.Eventually.of_forall fun n => (huD n).1.1⟩
-    have hvalue : Tendsto (fun n => path (u n)) atTop (𝓝 (path t)) :=
-      (hpath.isRightContinuous t).tendsto.comp hwithin
-    constructor
-    · exact isClosed_Ici.mem_of_tendsto hvalue
-        (Filter.Eventually.of_forall fun n => (hDpath (u n) (huD n).2).1)
-    · exact isClosed_Iic.mem_of_tendsto hvalue
-        (Filter.Eventually.of_forall fun n => (hDpath (u n) (huD n).2).2)
-
-/-- A uniform rational-coordinate corridor, with an explicit positive
-margin. -/
-def rationalCorridorWithMargin (lower upper : ℝ) :
-    Set (CadlagPath unitInterval ℝ) :=
-  {f | ∃ margin > 0, ∀ q : RationalCoordinate.UnitInterval,
-    lower + margin ≤ f (RationalCoordinate.toUnitInterval q) ∧
-      f (RationalCoordinate.toUnitInterval q) ≤ upper - margin}
-
-/-- Countable-coordinate strict corridor with a rational uniform margin. -/
+/-- Countable-coordinate strict corridor with a positive real uniform margin.
+The rational time coordinates make the event countably measurable. -/
 def rationalCoordinateCorridorWithMargin (lower upper : ℝ) :
-    Set (RationalCoordinate.UnitInterval → ℝ) :=
-  {x | ∃ margin : ℚ, 0 < (margin : ℝ) ∧
-    ∀ q : RationalCoordinate.UnitInterval,
-      lower + margin ≤ x q ∧ x q ≤ upper - margin}
-
-/-- A real-margin formulation of the same coordinate event. It is useful
-for positive scalar changes, while the rational-margin formulation exposes
-countable measurability. -/
-def rationalCoordinateCorridorWithRealMargin (lower upper : ℝ) :
     Set (RationalCoordinate.UnitInterval → ℝ) :=
   {x | ∃ margin : ℝ, 0 < margin ∧
     ∀ q : RationalCoordinate.UnitInterval,
       lower + margin ≤ x q ∧ x q ≤ upper - margin}
-
-theorem rationalCoordinateCorridorWithMargin_eq_real
-    (lower upper : ℝ) :
-    rationalCoordinateCorridorWithMargin lower upper =
-      rationalCoordinateCorridorWithRealMargin lower upper := by
-  ext x
-  constructor
-  · rintro ⟨margin, hmargin, hbound⟩
-    exact ⟨margin, hmargin, hbound⟩
-  · rintro ⟨margin, hmargin, hbound⟩
-    obtain ⟨q, hqpos, hqmargin⟩ := exists_rat_btwn hmargin
-    refine ⟨q, hqpos, ?_⟩
-    intro t
-    have ht := hbound t
-    constructor <;> linarith
 
 /-- Positive scalar multiplication transports a countable-coordinate
 uniform corridor, including its positive margin. -/
@@ -97,8 +70,6 @@ theorem mem_rationalCoordinateCorridorWithMargin_smul_iff
     (lower upper : ℝ) :
     (fun q => c * x q) ∈ rationalCoordinateCorridorWithMargin lower upper ↔
       x ∈ rationalCoordinateCorridorWithMargin (lower / c) (upper / c) := by
-  rw [rationalCoordinateCorridorWithMargin_eq_real,
-    rationalCoordinateCorridorWithMargin_eq_real]
   constructor
   · rintro ⟨margin, hmargin, hbound⟩
     refine ⟨margin / c, div_pos hmargin hc, ?_⟩
@@ -134,15 +105,33 @@ theorem measurableSet_rationalCoordinateCorridorWithMargin
     exact MeasurableSet.iInter fun q =>
       (measurableSet_le measurable_const (measurable_pi_apply q)).inter
         (measurableSet_le (measurable_pi_apply q) measurable_const)
-  rw [show rationalCoordinateCorridorWithMargin lower upper =
+  have hEq : rationalCoordinateCorridorWithMargin lower upper =
       ⋃ margin : ℚ,
         if 0 < (margin : ℝ) then
           {x : RationalCoordinate.UnitInterval → ℝ |
             ∀ q, lower + (margin : ℝ) ≤ x q ∧
               x q ≤ upper - (margin : ℝ)}
-        else ∅ by
-      ext x
-      simp [rationalCoordinateCorridorWithMargin]]
+        else ∅ := by
+    ext x
+    constructor
+    · rintro ⟨r, hr, hbound⟩
+      obtain ⟨q, hqpos, hqr⟩ := exists_rat_btwn hr
+      refine Set.mem_iUnion.2 ⟨q, ?_⟩
+      have hqbound : ∀ t, lower + (q : ℝ) ≤ x t ∧
+          x t ≤ upper - (q : ℝ) := by
+        intro t
+        rcases hbound t with ⟨hlower, hupper⟩
+        constructor <;> linarith
+      simpa [hqpos] using hqbound
+    · intro hx
+      rcases Set.mem_iUnion.mp hx with ⟨q, hq⟩
+      by_cases hqpos : 0 < (q : ℝ)
+      · have hbound : ∀ t, lower + (q : ℝ) ≤ x t ∧
+            x t ≤ upper - (q : ℝ) := by
+          simpa [hqpos] using hq
+        exact ⟨(q : ℝ), hqpos, hbound⟩
+      · simp [hqpos] at hq
+  rw [hEq]
   exact MeasurableSet.iUnion fun margin => by
     split_ifs
     · exact hmargin margin
@@ -221,26 +210,6 @@ theorem measurableSet_rationalCoordinateCorridorIocReturnWithMargin
   (measurableSet_rationalCoordinateCorridorWithMargin lower upper).inter
     (measurableSet_Ioc.preimage (measurable_pi_apply ⊤))
 
-/-- Rational and full-path positive-margin corridor events coincide. -/
-theorem rationalCorridorWithMargin_eq (lower upper : ℝ) :
-    rationalCorridorWithMargin lower upper = rangeInOpenInterval lower upper := by
-  have hD : Dense (Set.range RationalCoordinate.toUnitInterval) :=
-    RationalCoordinate.denseRange_toUnitInterval
-  have htop : (⊤ : unitInterval) ∈ Set.range RationalCoordinate.toUnitInterval := by
-    refine ⟨⟨1, by norm_num⟩, ?_⟩
-    apply Subtype.ext
-    simp [RationalCoordinate.toUnitInterval]
-  ext f
-  constructor
-  · rintro ⟨margin, hmargin, hbound⟩
-    refine ⟨margin, hmargin, ?_⟩
-    apply closedCorridor_on_dense hD htop f f.isCadlag_toFun
-    intro t ht
-    obtain ⟨q, rfl⟩ := ht
-    exact hbound q
-  · rintro ⟨margin, hmargin, hbound⟩
-    exact ⟨margin, hmargin, fun q => hbound _⟩
-
 /-- On càdlàg paths, the countable-coordinate event is exactly the full
 strict corridor event. -/
 theorem mem_rationalCoordinateCorridorWithMargin_iff
@@ -248,16 +217,29 @@ theorem mem_rationalCoordinateCorridorWithMargin_iff
     (fun q => f (RationalCoordinate.toUnitInterval q)) ∈
         rationalCoordinateCorridorWithMargin lower upper ↔
       f ∈ rangeInOpenInterval lower upper := by
-  rw [← rationalCorridorWithMargin_eq]
+  have hD : Dense (Set.range RationalCoordinate.toUnitInterval) :=
+    RationalCoordinate.denseRange_toUnitInterval
+  have htop : (⊤ : unitInterval) ∈ Set.range RationalCoordinate.toUnitInterval := by
+    refine ⟨⟨1, by norm_num⟩, ?_⟩
+    apply Subtype.ext
+    simp [RationalCoordinate.toUnitInterval]
+  change (∃ margin : ℝ, 0 < margin ∧
+      ∀ q : RationalCoordinate.UnitInterval,
+        lower + margin ≤ f (RationalCoordinate.toUnitInterval q) ∧
+          f (RationalCoordinate.toUnitInterval q) ≤ upper - margin) ↔
+    ∃ margin : ℝ, 0 < margin ∧
+      ∀ t, lower + margin ≤ f t ∧ f t ≤ upper - margin
   constructor
   · rintro ⟨margin, hmargin, hbound⟩
-    exact ⟨(margin : ℝ), hmargin, hbound⟩
+    refine ⟨margin, hmargin, fun t => ?_⟩
+    have hrange : Set.range f ⊆ Set.Icc (lower + margin) (upper - margin) :=
+      IsCadlag.range_subset_of_dense hD htop f.isCadlag_toFun isClosed_Icc
+        (fun t ht => by
+          obtain ⟨q, rfl⟩ := ht
+          exact hbound q)
+    exact hrange ⟨t, rfl⟩
   · rintro ⟨margin, hmargin, hbound⟩
-    obtain ⟨q, hq0, hqmargin⟩ := exists_rat_btwn hmargin
-    refine ⟨q, hq0, ?_⟩
-    intro t
-    have ht := hbound t
-    constructor <;> linarith
+    exact ⟨margin, hmargin, fun t => hbound (RationalCoordinate.toUnitInterval t)⟩
 
 end Skorokhod
 

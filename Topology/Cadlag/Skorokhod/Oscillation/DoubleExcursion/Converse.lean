@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion
-import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.JumpControl
+public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Basic
+import all Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Lemmas.JumpControl
 import Topology.Cadlag.Skorokhod.Oscillation.Partition.Finite
 import Topology.Cadlag.Jump
 import Order.Interval.UniformGrid
@@ -15,9 +15,31 @@ import Order.Interval.UniformGrid
 /-!
 # Converse to the double-excursion criterion
 
-A càdlàg path satisfying uniform double-excursion and endpoint controls has
-an oscillation partition with a uniform mesh lower bound. The proof isolates
+For `0 < δ ≤ 1` and `ε > 0`, if a càdlàg path satisfies both
+`HasDoubleExcursionBound f δ ε` and `HasEndpointOscillationBound f δ ε`,
+then it admits a finite oscillation partition `P` with
+`δ / 16 ≤ P.mesh` and cell oscillation at most `5 * ε`. The proof isolates
 large jumps and filters a uniform grid around them.
+
+This is a metric-valued pathwise partition construction motivated by the
+real-valued double-excursion and endpoint criterion in Patrick Billingsley,
+*Convergence of Probability Measures*, 1st ed., Wiley, 1968, Chapter 3, §14,
+Theorem 14.4, p. 119
+([online copy](https://ru.djvu.online/file/vaaIHv9IWlVeK)). It does not assert
+the full compactness theorem.
+
+## Public declarations
+
+- `HasDoubleExcursionBound.exists_oscillation_partition`: the stated
+  double-excursion and endpoint bounds yield `P` with
+  `δ / 16 ≤ P.mesh` and `OscillationBoundedOnPartition P f (5 * ε)`.
+
+In formula form, the hypotheses
+\(\operatorname{HasDoubleExcursionBound}(f,\delta,\varepsilon)\) and
+\(\operatorname{HasEndpointOscillationBound}(f,\delta,\varepsilon)\)
+imply that some finite partition \(P\) satisfies
+\(\delta/16\le\operatorname{mesh}(P)\) and
+\(\operatorname{OscillationBoundedOnPartition}(P,f,5\varepsilon)\).
 -/
 
 @[expose] public section
@@ -28,18 +50,18 @@ open scoped Topology
 
 namespace Skorokhod
 
-private theorem unitInterval_dist_eq_coe_sub {a b : unitInterval} (hab : a ≤ b) :
+private lemma unitInterval_dist_eq_coe_sub {a b : unitInterval} (hab : a ≤ b) :
     dist a b = (b : ℝ) - (a : ℝ) := by
   have hab' : (a : ℝ) ≤ b := by exact_mod_cast hab
   rw [Subtype.dist_eq, Real.dist_eq, abs_of_nonpos (sub_nonpos.mpr hab')]
   ring
 
-private theorem unitInterval_dist_bot_eq (t : unitInterval) :
+private lemma unitInterval_dist_bot_eq (t : unitInterval) :
     dist (⊥ : unitInterval) t = (t : ℝ) := by
   rw [unitInterval_dist_eq_coe_sub bot_le]
   simp
 
-private theorem unitInterval_dist_top_eq (t : unitInterval) :
+private lemma unitInterval_dist_top_eq (t : unitInterval) :
     dist (⊤ : unitInterval) t = 1 - (t : ℝ) := by
   rw [dist_comm, unitInterval_dist_eq_coe_sub (le_top : t ≤ ⊤)]
   simp
@@ -49,13 +71,13 @@ private noncomputable def unitGridPoint (blocks : ℕ) (hblocks : 0 < blocks)
   let grid : UniformGrid ℝ := UniformGrid.unit (K := ℝ) blocks hblocks
   exact ⟨grid.point i, by simpa [grid] using UniformGrid.point_mem_Icc grid i⟩
 
-private theorem unitGridPoint_coe (blocks : ℕ) (hblocks : 0 < blocks)
+private lemma unitGridPoint_coe (blocks : ℕ) (hblocks : 0 < blocks)
     (i : Fin (blocks + 1)) :
     (unitGridPoint blocks hblocks i : ℝ) = (i : ℝ) / blocks := by
   change (UniformGrid.unit (K := ℝ) blocks hblocks).point i = (i : ℝ) / blocks
   exact UniformGrid.unit_point (K := ℝ) blocks hblocks i
 
-private theorem unitGridPoint_strictMono (blocks : ℕ) (hblocks : 0 < blocks) :
+private lemma unitGridPoint_strictMono (blocks : ℕ) (hblocks : 0 < blocks) :
     StrictMono (unitGridPoint blocks hblocks) := by
   intro i j hij
   apply Subtype.coe_lt_coe.mpr
@@ -63,7 +85,7 @@ private theorem unitGridPoint_strictMono (blocks : ℕ) (hblocks : 0 < blocks) :
   change grid.point i < grid.point j
   exact UniformGrid.strictMono_point (grid := grid) (by norm_num [grid]) hij
 
-private theorem unitGridPoint_step_distance (blocks : ℕ) (hblocks : 0 < blocks)
+private lemma unitGridPoint_step_distance (blocks : ℕ) (hblocks : 0 < blocks)
     (i : Fin blocks) :
     dist (unitGridPoint blocks hblocks i.castSucc)
       (unitGridPoint blocks hblocks i.succ) = 1 / (blocks : ℝ) := by
@@ -80,7 +102,7 @@ private theorem unitGridPoint_step_distance (blocks : ℕ) (hblocks : 0 < blocks
   field_simp
   ring
 
-private theorem unitGridPoint_pair_distance_lower
+private lemma unitGridPoint_pair_distance_lower
     (blocks : ℕ) (hblocks : 0 < blocks) {i j : Fin (blocks + 1)} (hij : i ≠ j) :
     1 / (blocks : ℝ) ≤ dist (unitGridPoint blocks hblocks i)
       (unitGridPoint blocks hblocks j) := by
@@ -110,7 +132,7 @@ private theorem unitGridPoint_pair_distance_lower
   · exact hforward hij
   · simpa [dist_comm] using hforward hji
 
-private theorem exists_unitGridPoint_between
+private lemma exists_unitGridPoint_between
     {blocks : ℕ} (hblocks : 0 < blocks) {p q : unitInterval} {c : ℝ}
     (hc : 0 ≤ c)
     (hwidth : 2 * (c + 1 / (blocks : ℝ)) < (q : ℝ) - (p : ℝ)) :

@@ -4,16 +4,46 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition.Basic
-import Combinatorics.BranchingWalk.Step.ExponentialWeight
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition.Basic
+public import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
+public import Probability.Process.Path.Restart.Basic
 
 /-!
 # Finiteness adapters for causal relative-position populations
 
+## Public declarations
+
+- `RootIndexed.CausalPopulation.ofRestartedPositionSetsOfUpperFinite`: builds
+  the restarted relative-position population when each parent has finitely
+  many surviving children below every position bound and the window has a
+  finite upper bound.
+- `RootIndexed.CausalPopulation.ofRestartedPositionSetsOfStepLowerFinite`:
+  derives the same population from finiteness of each mapped branching step's
+  lower level sets.
+
 This file converts directional finiteness of offspring levels into finite
 relative-position slices.  It does not specialize the construction to real
 weights.
+
+The first construction assumes that for every \(n\), step field \(F\),
+parent address \((r,u)\) with \(|u|=n\), and bound \(a\),
+\[
+  \left\{i:\operatorname{survive}(F(r,u),i)\land
+  \operatorname{relativePositionAtGeneration}\!\left(
+  \operatorname{initialPosition},d,\operatorname{restartAnchor}(\operatorname{cutoff},n+1),n+1,
+  (r,u\mathbin{++}[i]),F\right)\le a\right\}\text{ is finite},
+\]
+and builds the restarted causal population in the window. The second obtains
+this finiteness from the mapped-step lower level sets
+\[
+  \left\{i:\operatorname{survive}((F(r,u)).\operatorname{map}(d),i)
+       \land \operatorname{value}'((F(r,u)).\operatorname{map}(d),i)\le a\right\}.
+\]
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
@@ -22,7 +52,7 @@ namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed.CausalPopulation
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open ProbabilityTheory.RandomWalk
+open ProbabilityTheory.Process.Path
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 noncomputable def ofRestartedPositionSetsOfUpperFinite
@@ -51,7 +81,7 @@ noncomputable def ofRestartedPositionSetsOfUpperFinite
   apply ofRestartedPositionSets initialPosition d hd initial hinitialDepth
     cutoff window hwindow
   intro n parents field
-  apply RootIndexed.childrenAtGeneration_filter_finite_of_upperBound
+  apply Combinatorics.Branching.Population.childrenAtGeneration_filter_finite_of_upperBound
     n parents field
     (fun q => RootIndexed.relativePositionAtGeneration initialPosition d
       (restartAnchor cutoff (n + 1)) (n + 1) q field)

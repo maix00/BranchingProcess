@@ -15,6 +15,26 @@ Finite inner corridors approximate every finite-width partition cell from
 inside. Cells with an infinite boundary trace admit inner widths tending to
 infinity, so their contribution to the rate tends to zero. This identifies
 the finite-partition lower rate with the `Hα` energy.
+
+## Public declarations
+
+- `commonPartitionApproxWidth upper lower n i` is \(n+1\) when the cell has
+  an infinite trace width, and otherwise equals its trace width times
+  \(1-\frac{1}{n+2}\).
+- `rightTrace_lt_of_traceSeparated` states
+  \(\operatorname{TraceSeparated}(upper,lower)\Rightarrow
+  lower.rightTrace(t)<upper.rightTrace(t)\).
+- Under trace separation, `commonPartitionApproxWidth_pos` gives
+  \(0<w_{n,i}\), and `commonPartitionApproxWidth_lt_traceWidth` gives
+  \(w_{n,i}<upper.rightTrace(t_i).toReal-lower.rightTrace(t_i).toReal\)
+  whenever the cell has finite trace width.
+- `ContinuousAdmissibleStepCorridor.tendsto_commonPartitionApproxRate` states
+  \[
+    \sum_i\frac{C\,\ell_i}{(w_{n,i}/2)^\alpha}
+      \longrightarrow C\,2^\alpha\,(c.energy\ \alpha).toReal,
+  \]
+  where \(\ell_i=\operatorname{commonPartitionCellLength}(upper,lower,i)\)
+  and \(w_{n,i}=\operatorname{commonPartitionApproxWidth}(upper,lower,n,i)\).
 -/
 
 open Filter
@@ -47,7 +67,7 @@ theorem rightTrace_lt_of_traceSeparated (upper lower : StepBoundary)
   exact lt_of_le_of_lt (le_max_right _ _)
     (lt_of_lt_of_le (hsep t) (min_le_right _ _))
 
-private theorem commonPartitionTraceWidth_pos (upper lower : StepBoundary)
+private lemma commonPartitionTraceWidth_pos (upper lower : StepBoundary)
     (hsep : TraceSeparated upper lower)
     (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))
     (hinf : ¬ (upper.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val) = ⊤ ∨
@@ -138,7 +158,7 @@ theorem commonPartitionApproxWidth_lt_traceWidth (upper lower : StepBoundary)
     rw [commonPartitionApproxWidth, ite_eq_right hinf]
     exact hlt
 
-private theorem tendsto_commonPartitionApproxWidth_finite
+private lemma tendsto_commonPartitionApproxWidth_finite
     (upper lower : StepBoundary) (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))
     (hinf : ¬ (upper.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val) = ⊤ ∨
       lower.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val) = ⊥)) :
@@ -163,7 +183,7 @@ private theorem tendsto_commonPartitionApproxWidth_finite
   rw [commonPartitionApproxWidth, ite_eq_right hinf]
   simp [one_div]
 
-private theorem tendsto_commonPartitionApproxWidth_infinite
+private lemma tendsto_commonPartitionApproxWidth_infinite
     (upper lower : StepBoundary) (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))
     (hinf : upper.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val) = ⊤ ∨
       lower.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val) = ⊥) :

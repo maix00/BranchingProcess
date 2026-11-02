@@ -15,6 +15,37 @@ public import Probability.Process.Levy.Basic
 The identity clock on nonnegative real time makes the stable increment laws
 stationary. This file contains the Lévy specialization and its connection to
 the general `IsLevyProcess` interface.
+
+The stable Lévy class is the stable clock-process class for the identity
+clock `t↦t`. For `r>0`, its canonical time-space scaling is
+
+\[
+Y_t=r^{-1/α}X_{rt}.
+\]
+
+Under `P`, for every finite monotone grid `t_0≤⋯≤t_n`, the consecutive
+increment vectors of `X` and `Y` have the same law:
+
+\[
+(X_{t_{i+1}}-X_{t_i})_{i<n}
+\overset{d}= (Y_{t_{i+1}}-Y_{t_i})_{i<n}.
+\]
+
+## Public declarations
+
+- `ProbabilityTheory.IsStableLevyProcess α μ X P` is the identity-clock
+  specialization of `IsStableClockProcess` on nonnegative real time.
+- `ProbabilityTheory.IsStableLevyProcess.spatialScale` preserves the process
+  class under `X ↦ c X` and `μ ↦ μ.map (c ·)` for `c > 0`.
+- `ProbabilityTheory.IsStableLevyProcess.timeSpaceScale` proves that
+  `t ↦ r^(-1/α) X(r t)` is a stable Lévy process for `r > 0`.
+- `ProbabilityTheory.IsStableLevyProcess.timeSpaceScale_increments_identDistrib`
+  identifies the finite increment-vector laws before and after this scaling.
+- `ProbabilityTheory.IsStableLevyProcess.increments` and
+  `ProbabilityTheory.IsStableLevyProcess.ae_cadlag` project the increment
+  specification and almost-sure càdlàg property.
+- `ProbabilityTheory.IsStableLevyProcess.toIsLevyProcess` gives the underlying
+  `IsLevyProcess X P` structure.
 -/
 
 open MeasureTheory

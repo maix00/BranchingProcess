@@ -7,13 +7,23 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Core
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.PathSupport
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.PathSupport
 public import Topology.Cadlag.Skorokhod.SmallDeviation.PathSets
-
+public import Topology.Cadlag.Skorokhod.Path.Linear
 /-!
 # Path-support entrance specialization
 
 Support criteria for proving positivity of the fixed entrance event.
+## Public declarations
+
+- `measure_unitEntrance_pos_of_linearPath_mem_support` proves positivity of
+  the open Skorokhod corridor with endpoint window $(c-b-\epsilon,c-b+\epsilon)$
+  when the straight path $t\mapsto(c-b)t$ belongs to the unit-time path law's
+  support.
+- `measure_unitEntrance_source_pos_of_linearPath_mem_support` transfers
+  this statement to a stable Lévy source path law; the final theorem inserts
+  this entrance lower bound into the logarithmic corridor-ratio estimate.
+
 -/
 
 @[expose] public section
@@ -26,31 +36,32 @@ open scoped NNReal
 /-- The exact entrance event in Mogulskii's comparison is a nonempty open
 Skorokhod set. Its positivity follows if the straight path to `c-b` belongs
 to the support of the unit-time path law. -/
-theorem measure_unitEntrance_pos_of_straightPath_mem_support
+theorem measure_unitEntrance_pos_of_linearPath_mem_support
     (Q : Measure (CadlagPath unitInterval ℝ))
     (b c ε : ℝ) (hb : -1 < b ∧ b < 1) (hc : -1 < c ∧ c < 1)
     (hε : 0 < ε)
-    (hsupport : Skorokhod.straightPath (c - b) ∈ Q.support) :
+    (hsupport : Skorokhod.linearPath (c - b) ∈ Q.support) :
     0 < Q (Skorokhod.rangeInOpenIntervalEndsIn
       (c - 1) (c + 1) (c - b - ε) (c - b + ε)) := by
-  apply MeasureTheory.CadlagPath.measure_skorokhodCorridorEndsIn_pos_of_straightPath_mem_support
+  apply MeasureTheory.CadlagPath.measure_skorokhodCorridorEndsIn_pos_of_linearPath_mem_support
     Q (y := c - b)
   · constructor <;> linarith [hc.1, hc.2]
   · constructor <;> linarith [hb.1, hb.2]
   · constructor <;> linarith
   · exact hsupport
 
-/-- The open entrance event used in the proof is contained in the source's
-left-open, right-closed `Y` event. Thus path support also gives positivity
-for the exact source event, without identifying the two events. -/
-theorem measure_unitEntrance_source_pos_of_straightPath_mem_support
+/-- The open entrance event is contained in the left-open, right-closed
+endpoint-window event `endpointWindow ⊤ (c-b-ε) (c-b+ε)` intersected with the
+open range corridor. Thus path support gives positivity for this exact event
+without identifying the two events. -/
+theorem measure_unitEntrance_source_pos_of_linearPath_mem_support
     (Q : Measure (CadlagPath unitInterval ℝ))
     (b c ε : ℝ) (hb : -1 < b ∧ b < 1) (hc : -1 < c ∧ c < 1)
     (hε : 0 < ε)
-    (hsupport : Skorokhod.straightPath (c - b) ∈ Q.support) :
+    (hsupport : Skorokhod.linearPath (c - b) ∈ Q.support) :
     0 < Q (Skorokhod.endpointWindow ⊤ (c - b - ε) (c - b + ε)
       (Skorokhod.rangeInOpenInterval (c - 1) (c + 1))) := by
-  have hopen := measure_unitEntrance_pos_of_straightPath_mem_support
+  have hopen := measure_unitEntrance_pos_of_linearPath_mem_support
     Q b c ε hb hc hε hsupport
   exact hopen.trans_le (measure_mono
     (Skorokhod.rangeInOpenIntervalEndsIn_subset_endpointWindow
@@ -71,7 +82,7 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_path_supp
     (hε : 0 < ε)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (hsupportEntrance :
-      Skorokhod.straightPath (c - b) ∈ (P.map F).support)
+      Skorokhod.linearPath (c - b) ∈ (P.map F).support)
     (δ : ℝ) (hδ : 0 < δ) :
     ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
       1 - δ ≤

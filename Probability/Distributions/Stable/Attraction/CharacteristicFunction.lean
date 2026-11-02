@@ -7,14 +7,33 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.DomainOfAttraction.CharacteristicFunction
-public import Probability.Distributions.Stable.Attraction
-public import Probability.Distributions.Stable.CharacteristicFunction
+public import Probability.Distributions.Stable.Domain.Attraction
+public import Probability.Distributions.Stable.CharacteristicFunction.Modulus
 
 /-!
 # Characteristic functions in a stable domain of attraction
 
 The general domain-of-attraction characteristic-function formulas are
 specialized to a stable limit here.
+
+If the limiting characteristic-function modulus is
+`|φ(t)|=\exp(-c|t|^α)`, the one-step modulus and squared-modulus defect obey
+
+\[
+n\bigl[-\log|\widehatν(a_n^{-1}t)|\bigr]\longrightarrow c|t|^α,
+\qquad
+n\bigl[1-|\widehatν(a_n^{-1}t)|^2\bigr]
+\longrightarrow 2c|t|^α.
+\]
+
+## Public declarations
+
+- If the limiting stable characteristic function has modulus
+  $\exp(-c|t|^\alpha)$, then
+  $n[-\log|\widehat\nu(a_n^{-1}t)|]\to c|t|^\alpha$ and
+  $n[1-|\widehat\nu(a_n^{-1}t)|^2]\to 2c|t|^\alpha$.
+- Stable attraction supplies the positive coefficient and corresponding
+  limits at a nonzero frequency.
 -/
 
 open Filter MeasureTheory
@@ -184,27 +203,6 @@ theorem IsInDomainOfAttractionAlong.exists_pos_tendsto_log_norm_charFun_and_norm
   · intro t
     exact (h.tendsto_log_norm_charFun_and_norm_defect_of_charFun_norm
       hlimit c hc hchar t).2
-
-/-- Pointwise projection of the simultaneous stable domain-of-attraction
-limits. -/
-theorem IsInDomainOfAttractionAlong.exists_pos_tendsto_log_norm_charFun_and_norm_defect_at
-    {α : ℝ} {ν limit : Measure ℝ} [IsProbabilityMeasure ν]
-    {scale center : ℕ → ℝ}
-    (hlimit : IsAlphaStable α limit)
-    (h : @IsInDomainOfAttractionAlong ν limit inferInstance
-      hlimit.isProbabilityMeasure scale center) (t : ℝ) :
-    ∃ c : ℝ, 0 < c ∧
-      Tendsto
-        (fun n : ℕ => (n : ℝ) *
-          (-Real.log ‖charFun ν ((scale n)⁻¹ * t)‖))
-        atTop (nhds (c * |t| ^ α)) ∧
-      Tendsto
-        (fun n : ℕ => (n : ℝ) *
-          (1 - ‖charFun ν ((scale n)⁻¹ * t)‖ ^ 2))
-        atTop (nhds (2 * c * |t| ^ α)) := by
-  obtain ⟨c, hc, hlog, hdefect⟩ :=
-    h.exists_pos_tendsto_log_norm_charFun_and_norm_defect hlimit
-  exact ⟨c, hc, hlog t, hdefect t⟩
 
 end ProbabilityTheory
 

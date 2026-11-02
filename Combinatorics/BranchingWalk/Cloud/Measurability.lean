@@ -12,9 +12,29 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 /-!
 # Measurability of time-indexed clouds
 
+## Public declarations
+
+The measurable structure is induced by the time-indexed point-set coordinate;
+in particular, membership of a fixed point at a fixed time is measurable:
+
+\[
+\mathcal{M}_{\operatorname{CloudSet}}
+=\operatorname{comap}(C\mapsto C.\operatorname{points},\,\mathcal{M}_{\operatorname{Time}\to\operatorname{Set}(X)}),
+\qquad
+\{C:x\in C.\operatorname{points}(t)\}\in\mathcal{M}_{\operatorname{CloudSet}}.
+\]
+
 The measurable space on `CloudSet Time X` is induced by the coordinate map
 `C ↦ C.points`.  Thus membership of every fixed time-space point in a cloud is
 a measurable event.
+
+The public API includes `CloudSet.instMeasurableSpace`, the coordinate
+σ-algebra on `CloudSet Time X`, and the measurability results
+`CloudSet.measurable_points` and `CloudSet.measurable_vertexSet` for the
+point-set coordinate and space-time vertex-set maps.
+
+`CloudSet.measurableSet_points_mem t x` gives the coordinate event
+`{C | x ∈ C.points t}` as a measurable set.
 -/
 
 @[expose] public section

@@ -16,6 +16,19 @@ configurations. The mark type is a parameter: `PUnit` gives an unmarked slot
 configuration, while a spatial mark type retains the marks attached to
 children. Optional slots allow a configuration with no children and preserve
 slot labels.
+
+## Public declarations
+
+- `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι Mark`:
+  the probability-measure type
+  `ProbabilityMeasure (Combinatorics.Branching.Step ι Mark)` for one offspring
+  configuration with slot type `ι` and child-mark type `Mark`.
+  Thus
+  \[
+  \operatorname{OffspringConfigurationLaw}(\iota,M)
+  \coloneqq \operatorname{ProbabilityMeasure}
+  (\operatorname{Branching.Step}(\iota,M)).
+  \]
 -/
 
 @[expose] public section

@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Coupling.Rank.Field
-import Probability.BranchingRandomWalk.Coupling.Field.Law
+module
+
+public import Probability.BranchingRandomWalk.Coupling.Rank.Field
+public import Probability.BranchingRandomWalk.Coupling.Field.Law
 
 /-!
 # Product law of a fixed rank matching
@@ -17,16 +19,38 @@ complete i.i.d. field.
 
 This is a fixed-cell theorem.  Random, past-measurable populations are handled
 later by partitioning over their actual range.
+
+## Public declarations
+
+For fixed finite source and target populations, equal-rank installation is a
+paste along the guarded rank preimage and preserves the product law:
+
+\[\begin{aligned}
+\operatorname{rankInstalledStepField}
+&=\operatorname{paste}(\operatorname{preimageByRank}),\\
+\operatorname{rankInstalledStepField}_{\#}
+\operatorname{stepFieldLaw}_{R\oplus R}^{\mu}
+&=\operatorname{stepFieldLaw}_{R}^{\mu}.
+\end{aligned}\]
+
+- `ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.rankInstalledStepField_eq_paste`:
+  identifies fixed equal-rank installation with
+  `StepField.paste (preimageByRank sourceValue targetValue source target)`.
+- `ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.stepFieldLaw_rankInstalledStepField`:
+  for independent product fields on two root copies, mapping the combined
+  field through a fixed equal-rank installation gives the product law on one
+  root set.
 -/
 
 open MeasureTheory ProbabilityTheory
 
+@[expose] public section
+
 namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 /-- Fixed equal-rank installation is the generic paste operation associated
 with the guarded inverse matching. -/
@@ -82,3 +106,5 @@ theorem RootIndexed.stepFieldLaw_rankInstalledStepField
       sourceValue targetValue source target)
 
 end ProbabilityTheory.BranchingRandomWalk.Coupling
+
+end

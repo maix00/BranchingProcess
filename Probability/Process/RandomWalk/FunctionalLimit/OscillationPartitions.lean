@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import MeasureTheory.Measure.CadlagPath.Tightness
-public import Probability.Process.RandomWalk.Path.Skorokhod
-public import Probability.Process.RandomWalk.Path.Skorokhod.Oscillation
+public import Probability.Process.RandomWalk.Path.Skorokhod.Core
+public import Probability.Process.RandomWalk.Path.Skorokhod.Oscillation.Partition
 public import Topology.Cadlag.Skorokhod.Oscillation.DoubleExcursion.Converse
 
 /-!
@@ -18,6 +18,15 @@ This module turns uniform finite-window double-excursion and endpoint
 probability estimates into the multiscale oscillation-partition events used
 by the deterministic Skorokhod compactness criterion. Distribution-specific
 estimates are supplied by adapters.
+## Public declarations
+
+- `exists_eventually_oscillationPartitions_bound_of_localEstimates` turns
+  local double-excursion and endpoint probability providers into positive gap
+  and oscillation-tolerance sequences $g_m,\eta_m$ with $\eta_m\to0$, such
+  that the normalized path law eventually assigns at most a prescribed
+  $0<\epsilon<1$ to paths admitting no such oscillation partition sequence.
+  Its window geometry selection is private to this assembly.
+
 -/
 
 @[expose] public section
@@ -34,7 +43,7 @@ private noncomputable def oscillationWindowWidth (δ : ℝ) (n : ℕ) : ℕ :=
 
 /-- The window length has the lower coverage bound and the asymptotic upper
 fraction needed by both stable excursion estimates. -/
-private theorem eventually_oscillationWindowGeometry {δ : ℝ}
+private lemma eventually_oscillationWindowGeometry {δ : ℝ}
     (hδ : 0 < δ) (hδsmall : δ ≤ 1 / 16) :
     ∀ᶠ n : ℕ in atTop,
       0 < n ∧

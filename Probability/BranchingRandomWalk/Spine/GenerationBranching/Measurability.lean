@@ -7,13 +7,40 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Spine.Generation
-public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.AddressFiltration
 
 /-!
 # Measurability of generation branching observables
 
 Joint endpoint observables and the recursive branching operators are separated
 from the pathwise generation decomposition.
+
+For a potential `φ`, generation `n`, and measurable
+`f : ℝ → [0,∞]`, the joint maps in `x ∈ ℝ` and
+`ω : StepField ι X`
+
+\[
+(x,\omega)\mapsto
+  \operatorname{weightedGenerationEndpoint}(\varphi,n,f,x,\omega),
+\qquad
+(x,\omega)\mapsto
+  \operatorname{generationEndpoint}(\varphi,n,f,x,\omega)
+\]
+
+are measurable.  The same argument gives measurability in `x` for each
+weighted or unweighted branching endpoint operator and all its iterates.
+
+## Public declarations
+
+- `weightedGenerationEndpoint_joint_measurable` and
+  `generationEndpoint_joint_measurable`: establish joint measurability in the
+  initial position and branching field for the weighted and unweighted
+  generation observables.
+- `measurable_weightedBranchingEndpointOperator`,
+  `measurable_branchingEndpointOperator`,
+  `measurable_weightedBranchingEndpointIterate`, and
+  `measurable_branchingEndpointIterate`: prove measurability of the one-step
+  branching operators and their iterates.
 -/
 
 open MeasureTheory ProbabilityTheory

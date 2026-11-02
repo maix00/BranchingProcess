@@ -12,14 +12,30 @@ public import Mathlib.Logic.Equiv.Basic
 /-!
 # Singleton walks as optional increment sequences
 
-A singleton branching walk is completely described by its initial position
-and the optional mark on each generation edge. The option value preserves
-extinction and does not assume that every generation has a child.
+Every singleton-slot walk is determined by its initial position and the
+optional mark on each generation edge:
+
+\[
+\operatorname{Walk}(Mark,Position)
+\simeq Position\times(\mathbb{N}\to\operatorname{Option}(Mark)),
+\qquad
+\operatorname{TreeNode}(\mathrm{PUnit})\simeq\mathbb{N}.
+\]
+
+## Public declarations
+
+* `Combinatorics.Branching.Walk.nodeEquivNat` identifies `TreeNode PUnit` with
+  `ℕ` by address length and `lineNode`.
+* `Combinatorics.Branching.Walk.equivInitialOptionalIncrements` identifies a
+  singleton-slot walk with `Position × (ℕ → Option Mark)`. The option value
+  retains every absent edge, including those after extinction.
 -/
 
 @[expose] public section
 
 namespace Combinatorics.Branching.Walk
+
+open Combinatorics.UlamHarris
 
 variable {Mark Position : Type*}
 
@@ -36,7 +52,16 @@ def equivInitialOptionalIncrements :
     Walk Mark Position ≃ Position × (ℕ → Option Mark) where
   toFun walk := (walk.initial PUnit.unit, increments walk)
   invFun data := ofOptionalIncrements data.1 data.2
-  left_inv walk := ofOptionalIncrements_initial_increments walk
+  left_inv walk := by
+    apply RootIndexed.BranchingWalk.ext
+    · funext root
+      cases root
+      funext u i
+      rw [eq_lineNode_length u]
+      simp [ofOptionalIncrements, increments]
+    · funext root
+      cases root
+      rfl
   right_inv data := by
     rcases data with ⟨initial, increment⟩
     simp

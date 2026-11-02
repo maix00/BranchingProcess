@@ -15,6 +15,13 @@ public import Topology.Cadlag.Basic
 The integer and natural floor maps are right-continuous and have left limits.
 These deterministic facts are independent of random walks and belong to the
 order-topology layer.
+
+## Public declarations
+
+* `IsCadlag.floor_int`: the integer-valued floor map
+  $x\mapsto\lfloor x\rfloor$ from $\mathbb R$ to $\mathbb Z$ is càdlàg.
+* `IsCadlag.floor_nat`: the natural-valued floor map
+  $x\mapsto\lfloor x\rfloor_+$ from $\mathbb R$ to $\mathbb N$ is càdlàg.
 -/
 
 @[expose] public section

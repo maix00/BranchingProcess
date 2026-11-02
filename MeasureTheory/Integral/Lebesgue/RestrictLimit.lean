@@ -14,6 +14,24 @@ public import Mathlib.MeasureTheory.Integral.Lebesgue.DominatedConvergence
 
 These lemmas use only a finite nonnegative integral and almost-everywhere
 eventual exclusion from the sets.
+
+## Public declarations
+
+If the total integral is finite and almost every point eventually leaves the
+measurable sets, the restricted integrals tend to zero:
+
+\[
+\operatorname{lintegral}_{\operatorname{band}(n)}
+\operatorname{weight}\,d\nu\longrightarrow 0.
+\]
+
+* `tendsto_lintegral_restrict_of_eventually_not_mem`: if `weight` is
+  measurable, each `band n` is measurable, `∫⁻ x, weight x ∂ν < ∞`, and
+  almost every `x` eventually lies outside `band n`, then
+  `∫⁻ x in band n, weight x ∂ν → 0`.
+* `exists_lintegral_restrict_lt_of_eventually_not_mem`: under the same
+  assumptions and `0 < ρ`, there is an `n` such that
+  `∫⁻ x in band n, weight x ∂ν < ENNReal.ofReal ρ`.
 -/
 
 @[expose] public section

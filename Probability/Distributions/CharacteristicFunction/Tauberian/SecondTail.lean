@@ -8,11 +8,33 @@ module
 public import Probability.Distributions.Moments.Truncated.TailIntegral
 public import Analysis.Fourier.CosineTauberian.Inversion
 public import Probability.Distributions.CharacteristicFunction.CosineDefect
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
 # Twice-integrated tails and cosine defects
+
+## Public declarations
+
+- `secondTailIntegral_twoSidedTail_eq_cappedCubic` represents the second
+  integral of a two-sided tail as the expectation of a capped cubic function.
+- `secondTailIntegral_eq_cosineDefect_kernel` identifies that second-tail
+  integral with the cosine defect integrated against the inverse-cosine
+  Tauberian kernel, for every probability measure and positive scale.
+
+For a probability measure `μ` and `x ≥ 0`, the capped-cubic representation is
+\[
+  \operatorname{SecondTail}_\mu(x)
+   =\int\left(\frac{x(\min\{|y|,x\})^2}{2}
+               -\frac{(\min\{|y|,x\})^3}{3}\right)\mu(dy),
+  \qquad
+  \operatorname{SecondTail}_\mu(x)
+   =\frac{2x^3}{\pi}\int_0^\infty
+       D_\mu(s/x)K(s)\,ds\quad(x>0),
+\]
+where `SecondTail_μ(x)` denotes `Asymptotics.secondTailIntegral`
+of `t ↦ μ.real {y : ℝ | t < |y|}`, `D_μ(u) = ∫ (1-cos(uy)) μ(dy)`, and
+`K` is the inverse-cosine Tauberian kernel `cosineTauberianKernel`.
 
 This module connects two-sided tails to the cosine defect of their measure.
 For an increment law's squared-modulus characteristic defect, the relevant
@@ -27,7 +49,7 @@ open Analysis.Fourier.CosineTauberian
 
 namespace ProbabilityTheory
 
-private theorem intervalIntegral_min_abs_sq {x y : ℝ} (hx : 0 ≤ x) :
+private lemma intervalIntegral_min_abs_sq {x y : ℝ} (hx : 0 ≤ x) :
     (∫ t in (0 : ℝ)..x, (min |y| t) ^ 2) =
       x * (min |y| x) ^ 2 - (2 / 3 : ℝ) * (min |y| x) ^ 3 := by
   let a : ℝ := min |y| x

@@ -11,6 +11,8 @@ public import Combinatorics.UlamHarris.MarkedTree.Basic
 /-!
 # Sibling order of the marks of a marked tree
 
+## Public declarations
+
 A marked tree whose tree enumerates the children of every node from the left
 has a distinguished property when the marks are read as the increments that
 produced each node: the increment of a later sibling is at least that of an
@@ -20,7 +22,14 @@ It is the marked-tree side of a parent-closed branching walk: reading a
 marked tree as a step field lists the children of `u` in slot order, and
 `IsMonotone` of that step is `siblingMonotone` at `u`
 (`BranchingWalk.monotone_stepOfMarkedTree_iff` in
-`BranchingWalk/MarkedTree/Order.lean`).
+`BranchingWalk/MarkedTree/SiblingMonotonicity.lean`).
+- `MarkedTree.siblingMonotone M` states that for every realized pair of
+  siblings at slots `i < j`, the earlier mark is at most the later mark:
+  `M.mark (u ++ [i]) hi ≤ M.mark (u ++ [j]) hj`.
+
+Its condition is
+`\(u++[i],u++[j]\in T.carrier\land i<j\Rightarrow
+T.mark(u++[i])\le T.mark(u++[j])\)`.
 -/
 
 @[expose] public section
@@ -40,15 +49,6 @@ def siblingMonotone (M : MarkedTree α X) : Prop :=
   ∀ (u : List α) (i j : α)
     (hi : u ++ [i] ∈ M.tree.carrier) (hj : u ++ [j] ∈ M.tree.carrier),
     i < j → M.mark (u ++ [i]) hi ≤ M.mark (u ++ [j]) hj
-
-/-- Sibling monotonicity is a statement about the realized siblings of one
-node. -/
-theorem siblingMonotone_iff {M : MarkedTree α X} :
-    M.siblingMonotone ↔
-      ∀ (u : List α) (i j : α)
-        (hi : u ++ [i] ∈ M.tree.carrier) (hj : u ++ [j] ∈ M.tree.carrier),
-        i < j → M.mark (u ++ [i]) hi ≤ M.mark (u ++ [j]) hj :=
-  Iff.rfl
 
 end MarkedTree
 

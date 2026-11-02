@@ -5,10 +5,38 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Basic.BranchingWalk
 
 /-!
 # Branching as the unmarked branching-walk specialization
+
+The unmarked process is the branching-walk model with singleton root marks,
+child marks, and positions. Packaging a singleton-mark step field preserves
+that field at the unique root:
+
+\[
+\operatorname{RootIndexed.Process}(Root,\alpha)
+=\operatorname{BranchingWalk}(Root,\alpha,\mathrm{PUnit},\mathrm{PUnit}),
+\qquad
+\operatorname{Process}(\alpha)
+=\operatorname{RootIndexed.Process}(\mathrm{PUnit},\alpha),
+\]
+\[
+(\operatorname{branchingOfStepField}(\beta)).\operatorname{step}(*)=\beta,
+\qquad
+(\operatorname{branchingOfStepField}(\beta)).\operatorname{initial}(*)=*.
+\]
+
+## Public declarations
+
+* `Combinatorics.Branching.RootIndexed.Process Root α` and
+  `Combinatorics.Branching.Process α` are the root-indexed and single-root
+  specializations of `BranchingWalk` with both mark types equal to `PUnit`.
+* `Combinatorics.Branching.branchingOfStepField β` packages a unit-marked step
+  field as a single-root process;
+  `Combinatorics.Branching.branchingOfStepField_step` recovers its step field,
+  and `Combinatorics.Branching.measurable_branchingOfStepField` proves the
+  packaging map measurable.
 
 `RootIndexed.Process Root α` is exactly a root-indexed branching walk whose
 mark type is `PUnit`. Thus it retains child presence and genealogy and carries

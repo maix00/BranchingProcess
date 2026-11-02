@@ -11,6 +11,27 @@ public import Combinatorics.UlamHarris.Basic
 /-!
 # Fields of branching steps
 
+## Public declarations
+
+For $\beta:\operatorname{TreeNode}(\alpha)\to\operatorname{Step}(\alpha,X)$:
+
+* `Combinatorics.Branching.StepField α X` is the function type
+  $\operatorname{TreeNode}(\alpha)\to\operatorname{Step}(\alpha,X)$.
+* `Combinatorics.Branching.StepField.map` maps every mark by $f:X\to Y$.
+  `Combinatorics.Branching.StepField.map_apply` gives
+  $(\beta.\operatorname{map}(f))(u)=(\beta(u)).\operatorname{map}(f)$.
+* `Combinatorics.Branching.StepField.map_id` and
+  `Combinatorics.Branching.StepField.map_map` give
+  $\beta.\operatorname{map}(\mathrm{id})=\beta$ and
+  $(\beta.\operatorname{map}(f)).\operatorname{map}(g)
+    =\beta.\operatorname{map}(g\circ f)$.
+  `Combinatorics.Branching.StepField.map_measurable` states that
+  $\operatorname{StepField.map}(f)$ is measurable when $f$ is measurable.
+* `Combinatorics.Branching.StepField.forgetMarks` replaces each mark with
+  $\mathrm{PUnit.unit}$ and preserves its optional child slots:
+  $(\operatorname{forgetMarks}(\beta))(u)
+    =(\beta(u)).\operatorname{map}(\lambda\_,\mathrm{PUnit.unit})$.
+
 A step field assigns one complete optional child-slot configuration to every
 potential address. This module contains its type and pointwise mark maps, below
 the definitions of realized branching walks.

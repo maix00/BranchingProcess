@@ -7,10 +7,21 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Scale
-public import MeasureTheory.Measure.PositiveTail
+public import MeasureTheory.Measure.Tails.Positive
 
 /-!
 # Strict loss of tube probability
+
+## Public declarations
+
+- `measure_rationalHorizonTube_lt_one_of_positive_tail` proves $P(T_1(w))<1$
+  whenever the increment law has positive mass above $w$.
+- `measure_scaledTube_le_pow_strict` gives the stable block power bound and
+  this strict loss in one statement.
+- `exists_strict_exponential_tube_upper_bound` chooses $w>0$ and $c<1$ so
+  the rational tube at the stable block-scaled width has probability at most
+  $c^N$ for every $N>0$.
+
 
 A positive upper tail for the reference increment law prevents the unit-time
 range tube from having probability one. Together with the scaled block upper

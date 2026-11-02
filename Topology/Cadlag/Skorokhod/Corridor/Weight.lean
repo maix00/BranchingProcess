@@ -8,13 +8,51 @@ module
 
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
+public import Topology.MetricSpace.Cutoff
 
 /-!
 # Continuous weights for strict corridor events
 
+## Public declarations
+
+- `Skorokhod.corridorCutoff`: the clipped distance from a path to the
+  complement of the open corridor, taking values in `[0,1]`.
+- `Skorokhod.endpointCutoff`: the clipped distance of the terminal value to
+  the boundary of an open interval, taking values in `[0,1]`.
+- `Skorokhod.corridorEndsInWeight`: the product of corridor and endpoint
+  cutoffs; `Skorokhod.corridorPotentialWeight` multiplies the corridor cutoff
+  by a terminal potential.
+- `Skorokhod.continuous_corridorCutoff`,
+  `Skorokhod.continuous_endpointCutoff`,
+  `Skorokhod.continuous_corridorEndsInWeight`, and
+  `Skorokhod.continuous_corridorPotentialWeight`: these weights are continuous
+  when the potential is continuous.
+- `Skorokhod.corridorCutoff_nonneg`, `Skorokhod.corridorCutoff_le_one`,
+  `Skorokhod.endpointCutoff_nonneg`, and `Skorokhod.endpointCutoff_le_one`:
+  the two cutoffs lie in `[0,1]`.
+- `Skorokhod.corridorCutoff_pos_iff` and
+  `Skorokhod.endpointCutoff_pos_iff`: each cutoff is positive exactly on its
+  corresponding open event.
+- `Skorokhod.corridorEndsInWeight_nonneg`,
+  `Skorokhod.corridorEndsInWeight_le_one`, and
+  `Skorokhod.corridorEndsInWeight_pos_iff`: the product weight lies in `[0,1]`
+  and is positive exactly on the corridor with endpoint window.
+- `Skorokhod.corridorPotentialWeight_nonneg`,
+  `Skorokhod.corridorPotentialWeight_le_one`, and
+  `Skorokhod.corridorPotentialWeight_pos_iff`: for nonnegative potential,
+  the product is nonnegative, is at most `1` when the potential is at most
+  `1`, and is positive exactly when the path lies in the corridor and its
+  terminal potential is positive.
+
 An open corridor and a terminal interval determine a continuous, bounded
 path weight that vanishes outside the event. This gives a continuous-test
 function interface for Portmanteau arguments with endpoint weights.
+
+For \(\mathcal O_{a,b}=\operatorname{rangeInOpenInterval}(a,b)\), the
+cutoff is \(\phi_{a,b}(f)=\min\{1,\operatorname{infDist}
+(f,\mathcal O_{a,b}^{c})\}\). The endpoint cutoff is the same clipped
+distance from \(f(1)\) to \((c,d)^c\), and the joint weight is their product.
+Each cutoff lies in \([0,1]\) and is positive exactly on its open event.
 -/
 
 @[expose] public section
@@ -26,14 +64,13 @@ corridor. It vanishes on the complement and is positive at every point of the
 open corridor. -/
 noncomputable def corridorCutoff (lower upper : ℝ)
     (path : CadlagPath unitInterval ℝ) : ℝ :=
-  max 0 (min 1 (Metric.infDist path
-    (rangeInOpenInterval lower upper)ᶜ))
+  Metric.openSetCutoff (rangeInOpenInterval lower upper) path
 
 /-- A continuous cutoff measuring how far the terminal value lies inside an
 open interval. -/
-def endpointCutoff (lower upper : ℝ)
+noncomputable def endpointCutoff (lower upper : ℝ)
     (path : CadlagPath unitInterval ℝ) : ℝ :=
-  max 0 (min 1 (min (path ⊤ - lower) (upper - path ⊤)))
+  Metric.openSetCutoff (Set.Ioo lower upper) (path ⊤)
 
 /-- The product cutoff for a strict corridor event with an open terminal
 constraint. -/
@@ -48,21 +85,13 @@ noncomputable def corridorPotentialWeight (lower upper : ℝ)
   corridorCutoff lower upper path * potential (path ⊤)
 
 theorem continuous_corridorCutoff (lower upper : ℝ) :
-    Continuous (corridorCutoff lower upper) := by
-  unfold corridorCutoff
-  fun_prop
+    Continuous (corridorCutoff lower upper) :=
+  Metric.continuous_openSetCutoff _
 
 theorem continuous_endpointCutoff (lower upper : ℝ) :
-    Continuous (endpointCutoff lower upper) := by
-  have heval : Continuous (fun path : CadlagPath unitInterval ℝ => path ⊤) :=
+    Continuous (endpointCutoff lower upper) :=
+  (Metric.continuous_openSetCutoff (Set.Ioo lower upper)).comp
     continuous_apply_top
-  have hlower : Continuous (fun path : CadlagPath unitInterval ℝ =>
-      path ⊤ - lower) := heval.sub continuous_const
-  have hupper : Continuous (fun path : CadlagPath unitInterval ℝ =>
-      upper - path ⊤) := continuous_const.sub heval
-  unfold endpointCutoff
-  exact continuous_const.max
-    (continuous_const.min (hlower.min hupper))
 
 theorem continuous_corridorEndsInWeight
     (lower upper endpointLower endpointUpper : ℝ) :
@@ -80,79 +109,49 @@ theorem continuous_corridorPotentialWeight
 
 theorem corridorCutoff_nonneg (lower upper : ℝ)
     (path : CadlagPath unitInterval ℝ) :
-    0 ≤ corridorCutoff lower upper path := le_max_left _ _
+    0 ≤ corridorCutoff lower upper path :=
+  Metric.openSetCutoff_nonneg _ _
 
 theorem corridorCutoff_le_one (lower upper : ℝ)
     (path : CadlagPath unitInterval ℝ) :
-    corridorCutoff lower upper path ≤ 1 := by
-  unfold corridorCutoff
-  exact max_le (by norm_num) (min_le_left _ _)
+    corridorCutoff lower upper path ≤ 1 :=
+  Metric.openSetCutoff_le_one _ _
 
 theorem endpointCutoff_nonneg (lower upper : ℝ)
     (path : CadlagPath unitInterval ℝ) :
-    0 ≤ endpointCutoff lower upper path := le_max_left _ _
+    0 ≤ endpointCutoff lower upper path :=
+  Metric.openSetCutoff_nonneg _ _
 
 theorem endpointCutoff_le_one (lower upper : ℝ)
     (path : CadlagPath unitInterval ℝ) :
-    endpointCutoff lower upper path ≤ 1 := by
-  unfold endpointCutoff
-  exact max_le (by norm_num) (min_le_left _ _)
+    endpointCutoff lower upper path ≤ 1 :=
+  Metric.openSetCutoff_le_one _ _
 
 theorem corridorCutoff_pos_iff {lower upper : ℝ}
     (path : CadlagPath unitInterval ℝ) :
     0 < corridorCutoff lower upper path ↔
       path ∈ rangeInOpenInterval lower upper := by
-  constructor
-  · intro h
-    by_contra hmem
-    have hzero : Metric.infDist path
-        (rangeInOpenInterval lower upper)ᶜ = 0 :=
-      Metric.infDist_zero_of_mem hmem
-    simp [corridorCutoff, hzero] at h
-  · intro hmem
-    have hnotempty : (rangeInOpenInterval lower upper)ᶜ.Nonempty := by
-      let outside : CadlagPath unitInterval ℝ :=
-        ofContinuousMap (ContinuousMap.const unitInterval (upper + 1))
-      refine ⟨outside, ?_⟩
-      change outside ∉ rangeInOpenInterval lower upper
-      rw [mem_rangeInOpenInterval_iff]
-      rintro ⟨margin, hmargin, hall⟩
-      have hUpper := (hall ⊥).2
-      change upper + 1 ≤ upper - margin at hUpper
-      linarith
-    obtain ⟨radius, hradius, hball⟩ :=
-      (Metric.isOpen_iff.mp (isOpen_rangeInOpenInterval lower upper)) path hmem
-    have hradiusDist : radius ≤ Metric.infDist path
-        (rangeInOpenInterval lower upper)ᶜ :=
-      (Metric.le_infDist hnotempty).2 fun q hq => by
-        by_contra hdist
-        have hstrict : dist path q < radius := lt_of_not_ge hdist
-        have hqball : q ∈ Metric.ball path radius := by
-          rw [Metric.mem_ball, dist_comm]
-          exact hstrict
-        have hqnot : q ∉ rangeInOpenInterval lower upper := by
-          simpa only [Set.mem_compl_iff] using hq
-        exact hqnot (hball hqball)
-    unfold corridorCutoff
-    rw [max_eq_right (le_min (by norm_num) Metric.infDist_nonneg)]
-    exact lt_min_iff.mpr ⟨by norm_num, lt_of_lt_of_le hradius hradiusDist⟩
+  have hcomplement : (rangeInOpenInterval lower upper)ᶜ.Nonempty := by
+    let outside : CadlagPath unitInterval ℝ :=
+      ofContinuousMap (ContinuousMap.const unitInterval (upper + 1))
+    refine ⟨outside, ?_⟩
+    change outside ∉ rangeInOpenInterval lower upper
+    rw [mem_rangeInOpenInterval_iff]
+    rintro ⟨margin, hmargin, hall⟩
+    have hUpper := (hall ⊥).2
+    change upper + 1 ≤ upper - margin at hUpper
+    linarith
+  simpa [corridorCutoff] using
+    (Metric.openSetCutoff_pos_iff
+      (isOpen_rangeInOpenInterval lower upper) hcomplement path)
 
 theorem endpointCutoff_pos_iff {lower upper : ℝ}
     (path : CadlagPath unitInterval ℝ) :
     0 < endpointCutoff lower upper path ↔
       path ⊤ ∈ Set.Ioo lower upper := by
-  unfold endpointCutoff
-  simp only [lt_max_iff, lt_self_iff_false, false_or]
-  constructor
-  · intro h
-    have hmin : 0 < min (path ⊤ - lower) (upper - path ⊤) :=
-      (lt_min_iff.mp h).2
-    rcases lt_min_iff.mp hmin with ⟨hl, hu⟩
-    exact ⟨sub_pos.mp hl, sub_pos.mp hu⟩
-  · rintro ⟨hlower, hupper⟩
-    have hmin : 0 < min (path ⊤ - lower) (upper - path ⊤) :=
-      lt_min_iff.mpr ⟨sub_pos.mpr hlower, sub_pos.mpr hupper⟩
-    exact lt_min_iff.mpr ⟨by norm_num, hmin⟩
+  simpa [endpointCutoff] using
+    (Metric.openSetCutoff_pos_iff isOpen_Ioo
+      (s := Set.Ioo lower upper) ⟨lower, by simp⟩ (path ⊤))
 
 theorem corridorEndsInWeight_nonneg
     (lower upper endpointLower endpointUpper : ℝ)

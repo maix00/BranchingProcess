@@ -7,9 +7,11 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Stable.Basic
-public import Mathlib.Probability.Moments.Variance
-public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.MeasureTheory.Function.LpSeminorm.Defs
+public import Mathlib.Analysis.SpecialFunctions.Exp
+import Mathlib.Probability.Moments.Variance
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.MeasureTheory.Integral.Prod
 
 /-!
 # Support of a nondegenerate strictly stable law at index one
@@ -18,6 +20,26 @@ The strict stability identity at index one says that the sum of two
 independent samples has the law of twice one sample. If a nonzero exponential
 of the sample is square integrable, its first and second moments therefore
 have zero variance. This forces degeneracy, contradicting strict stability.
+
+For a nondegenerate strictly `1`-stable law `μ`, no nonconstant exponential
+is square-integrable. Moreover, every open half-line has positive mass:
+
+\[
+\begin{aligned}
+s\neq0&\Longrightarrow (x\mapsto e^{sx})\notin L^2(\mu),\\
+v\in\mathbb R&\Longrightarrow
+\mu(({-\infty},v))>0\ \text{and}\ \mu((v,\infty))>0.
+\end{aligned}
+\]
+
+## Public declarations
+
+* `IsStrictlyAlphaStable.not_memLp_exp_mul_indexOne`: for every `s ≠ 0`,
+  `x ↦ exp(s*x)` is not in `L²(μ)` when `μ` is strictly `1`-stable.
+* `IsStrictlyAlphaStable.measure_Iio_pos_indexOne` and
+  `IsStrictlyAlphaStable.measure_Ioi_pos_indexOne`: every nondegenerate
+  strictly `1`-stable law assigns positive mass to every open left and right
+  half-line.
 -/
 
 @[expose] public section

@@ -19,6 +19,37 @@ public section
 This file contains the measure-theoretic diagonal arguments that turn
 one-scale path oscillation estimates into multiscale bounds.  It is independent
 of any increment law or stochastic-process model.
+
+## Public declarations
+
+- For a finite path measure and ε,η>0, some δ>0 satisfies
+  μ({f : HasOscillationBound(δ,ε,f)ᶜ})<η.
+- Finite measures on continuous paths admit a multiscale sequence of
+  oscillation bounds outside a set of arbitrarily small measure.
+  Writing
+  \[
+  B_{\delta,\varepsilon}=\{f\in C(T,E):\forall s,t,\quad
+  d_T(s,t)<\delta\Longrightarrow d_E(f(s),f(t))\le\varepsilon\},
+  \]
+  the first result is
+  \[
+  \forall \varepsilon>0\;\forall\eta>0\;\exists\delta>0,\qquad
+  \mu(B_{\delta,\varepsilon}^{\mathsf c})<\eta.
+  \]
+  For a finite prefix of measures the conclusion is
+  \[
+  \exists\delta>0\;\forall i<N,\qquad
+  \mu_i(B_{\delta,\varepsilon}^{\mathsf c})<\eta.
+  \]
+  For positive sequences \((\delta_m),(\varepsilon_m)\) with
+  \(\varepsilon_m\to0\), set
+  \(B_{\boldsymbol\delta,\boldsymbol\varepsilon}
+  =\{f:\forall m,\forall s,t,\ d_T(s,t)<\delta_m\Rightarrow
+  d_E(f(s),f(t))\le\varepsilon_m\}\). The diagonal conclusion is
+  \[
+  \forall i,\qquad
+  \mu_i(B_{\boldsymbol\delta,\boldsymbol\varepsilon}^{\mathsf c})\le\eta.
+  \]
 -/
 
 open Filter MeasureTheory Set

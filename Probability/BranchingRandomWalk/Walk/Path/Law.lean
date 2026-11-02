@@ -17,6 +17,24 @@ The process observed from a possibly killed singleton-slot walk is an
 `Option`-valued path.  This file identifies its full path law, under the
 increment-path encoding, with the law of the corresponding directly summed
 position path.
+
+For any increment-path law \(\mu\), observing the increment-encoded walk
+has the same full path law as summing the increments directly:
+
+\[\operatorname{map}(\operatorname{processPath}(d),
+  \operatorname{map}(\operatorname{Walk.ofIncrements}(x_0),\mu))
+  =\operatorname{map}(\operatorname{positionPath}(d,x_0),\mu).\]
+
+## Public declarations
+
+- `processPath` observes the possibly killed walk at every discrete time;
+  `processPath_measurable` proves its path-valued map measurable.
+- `positionPath` gives the directly summed position path, and
+  `positionPath_measurable` proves its measurability.
+- `map_processPath_map_ofIncrements` identifies the law of the observed
+  process path with the law obtained by mapping the increment-path encoding.
+- `map_processPath_ofIncrementLaw` states the same path-law identity for a
+  walk specified by its increment law.
 -/
 
 open MeasureTheory

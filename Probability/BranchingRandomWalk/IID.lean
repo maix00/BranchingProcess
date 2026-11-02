@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Law
-public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 public import Combinatorics.BranchingWalk.StepField
 
 /-!
@@ -17,6 +17,21 @@ The canonical construction samples one independent offspring configuration at
 every root and address.  The initial position is deterministic.  Offspring
 configurations at different addresses are independent; siblings within one
 configuration may be dependent.
+
+## Public declarations
+
+- `iidRealization initial field` turns a root-indexed field into a walk with
+  constant initial position; `iidRealization_measurable` and
+  `iid_step_measurable` prove measurability of the realization and step map.
+- `iid μ initial` is the pushforward of the root-indexed product-field law:
+  $((\mathsf{iid}(\mu,x)) : \mathrm{Measure}(\mathrm{BranchingWalk}))
+  =(\mathrm{offspringFieldLaw}(\mu)).\mathrm{map}(\mathrm{iidRealization}(x))$;
+  `iid_toMeasure` records this equality.
+- `iid_stepFieldLaw` recovers the product-field law by mapping the walk back
+  to its step field.
+- `iid_mapMarks` transports the law under a measurable mark map $f$, and
+  `iid_mapInitial` transports it under a measurable map of the deterministic
+  initial position.
 -/
 
 open MeasureTheory
@@ -24,6 +39,8 @@ open MeasureTheory
 @[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 

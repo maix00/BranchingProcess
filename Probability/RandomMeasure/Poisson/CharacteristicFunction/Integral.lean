@@ -6,19 +6,41 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.RandomMeasure.Poisson.Integral
+public import Probability.RandomMeasure.Poisson.Integration.Integral
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
-import Probability.RandomMeasure.Poisson.Integrability
+import Probability.RandomMeasure.Poisson.Integration.Integrability
 import Probability.RandomMeasure.Poisson.CharacteristicFunction.PartitionedSum
 
 /-!
 # Characteristic formula for a Poisson random-measure integral
 
-The intensity integrand `exp (i ξ f) - 1` must be integrable, while the
-realized integral need only be integrable almost surely. These are separate
-hypotheses; finite intensity is also handled without a global first moment
-of the mark function.
+## Public declarations
+
+- `ProbabilityTheory.IsPoissonPointFamily.integral_exp_poissonRandomMeasure`: if the realized
+  integral of `f` is almost surely integrable and `exp (i ξ f) - 1` is
+  integrable against the intensity `m`, then
+  `∫ exp (i ξ ∫ f dN) dP = exp (∫ (exp (i ξ f) - 1) dm)`.
+- `ProbabilityTheory.IsPoissonPointFamily.charFun_poissonRandomMeasure_integral`: the same
+  identity for the characteristic function of the law of `∫ f dN`.
+- `ProbabilityTheory.IsPoissonPointFamily.integral_exp_poissonRandomMeasure_of_integrable`:
+  the exponential-integral formula when `f` is integrable against `m`.
+- `ProbabilityTheory.IsPoissonPointFamily.integral_exp_poissonRandomMeasure_of_finiteIntensity`:
+  the formula when `m` has finite total mass, without a first-moment
+  assumption on `f`.
+
+The intensity integrand `exp (i ξ f) - 1` and almost-sure integrability of
+the realized integral are stated as separate hypotheses in the general form.
+
+Write `\mathcal N_\omega` for the realized Poisson measure. Under those
+hypotheses, its characteristic exponential is the exponential of the
+integrated intensity exponent:
+
+\[
+\mathbb E_P\exp\!\left(i\xi\int_E f(x)\,\mathcal N_\omega(dx)\right)
+=\exp\!\left(\int_E
+  \bigl(e^{i\xi f(x)}-1\bigr)\,m(dx)\right).
+\]
 -/
 
 @[expose] public section
@@ -27,6 +49,18 @@ namespace ProbabilityTheory
 
 open MeasureTheory Complex Filter
 open scoped Topology
+
+private lemma hasSum_integral_prmPiece
+    {E : Type} [MeasurableSpace E]
+    {m : Measure E} [SigmaFinite m]
+    {g : E → ℂ} (hg : Integrable g m) :
+    HasSum (fun k => ∫ x in prmPiece m k, g x ∂m)
+      (∫ x, g x ∂m) := by
+  have h := hasSum_integral_iUnion
+    (s := prmPiece m) (f := g) (μ := m)
+    (fun k => measurableSet_prmPiece)
+    pairwise_disjoint_prmPiece (by simpa [iUnion_prmPiece] using hg)
+  simpa only [iUnion_prmPiece, setIntegral_univ] using h
 
 theorem IsPoissonPointFamily.integral_exp_poissonRandomMeasure
     {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]

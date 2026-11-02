@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import MeasureTheory.Measure.InnerOuter
+public import MeasureTheory.Measure.InnerMeasure
 public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.ContinuousBoundary
 public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.ContinuousBoundary
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Relative
@@ -19,6 +19,25 @@ corridors. The result is independent of any particular source of those rates.
 It gives inner and outer measure conclusions without measurability of the
 target; ordinary probability follows when the target preimages are
 null-measurable.
+
+## Public declarations
+
+* `tendsto_inner_outer_log_probability_ratio_of_finiteCorridorUnionRates_continuousBoundary`
+  gives matching inner-measure and outer-probability limits for the
+  continuous-boundary corridor, each equal to
+  `κ * ∫ continuousBoundaryDensity α lower upper dvolume`.
+* `tendsto_log_probability_ratio_of_finiteCorridorUnionRates_continuousBoundary`
+  gives the ordinary probability limit with the same integral when the target
+  preimages are null-measurable.
+
+For `\(G_n=\{\omega: paths_n(\omega)\in C_{lower,upper}\}\)` and
+`\(g_n\to-\infty\)`, the rates are
+`\(\log(P.innerMeasure(G_n).toReal)/g_n\to\kappa\int_0^1
+continuousBoundaryDensity(\alpha,lower,upper)(t)\,dt\)` and
+`\(\log(P(G_n).toReal)/g_n\to\kappa\int_0^1
+continuousBoundaryDensity(\alpha,lower,upper)(t)\,dt\)`.
+Null-measurability identifies the ordinary probability with the inner and
+outer measures.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

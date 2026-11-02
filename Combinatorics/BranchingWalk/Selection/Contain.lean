@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Basic.BranchingWalk
 
 /-!
 # Selection containment on branching walks
@@ -21,6 +21,27 @@ Every branching walk is parent-closed because survival is defined by all
 successive edge-presence conditions along an address. Selecting a sub-walk
 preserves only the marks and positions of its surviving particles; sibling
 order is handled separately by the ordered-step API after any reindexing.
+
+## Public declarations
+
+* `Combinatorics.Branching.RootIndexed.SelectContain β β'` means that the
+  initial positions agree and every surviving selected child has the same
+  optional step as in the source walk:
+  \[
+    (\forall r,\; \beta_0(r)=\beta'_0(r))
+      \land
+    (\forall r,u,i,\; \operatorname{survive}(\beta_r(u),i)
+      \implies \beta_r(u)(i)=\beta'_r(u)(i)).
+  \]
+* `Combinatorics.Branching.RootIndexed.SelectContain.refl` and
+  `Combinatorics.Branching.RootIndexed.SelectContain.trans` give reflexivity
+  and transitivity; `Combinatorics.Branching.RootIndexed.SelectContain.antisymm`
+  proves equality from mutual containment.
+* `Combinatorics.Branching.RootIndexed.instPartialOrder` equips
+  `RootIndexed.BranchingWalk` with the `PartialOrder` whose relation is
+  `SelectContain`.
+* `Combinatorics.Branching.SelectContain` is the single-root specialization
+  obtained by taking the root type to be `PUnit`.
 -/
 
 @[expose] public section
@@ -88,6 +109,17 @@ theorem antisymm {β β' : RootIndexed.BranchingWalk Root α Mark Position}
     exact hi r
 
 end SelectContain
+
+instance instPartialOrder {Root α Mark Position : Type*} :
+    PartialOrder (RootIndexed.BranchingWalk Root α Mark Position) where
+  le := SelectContain
+  le_refl := SelectContain.refl
+  le_trans := by
+    intro a b c hab hbc
+    exact SelectContain.trans hab hbc
+  le_antisymm := by
+    intro a b hab hba
+    exact SelectContain.antisymm hab hba
 
 end RootIndexed
 

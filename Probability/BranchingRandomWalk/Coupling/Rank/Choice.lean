@@ -4,26 +4,57 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Coupling.Rank.Field
-import Probability.BranchingRandomWalk.Coupling.Field.Law
-import Probability.BranchingRandomWalk.Coupling.Field.Adaptive
-import Probability.BranchingRandomWalk.Step.GenerationUpdate
+module
+
+public import Probability.BranchingRandomWalk.Coupling.Rank.Field
+public import Probability.BranchingRandomWalk.Coupling.Field.Law
+public import Probability.BranchingRandomWalk.Coupling.Field.Adaptive
+public import Probability.BranchingRandomWalk.Step.Field.Update
 
 /-!
 # One-generation rank choice
 
 This layer builds the guarded equal-rank inverse and the injective choice of a
 source root for each target generation address.
+
+## Public declarations
+
+The rank choice uses the source coordinate of the same rank when one exists,
+and the corresponding fallback coordinate otherwise; it is injective and
+preserves generation depth:
+
+\[
+\operatorname{rankChoice}_n(q)
+=\operatorname{pasteCoordinate}(\operatorname{rankPreimage}_n,q),
+\qquad
+\operatorname{Injective}(\operatorname{rankChoice}_n),\quad
+(\operatorname{rankChoice}_n(q)).2.\operatorname{length}=n.
+\]
+
+* `RootIndexed.rankPreimage` assigns to every target tree node its guarded
+  source node of the same dynamic rank, when such a node exists.
+* `RootIndexed.rankPreimage_range_countable` proves countability of the
+  actual range of the complete random inverse function from countable actual
+  ranges of the source and target populations.
+* `RootIndexed.measurableSet_rankPreimage_eq` proves that every inverse-map
+  fibre belongs to the generation-`n` domain flow.
+* `RootIndexed.rankChoice` extends the inverse match to generation-`n`
+  addresses by using the target copy when a source match is absent.
+* `RootIndexed.rankChoice_depth` states that every selected root has address
+  length `n` when every source particle does.
+* `RootIndexed.rankChoice_injective` states that the selected map on
+  generation-`n` addresses is injective for each field.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 /-- The sample-dependent guarded inverse rank map. -/
 noncomputable def RootIndexed.rankPreimage
@@ -96,14 +127,6 @@ theorem RootIndexed.measurableSet_rankPreimage_eq
     source target hsourceFiber hsourceRange htargetFiber htargetRange
     hsourceKey htargetKey f
 
-/-- Extend a guarded inverse map to the two-copy coordinate space. -/
-def RootIndexed.choiceOfPreimage
-    {Root α : Type*} (n : ℕ)
-    (preimage : RootIndexed.TreeNode Root α →
-      Option (RootIndexed.TreeNode Root α)) :
-    RootIndexed.Generation Root α n → (Root ⊕ Root) × TreeNode α :=
-  fun q => RootIndexed.StepField.pasteCoordinate preimage q.1
-
 /-- At every target node of generation `n`, choose the source node of equal
 rank when it exists and otherwise choose the same node in the fallback copy. -/
 noncomputable def RootIndexed.rankChoice
@@ -118,8 +141,8 @@ noncomputable def RootIndexed.rankChoice
     (field : RootIndexed.StepField (Root ⊕ Root) α X)
     (q : RootIndexed.Generation Root α n) :
     (Root ⊕ Root) × TreeNode α :=
-  RootIndexed.choiceOfPreimage n
-    (RootIndexed.rankPreimage sourceValue targetValue source target field) q
+  RootIndexed.StepField.pasteCoordinate
+    (RootIndexed.rankPreimage sourceValue targetValue source target field) q.1
 
 /-- Every chosen root lies in generation `n` when the source population does. -/
 theorem RootIndexed.rankChoice_depth
@@ -135,7 +158,7 @@ theorem RootIndexed.rankChoice_depth
     (field : RootIndexed.StepField (Root ⊕ Root) α X)
     (q : RootIndexed.Generation Root α n) :
     (RootIndexed.rankChoice n sourceValue targetValue source target field q).2.length = n := by
-  unfold RootIndexed.rankChoice RootIndexed.choiceOfPreimage
+  unfold RootIndexed.rankChoice
     RootIndexed.rankPreimage RootIndexed.StepField.pasteCoordinate
   cases hpre : preimageByRank (sourceValue field) (targetValue field)
       (source field) (target field) q.1 with

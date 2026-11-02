@@ -12,8 +12,28 @@ import Mathlib.MeasureTheory.Integral.Prod
 /-!
 # Characteristic functions of independent Poisson integrals
 
-The characteristic exponent of a sum of independent Poisson integrals is
-the sum of their intensity exponents, by product integration.
+## Public declarations
+
+- `ProbabilityTheory.integral_exp_sum_independent_poissonRandomMeasures`: for independent
+  Poisson random measures with intensity measures `mₛ` and `mᵦ`, measurable
+  integrands `fₛ`, `fᵦ`, and the stated realized- and intensity-integrability
+  hypotheses,
+  `∫ exp (i ξ (∫ fₛ dNₛ + ∫ fᵦ dNᵦ)) d(Pₛ × Pᵦ) =
+  exp (∫ (exp (i ξ fₛ) - 1) dmₛ + ∫ (exp (i ξ fᵦ) - 1) dmᵦ)`.
+
+The proof factors the product-space integral into the two characteristic
+integrals.
+
+For independent Poisson random measures `\mathcal N_s,\mathcal N_b` and
+the integrands `f_s,f_b`, the characteristic exponential of the sum has
+the sum of their intensity exponents:
+
+\[
+\mathbb E_{P_s\otimes P_b}\exp\!\left(i\xi\left(
+  \int_E f_s\,d\mathcal N_s+\int_E f_b\,d\mathcal N_b\right)\right)
+=\exp\!\left(\int_E(e^{i\xi f_s(x)}-1)\,m_s(dx)
+             +\int_E(e^{i\xi f_b(x)}-1)\,m_b(dx)\right).
+\]
 -/
 
 @[expose] public section

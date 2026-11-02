@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.GenerationDecomposition
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedCoordinates
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.AddressFiltration.GenerationDecomposition
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedCoordinates
 
 /-!
 # Predictable pasting of descendant fields
@@ -19,7 +21,46 @@ original root-indexed product law.
 Countability is required only for the actual range of the random family of
 chosen roots, which is the condition used to form measurable unions over its
 fibres.  Roots, family indices, and offspring slots remain arbitrary.
+
+## Public declarations
+
+The right-copy past contains exactly the coordinates of depth below `n`. Let
+`P` be the two-copy product law, let `A(F)` be a measurable past with the same
+law as the right-copy past, and let `B(F)` be the fields rooted at a
+countable-range predictable injective choice of generation-`n` coordinates.
+Gluing them gives the one-copy product law:
+
+\[
+\operatorname{rightPast}_n(F)(r,u)=F(\operatorname{inr}(r),u)\quad(|u|<n),
+\qquad
+P\circ A^{-1}=P\circ\operatorname{rightPast}_n^{-1}
+\Longrightarrow
+(F\mapsto\operatorname{glue}_n(A(F),B(F)))_{\#}P
+=\operatorname{stepFieldLaw}_{R}^{\mu}.
+\]
+
+* `RootIndexed.StepField.rightPast` restricts the right copy to coordinates
+  of address depth less than `n`; `rightPast_measurable` proves its
+  measurability in the joint generation-`n` domain flow.
+* `RootIndexed.StepField.splice` glues selected descendant fields onto a
+  specified past, while `RootIndexed.rightGenerationRoots` gives the
+  canonical right-copy family of generation-`n` roots.
+* `RootIndexed.rightGenerationRoots_injective` and
+  `RootIndexed.rightGenerationRoots_depth` state that this canonical family
+  is injective and every selected address has length `n`.
+* `RootIndexed.StepField.splice_right` identifies gluing the canonical
+  right-copy descendants to their own past with the full right field.
+* `RootIndexed.stepFieldLaw_glueSelected` preserves the root-indexed product
+  law when an injective, generation-`n` family is selected predictably and
+  glued onto a past with the right-copy marginal.
+* `RootIndexed.stepFieldLaw_glueCoordinates` gives the same product-law
+  conclusion for an injective map of individual descendant coordinates at
+  depths at least `n`.
+* `RootIndexed.stepFieldLaw_splice` specializes the selected-field theorem to
+  the canonical right-copy past and the splice operation.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

@@ -4,8 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Coupling.Field.Ranked
-import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Step
+module
+
+public import Combinatorics.BranchingWalk.Population.Offspring
+
+public import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Core
+public import Probability.BranchingRandomWalk.Coupling.Slice
+public import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
+public import Combinatorics.BranchingWalk.Basic.BranchingWalk
+public import Combinatorics.BranchingWalk.Selection.Coupling.PopulationCloud
+public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Step
 
 /-!
 # A recursively matched field for the selected branching walk
@@ -14,15 +22,84 @@ This file specializes the abstract rank-installed field to spatial branching
 walks.  Source and target ranks are computed from their path positions, while
 the target population is the causal first-`N` population of the field built
 so far.
+
+## Public declarations
+
+Write `F_n` for the recursively installed field at stage `n` and `P_n` for
+its selected population. Installing the next generation preserves `P_n` and
+leaves all positions through depth `n` unchanged:
+
+\[\begin{aligned}
+P_n(F_{n+1})&=P_n(F_n),\\
+|q|\le n\quad&\Longrightarrow\quad
+\operatorname{position}_{F_{n+1}}(q)=\operatorname{position}_{F_n}(q).
+\end{aligned}\]
+
+* `RootIndexed.initialPopulationSliceDominatingMap_of_subset` constructs an
+  identity particle map from the initial cloud on `sourceRoots` into that on
+  `targetRoots` whenever `sourceRoots ⊆ targetRoots`; both clouds may use
+  different step fields because their particles have empty addresses.
+* `RootIndexed.coupledField` recursively installs source steps at equal-rank
+  target particles; `RootIndexed.coupledPopulation` reads the selected target
+  population in that field.
+* `RootIndexed.coupledPopulation_succ_stage` states that installation at stage
+  `n+1` preserves the target population at generation `n`.
+* `RootIndexed.coupledField_position_succ_of_depth_le` states that positions
+  at address depth at most `n` are unchanged from stage `n` to `n+1`.
+* `RootIndexed.coupledField_succ_apply_matchByRankOrSelf` identifies the
+  installed step at an equal-rank target parent with the source step.
+* `RootIndexed.coupledInjection` constructs a slice-dominating injection at
+  every stage from the initial injection, source offspring inclusion, and the
+  finite population-capacity hypotheses.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 
 open Combinatorics.UlamHarris Combinatorics.Branching
+open _root_.Combinatorics.Selection
 open Combinatorics.Branching.Selection
-open Combinatorics.Branching.Selection.NSelection
+open _root_.Combinatorics.Selection.NSelection
 
 variable {Ω Root α Mark Position Value : Type*}
+
+/-- If `sourceRoots ⊆ targetRoots`, the initial source cloud embeds into the
+target cloud by the identity on root particles. The target and source step
+fields may differ because every initial particle has the empty address, so
+both position maps equal the prescribed initial position there. -/
+noncomputable def RootIndexed.initialPopulationSliceDominatingMap_of_subset
+    {Root α Mark Position Value : Type*}
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    [AddCommMonoid Position] [Preorder Value]
+    (φ : Position → Value) (d : Mark → Position)
+    (initial : Root → Position)
+    (sourceRoots targetRoots : Finset Root)
+    (hroots : sourceRoots ⊆ targetRoots)
+    (sourceField targetField : RootIndexed.StepField Root α Mark) :
+    Cloud.SliceDominatingMap φ
+      (Combinatorics.Branching.Selection.Coupling.populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initial sourceField)
+        (RootIndexed.initialPopulation (α := α) sourceRoots))
+      (Combinatorics.Branching.Selection.Coupling.populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initial targetField)
+        (RootIndexed.initialPopulation (α := α) targetRoots)) () := by
+  refine {
+    toFun := id
+    mapsTo := ?_
+    injOn := Set.injOn_id _
+    dominates := ?_ }
+  · intro p hp
+    change p ∈ RootIndexed.initialPopulation (α := α) targetRoots
+    change p ∈ RootIndexed.initialPopulation (α := α) sourceRoots at hp
+    rw [RootIndexed.mem_initialPopulation_iff] at hp ⊢
+    rcases hp with ⟨r, hr, rfl⟩
+    exact ⟨r, hroots hr, rfl⟩
+  · intro p hp
+    change φ (RootIndexed.position initial d targetField p.1 p.2) ≤
+      φ (RootIndexed.position initial d sourceField p.1 p.2)
+    obtain ⟨r, _, rfl⟩ := RootIndexed.mem_initialPopulation_iff.mp hp
+    simp [RootIndexed.position]
 
 /-- The target field obtained by installing the source step of each particle
 at the target particle of the same spatial rank, one generation at a time. -/
@@ -36,7 +113,7 @@ noncomputable def RootIndexed.coupledField
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
-        (RootIndexed.childrenAtGeneration n parents β))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (sourcePopulation : ℕ → Ω → Finset (RootIndexed.TreeNode Root α)) :
     ℕ → Ω → RootIndexed.StepField Root α Mark :=
@@ -61,7 +138,7 @@ noncomputable def RootIndexed.coupledPopulation
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
-        (RootIndexed.childrenAtGeneration n parents β))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (sourcePopulation : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (n : ℕ) (ω : Ω) : Finset (RootIndexed.TreeNode Root α) :=
@@ -81,7 +158,7 @@ theorem RootIndexed.coupledPopulation_succ_stage
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
-        (RootIndexed.childrenAtGeneration n parents β))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (sourcePopulation : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (n : ℕ) (ω : Ω) :
@@ -105,7 +182,7 @@ theorem RootIndexed.coupledField_position_succ_of_depth_le
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
-        (RootIndexed.childrenAtGeneration n parents β))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (sourcePopulation : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (n : ℕ) (ω : Ω) (q : RootIndexed.TreeNode Root α)
@@ -133,7 +210,7 @@ theorem RootIndexed.coupledField_succ_apply_matchByRankOrSelf
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
-        (RootIndexed.childrenAtGeneration n parents β))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (sourcePopulation : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (n : ℕ) (ω : Ω)
@@ -176,7 +253,7 @@ noncomputable def RootIndexed.coupledInjection
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
-        (RootIndexed.childrenAtGeneration n parents β))
+        (Combinatorics.Branching.Population.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (sourcePopulation : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (sourceSlots : ℕ → Ω → RootIndexed.TreeNode Root α → Set α)
@@ -189,7 +266,7 @@ noncomputable def RootIndexed.coupledInjection
         (RootIndexed.coupledPopulation N roots initial d φ hadmits sourceStep
           fallback sourcePopulation 0 ω)) ())
     (hsourceSubset : ∀ n ω, ↑(sourcePopulation (n + 1) ω) ⊆
-      Combinatorics.Branching.Selection.Coupling.offspringAddressSet
+      Combinatorics.Branching.Population.offspringAddressSet
         (↑(sourcePopulation n ω)) (sourceSlots n ω))
     (hsourceSlots : ∀ n ω p, p ∈ sourcePopulation n ω →
       sourceSlots n ω p ⊆ {i | survive (sourceStep ω p.1 p.2) i})

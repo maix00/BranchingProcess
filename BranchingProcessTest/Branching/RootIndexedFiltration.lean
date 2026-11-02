@@ -1,12 +1,13 @@
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Space
-import Probability.BranchingRandomWalk.Genealogy.Exploration.PreSampled
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtration
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.AddressFiltration.PastFuture
 
 open MeasureTheory ProbabilityTheory
 open Combinatorics.UlamHarris Combinatorics.Branching
 
 namespace ProbabilityTheory.BranchingRandomWalk
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 example {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
     multiRootStepGenerationSpace (m := m) (X := X) n =
@@ -36,8 +37,8 @@ example {m n : ℕ} {X : Type*} [MeasurableSpace X]
 
 example {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ] :
-    iIndep (multiRootStepCoordinateSpace (m := m) (X := X))
-      (finiteRootStepFieldLaw μ m) :=
+    iIndep (RootIndexed.stepCoordinateSpace (Root := Fin m) (α := ℕ) (X := X))
+      (RootIndexed.stepFieldLaw (Root := Fin m) μ) :=
   RootIndexed.stepFieldLaw_coordinates_independent μ
 
 example {Root α X : Type*} [MeasurableSpace X]
@@ -46,13 +47,6 @@ example {Root α X : Type*} [MeasurableSpace X]
       (RootIndexed.stepFutureSpace (Root := Root) (α := α) (X := X) n)
       (RootIndexed.stepFieldLaw (Root := Root) μ) :=
   RootIndexed.step_past_future_independent μ n
-
-example {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ] (n : ℕ) :
-    Indep (multiRootStepFiltration (m := m) (X := X) n)
-      (multiRootStepFutureSpace (m := m) (X := X) n)
-      (finiteRootStepFieldLaw μ m) :=
-  multiRootStep_past_future_independent μ n
 
 example {m : ℕ} {Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]
@@ -86,7 +80,7 @@ example {Root α Mark Position : Type*}
 example {α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     {ι : Type*} (σ : ι → TreeNode α) (hσ : Function.Injective σ) :
-    iIndepFun (fun i (ω : StepField α X) => ω (σ i)) (stepFieldLaw μ) :=
-  (stepFieldLaw_independent μ).precomp hσ
+    iIndepFun (fun i (ω : StepField α X) => ω (σ i)) (offspringFieldLaw μ) :=
+  (offspringFieldLaw_independent μ).precomp hσ
 
 end ProbabilityTheory.BranchingRandomWalk

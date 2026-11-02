@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
 
 jobs:
@@ -15,19 +16,129 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Identify the pinned Mathlib revision
+        id: mathlib-revision
+        run: echo "sha=$(git -C Vendor/Mathlib rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      # The Mathlib cache service has no matching artifact set for this pinned source
+      # tree. lean-action caches the root .lake directory, while this path belongs to
+      # the Mathlib submodule and needs its own stable cache.
+      - name: Restore the Mathlib build cache
+        id: mathlib-build-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: Vendor/Mathlib/.lake/build
+          key: mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib-revision.outputs.sha }}
+          restore-keys: |
+            mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-
+
+      # A pull_request run cannot restore a cache saved by a push to its head
+      # branch. Transfer the build through a short-lived artifact from preflight.
+      - name: Find the preflight Mathlib build artifact
+        id: mathlib-build-artifact
+        if: >-
+          steps.mathlib-build-cache.outputs.cache-hit != 'true' &&
+          ((github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository) ||
+          (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const artifactName = `mathlib-build-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib-revision.outputs.sha }}`;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const repoFullName = `${owner}/${repo}`;
+            const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+            for (let attempt = 0; attempt < 40; attempt++) {
+              const artifacts = await github.paginate(
+                github.rest.actions.listArtifactsForRepo,
+                { owner, repo, per_page: 100 }
+              );
+              const candidates = artifacts
+                .filter(a => a.name === artifactName && !a.expired && a.workflow_run?.id)
+                .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+
+              for (const artifact of candidates) {
+                const { data: run } = await github.rest.actions.getWorkflowRun({
+                  owner, repo, run_id: artifact.workflow_run.id
+                });
+                if (run.event === 'push' && run.head_branch === 'preflight' &&
+                    run.head_repository?.full_name === repoFullName &&
+                    run.path === '.github/workflows/build.yml') {
+                  core.setOutput('run-id', String(run.id));
+                  core.setOutput('artifact-name', artifactName);
+                  core.info(`Using Mathlib build artifact from push run ${run.id}.`);
+                  return;
+                }
+              }
+
+              if (attempt % 5 === 0)
+                core.info(`Waiting for the matching preflight artifact (${attempt + 1}/40).`);
+              await pause(30_000);
+            }
+
+            core.notice('No preflight Mathlib artifact was found; continuing with the normal build path.');
+
+      - name: Download the preflight Mathlib build artifact
+        if: steps.mathlib-build-artifact.outputs.run-id != ''
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ steps.mathlib-build-artifact.outputs.artifact-name }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.mathlib-build-artifact.outputs.run-id }}
+          path: ${{ runner.temp }}/mathlib-build-artifact
+
+      - name: Restore the Mathlib build files
+        if: steps.mathlib-build-artifact.outputs.run-id != ''
+        run: |
+          mkdir -p Vendor/Mathlib/.lake
+          tar --zstd -xf "$RUNNER_TEMP/mathlib-build-artifact/mathlib-build.tar.zst" \
+            -C Vendor/Mathlib/.lake
 
       - name: Install Lean and build the package
         uses: leanprover/lean-action@v1
         with:
-          use-mathlib-cache: true
+          # Mathlib has not published a cache for this fork; use the pinned
+          # GitHub build cache or the matching short-lived artifact instead.
+          use-mathlib-cache: false
+
+      - name: Save the Mathlib build cache
+        if: success() && steps.mathlib-build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: Vendor/Mathlib/.lake/build
+          key: mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib-revision.outputs.sha }}
+
+      - name: Package Mathlib build files for PR runs
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/preflight'
+        run: |
+          set -o pipefail
+          tar -cf - -C Vendor/Mathlib/.lake build \
+            | zstd -T0 -3 -o "$RUNNER_TEMP/mathlib-build.tar.zst"
+
+      - name: Upload the short-lived Mathlib build artifact
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/preflight'
+        uses: actions/upload-artifact@v7
+        with:
+          name: mathlib-build-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib-revision.outputs.sha }}
+          path: ${{ runner.temp }}/mathlib-build.tar.zst
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
 
       - name: Check stable APIs, proof dependencies, and import boundaries
         run: |
           set -o pipefail
           node scripts/check-visualizer-manifest.mjs
           lake build \
-            Analysis.Asymptotics.RegularVariation \
-            Analysis.Asymptotics.RegularVariation.Integral \
+            Analysis.Asymptotics.RegularVariation.Basic \
+            Analysis.Asymptotics.RegularVariation.Integral.Basic \
+            Analysis.Asymptotics.RegularVariation.Integral.Tail \
             MeasureTheory.Measure.CadlagPath.RangeCover \
             Probability.Process.Stable.Corridor.Law \
             Probability.Process.Stable.SmallDeviation.ShiftedCorridor \
@@ -35,22 +146,22 @@ jobs:
             Probability.Process.Stable.SmallDeviation.BlockBounds \
             Probability.Process.Stable.SmallDeviation.Blocks.Upper.ArbitraryHorizon \
             Probability.Process.Stable.SmallDeviation.EndpointComparison \
-            Probability.Process.Stable.SmallDeviation.EscapeRate \
+            Probability.Process.Stable.SmallDeviation.EscapeRate.Basic \
             Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor \
             Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint \
             Probability.Process.Stable.SmallDeviation.EscapeRate.Law \
-            Probability.Distributions.Moments.Truncated \
+            Probability.Distributions.Moments.Truncated.Basic \
             Probability.Distributions.Moments.Truncated.TailIntegral \
             Analysis.Asymptotics.RegularVariation.AtZero.Potter \
             Analysis.Fourier.PositiveDefinite \
             MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite \
-            Analysis.Fourier.Bochner \
+            Analysis.Fourier.Bochner.Theorem \
             Analysis.Fourier.CosineTauberian.Kernel \
             Analysis.Fourier.CosineTauberian.Inversion \
             Analysis.Fourier.CosineTauberian.Mellin \
             Analysis.Fourier.CosineTauberian.RegularVariation \
             Probability.Distributions.CharacteristicFunction.CosineDefect \
-            Probability.Distributions.CharacteristicFunction.Symmetrization \
+            Probability.Distributions.CharacteristicFunction.Symmetrization.Basic \
             Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail \
             Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian \
             Probability.Distributions.CharacteristicFunction.GaussianSmoothing \
@@ -59,28 +170,29 @@ jobs:
             Probability.Distributions.DomainOfAttraction.CharacteristicFunction \
             Probability.Distributions.DomainOfAttraction.Block \
             MeasureTheory.Measure.CharacteristicFunction.Convergence \
-            Probability.Distributions.Stable.Attraction.Norming \
+            Probability.Distributions.Stable.Attraction.Norming.Basic \
             Probability.Distributions.Stable.Attraction.CharacteristicFunction \
             Probability.Distributions.Stable.Attraction.NormingRatios.Index \
             Probability.Distributions.Stable.Attraction.NormingRatios.UniformDefect \
             Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation \
-            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.TruncatedMoment \
-            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.UpperEndpoint \
-            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointReturn \
+            Probability.Distributions.Stable.Attraction.Normal.QuadraticTail \
+            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.Upper \
+            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.Lemmas.Return \
             MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy \
             Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnion \
             Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation \
-            Topology.Cadlag.Skorokhod.Separable \
-            MeasureTheory.MeasurableSpace.CadlagPath \
+            Topology.Cadlag.Skorokhod.Path.Separable \
+            MeasureTheory.MeasurableSpace.CadlagPath.Basic \
             Combinatorics.BranchingWalk.Walk.Equiv \
             Probability.BranchingRandomWalk.Walk.Path.Scaling
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
-          python3 scripts/run-all-lean-tests.py --output-dir "$RUNNER_TEMP/lean-tests"
+          # Compile independent test modules across ubuntu-latest's four CPUs.
+          python3 scripts/run-all-lean-tests.py --jobs 4 --output-dir "$RUNNER_TEMP/lean-tests"
           : > "$RUNNER_TEMP/positive-definite-axioms.txt"
           cat \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/PositiveDefinite.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/Fourier/PositiveDefinite.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/PositiveDefinite.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/Bochner.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/Fourier/Bochner.lean.log" \
             >> "$RUNNER_TEMP/positive-definite-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/positive-definite-axioms.txt" --expected \
@@ -92,23 +204,23 @@ jobs:
             ProbabilityTheory.bochner
           : > "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           cat \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/ShiftedCorridor.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/RangeComparison.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/BlockBounds.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/EndpointComparison.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/EscapeRate.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/EscapeRatePathLaw.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Scale.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/ShiftedCorridor.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/RangeComparison.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/BlockBounds.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/EndpointComparison.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/EscapeRate.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/SmallDeviation/EscapeRatePathLaw.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Attraction/Scale.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/GaussianSmoothing.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/CharacteristicFunction.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/AttractionBlock.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/AttractionCharacteristicFunction.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Attraction/CharacteristicFunction.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Attraction/Block.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Attraction/CharacteristicFunctionLimit.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/NormingRatios.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/TruncatedTailIntegral.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/CosineTauberian.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/Fourier/CosineTauberian.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/Tauberian.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/InverseTauberian.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/PathClassRate.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Rates/PathClassRate.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Stable/Discrete/UpperEndpoint.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Stable/Discrete/PathClassRegimes.lean.log" \
             >> "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
@@ -194,7 +306,6 @@ jobs:
             ProbabilityTheory.exists_pos_symmetrizedClosedAbsTail_le_normDefectFrequencyAverage \
             ProbabilityTheory.intervalIntegral_four_cosineDefect_sub_double \
             ProbabilityTheory.tendsto_closedAbsTail_div_cosineDefect_atTop \
-            ProbabilityTheory.tendsto_frequencyCancellation_ratio_nhdsGT_zero \
             ProbabilityTheory.tendsto_symmetrizedClosedAbsTail_div_normDefect_atTop \
             ProbabilityTheory.secondTailIntegral_twoSidedTail_eq_cappedCubic \
             ProbabilityTheory.secondTailIntegral_eq_cosineDefect_kernel \
@@ -220,7 +331,7 @@ jobs:
             ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_probability_ratio_of_FiniteCorridorUnionApproximation \
             ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation \
             ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_stepCorridorRates \
-            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.exists_constantCorridor_rate \
+            ProbabilityTheory.Process.Stable.SmallDeviation.PathClass.StepCorridor.exists_constantCorridor_rate \
             ProbabilityTheory.cdf_gaussianReal_zero_lt_one \
             ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two \
             ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two_of_brownian
@@ -231,11 +342,11 @@ jobs:
         run: |
           set -o pipefail
           lake build \
-            Topology.Cadlag.Skorokhod.Separable \
-            MeasureTheory.MeasurableSpace.CadlagPath
+            Topology.Cadlag.Skorokhod.Path.Separable \
+            MeasureTheory.MeasurableSpace.CadlagPath.Basic
           : > "$RUNNER_TEMP/skorokhod-path-axioms.txt"
           cat \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/SkorokhodBorelGeneration.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Skorokhod/Borel/Generation.lean.log" \
             >> "$RUNNER_TEMP/skorokhod-path-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/skorokhod-path-axioms.txt" --expected \
@@ -244,7 +355,6 @@ jobs:
             Skorokhod.continuousAt_integralAlongTimeChange \
             Skorokhod.instSeparableSpaceCadlagPath \
             Skorokhod.instIsCompletelyMetrizableSpaceCadlagPath \
-            Skorokhod.measurable_rationalEvaluation \
             Skorokhod.measurableEmbedding_rationalEvaluation \
             Skorokhod.borel_eq_comap_rationalEvaluation
 
@@ -252,11 +362,11 @@ jobs:
         run: |
           set -o pipefail
           lake build \
-            Probability.RandomMeasure.Poisson.Basic \
-            Probability.RandomMeasure.Poisson.Integral
+            Probability.RandomMeasure.Poisson.RandomMeasure.Basic \
+            Probability.RandomMeasure.Poisson.Integration.Integral
           : > "$RUNNER_TEMP/poisson-random-measure-axioms.txt"
           cat \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Probability/PoissonRandomMeasure.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Probability/Poisson/RandomMeasure.lean.log" \
             >> "$RUNNER_TEMP/poisson-random-measure-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/poisson-random-measure-axioms.txt" --expected \
@@ -274,7 +384,6 @@ jobs:
             Probability.BranchingProcess.Offspring.FieldLaw \
             Probability.BranchingProcess.Offspring.Count \
             Probability.BranchingProcess.GaltonWatson.Generation \
-            Probability.BranchingProcess.GaltonWatson.BranchingProperty \
             Probability.BranchingRandomWalk.Genealogy.GaltonWatson
           : > "$RUNNER_TEMP/branching-process-axioms.txt"
           cat \
@@ -282,7 +391,7 @@ jobs:
             >> "$RUNNER_TEMP/branching-process-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/branching-process-axioms.txt" --expected \
-            Combinatorics.Branching.RootIndexed.BranchingWalk.generationSize_one_eq_childCount \
+            Combinatorics.Branching.BranchingWalk.generationSize_one_eq_childCount \
             ProbabilityTheory.BranchingProcess.GaltonWatson.generationSize_one_law
 
       - name: Check random-walk full path-law conversion
@@ -292,7 +401,7 @@ jobs:
             Probability.BranchingRandomWalk.Walk.Path.Scaling
           : > "$RUNNER_TEMP/random-walk-axioms.txt"
           cat \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Probability/RandomWalkPathLaw.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Probability/RandomWalk/PathLaw.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Branching/WalkEquiv.lean.log" \
             >> "$RUNNER_TEMP/random-walk-axioms.txt"
           python3 scripts/check-lean-axioms.py \

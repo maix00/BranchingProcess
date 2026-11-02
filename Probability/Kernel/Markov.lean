@@ -12,6 +12,19 @@ public import Mathlib.Probability.Kernel.Basic
 /-!
 # Markov kernels
 
+With `Ω` the state space, the unit row-mass condition for a kernel and its
+iterates is:
+
+\[
+K(x,\Omega)=1\quad\Longrightarrow\quad (K^n)(x,\Omega)=1
+\qquad(x\in X,\ n\in\mathbb N).
+\]
+
+## Public declarations
+
+- `IsMarkovKernel.pow`: if `K` is a Markov transition kernel on a measurable
+  state space, every iterate `K ^ n` is Markov.
+
 Small closure results for mathlib's `Kernel` API.
 -/
 

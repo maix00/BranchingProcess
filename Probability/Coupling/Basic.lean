@@ -13,6 +13,38 @@ public import Mathlib.MeasureTheory.Measure.Prod
 
 A coupling is a joint measure with prescribed first and second marginals.  The
 definition is independent of any order, branching structure, or pathwise map.
+
+For a measure `κ` on `X×Y`, being a coupling of `μ` and `ν` means
+
+\[
+(\operatorname{map}\,\mathrm{Prod.fst})\,κ=μ,
+\qquad
+(\operatorname{map}\,\mathrm{Prod.snd})\,κ=ν.
+\]
+
+For a relation `R : X → Y → Prop`, it holds almost everywhere under the
+joint measure:
+
+\[
+R(p.1,p.2)\quad\text{for }κ.\mathrm{joint}\text{-almost every }p.
+\]
+
+## Public declarations
+
+* `ProbabilityTheory.Coupling μ ν` consists of a measure `κ` on `X × Y` such
+  that `κ.map Prod.fst = μ` and `κ.map Prod.snd = ν`.
+* `ProbabilityTheory.Coupling.AESatisfies κ R` means
+  `∀ᵐ p ∂κ.joint, R p.1 p.2`.
+* `ProbabilityTheory.Coupling.ofVariables` and
+  `ProbabilityTheory.Coupling.ofVariablesOfLaws` form the joint law of two
+  measurable random variables on a common probability space.
+* `ProbabilityTheory.Coupling.independent` is the product coupling;
+  `ProbabilityTheory.Coupling.swap` exchanges the marginals; and
+  `ProbabilityTheory.Coupling.map` pushes both coordinates through measurable
+  maps.
+* `ProbabilityTheory.Coupling.measure_event_le_add_of_ae_implication` transfers
+  an almost-sure event implication under a coupling to the marginal bound
+  $\nu(A)\leq\mu(B)+\mu(C)$.
 -/
 
 open MeasureTheory
@@ -37,7 +69,7 @@ instance {μ : Measure X} {ν : Measure Y} [IsProbabilityMeasure μ]
     have h := congrArg (fun m : Measure X => m Set.univ) κ.fst_joint
     simpa [Measure.map_apply measurable_fst MeasurableSet.univ] using h
 
-/-- A pathwise relation holds under the joint law of a coupling. -/
+/-- A relation holds almost surely between the two coordinates of a coupling. -/
 def AESatisfies {μ : Measure X} {ν : Measure Y} (κ : Coupling μ ν)
     (R : X → Y → Prop) : Prop :=
   ∀ᵐ p ∂κ.joint, R p.1 p.2
@@ -112,6 +144,42 @@ noncomputable def map {μ : Measure X} {ν : Measure Y}
     rw [show Prod.snd ∘ (fun p : X × Y => (f p.1, g p.2)) = g ∘ Prod.snd by
       funext p; rfl]
     rw [← Measure.map_map hg measurable_snd, κ.snd_joint]
+
+/-- If membership in a target event implies, almost surely under the joint
+measure, membership in one of two source events, then the target marginal
+probability is at most the sum of the two source marginal probabilities. -/
+theorem measure_event_le_add_of_ae_implication
+    {μ : Measure X} {ν : Measure Y} (κ : Coupling μ ν)
+    (A : Set Y) (B C : Set X)
+    (hA : MeasurableSet A) (hB : MeasurableSet B) (hC : MeasurableSet C)
+    (h : ∀ᵐ p ∂κ.joint,
+      p.2 ∈ A → p.1 ∈ B ∨ p.1 ∈ C) :
+    ν A ≤ μ B + μ C := by
+  have hAmap : (κ.joint.map Prod.snd) A =
+      κ.joint (Prod.snd ⁻¹' A) := Measure.map_apply measurable_snd hA
+  have hBmap : (κ.joint.map Prod.fst) B =
+      κ.joint (Prod.fst ⁻¹' B) := Measure.map_apply measurable_fst hB
+  have hCmap : (κ.joint.map Prod.fst) C =
+      κ.joint (Prod.fst ⁻¹' C) := Measure.map_apply measurable_fst hC
+  calc
+    ν A = κ.joint (Prod.snd ⁻¹' A) := by
+      calc
+        ν A = (κ.joint.map Prod.snd) A := by rw [κ.snd_joint]
+        _ = κ.joint (Prod.snd ⁻¹' A) := hAmap
+    _ ≤ κ.joint ((Prod.fst ⁻¹' B) ∪ (Prod.fst ⁻¹' C)) := by
+      apply measure_mono_ae
+      filter_upwards [h] with p hp
+      intro hpA
+      rcases hp (by simpa using hpA) with hpB | hpC
+      · exact Or.inl hpB
+      · exact Or.inr hpC
+    _ ≤ κ.joint (Prod.fst ⁻¹' B) + κ.joint (Prod.fst ⁻¹' C) :=
+      measure_union_le _ _
+    _ = μ B + μ C := by
+      calc
+        _ = (κ.joint.map Prod.fst) B +
+            (κ.joint.map Prod.fst) C := by rw [hBmap, hCmap]
+        _ = μ B + μ C := by rw [κ.fst_joint]
 
 end Coupling
 

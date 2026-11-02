@@ -7,12 +7,36 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
+import Probability.Process.RandomWalk.Path.Block.Corridor.Geometry
 
 /-!
 # Normalized endpoints of block partitions
 
 Deterministic estimates that transfer normalized endpoint control to
 unnormalized block-start margins and corridor events.
+
+## Public declarations
+
+* `normalized_partitionEndpoints_mem_Icc_of_blockApproximation` and
+  `normalized_partitionEndpoints_mem_Ioo_of_blockApproximation` transfer
+  coordinatewise block-sum error at most `radius` and a margin of
+  `blocks * radius` on reference partial sums to
+  `AdditivePath.displacement (k * length) increment / scale ∈ Icc lower[k] upper[k]`
+  or the corresponding `Ioo` conclusion for each `k ≤ blocks`.
+* `partitionStartMargins_of_normalizedEndpoints` converts
+  `AdditivePath.displacement (j * length) increment / scale ∈
+  Ioo (lower j + radius) (upper j - radius)` into
+  `scale * lower j + scale * radius ≤ AdditivePath.displacement (j * length) increment ∧
+  AdditivePath.displacement (j * length) increment ≤ scale * upper j - scale * radius`
+  when `scale > 0`.
+* `partitionStartMargins_subset_corridors_union_largeDeviation` states that
+  simultaneous margins imply all block corridors unless some block contains
+  a relative displacement of size at least `radius`.
+
+If each normalized block-sum error is at most `\(r\)`, then at partition
+endpoint `k` the cumulative error is at most `\(kr\)`. In particular,
+`\(S_{kL}/c\in(l_k+r,u_k-r)\)` and `\(c>0\) imply the unnormalized
+margin `\(c l_k+cr\le S_{kL}\le c u_k-cr\)`.
 -/
 
 @[expose] public section
@@ -21,7 +45,7 @@ namespace ProbabilityTheory.RandomWalk
 
 /-- Coordinatewise approximation of consecutive normalized block sums gives
 a linear error bound at every earlier partition endpoint. -/
-theorem abs_normalized_partialSum_mul_sub_sum_le
+private lemma abs_normalized_partialSum_mul_sub_sum_le
     {blocks length : ℕ} {scale radius : ℝ}
     {increment : ℕ → ℝ} {target : ℕ → ℝ}
     (hblock : ∀ j < blocks,

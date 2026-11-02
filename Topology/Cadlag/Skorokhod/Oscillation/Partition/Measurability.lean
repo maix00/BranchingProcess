@@ -11,7 +11,24 @@ public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Pullback
 /-!
 # Measurability of oscillation-partition path sets
 
-The existence of a finite partition with strict minimum-gap and within-cell-oscillation margins is open in the Skorokhod `J₁` topology, hence Borel measurable.
+For $\delta,\varepsilon\in\mathbb R$, define $A(\delta,\varepsilon)$ as the set
+of paths $f$ for which some finite partition $P$ and bound $b<\varepsilon$
+satisfy $\delta<\operatorname{mesh}(P)$ and
+$P.index(s)=P.index(t)\implies d(f(s),f(t))\le b$ for all $s,t\ne1$.
+This set is open in the Skorokhod $J_1$ topology and hence Borel measurable.
+The multiscale event is
+$\bigcap_{n\in\mathbb N}A(\delta_n,\varepsilon_n)$ and is Borel measurable.
+
+## Public declarations
+
+- `admitsOscillationPartition E δ ε` is the event $A(δ,ε)$ defined above.
+- `isOpen_admitsOscillationPartition` and
+  `measurableSet_admitsOscillationPartition` prove that this event is open
+  and Borel measurable.
+- `admitsOscillationPartitionSequence` is
+  $\bigcap_{n\in\mathbb N}A(δ_n,ε_n)$, and
+  `measurableSet_admitsOscillationPartitionSequence` proves it is Borel.
+
 -/
 
 @[expose] public section

@@ -18,6 +18,17 @@ public section
 The cutoff weights are path-space objects. Their elementary domination by the
 corresponding open corridor event is stated for arbitrary measures on the
 Skorokhod path space.
+
+## Public declarations
+
+- The integral of the corridor/endpoint cutoff weight is at most the measure
+  of the strict corridor event on which the weight is positive.
+  For every path-space measure \(\mu\),
+  \[
+  \int \operatorname{ofReal}\!\left(w_{a,b,c,d}(f)\right)\,d\mu(f)
+  \le \mu\!\left(\operatorname{rangeInOpenIntervalEndsIn}(a,b,c,d)\right),
+  \]
+  where \(w_{a,b,c,d}\) is `Skorokhod.corridorEndsInWeight`.
 -/
 
 open MeasureTheory

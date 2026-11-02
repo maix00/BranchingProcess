@@ -11,7 +11,28 @@ public import Topology.Cadlag.Skorokhod.Topology
 /-!
 # Basic oscillation partitions
 
-Finite partitions record half-open time cells, their assignment map, and a lower bound on cell lengths. This module proves the cell-assignment laws and constructs càdlàg step approximations controlled by within-cell oscillation.
+For knots $0=t_0<\cdots<t_m=1$, an `OscillationPartition` assigns each
+nonterminal time to a half-open cell $[t_i,t_{i+1})$ and assigns $1$ to the
+last cell. Its mesh $\delta$ satisfies $0<\delta\le t_{i+1}-t_i$ for each
+$i$. The step approximation samples each cell's left endpoint and retains the
+path's value at $1$.
+
+## Public declarations
+
+- `OscillationPartition` is this finite partition with its cell-index map.
+  `index_eq_of_cell` and `index_monotone` characterize that map, and
+  `size_mul_mesh_le_one` states $m\delta\le1$.
+- `stepPath` assigns one value to each half-open cell and a separate value at
+  $1$. `OscillationBoundedOnPartition P f b` means
+  $d(f(s),f(t))\le b$ whenever $s,t\ne1$ have the same cell index.
+- `stepApproximation` samples at each cell's left endpoint and keeps $f(1)$.
+  `dist_stepApproximation_le` states
+  $d(f(t),\operatorname{stepApproximation}_P(f)(t))\le b$.
+  `uniformEDist_stepApproximation_le` states
+  `uniformEDist f (partition.stepApproximation f) ≤ ENNReal.ofReal b`, and
+  `j1EDist_stepApproximation_le` gives the corresponding bound for
+  `j1EDist f (partition.stepApproximation f)`.
+
 -/
 
 @[expose] public section

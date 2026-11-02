@@ -8,10 +8,12 @@ Authors: LeanLevy Contributors
 -/
 module
 
-public import MeasureTheory.Measure.LevyMeasure
+public import MeasureTheory.Measure.Levy.Basic
 public import Mathlib.Analysis.Complex.Exponential
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Analysis.Fourier.ConditionallyPositiveDefinite.Basic
+import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 
 /-!
 # Compensated Integrand for the Lévy-Khintchine Formula
@@ -20,22 +22,40 @@ The **compensated integrand** is the function
 `f(ξ, x) = exp(ixξ) - 1 - ixξ · 1_{|x| < 1}`
 which appears in the Lévy-Khintchine representation of infinitely divisible distributions.
 
-## Main definitions
+## Public declarations
 
-* `ProbabilityTheory.levyCompensatedIntegrand` — the compensated integrand as a function `ℝ → ℝ → ℂ`.
+* `ProbabilityTheory.levyCompensatedIntegrand ξ x` is
+  $e^{i x\xi}-1-i x\xi\mathbf 1_{\{|x|<1\}}$. Its defining equation is
+  `levyCompensatedIntegrand_def`, and `levyCompensatedIntegrand_zero_right`
+  and `levyCompensatedIntegrand_zero_left` state that it vanishes at `x = 0`
+  and `ξ = 0`, respectively.
 
-## Main results
-
-* `ProbabilityTheory.norm_levyCompensatedIntegrand_le` — pointwise norm bound in terms of `min(1, x²)`.
-* `ProbabilityTheory.measurable_levyCompensatedIntegrand` — measurability in `x` for fixed `ξ`.
-* `ProbabilityTheory.integrable_levyCompensatedIntegrand` — Bochner integrability under a Lévy measure.
-* `ProbabilityTheory.integral_levyCompensatedIntegrand_eq_small_add_large` — the integral against a
-  Lévy measure splits at radius 1 into the compensated small-jump and uncompensated large-jump parts.
+* `levyCompensatedIntegrand_eq_exp_sub_one_of_one_le_abs` states
+  $f(\xi,x)=e^{i x\xi}-1$ when $1\le |x|$; `conj_levyCompensatedIntegrand`
+  states $\overline{f(\xi,x)}=f(-\xi,x)$.
+* `measurable_levyCompensatedIntegrand` proves measurability in `x` for fixed
+  `ξ`; `continuous_levyCompensatedIntegrand_fst` proves continuity in `ξ` for
+  fixed `x`.
+* `norm_levyCompensatedIntegrand_le_two` gives $\|f(\xi,x)\|\le2$ when
+  $1\le|x|$, and `norm_levyCompensatedIntegrand_le` gives
+  $\|f(\xi,x)\|\le(2+3\xi^2)\min(1,x^2)$ for all `x, ξ`.
+* If `ν` is a Lévy measure, `lintegral_enorm_levyCompensatedIntegrand_lt_top`
+  proves $\int\|f(\xi,x)\|\,d\nu(x)<\infty$, and
+  `integrable_levyCompensatedIntegrand` gives Bochner integrability.
+  `integral_levyCompensatedIntegrand_eq_small_add_large` splits the integral
+  over $(-1,1)$ and $\{|x|\ge1\}$ into compensated and uncompensated parts.
+* `cpd_levyCompensatedIntegrand_fixed` proves $\xi\mapsto f(\xi,x)$ is
+  conditionally positive definite for each `x`; `cpd_integral_levyCompensatedIntegrand`
+  proves the same for its integral against a Lévy measure.
+* `continuous_integral_levyCompensatedIntegrand` proves continuity in `ξ` of
+  that integral, and `hermitian_integral_levyCompensatedIntegrand` states its
+  Hermitian symmetry under `ξ ↦ -ξ`.
 -/
 
 @[expose] public section
 
 open MeasureTheory Complex ENNReal Set
+open Filter Topology
 open scoped NNReal ENNReal ComplexConjugate
 
 namespace ProbabilityTheory
@@ -62,6 +82,13 @@ theorem levyCompensatedIntegrand_zero_right (ξ : ℝ) :
 theorem levyCompensatedIntegrand_zero_left (x : ℝ) :
     levyCompensatedIntegrand 0 x = 0 := by
   simp [levyCompensatedIntegrand]
+
+/-- Outside the unit ball, the compensation term vanishes:
+`f(ξ, x) = exp(i x ξ) - 1` when `1 ≤ |x|`. -/
+theorem levyCompensatedIntegrand_eq_exp_sub_one_of_one_le_abs {ξ x : ℝ}
+    (hx : 1 ≤ |x|) :
+    levyCompensatedIntegrand ξ x = exp (↑x * ↑ξ * I) - 1 := by
+  simp [levyCompensatedIntegrand, show ¬(|x| < 1) from not_lt.mpr hx]
 
 /-- Complex conjugation reflects the compensated integrand's frequency:
 `conj (f ξ x) = f (-ξ) x`. -/
@@ -203,5 +230,133 @@ theorem integral_levyCompensatedIntegrand_eq_small_add_large
     intro x hx
     simp only [Set.mem_ofPred_eq] at hx
     simp only [levyCompensatedIntegrand, not_lt.mpr hx, ite_false, mul_zero, sub_zero]
+
+/-- For fixed `x`, the compensated integrand `ξ ↦ f(ξ, x)` is conditionally positive
+definite. It splits as `(exp(ixξ) - 1) + (-x·1_{|x|<1})·ξ·I`: the first summand is
+conditionally positive definite via `IsPositiveDefinite.exp_ofReal_mul` and `cpd_sub_one`,
+the second via `IsConditionallyPositiveDefinite.imaginary_additive` (the indicator coefficient
+is independent of `ξ`). -/
+theorem cpd_levyCompensatedIntegrand_fixed (x : ℝ) :
+    IsConditionallyPositiveDefinite (fun ξ => levyCompensatedIntegrand ξ x) := by
+  have hexp : IsConditionallyPositiveDefinite
+      (fun ξ : ℝ => Complex.exp ((x : ℂ) * (ξ : ℂ) * I) - 1) :=
+    IsPositiveDefinite.cpd_sub_one (IsPositiveDefinite.exp_ofReal_mul x)
+  have hlin : IsConditionallyPositiveDefinite
+      (fun ξ : ℝ => ((if |x| < 1 then -x else 0 : ℝ) : ℂ) * ↑ξ * I) :=
+    IsConditionallyPositiveDefinite.imaginary_additive (AddMonoidHom.id ℝ) _
+  have key : (fun ξ => levyCompensatedIntegrand ξ x)
+      = fun ξ : ℝ => (Complex.exp ((x : ℂ) * ↑ξ * I) - 1)
+          + ((if |x| < 1 then -x else 0 : ℝ) : ℂ) * ↑ξ * I := by
+    funext ξ
+    simp only [levyCompensatedIntegrand_def]
+    by_cases hx : |x| < 1
+    · simp only [ite_eq_left hx]; push_cast; ring
+    · simp only [ite_eq_right hx]; push_cast; ring
+  rw [key]
+  exact hexp.add hlin
+
+/-! ### Integral-level properties of the compensated integrand
+
+The pointwise facts about `levyCompensatedIntegrand` lift to its integral against a Lévy
+measure `ν`: conditional positive definiteness, continuity in the frequency variable, and
+Hermitian symmetry. These feed the converse Lévy–Khintchine construction. -/
+
+/-- The compensated integrand is continuous in the frequency variable `ξ`. -/
+theorem continuous_levyCompensatedIntegrand_fst (x : ℝ) :
+    Continuous (fun ξ => levyCompensatedIntegrand ξ x) := by
+  unfold levyCompensatedIntegrand
+  by_cases hx : |x| < 1
+  · simp only [ite_eq_left hx, mul_one]; fun_prop
+  · simp only [ite_eq_right hx, mul_zero, sub_zero]; fun_prop
+
+/-- The integral of the compensated integrand against a Lévy measure is conditionally
+positive definite in the frequency variable. -/
+theorem cpd_integral_levyCompensatedIntegrand {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) :
+    IsConditionallyPositiveDefinite (fun ξ => ∫ x, levyCompensatedIntegrand ξ x ∂ν) := by
+  intro n ξ c hc
+  -- Each `conj (c i) · c j · f(ξᵢ - ξⱼ, ·)` is integrable against `ν`.
+  have hint : ∀ i j : Fin n,
+      Integrable (fun x => starRingEnd ℂ (c i) * c j *
+        levyCompensatedIntegrand (ξ i - ξ j) x) ν :=
+    fun i j => (integrable_levyCompensatedIntegrand hν _).const_mul _
+  have hG_int : Integrable (fun x => ∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+      levyCompensatedIntegrand (ξ i - ξ j) x) ν :=
+    integrable_finsetSum Finset.univ fun i _ =>
+      integrable_finsetSum Finset.univ fun j _ => hint i j
+  -- Pull the finite double sum through the integral (no Fubini).
+  have key : (∫ x, ∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+      levyCompensatedIntegrand (ξ i - ξ j) x ∂ν) =
+      ∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+        ∫ x, levyCompensatedIntegrand (ξ i - ξ j) x ∂ν := by
+    rw [integral_finsetSum Finset.univ
+      fun i _ => integrable_finsetSum Finset.univ fun j _ => hint i j]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [integral_finsetSum Finset.univ fun j _ => hint i j]
+    refine Finset.sum_congr rfl fun j _ => ?_
+    exact integral_const_mul _ _
+  have hRe : 0 ≤ (∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+      ∫ x, levyCompensatedIntegrand (ξ i - ξ j) x ∂ν).re := by
+    rw [← key, show (∫ x, ∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+      levyCompensatedIntegrand (ξ i - ξ j) x ∂ν).re =
+      ∫ x, (∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+        levyCompensatedIntegrand (ξ i - ξ j) x).re ∂ν from
+    ((@RCLike.reCLM ℂ _).integral_comp_comm hG_int).symm]
+    refine integral_nonneg fun x => ?_
+    exact IsConditionallyPositiveDefinite.re_nonneg
+      (cpd_levyCompensatedIntegrand_fixed x) n ξ c hc
+  have hIm : (∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+      ∫ x, levyCompensatedIntegrand (ξ i - ξ j) x ∂ν).im = 0 := by
+    rw [← key]
+    rw [show (∫ x, ∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+        levyCompensatedIntegrand (ξ i - ξ j) x ∂ν).im =
+        ∫ x, (∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+          levyCompensatedIntegrand (ξ i - ξ j) x).im ∂ν from
+        ((@RCLike.imCLM ℂ _).integral_comp_comm hG_int).symm]
+    have hpoint : ∀ x, (∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+        levyCompensatedIntegrand (ξ i - ξ j) x).im = 0 := by
+      intro x
+      exact (Complex.nonneg_iff.mp
+        (cpd_levyCompensatedIntegrand_fixed x n ξ c hc)).2.symm
+    have hfun : (fun x : ℝ => (∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+        levyCompensatedIntegrand (ξ i - ξ j) x).im) = fun _ => (0 : ℝ) :=
+      funext hpoint
+    rw [hfun, integral_zero]
+  rw [Complex.nonneg_iff]
+  exact ⟨hRe, hIm.symm⟩
+
+/-- The integral of the compensated integrand against a Lévy measure is continuous in the
+frequency variable. -/
+theorem continuous_integral_levyCompensatedIntegrand
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) :
+    Continuous (fun ξ => ∫ x, levyCompensatedIntegrand ξ x ∂ν) := by
+  rw [continuous_iff_continuousAt]
+  intro ξ₀
+  -- Dominate near `ξ₀` by `(2 + 3(|ξ₀|+1)²)·min(1, x²)`; the global bound `(2 + 3ξ²)`
+  -- grows in `ξ`, so we work at each point.
+  refine continuousAt_of_dominated
+    (bound := fun x => (2 + 3 * (|ξ₀| + 1) ^ 2) * min 1 (x ^ 2))
+    (Eventually.of_forall fun ξ => (measurable_levyCompensatedIntegrand ξ).aestronglyMeasurable)
+    ?_ (hν.integrable_min_one_sq.const_mul _)
+    (Eventually.of_forall fun x => (continuous_levyCompensatedIntegrand_fst x).continuousAt)
+  have hev : ∀ᶠ ξ in 𝓝 ξ₀, |ξ| < |ξ₀| + 1 :=
+    continuous_abs.continuousAt.eventually_lt continuousAt_const (by linarith)
+  filter_upwards [hev] with ξ hξ
+  filter_upwards with x
+  have hξ2 : ξ ^ 2 ≤ (|ξ₀| + 1) ^ 2 := by
+    nlinarith [sq_abs ξ, hξ.le, abs_nonneg ξ, abs_nonneg ξ₀]
+  have hmin : (0 : ℝ) ≤ min 1 (x ^ 2) := le_min zero_le_one (sq_nonneg x)
+  calc ‖levyCompensatedIntegrand ξ x‖
+      ≤ (2 + 3 * ξ ^ 2) * min 1 (x ^ 2) := norm_levyCompensatedIntegrand_le ξ x
+    _ ≤ (2 + 3 * (|ξ₀| + 1) ^ 2) * min 1 (x ^ 2) := by nlinarith [hξ2, hmin]
+
+/-- Hermitian symmetry of the compensated integral: reflecting the frequency conjugates the
+integral, `∫ f(-ξ, x) ∂ν = conj (∫ f(ξ, x) ∂ν)`. -/
+theorem hermitian_integral_levyCompensatedIntegrand {ν : Measure ℝ} (ξ : ℝ) :
+    ∫ x, levyCompensatedIntegrand (-ξ) x ∂ν =
+      starRingEnd ℂ (∫ x, levyCompensatedIntegrand ξ x ∂ν) :=
+  calc ∫ x, levyCompensatedIntegrand (-ξ) x ∂ν
+      = ∫ x, starRingEnd ℂ (levyCompensatedIntegrand ξ x) ∂ν :=
+        integral_congr_ae (ae_of_all ν fun x => (conj_levyCompensatedIntegrand ξ x).symm)
+    _ = starRingEnd ℂ (∫ x, levyCompensatedIntegrand ξ x ∂ν) := integral_conj
 
 end ProbabilityTheory

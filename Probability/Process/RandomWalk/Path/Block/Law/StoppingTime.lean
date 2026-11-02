@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Filtration
+public import Probability.Process.RandomWalk.Path.Adapted.Filtration
+public import Probability.Sequence.IID.Blocks.StoppingTime
 public import Probability.Process.RandomWalk.Path.Block.Law.Excursions
 public import Mathlib.Probability.Process.Stopping
 
@@ -17,6 +18,28 @@ For an IID increment path, a fixed finite block after a stopping time has the
 same excursion bound as a deterministic block. The proof splits according to
 the stopping-time value and uses independence of each future coordinate block
 from the already observed increment prefix.
+
+## Public declarations
+
+* `blockPrefixExceedanceAfter τ length threshold` is the event that a finite
+  block after a finite value of `τ` has a prefix sum of absolute value at
+  least `threshold`.
+* `blockPrefixExceedanceAfter_eq_iidBlockEventAfter` identifies this event
+  with the generic finite-coordinate block event after `τ`.
+* `measurableSet_blockPrefixExceedance` proves measurability of the
+  infinite-path event.
+* `measure_stoppingTimeCell_inter_blockPrefixExceedance_eq_mul` factors the
+  probability on a stopping-time cell into the cell probability and the
+  deterministic block-excursion probability.
+* `measure_blockPrefixExceedanceAfter_le` bounds the probability of an
+  excursion after `τ` by the probability of the same excursion in an initial
+  deterministic block.
+
+The event is
+`\(\bigcup_{n\ge0}\{\tau=n\}\cap
+\{\exists k<L,\ |S_{n+k+1}-S_n|\ge r\}\)`;
+its IID probability is at most that of the same `\(L\)`-step excursion
+starting at time zero.
 -/
 
 open MeasureTheory

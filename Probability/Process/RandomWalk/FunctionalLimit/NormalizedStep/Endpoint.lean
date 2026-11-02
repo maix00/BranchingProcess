@@ -7,9 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
-public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint
+public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Core
 public import Probability.ConvergenceInDistribution.Portmanteau
-public import Probability.Process.Path.Skorokhod.Corridor
+public import Probability.Process.Path.Skorokhod.Corridor.Basic
 
 /-!
 # Normalized-step limits with an endpoint constraint
@@ -18,6 +18,21 @@ Portmanteau transfers open or closed path corridors together with matching
 terminal intervals to the corresponding finite random-walk events.  The
 path-space Portmanteau input is supplied by the process layer; this file only
 identifies the normalized-step laws with horizontal-tube events.
+## Public declarations
+
+- `measure_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn_of_functionalLimit`
+  states
+  \(P(\operatorname{limit}\in O)\le\liminf_n
+  \mathbb P_\nu(\operatorname{strictTube}_n\land
+  \operatorname{endpoint}_n\in(a,b))\), where the limit event is the open
+  centered corridor with terminal value in \((a,b)\).
+- `limsup_weakTubeEndsIn_le_measure_centeredSkorokhodCorridorEndsIn_of_functionalLimit`
+  states the matching closed-set bound
+  \(\limsup_n\mathbb P_\nu(\operatorname{weakTube}_n\land
+  \operatorname{endpoint}_n\in[a,b])\le
+  P(\operatorname{limit}\in C)\), where \(C\) is the closed centered
+  corridor with terminal value in \([a,b]\).
+
 -/
 
 open Filter MeasureTheory ProbabilityTheory

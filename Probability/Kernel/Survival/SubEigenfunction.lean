@@ -6,16 +6,26 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Kernel.Survival
+public import Probability.Kernel.Survival.Basic
 
 /-!
 # Iterating positive test-function bounds for kernels
 
-A pointwise lower bound on the one-step action of a nonnegative test function
-can be iterated through powers of any kernel.  For a sub-Markov kernel, a test
-function bounded by one then turns this into a lower bound on remaining mass.
-This is the kernel form of the positive-eigenfunction method for killed
-processes.
+## Public declarations
+
+- If $f:S\to[0,\infty]$ is measurable and
+  $\lambda f(x)\le\int f(y)K(x,dy)$ for every $x$, then
+  `pow_lintegral_lower_bound_of_subEigenfunction` gives
+  $\lambda^n f(x)\le\int f(y)(K^n)(x,dy)$ for every $n$.
+- For a sub-Markov kernel, if additionally $f\le1$,
+  `pow_mul_le_remainingMass_of_subEigenfunction` gives
+  $\lambda^n f(x)\le M_n(x)$.
+- `pow_succ_div_mul_le_remainingMass_of_subEigenfunction` applies a
+  one-block inequality for $K^b$ to an arbitrary horizon and gives
+  $\lambda^{\lfloor n/b\rfloor+1}f(x)\le M_n(x)$ when $b>0$.
+
+These are the positive test-function bounds for general kernels and their
+sub-Markov survival specializations.
 -/
 
 public section

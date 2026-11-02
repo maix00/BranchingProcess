@@ -6,14 +6,39 @@ Authors: WANG Yiyang
 
 module
 
-public import Topology.Cadlag.Skorokhod.TimeChange
+public import Topology.Cadlag.Skorokhod.TimeChange.Basic
 
 /-!
 # Piecewise-affine time changes
 
 `linearBreakpoint target source` is the increasing piecewise-affine homeomorphism
-of `[0,1]` that sends `source` to `target` and fixes the two endpoints. Its
-uniform distortion is bounded by the displacement of the breakpoint.
+of $[0,1]$ that sends `source` to `target` and fixes the two endpoints. For
+$0<x,y<1$, its real-valued map is
+\[
+  \beta_{y,x}(u)=
+  \begin{cases}
+    \frac{y}{x}u,&u\le x,\\
+    y+\frac{1-y}{1-x}(u-x),&x\le u.
+  \end{cases}
+\]
+Its uniform distortion is at most $|y-x|$.
+
+## Public declarations
+
+- `breakpointMap target source x` is affine on each side of `source`, sends
+  `source` to `target`, and fixes 0 and 1; the left and right formulas are
+  given by `breakpointMap_left` and `breakpointMap_right`.
+- `breakpointMap_mem_unitInterval`, `breakpointMap_comp_swapped`, and
+  `breakpointMap_strictMono` show it maps `[0,1]` into itself, is inverted by
+  swapping source and target, and is strictly increasing.
+- `breakpointMapInterval` restricts it to `[0,1]`;
+  `breakpointMapInterval_left_inv` proves the inverse formula, and
+  `breakpointHomeomorph` gives the resulting homeomorphism.
+- `linearBreakpoint` gives the associated time change;
+  `linearBreakpoint_apply_source` maps the selected source to its target,
+  `linearBreakpoint_apply_bot` and `linearBreakpoint_apply_top` fix the
+  endpoints, and `linearBreakpoint_distortion_le_abs` bounds its uniform
+  displacement by `|target - source|`.
 -/
 
 @[expose] public section
@@ -199,11 +224,11 @@ noncomputable def breakpointHomeomorph (target source : ℝ)
 `target` and fixing `0` and `1`. -/
 noncomputable def linearBreakpoint (target source : ℝ)
     (htarget : 0 < target) (htarget_one : target < 1)
-    (hsource : 0 < source) (hsource_one : source < 1) : TimeChange where
-  toHomeomorph := breakpointHomeomorph target source htarget htarget_one hsource hsource_one
-  strictMono_toHomeomorph := by
+    (hsource : 0 < source) (hsource_one : source < 1) : TimeChange :=
+  TimeChange.ofHomeomorph
+    (breakpointHomeomorph target source htarget htarget_one hsource hsource_one) (by
     intro x y hxy
-    exact breakpointMap_strictMono htarget htarget_one hsource hsource_one hxy
+    exact breakpointMap_strictMono htarget htarget_one hsource hsource_one hxy)
 
 @[simp]
 theorem linearBreakpoint_apply_source (target source : ℝ)

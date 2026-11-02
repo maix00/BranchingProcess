@@ -6,15 +6,26 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Core
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FeedbackEntrance
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FeedbackEntranceIndexOne
-public import Probability.Distributions.Stable.Sign
+public import Mathlib.Probability.CDF
+public import Probability.Process.Corridor.Segment
+public import Probability.Process.Stable.Levy
+import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Core
+import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.Feedback.AboveOne
+import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Entrance.Feedback.IndexOne
+import Probability.Distributions.Stable.Support.Sign
+import Probability.Distributions.Stable.Support.IndexOne
 
 /-!
 # Feedback entrance specializations
 
 Stable-index-specific conclusions that obtain the entrance probability from finite feedback constructions.
+## Public declarations
+
+The two theorems derive the shifted-corridor logarithmic ratio
+$1-\delta\le\log p_{\rm narrow}(a)/\log p_{\rm wide}(a)$ for small $a$
+from finite feedback constructions: one for stable index $1<\alpha<2$ using
+$0<F_\mu(0)<1$, and one for the index-one sine-centering condition.
+
 -/
 
 @[expose] public section

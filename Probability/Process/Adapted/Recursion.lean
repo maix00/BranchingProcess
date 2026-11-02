@@ -11,8 +11,14 @@ public import Mathlib.Probability.Process.Adapted
 /-!
 # Adapted causal recursions
 
-A state updated from its previous value and the newly observed marks is
-adapted whenever the update map is measurable.
+## Public declarations
+
+- `ProbabilityTheory.causal_recursion_adapted` states that a recursively
+  updated state remains adapted. If `state 0` is measurable with respect to
+  `F 0`, each `marks n` is measurable with respect to `F (n + 1)`, `step` is
+  measurable, and
+  `state (n + 1) ω = step (state n ω, marks n ω)`, then
+  $\forall n,\quad \texttt{Measurable}[F_n](\texttt{state}_n)$.
 -/
 
 open MeasureTheory

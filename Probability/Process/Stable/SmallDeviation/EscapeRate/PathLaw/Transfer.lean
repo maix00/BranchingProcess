@@ -11,19 +11,77 @@ public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Basic
 public import Probability.Process.Stable.Levy
 public import Probability.Process.Corridor.Range
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
+public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
 public import Mathlib.Probability.CDF
 
 import Probability.Process.Stable.FiniteDimensional
-public import Probability.Process.Stable.SmallDeviation.EscapeRate
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.Basic
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor
+import Probability.Process.Levy.PathLaw.Corridor
+import Probability.Process.Stable.PathLaw.SelfSimilarity
 import Probability.Process.Path.Skorokhod.RationalTime
 import Topology.Order.UnitInterval.Rational
 
 /-!
 # Stable escape rates on càdlàg path laws
 
-The rational-coordinate description of a range tube lets a unit-interval
-stable path law inherit the process-level escape rate whenever it has the same
-stable increment specification as a stable Lévy process.
+## Public declarations
+
+- `ProbabilityTheory.IsStableClockProcessLaw.measure_stableProcessTube_eq_rationalRangeProbability`:
+  \(P(\operatorname{stableProcessTube}(a))=
+  \operatorname{rationalRangeProbability}(Q,X,a)\), for path and process
+  laws with the same stable increment specification.
+- `ProbabilityTheory.HasStableProcessEscapeRate.tendsto_stableRangeLogRate_of_isStableLevyProcess`:
+  the path-law rate transfers to the process range rate,
+  \[
+    a^\alpha\log((\operatorname{rationalRangeProbability}(Q,X,a)).toReal)
+      \longrightarrow C\qquad(a\downarrow0).
+  \]
+- `ProbabilityTheory.HasStableProcessEscapeRate.tendsto_invRpow_mul_sum_log_stableProcessTube`:
+  for a finite set \(F\) and positive radii \(r_i\),
+  \[
+    c^{-\alpha}\sum_{i\in F}\log\!\left(
+      (P(\operatorname{stableProcessTube}(r_i/c))).toReal\right)
+    \longrightarrow \sum_{i\in F}\frac{C}{r_i^\alpha}
+    \qquad(c\to\infty).
+  \]
+- `ProbabilityTheory.IsStableClockProcessLaw.measure_corridorReturnEvent_eq`:
+  stable path-law uniqueness and the Lévy path-law corridor bridge give
+  \[
+    P\{f:\exists\eta>0,\ \forall t\in[0,1],\
+      l+\eta\le f(t)\le u-\eta,\ f(1)\in(c,d)\}
+    =Q\{\omega:\exists\eta>0,\ \forall t\in[0,1],\
+      l+\eta\le X_t(\omega)-X_0(\omega)\le u-\eta,\
+      X_1(\omega)-X_0(\omega)\in(c,d)\}.
+  \]
+- `ProbabilityTheory.IsStableClockProcessLaw.measure_stableProcessCenteredCorridor_eq`:
+  for the path set
+  \(I^a_{-a}=\{f:f(0)=0,\exists\eta>0,\forall t\in[0,1],
+  -a+\eta\le f(t)\le a-\eta\}\),
+  \[
+    P(I^a_{-a})=
+    Q\{\omega:\exists\eta>0,\ \forall t\in[0,1],\
+      -a+\eta\le X_t(\omega)-X_0(\omega)\le a-\eta\}.
+  \]
+- `ProbabilityTheory.IsStableClockProcessLaw.exists_centeredCorridorEscapeRate_of_isStableLevyProcess`:
+  when \(0<F_\alpha(0)<1\), the centered rate transfers with a negative
+  constant, \(C<0\), and
+  \[
+    a^\alpha\log((P(I^a_{-a})).toReal)
+      \longrightarrow C\qquad(a\downarrow0).
+  \]
+- `ProbabilityTheory.IsStableClockProcessLaw.exists_finite_openEndpointCorridor_lowerBound`:
+  for the finite family of strictly nested endpoint intervals in its
+  hypotheses, there are \(0<\beta<1/2\) and \(q>0\) such that
+  \[
+    q\le P(\operatorname{rangeInOpenIntervalEndsIn}
+      (-\beta,\beta,\beta l_i,\beta u_i))\quad(i:\iota).
+  \]
+- `ProbabilityTheory.IsStableClockProcessLaw.hasStableProcessEscapeRate_of_isStableLevyProcess`:
+  when \(0<F_\alpha(0)<1\), the process escape-rate theorem supplies
+  \(C\in\mathbb R\) with
+  \(\operatorname{HasStableProcessEscapeRate}(\alpha,\mu,P,C)\).
+
 -/
 
 open Filter MeasureTheory
@@ -41,7 +99,7 @@ theorem IsStableClockProcessLaw.measure_stableProcessTube_eq_rationalRangeProbab
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q) (a : ℝ) :
     P (stableProcessTube a) = rationalRangeProbability Q X a := by
   let pathCoordinates : CadlagPath unitInterval ℝ →
@@ -54,12 +112,12 @@ theorem IsStableClockProcessLaw.measure_stableProcessTube_eq_rationalRangeProbab
   have htoUnitIntervalBot : RationalCoordinate.toUnitInterval ⊥ = ⊥ := by
     apply Subtype.ext
     norm_num [RationalCoordinate.toUnitInterval]
-  have hPbase : HasStableClockIncrements α μ UnitInterval.clock
+  have hPbase : HasStableClockIncrements α μ unitInterval.clock
       cadlagPathProcess P := hP
   have hPgrid0 := hPbase.comp_time RationalCoordinate.toUnitInterval
     htoUnitIntervalMonotone htoUnitIntervalBot
   change HasStableClockIncrements α μ
-    (fun q => UnitInterval.clock (RationalCoordinate.toUnitInterval q))
+    (fun q => unitInterval.clock (RationalCoordinate.toUnitInterval q))
     (fun q f => f (RationalCoordinate.toUnitInterval q)) P at hPgrid0
   have hPgrid : HasStableClockIncrements α μ
       (fun q => (RationalCoordinate.toNNReal q : ℝ))
@@ -159,111 +217,147 @@ theorem HasStableProcessEscapeRate.tendsto_invRpow_mul_sum_log_stableProcessTube
 
 /-- A stable càdlàg path law and a stable Lévy process with the same
 increment specification assign the same probability to a complete open
-corridor with an open terminal window. The bridge is finite-dimensional law
-equality on rational coordinates, followed by the càdlàg corridor
-characterization. -/
+corridor with an open terminal window. Stable path-law uniqueness identifies
+the path measure with the process's canonical unit-interval path law; the
+generic Lévy corridor bridge then transfers the event probability. -/
 theorem IsStableClockProcessLaw.measure_corridorReturnEvent_eq
     {α : ℝ} {μ : Measure ℝ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (lower upper coreLower coreUpper : ℝ) :
     P (Skorokhod.rangeInOpenIntervalEndsIn lower upper coreLower coreUpper) =
       Q (fullSegmentCorridorReturnEvent X 0 1 lower upper coreLower coreUpper) := by
-  let pathCoordinates : CadlagPath unitInterval ℝ →
-      RationalCoordinate.UnitInterval → ℝ :=
-    fun f q => f (RationalCoordinate.toUnitInterval q)
-  have htoUnitIntervalMonotone : Monotone RationalCoordinate.toUnitInterval := by
-    intro q r hqr
-    change ((q : ℚ) : ℝ) ≤ ((r : ℚ) : ℝ)
-    exact_mod_cast hqr
-  have htoUnitIntervalBot : RationalCoordinate.toUnitInterval ⊥ = ⊥ := by
-    apply Subtype.ext
-    norm_num [RationalCoordinate.toUnitInterval]
-  have hPbase : HasStableClockIncrements α μ UnitInterval.clock
-      cadlagPathProcess P := hP
-  have hPgrid0 := hPbase.comp_time RationalCoordinate.toUnitInterval
-    htoUnitIntervalMonotone htoUnitIntervalBot
-  change HasStableClockIncrements α μ
-    (fun q => UnitInterval.clock (RationalCoordinate.toUnitInterval q))
-    (fun q f => f (RationalCoordinate.toUnitInterval q)) P at hPgrid0
-  have hPgrid : HasStableClockIncrements α μ
-      (fun q => (RationalCoordinate.toNNReal q : ℝ))
-      (fun q f => pathCoordinates f q) P := by
-    convert hPgrid0 using 1
-    · funext q
-      exact (RationalCoordinate.toNNReal_coe q).symm
-  have hXgrid0 := hX.increments.comp_time RationalCoordinate.toNNReal
-    RationalCoordinate.monotone_toNNReal RationalCoordinate.toNNReal_bot
-  have hXgrid : HasStableClockIncrements α μ
-      (fun q => (RationalCoordinate.toNNReal q : ℝ))
-      (fun q ω => X (RationalCoordinate.toNNReal q) ω) Q := by
-    convert hXgrid0 using 1
-  have hlaw := hPgrid.process_identDistrib_of_aemeasurable hXgrid
-    (AEMeasurable.of_eval fun q => hPgrid.aemeasurable_eval q)
-    (AEMeasurable.of_eval fun q => hXgrid.aemeasurable_eval q)
-  let rationalCorridor := Skorokhod.rationalCoordinateCorridorReturnWithMargin
-    lower upper coreLower coreUpper
-  have hcoord := hlaw.measure_mem_eq
-    (Skorokhod.measurableSet_rationalCoordinateCorridorReturnWithMargin
-      lower upper coreLower coreUpper)
-  have hpathSet :
-      Skorokhod.rangeInOpenIntervalEndsIn lower upper coreLower coreUpper =
-        pathCoordinates ⁻¹' rationalCorridor := by
-    ext f
-    change (f ∈ Skorokhod.rangeInOpenInterval lower upper ∧
-      f ⊤ ∈ Set.Ioo coreLower coreUpper) ↔
-      pathCoordinates f ∈ Skorokhod.rationalCoordinateCorridorReturnWithMargin
-        lower upper coreLower coreUpper
-    rw [Skorokhod.rationalCoordinateCorridorReturnWithMargin]
-    simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
-    have htop : RationalCoordinate.toUnitInterval ⊤ = (⊤ : unitInterval) := by
-      apply Subtype.ext
-      norm_num [RationalCoordinate.toUnitInterval]
-    change (f ∈ Skorokhod.rangeInOpenInterval lower upper ∧
-      f ⊤ ∈ Set.Ioo coreLower coreUpper) ↔
-      ((fun q => f (RationalCoordinate.toUnitInterval q)) ∈
-          Skorokhod.rationalCoordinateCorridorWithMargin lower upper ∧
-        f (RationalCoordinate.toUnitInterval ⊤) ∈
-          Set.Ioo coreLower coreUpper)
-    constructor
-    · rintro ⟨hpath, hend⟩
-      exact ⟨(Skorokhod.mem_rationalCoordinateCorridorWithMargin_iff
-        f lower upper).mpr hpath, by simpa [htop] using hend⟩
-    · rintro ⟨hpath, hend⟩
-      exact ⟨(Skorokhod.mem_rationalCoordinateCorridorWithMargin_iff
-        f lower upper).mp hpath, by simpa [htop] using hend⟩
-  have hpathMeasure :
-      P (Skorokhod.rangeInOpenIntervalEndsIn lower upper coreLower coreUpper) =
-        P (pathCoordinates ⁻¹' rationalCorridor) := by
-    rw [hpathSet]
-  have hstart : ∀ᵐ ω ∂Q, X 0 ω = 0 := hX.increments.ae_start_eq_zero
-  have hcoordinateEq :
-      Q ((fun ω q => X (RationalCoordinate.toNNReal q) ω) ⁻¹' rationalCorridor) =
-        Q ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
-          rationalCorridor) := by
-    apply measure_congr
-    filter_upwards [hstart] with ω hω
-    have hfun : (fun q => X (RationalCoordinate.toNNReal q) ω) =
-        fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω := by
-      funext q
-      simp [hω]
-    change ((fun q => X (RationalCoordinate.toNNReal q) ω) ∈ rationalCorridor) =
-      ((fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ∈ rationalCorridor)
-    rw [hfun]
-  have hprocess := measure_fullSegmentCorridorReturnEvent_eq_rational
-    Q X 0 1 lower upper coreLower coreUpper hX.ae_cadlag
+  let pathEvent : Set (CadlagPath unitInterval ℝ) :=
+    Skorokhod.corridorStartingAtZero lower upper ∩
+      {f : CadlagPath unitInterval ℝ | f ⊤ ∈ Set.Ioo coreLower coreUpper}
+  have hpathEvent :
+      Skorokhod.rangeInOpenIntervalEndsIn lower upper coreLower coreUpper =ᵐ[P]
+        pathEvent := by
+    filter_upwards [hP.ae_start_eq_zero] with f hf
+    simp [pathEvent, Skorokhod.rangeInOpenIntervalEndsIn,
+      Skorokhod.corridorStartingAtZero, hf]
+  have hP_eq : P =
+      (hX.toIsLevyProcess.unitIntervalPathLaw 1 :
+        Measure (CadlagPath unitInterval ℝ)) :=
+    hP.unitInterval_measure_eq
+      hX.isStableClockProcessLaw_unitIntervalPathLaw
   calc
     P (Skorokhod.rangeInOpenIntervalEndsIn lower upper coreLower coreUpper) =
-        P (pathCoordinates ⁻¹' rationalCorridor) := hpathMeasure
-    _ = Q ((fun ω q => X (RationalCoordinate.toNNReal q) ω) ⁻¹' rationalCorridor) := by
-      simpa [pathCoordinates, rationalCorridor] using hcoord
-    _ = Q ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
-        rationalCorridor) := hcoordinateEq
-    _ = Q (fullSegmentCorridorReturnEvent X 0 1 lower upper coreLower coreUpper) := by
-      simpa only [rationalCorridor, zero_add, one_mul] using hprocess
+        P pathEvent := measure_congr hpathEvent
+    _ = (hX.toIsLevyProcess.unitIntervalPathLaw 1 :
+        Measure (CadlagPath unitInterval ℝ)) pathEvent := by rw [hP_eq]
+    _ = Q (fullSegmentCorridorReturnEvent X 0 1 lower upper coreLower coreUpper) :=
+      hX.toIsLevyProcess.unitIntervalPathLaw_measure_corridorReturnEvent
+        1 lower upper coreLower coreUpper
+
+/-- The centered path-space corridor has the same probability as the
+corresponding complete-segment corridor of a stable Lévy process with the
+same increment law. The path law starts at zero almost surely, and the
+terminal condition in the transfer theorem follows from the uniform corridor
+margin. -/
+theorem IsStableClockProcessLaw.measure_stableProcessCenteredCorridor_eq
+    {α : ℝ} {μ : Measure ℝ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    {Ω : Type*} [MeasurableSpace Ω]
+    {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
+    (hX : IsStableLevyProcess α μ X Q) (a : ℝ) :
+    P (stableProcessCenteredCorridor a) =
+      centeredCorridorProbability Q X a := by
+  have hstart := hP.ae_start_eq_zero
+  have hpathSet :
+      stableProcessCenteredCorridor a =ᵐ[P]
+        Skorokhod.rangeInOpenInterval (-a) a := by
+    filter_upwards [hstart] with f hf
+    simp [stableProcessCenteredCorridor, Skorokhod.corridorStartingAtZero, hf]
+  have hpathMeasure :
+      P (stableProcessCenteredCorridor a) =
+        P (Skorokhod.rangeInOpenInterval (-a) a) :=
+    measure_congr hpathSet
+  have hterminal :
+      Skorokhod.rangeInOpenInterval (-a) a =
+        Skorokhod.rangeInOpenIntervalEndsIn (-a) a (-a) a := by
+    ext f
+    rw [Skorokhod.mem_rangeInOpenIntervalEndsIn_iff]
+    constructor
+    · intro hf
+      refine ⟨hf, ?_⟩
+      obtain ⟨margin, hmargin, hpath⟩ := hf
+      have htop := hpath ⊤
+      constructor <;> linarith
+    · exact fun hf => hf.1
+  have hprocessEvent :
+      fullSegmentCorridorReturnEvent X 0 1 (-a) a (-a) a =
+        fullSegmentCorridorEvent X 0 1 (-a) a := by
+    ext ω
+    simp only [fullSegmentCorridorReturnEvent, segmentCorridorEndpointEvent,
+      Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_Ioo]
+    constructor
+    · exact fun h => h.1
+    · intro h
+      rcases h with ⟨margin, hmargin, hpath⟩
+      refine ⟨⟨margin, hmargin, hpath⟩, ?_⟩
+      have htop := hpath ⊤
+      constructor <;> linarith
+  calc
+    P (stableProcessCenteredCorridor a) =
+        P (Skorokhod.rangeInOpenInterval (-a) a) := hpathMeasure
+    _ = P (Skorokhod.rangeInOpenIntervalEndsIn (-a) a (-a) a) := by
+      rw [hterminal]
+    _ = Q (fullSegmentCorridorReturnEvent X 0 1 (-a) a (-a) a) :=
+      hP.measure_corridorReturnEvent_eq hX (-a) a (-a) a
+    _ = Q (fullSegmentCorridorEvent X 0 1 (-a) a) := by
+      rw [hprocessEvent]
+
+/-- Lemma 1(II) of A. A. Mogul'skii, “Small Deviations in a Space of
+Trajectories,” as a path-law consequence of the centered and range-tube
+comparison. A stable-clock path law and a stable Lévy-process realization
+with the same increment law have the same centered-corridor escape constant.
+The source is A. A. Mogul'skii, “Small deviations in the sample function
+space,” Lemma 1(II), *Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974),
+755--765; see also the English translation, “Small Deviations in a Space of
+Trajectories,” *Theory of Probability and Its Applications* 19(4) (1975),
+726--736, DOI 10.1137/1119081. -/
+theorem IsStableClockProcessLaw.exists_centeredCorridorEscapeRate_of_isStableLevyProcess
+    {α : ℝ} {μ : Measure ℝ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    {Ω : Type*} [MeasurableSpace Ω]
+    {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
+    (hX : IsStableLevyProcess α μ X Q)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :
+    ∃ C : ℝ, C < 0 ∧ HasStableCenteredCorridorEscapeRate α μ P C := by
+  obtain ⟨C, hC, _, hcenter⟩ := hX.exists_centeredCorridor_escape_rate hcdf
+  have hpositive : ∀ᶠ a : ℝ in 𝓝[>] (0 : ℝ),
+      0 < (P (stableProcessCenteredCorridor a)).toReal := by
+    filter_upwards [self_mem_nhdsWithin] with a ha
+    rw [hP.measure_stableProcessCenteredCorridor_eq hX a]
+    have ⟨hnegative, hpositive⟩ :=
+      hX.increments.strictlyStable.twoSidedMass_of_cdfAtZero hcdf
+    have hcorridor : 0 < centeredCorridorProbability Q X a := by
+      dsimp [centeredCorridorProbability]
+      have ha' : 0 < a := by simpa using ha
+      exact hX.measure_fullSegmentCorridor_pos (-a) a (neg_neg_of_pos ha') ha'
+        hpositive hnegative
+    exact ENNReal.toReal_pos_iff.mpr
+      ⟨hcorridor, measure_lt_top Q _⟩
+  have hrate : Tendsto
+      (fun a : ℝ => a ^ α *
+        Real.log ((P (stableProcessCenteredCorridor a)).toReal))
+      (𝓝[>] (0 : ℝ)) (𝓝 C) := by
+    have heq : (fun a : ℝ => a ^ α *
+        Real.log ((P (stableProcessCenteredCorridor a)).toReal)) =
+        fun a => stableCenteredLogRate Q X α a := by
+      funext a
+      simp [stableCenteredLogRate,
+        hP.measure_stableProcessCenteredCorridor_eq hX a]
+    rw [heq]
+    exact hcenter
+  refine ⟨C, hC, hP, ?_⟩
+  exact ⟨hP.strictlyStable.1, hC, hpositive, hrate⟩
 
 /-- Transfer a common positive lower bound on finitely many strict-stable
 endpoint windows to the corresponding open endpoint events under a càdlàg
@@ -275,7 +369,7 @@ theorem IsStableClockProcessLaw.exists_finite_openEndpointCorridor_lowerBound
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι] [Nonempty ι]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (innerLower innerUpper outerLower outerUpper : ι → ℝ)
@@ -327,13 +421,14 @@ theorem IsStableClockProcessLaw.hasStableProcessEscapeRate_of_isStableLevyProces
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :
     ∃ C, HasStableProcessEscapeRate α μ P C := by
   have hprob (a : ℝ) :=
     hP.measure_stableProcessTube_eq_rationalRangeProbability hX a
   obtain ⟨C, hC, hlim⟩ := hX.exists_rationalRange_escape_rate hcdf
+  have hα : 0 < α := hP.strictlyStable.1
   have hpos : ∀ᶠ a : ℝ in 𝓝[>] (0 : ℝ),
       0 < (P (stableProcessTube a)).toReal := by
     filter_upwards [self_mem_nhdsWithin] with a ha
@@ -342,7 +437,7 @@ theorem IsStableClockProcessLaw.hasStableProcessEscapeRate_of_isStableLevyProces
     rw [hprob]
     exact ENNReal.toReal_pos_iff.mpr
       ⟨hRa, measure_lt_top Q (rationalHorizonTubeEvent X 1 (2 * a))⟩
-  refine ⟨C, hP, hC, hpos, ?_⟩
+  refine ⟨C, hP, hα, hC, hpos, ?_⟩
   have hrate :
       (fun a => a ^ α * Real.log ((P (stableProcessTube a)).toReal)) =
         stableRangeLogRate Q X α := by

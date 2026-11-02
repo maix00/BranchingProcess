@@ -13,9 +13,9 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 # Measurable slot conditions
 
 A branching step is the abstract `Step ι X`: slot `i` holds `some x` when
-the corresponding optional child is survive, and `none` otherwise. The
-support records the survive slots, so no separate child vocabulary is
-needed for nonemptiness or splitting.
+the corresponding child is present, and `none` otherwise. The support records
+the present slots, so nonemptiness and splitting can be expressed directly
+through `survive`.
 
 This module derives the measurable sets used. The generic
 support events work for any countable slot type. The threshold-selection
@@ -24,6 +24,28 @@ threshold, and `keepAbove` is its order-dual counterpart. Their thresholds
 are arbitrary, and the measurability of the threshold set is an explicit
 hypothesis discharged by the real line with `measurableSet_Iic` and
 `measurableSet_Ici`.
+
+## Public declarations
+
+- `nonemptySupport` and `nontrivialSupport` satisfy
+  `\(\xi\in nonemptySupport\iff\exists i,\operatorname{survive}(\xi,i)\)`
+  and
+  `\(\xi\in nontrivialSupport\iff\exists i\ne j,
+  \operatorname{survive}(\xi,i)\land\operatorname{survive}(\xi,j)\)`.
+  Their measurability results for countable slots are
+  `nonemptySupport_measurable` and `nontrivialSupport_measurable`.
+- `keepRel R i M` satisfies
+  `\(\xi\in keepRel(R,i,M)\iff
+  \exists x,\xi(i)=\operatorname{some}(x)\land R(x,M)\)`;
+  `keepRel_measurable` assumes the section `{x | R x M}` measurable.
+- `keepAt i M` and `keepAbove i M` satisfy
+  `\(\xi\in keepAt(i,M)\iff\exists x,\xi(i)=\operatorname{some}(x)
+  \land x\le M\)` and
+  `\(\xi\in keepAbove(i,M)\iff\exists x,\xi(i)=\operatorname{some}(x)
+  \land M\le x\)`. Their measurability results are
+  `keepAt_measurable` and `keepAbove_measurable`, and
+  `mem_keepAbove_iff_orderDual` identifies the upper event with the lower
+  event on `OrderDual X`.
 -/
 
 @[expose] public section
@@ -81,64 +103,39 @@ theorem nontrivialSupport_measurable
     rw [hset2]
     exact (survive_measurableSet i).inter (survive_measurableSet j)
 
-/-- Keep a survive slot when its value satisfies an arbitrary relation with
+/-- Keep a slot when its present mark satisfies an arbitrary relation with
 the threshold. The slot is an explicit parameter, so no numerical indexing is
 built into the rule. -/
-def keepRel {ι X : Type*} [Zero X]
+def keepRel {ι X : Type*}
     (R : X → X → Prop) (i : ι) (M : X) : Set (Step ι X) :=
-  {ξ | survive ξ i ∧ R (value' ξ i) M}
+  (fun ξ : Step ι X => ξ i) ⁻¹' (some '' {x : X | R x M})
 
 theorem keepRel_measurable {ι X : Type*}
-    [Zero X] [MeasurableSpace X]
+    [MeasurableSpace X]
     (R : X → X → Prop) (i : ι) (M : X)
     (hM : MeasurableSet {x : X | R x M}) :
     MeasurableSet (keepRel R i M) := by
-  change MeasurableSet
-    ({ξ : Step ι X | survive ξ i} ∩
-      {ξ : Step ι X | R (value' ξ i) M})
-  exact (survive_measurableSet i).inter ((value'_measurable i) hM)
+  exact (measurable_pi_apply i) (measurableSet_option_some_image hM)
 
 /-- Keep a survive slot when its value is at most `M`. -/
-def keepAt {ι X : Type*} [Zero X] [LE X]
+def keepAt {ι X : Type*} [LE X]
     (i : ι) (M : X) : Set (Step ι X) :=
   keepRel (· ≤ ·) i M
 
 theorem keepAt_measurable {ι X : Type*}
-    [Zero X] [LE X] [MeasurableSpace X]
+    [LE X] [MeasurableSpace X]
     (i : ι) (M : X) (hM : MeasurableSet {x : X | x ≤ M}) :
     MeasurableSet (keepAt i M) := by
   exact keepRel_measurable (· ≤ ·) i M hM
 
-/-- The corresponding first-slot instance of `keepAt`. -/
-abbrev selectFirstN {X : Type*} [Zero X] [LE X]
-    (M : X) : Set (Step ℕ X) :=
-  keepAt 0 M
-
-theorem selectFirstN_measurable {X : Type*}
-    [Zero X] [LE X] [MeasurableSpace X]
-    (M : X) (hM : MeasurableSet {x : X | x ≤ M}) :
-    MeasurableSet (selectFirstN M) := by
-  exact keepAt_measurable 0 M hM
-
-/-- The corresponding second-slot instance of `keepAt`. -/
-abbrev keepSecond {X : Type*} [Zero X] [LE X]
-    (M : X) : Set (Step ℕ X) :=
-  keepAt 1 M
-
-theorem keepSecond_measurable {X : Type*}
-    [Zero X] [LE X] [MeasurableSpace X]
-    (M : X) (hM : MeasurableSet {x : X | x ≤ M}) :
-    MeasurableSet (keepSecond M) := by
-  exact keepAt_measurable 1 M hM
-
 /-- The order-dual counterpart of `keepAt`: keep a survive slot when its
 value is at least `M`. -/
-def keepAbove {ι X : Type*} [Zero X] [LE X]
+def keepAbove {ι X : Type*} [LE X]
     (i : ι) (M : X) : Set (Step ι X) :=
   keepRel (fun x M' => M' ≤ x) i M
 
 theorem keepAbove_measurable {ι X : Type*}
-    [Zero X] [LE X] [MeasurableSpace X]
+    [LE X] [MeasurableSpace X]
     (i : ι) (M : X) (hM : MeasurableSet {x : X | M ≤ x}) :
     MeasurableSet (keepAbove i M) := by
   exact keepRel_measurable (fun x M' => M' ≤ x) i M hM
@@ -146,15 +143,15 @@ theorem keepAbove_measurable {ι X : Type*}
 /-- Left-right symmetry of the threshold rule: the upper rule is the lower
 rule after reversing the order on the values. -/
 theorem mem_keepAbove_iff_orderDual {ι X : Type*}
-    [Zero X] [LE X] (i : ι) (M : X) (ξ : Step ι X) :
+    [LE X] (i : ι) (M : X) (ξ : Step ι X) :
     ξ ∈ keepAbove i M ↔
       (fun j => (ξ j).map OrderDual.toDual) ∈
         keepAt (X := OrderDual X) i (OrderDual.toDual M) := by
   cases h : ξ i with
   | none =>
-      simp [keepAbove, keepAt, keepRel, survive, value', h]
+      simp [keepAbove, keepAt, keepRel, h]
   | some x =>
-      simp [keepAbove, keepAt, keepRel, survive, value', h,
+      simp [keepAbove, keepAt, keepRel, h,
         OrderDual.toDual_le_toDual]
 
 end Branching

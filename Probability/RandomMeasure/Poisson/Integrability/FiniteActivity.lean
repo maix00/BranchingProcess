@@ -6,7 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.RandomMeasure.Poisson.Basic
+public import Probability.RandomMeasure.Poisson.RandomMeasure.Basic
+import Probability.RandomMeasure.Poisson.Integration.Integral
+import Probability.RandomMeasure.Poisson.RandomMeasure.Evaluation
 
 /-!
 # Integrability under a finite Poisson point configuration
@@ -14,6 +16,25 @@ public import Probability.RandomMeasure.Poisson.Basic
 A finite-intensity Poisson measure has finitely many realized atoms almost
 surely. Any measurable real test function is therefore integrable against
 that realized measure, even when its intensity first moment is infinite.
+
+## Public declarations
+
+If the intensity \(\lambda\) has finite total mass, then the realized
+Poisson point measure \(\Xi\) is finite almost surely, and every measurable
+real function is integrable against \(\Xi\) almost surely:
+
+\[\lambda(X)<\infty\Longrightarrow
+  \mathbb P(\Xi(X)<\infty)=1,\qquad
+  \forall f\text{ measurable},\ \mathbb P\!\left(
+    \int|f|\,d\Xi<\infty\right)=1.\]
+
+* `integrable_poissonRandomMeasure_of_finite_count` shows that a measurable
+  real function is integrable against each realized point measure whose total
+  mass is finite.
+* `IsPoissonPointFamily.ae_integrable_of_finite_intensity` shows that finite
+  total intensity makes the realized point measure finite, and hence makes
+  every measurable real observable integrable almost surely.
+
 -/
 
 @[expose] public section

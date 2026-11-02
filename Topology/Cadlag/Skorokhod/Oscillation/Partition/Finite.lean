@@ -13,10 +13,23 @@ import Mathlib.Data.Finset.Sort
 /-!
 # Partitions from finite ordered time points
 
-Turn a finite strictly increasing sequence of times with the correct
-endpoints into the indexed half-open partition used by Skorokhod oscillation
-arguments. The cell index is the greatest left endpoint not exceeding the
-time, with the terminal point assigned to the last cell.
+Given knots $0=t_0<\cdots<t_n=1$, for $t<1$ the cell index is
+$i=\max\{j<n:t_j\le t\}$; the terminal point $1$ is assigned to cell $n-1$.
+
+## Public declarations
+
+- `finitePointIndex` assigns $t<1$ to the cell
+  $i=\max\{j<n:t_j\le t\}$; the lower, upper, and knot theorems characterize
+  this assignment.
+- `finitePointGaps` is
+  $\{\operatorname{dist}(t_i,t_{i+1}):0\le i<n\}$, and
+  `finitePointMesh` is its minimum. The minimum is positive for strictly
+  increasing knots.
+- `ofFinitePoints` constructs an `OscillationPartition` from strictly
+  increasing knots with endpoints $0$ and $1$;
+  `exists_ofFinset` constructs such a partition from a finite set containing
+  both endpoints and preserves exactly that set of knots.
+
 -/
 
 @[expose] public section
@@ -29,12 +42,12 @@ namespace Skorokhod
 namespace OscillationPartition
 
 /-- The set of cell indices whose left endpoint is at or before `t`. -/
-noncomputable def predecessorIndices {n : ℕ}
+private noncomputable def predecessorIndices {n : ℕ}
     (points : Fin (n + 1) → unitInterval) (t : unitInterval) : Finset (Fin n) :=
   Finset.univ.filter fun i => points i.castSucc ≤ t
 
 /-- The first cell always starts at or before every time. -/
-theorem predecessorIndices_nonempty {n : ℕ} (hn : 0 < n)
+private theorem predecessorIndices_nonempty {n : ℕ} (hn : 0 < n)
     (points : Fin (n + 1) → unitInterval)
     (hfirst : points ⟨0, by omega⟩ = ⊥) (t : unitInterval) :
     (predecessorIndices points t).Nonempty := by
@@ -50,9 +63,15 @@ theorem predecessorIndices_nonempty {n : ℕ} (hn : 0 < n)
 before `t`. -/
 noncomputable def finitePointIndex {n : ℕ} (hn : 0 < n)
     (points : Fin (n + 1) → unitInterval)
-    (hfirst : points ⟨0, by omega⟩ = ⊥) (t : unitInterval) : Fin n :=
-  (predecessorIndices points t).max'
-    (predecessorIndices_nonempty hn points hfirst t)
+    (hfirst : points ⟨0, by omega⟩ = ⊥) (t : unitInterval) : Fin n := by
+  classical
+  refine (Finset.univ.filter fun i : Fin n => points i.castSucc ≤ t).max' ?_
+  refine ⟨⟨0, hn⟩, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩⟩
+  have hzero : (⟨0, hn⟩ : Fin n).castSucc = ⟨0, by omega⟩ := by
+    apply Fin.ext
+    rfl
+  rw [hzero, hfirst]
+  exact bot_le
 
 /-- The selected cell starts at or before the queried time. -/
 theorem finitePointIndex_lower {n : ℕ} (hn : 0 < n)

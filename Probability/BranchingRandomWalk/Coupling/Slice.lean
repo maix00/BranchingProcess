@@ -14,6 +14,18 @@ public import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
 
 This file connects the measure-level notion of coupling to a pathwise
 order-dominating map between cloud slices.
+
+## Public declarations
+
+* `Coupling.SliceDominates κ φ source target t` means that for
+  `κ`-almost every paired sample `(x,y)`, there is a
+  `Cloud.SliceDominatingMap φ (source x) (target y) t`.
+  Precisely,
+  \[
+  \kappa\text{-a.e. }(x,y),\qquad
+  \operatorname{Nonempty}\bigl(\operatorname{SliceDominatingMap}
+  (\varphi,\operatorname{source}(x),\operatorname{target}(y),t)\bigr).
+  \]
 -/
 
 open MeasureTheory

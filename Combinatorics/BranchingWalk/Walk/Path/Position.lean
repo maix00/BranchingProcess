@@ -6,15 +6,49 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Population.Cloud
+public import Combinatorics.BranchingWalk.Cloud.Basic
 public import Combinatorics.BranchingWalk.Walk.Basic
 public import Algebra.BigOperators.AdditivePath.Block
 
 /-!
 # Additive paths along a singleton branching walk
 
-This module proves only the branching-specific correspondence between a
-singleton-slot branching walk and its additive increment path.
+## Public declarations
+
+For `d : Mark → Position`, `x₀ : Position`, and `ξ : ℕ → Mark`, set
+`β = ofIncrements x₀ ξ`. The position along its unique lineage is the
+additive path from `x₀`; its block increment gives the corresponding
+two-time identity:
+
+\[\begin{aligned}
+\operatorname{position}(\operatorname{ofIncrements}(x_0,\xi),d,\mathrm{unit},\operatorname{lineNode}(n))
+&=x_0+\operatorname{displacement}(n,d\circ\xi)
+=x_0+\sum_{j=0}^{n-1}d(\xi(j)),\\
+\operatorname{position}(\operatorname{ofIncrements}(x_0,\xi),d,\mathrm{unit},\operatorname{lineNode}(m+n))
+&=\operatorname{position}(\operatorname{ofIncrements}(x_0,\xi),d,\mathrm{unit},\operatorname{lineNode}(m))
++\operatorname{blockSum}(m,n,d\circ\xi).
+\end{aligned}\]
+
+For `d : Mark → Position`, `initial : Position`, and
+`increment : ℕ → Mark`, the declarations in
+`Combinatorics.Branching.Walk` give the path correspondence:
+
+* `Combinatorics.Branching.Walk.displaceWith_lineNode_eq_displacement`
+  identifies displacement to `lineNode n` with
+  `AdditivePath.displacement n (d ∘ increment)`.
+* `Combinatorics.Branching.Walk.position_lineNode_eq_fromIncrements`
+  identifies the position at `lineNode n` with
+  `AdditivePath.fromIncrements initial (d ∘ increment) n`.
+* `Combinatorics.Branching.Walk.position_lineNode_add` expresses the position
+  at `start + length` as the position at `start` plus
+  `AdditivePath.blockSum start length (d ∘ increment)`.
+* `Combinatorics.Branching.Walk.discreteTimeCloud_position_lineNode_eq_fromIncrements`
+  gives the same position formula for the generation cloud, and
+  `Combinatorics.Branching.Walk.lineNode_mem_discreteTimeCloud` places the
+  canonical address in that cloud.
+
+These results connect the singleton branching representation to the general
+additive-path API without identifying the two underlying objects.
 -/
 
 open scoped BigOperators

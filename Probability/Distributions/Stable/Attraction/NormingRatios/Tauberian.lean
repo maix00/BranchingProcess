@@ -6,14 +6,17 @@ Authors: Codex
 module
 
 public import Probability.Distributions.CharacteristicFunction.CosineDefect
-public import Probability.Distributions.CharacteristicFunction.Symmetrization
+public import Probability.Distributions.CharacteristicFunction.Symmetrization.Basic
 public import Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation
-public import Probability.Distributions.Stable.Attraction.Norming
+public import Probability.Distributions.Stable.Attraction.Norming.Basic
 public import Probability.Distributions.CharacteristicFunction.Symmetrization.RegularVariation
 public import Analysis.Asymptotics.RegularVariation.AtZero.Potter
 public import Analysis.Fourier.CosineTauberian.Mellin
 public import Analysis.Fourier.CosineTauberian.RegularVariation
 public import Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail
+
+import Probability.Distributions.Stable.Attraction.Norming.Asymptotics.Tail
+import Probability.Distributions.Moments.Truncated.TailAsymptotics
 
 /-!
 # Stable attraction and the symmetric cosine defect
@@ -21,6 +24,60 @@ public import Probability.Distributions.CharacteristicFunction.Tauberian.SecondT
 The squared-modulus defect of an increment characteristic function is the
 cosine defect of the symmetrized increment law. This bridge keeps the law
 whose tail enters the inverse Tauberian theorem explicit.
+
+Write `ν_s` for the symmetrized increment law, `D_s(u)` for its cosine defect,
+`φ_ν` for the increment characteristic function, and
+`V_ν(x)=∫_{|y|≤x}y²ν(dy)`. For `0<α<2`, with `J_α` the cosine Tauberian
+moment, the tail and truncated-moment limits are
+
+\[
+\frac{\barν_s(x)}{D_s(x^{-1})}\longrightarrow\frac1{αJ_α},\qquad
+\frac{\barν(x)}{1-|φ_ν(x^{-1})|^2}\longrightarrow\frac1{2αJ_α},
+\]
+
+and
+
+\[
+\frac{V_ν(x)}{x^2\bigl(1-|φ_ν(x^{-1})|^2\bigr)}
+\longrightarrow\frac1{2(2-α)J_α}.
+\]
+
+Here `\barν_s(x)=ν_s\{|y|>x\}` and `\barν(x)=ν\{|y|>x\}`.
+
+## Public declarations
+
+Write $\nu_s$ for the symmetrized increment law,
+$D_s(u)=\operatorname{cosineDefectIntegral}(\nu_s,u)$, and $J_\alpha$ for
+the cosine Tauberian Mellin moment. For the tail conclusions below, assume
+$0<\alpha<2$.
+
+* `ProbabilityTheory.IsInDomainOfAttractionAlong.isRegularlyVarying_symmetrizedCosineDefect`:
+  $D_s$ is regularly varying at zero with index $\alpha$.
+* `ProbabilityTheory.IsInDomainOfAttractionAlong.exists_potter_bound_symmetrizedCosineDefect`
+  gives, for every $0<\delta<\alpha$ and sufficiently small $0<u\le v$,
+  $\frac{(v/u)^{\alpha-\delta}}{2\cdot2^{\alpha-\delta}}
+  \le D_s(v)/D_s(u)\le(2^\alpha+1)(v/u)^{\alpha+\delta}$.
+* `ProbabilityTheory.IsInDomainOfAttractionAlong.exists_potter_envelope_symmetrizedCosineDefect`:
+  for every $0<\delta<\alpha$, a constant $C$ bounds
+  $D_s(su)/D_s(u)\le C\bigl(s^{\alpha-\delta}+s^{\alpha+\delta}\bigr)$
+  whenever $u,su$ are sufficiently small and positive.
+* `ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_secondTailIntegral_ratio`:
+  the normalized second-tail integral tends to the cosine Tauberian constant.
+* `ProbabilityTheory.IsInDomainOfAttractionAlong.isRegularlyVarying_symmetrizedTwoSidedTail`
+  and `ProbabilityTheory.IsInDomainOfAttractionAlong.isRegularlyVarying_twoSidedTail`:
+  the symmetrized and original two-sided tails have index $-\alpha$ at
+  infinity.
+* `ProbabilityTheory.IsInDomainOfAttractionAlong.isSlowlyVarying_stableSlowVariation`:
+  $u^{\alpha-2}\int_{|x|\le u}x^2\,\nu(dx)$ is slowly varying.
+* `ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_symmetrizedTail_div_cosineDefect`
+  and `ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_twoSidedTail_div_cosineDefect`:
+  $\bar\nu_s(x)/D_s(x^{-1})\to(\alpha J_\alpha)^{-1}$ and
+  $\bar\nu(x)/(1-|\varphi_\nu(x^{-1})|^2)\to(2\alpha J_\alpha)^{-1}$.
+* `ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_truncatedSecondMoment_div_scaledCosineDefect`:
+  the normalized truncated second moment tends to
+  $[2(2-\alpha)J_\alpha]^{-1}$.
+
+Here $\bar\nu_s$ and $\bar\nu$ denote the corresponding two-sided tails.
 -/
 
 open Filter MeasureTheory
@@ -178,7 +235,7 @@ theorem IsInDomainOfAttractionAlong.tendsto_secondTailIntegral_ratio
       (nhds (cosineTauberianMellinMoment α)) := by
     simpa [Q, f, μs, cosineTauberianMellinMoment] using
       Analysis.Fourier.CosineTauberian.tendsto_integral_ratio_mul_cosineTauberianKernel
-        hcont hreg huniform hα₀ hδ₀ hδα hαδ₂ hM₀ hnonneg hbounded
+        hcont.measurable hreg huniform hα₀ hδ₀ hδα hαδ₂ hM₀ hnonneg hbounded
   have hQtop : Tendsto (fun x : ℝ => Q x⁻¹) atTop
       (nhds (cosineTauberianMellinMoment α)) :=
     hQ.comp tendsto_inv_atTop_nhdsGT_zero

@@ -8,28 +8,73 @@ module
 
 public import Combinatorics.BranchingWalk.Cloud.SliceMeasure
 public import Combinatorics.BranchingWalk.Cloud.Rank.Slice
+public import MeasureTheory.Measure.LowerTail
 
 /-!
 # Domination on one time slice
 
 Two populations at a fixed time are compared through their counting measures:
-`μ` is dominated by `ν` when, at every threshold, `μ` has no more mass on the left
-half-line than `ν` does. This is the order B\'erard and Gou\'er\'e use on counting
-measures (`Brunet-Derrida behavior of branching-selection particle systems on the
-line`, arXiv:0811.2782, Section 2), stated there in the upper-tail form, and it is
-the lower-tail order on finite counting measures
-(`contents/n-brw/intro.tex`): the leftmost comparison of the atoms together with
-`M(μ) ≤ M(ν)`, both with multiplicity.
+`μ` is dominated by `ν` when `μ (Iic a) ≤ ν (Iic a)` at every threshold. On
+finite counting measures this is the relation `μ₁ \succcurlyeq μ₂` defined by
+WANG Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* (master's thesis, Fudan University, 2026), Chapter 3, Section 3.4:
+`M(μ₁) ≤ M(μ₂)` and the increasingly ordered atoms of `μ₁` lie at or to the
+right of the corresponding leftmost atoms of `μ₂`, counting multiplicity.
+Bérard and Gouéré define the upper-tail convention `μ \prec ν` in Section 2.1
+of “Brunet-Derrida behavior of branching-selection particle systems on the
+line” (arXiv:0811.2782v3, DOI 10.48550/arXiv.0811.2782); applying the lower-tail
+relation to order-dual positions gives that convention, as stated by
+`Cloud.dominates_orderDual_iff`.
 
-The two directions of the line are the *same* relation read in the two orders, so
-this file defines one relation and `Cloud/Order/Basic.lean` obtains the second
-direction from it at `OrderDual`. It is *not* the relation with the two arguments
-exchanged: both directions keep the atom count of the first population below that
-of the second.
+The lower-tail relation on measures is generic and is owned by
+`MeasureTheory/Measure/LowerTail.lean`. This file relates it to rankwise
+order on cloud slices. The upper-tail form is the same relation read at
+`OrderDual`; it does not exchange the two cloud arguments, so both directions
+keep the atom count of the first population below that of the second.
 
-The definition is a condition on measures, so it needs nothing on the particle
-index of a cloud; only the half-lines of the value space have to be measurable for
-the statements that move between thresholds.
+The lower-tail relation itself evaluates measures on principal lower sets and
+places no measurability condition on those sets. A theorem using pushforward
+evaluation states the required measurability of its half-line explicitly.
+
+## Public declarations
+
+At a fixed time, rankwise domination matches each particle with a particle
+of the same index rank at a position no greater than its own; on finite
+slices this implies the lower-tail counting inequality:
+
+\[
+\forall k,q,\quad
+q\in C_t\land\operatorname{rank}_C(q)=k
+\Longrightarrow
+\exists q'\in D_t,\quad
+\operatorname{rank}_D(q')=k\land x_D(q')\le x_C(q),
+\]
+\[
+|C_t|,|D_t|<\infty
+\quad\Longrightarrow\quad
+\#\{q\in C_t:x_C(q)\le a\}
+\le\#\{q\in D_t:x_D(q)\le a\}.
+\]
+
+- `Measure.LowerTailDominates μ ν` means `μ (Iic a) ≤ ν (Iic a)` for every
+  threshold `a`; the generic measure relation and its order laws are owned by
+  `MeasureTheory/Measure/LowerTail.lean`.
+- `Cloud.RankwiseDominates C D t` matches each particle of rank `k` in the
+  slice of `C` to a particle of the same rank in `D` whose position is no
+  greater. `RankwiseDominatesBy` states this after applying an ordered
+  observation of positions.
+- `rankwiseDominates_encard_Iic_le` and `rankwiseDominates_encard_le` give
+  lower-tail and total particle-count inequalities. Conversely,
+  `rankwiseDominates_of_encard_Iic_le` constructs the rankwise order from
+  threshold counts, and `rankwiseDominates_iff_encard_Iic_le` packages the
+  equivalence. `rankwiseDominates_mapOrderDual_iff` gives the upper-tail order
+  by reversing the value order.
+- `rankwiseDominates_diracSum_of_countable` transfers the rankwise comparison
+  to the corresponding counting-measure inequality on countable slices.
+
+The relation laws are `Measure.lowerTailDominates_refl` and
+`Measure.lowerTailDominates_trans`, together with
+`Cloud.rankwiseDominates_refl` and `Cloud.rankwiseDominates_trans`.
 -/
 
 open MeasureTheory
@@ -43,21 +88,6 @@ namespace Combinatorics
 namespace Branching
 
 variable {X : Type*}
-
-/-- The slice domination order read on counting measures: at every threshold the
-first measure has no more mass on the left half-line than the second. -/
-def SliceDominatesMeasure [MeasurableSpace X] [Preorder X] (μ ν : Measure X) : Prop :=
-  ∀ a : X, μ (Set.Iic a) ≤ ν (Set.Iic a)
-
-theorem sliceDominatesMeasure_refl [MeasurableSpace X] [Preorder X] (μ : Measure X) :
-    SliceDominatesMeasure μ μ :=
-  fun _ => le_rfl
-
-theorem sliceDominatesMeasure_trans [MeasurableSpace X] [Preorder X]
-    {μ ν ρ : Measure X} (h₁ : SliceDominatesMeasure μ ν)
-    (h₂ : SliceDominatesMeasure ν ρ) :
-    SliceDominatesMeasure μ ρ :=
-  fun a => le_trans (h₁ a) (h₂ a)
 
 /-- The rankwise form of the slice order: the particle of rank `k` of `C`, whenever it
 exists, has a counterpart of rank `k` in `D` lying weakly to its left. The rank is read
@@ -308,7 +338,7 @@ theorem Cloud.rankwiseDominates_mapOrderDual_iff [LT (RootIndexed.TreeNode Root 
 /-- Counting the particles of a slice that satisfy a predicate does not depend on whether the
 slice is read as a set of particles or as its own type: the two sets correspond under the
 identity on the underlying particles. -/
-theorem Cloud.encard_subtype_eq_encard {Time Root α X : Type*} {C : Cloud Time Root α X}
+private lemma Cloud.encard_subtype_eq_encard {Time Root α X : Type*} {C : Cloud Time Root α X}
     (t : Time) (P : RootIndexed.TreeNode Root α → Prop) :
     ({p : (C.particles t : Set (RootIndexed.TreeNode Root α)) | P p.1} : Set _).encard =
       {p | p ∈ C.particles t ∧ P p}.encard :=
@@ -326,7 +356,7 @@ theorem Cloud.rankwiseDominates_diracSum_of_countable [MeasurableSpace X]
     [Preorder X] {C D : Cloud Time Root α X} (t : Time)
     (hinj : Set.InjOn (C.sliceRank t) (C.particles t))
     (h : C.RankwiseDominates D t) :
-    SliceDominatesMeasure (C.diracSum t) (D.diracSum t) := by
+    Measure.LowerTailDominates (C.diracSum t) (D.diracSum t) := by
   intro a
   rw [Cloud.diracSum_Iic_eq_encard_of_countable C t a,
     Cloud.diracSum_Iic_eq_encard_of_countable D t a,

@@ -1,180 +1,245 @@
-# Mogulskii Theorem 4: process-level proof route and missing interfaces
+# Mogul'skii Theorem 4: source-faithful formalization route
 
-## Scope and source statement
+## Source statement
 
-This note audits the process theorem in §5 of Mogul'skii, “Small deviations
-in the sample function space” ([1974 article record and full text](https://www.mathnet.ru/eng/tvp3978), English translation in *Theory of Probability and its Applications* 19 (1975), 726–736).
-The theorem concerns a homogeneous process with independent increments
-`ξ(t)`, `t ≥ 0`, with almost-surely right-continuous paths and zero mean when
-the mean exists. Its one-time laws are in the strict stable domain of
-attraction with index `0 < α < 2`; the source also assumes
-`B*(B(n)) / n → 1`, where
-
-```text
-L*(u) = u^(α - 2) ∫_{[-u,u]} z² ν(dz),
-B*(u) = u^α / L*(u),
-```
-
-and `ν` is the law of a unit-time increment. For `x(n) → ∞` with
-`x(n) / B(n) → 0`, Theorem 4 asserts, for the same source class `A` and
-functional `Hα` as Theorem 1,
+This note follows Section 5 of A. A. Mogul'skii, *Small Deviations in the
+Sample Function Space* (Russian original, *Theory of Probability and Its
+Applications* 19:4 (1974), 755--765; English translation, 19:4 (1975),
+726--736, [DOI 10.1137/1119081](https://doi.org/10.1137/1119081)). Theorem 4
+assumes a homogeneous process `ξ(t)`, `t ≥ 0`, with independent increments,
+almost-surely right-continuous paths, and the stable domain-of-attraction
+condition
 
 ```text
-log P(t ↦ ξ(n t) / x(n) ∈ G)
-  ~ C Hα(G) n x(n)^(-α) L*(x(n)),
+P(ξ(n) < x B(n)) → Fα(x),       0 < α < 2,
+0 < Fα(0) < 1,
+B*(B(n)) / n → 1,
 ```
 
-with the same coefficient `C < 0` as Theorem 1. The path convention is the
-paper's `D(0,1)` convention: the value at the terminal time is the left limit.
-In the repository's normalization, `C = 2^α C₀`, where `C₀` is the stable
-unit-range escape coefficient. The exact event convention and `Hα` definition
-remain those recorded in `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Rate/PROOF_ROUTE.md`.
+Write `ν = Law(ξ(1))`; homogeneity and independent increments identify the law
+of `ξ(n)` with the sum of `n` independent variables of law `ν`. The article
+assumes `E[ξ(t)] = 0` whenever this expectation exists and, at `α = 1`, also
+assumes `∫_ℝ sin(z / B(n)) ν(dz) → 0`. Here `B*(u) = u^α / L*(u)` and
+`L*(u) = u^(α-2) ∫_{[-u,u]} z² ν(dz)`. For
+`x(n) → ∞` with `x(n) / B(n) → 0`, the process path is
+`s_n(t) = ξ(nt) / x(n)`, with the terminal value taken as the left limit. The
+conclusion for every `G ∈ 𝔐` is
 
-## Existing interfaces that can be reused
+```text
+log P(s_n ∈ G)  ~  C Hα(G) n x(n)^(-α) L*(x(n)),
+```
 
-- `Probability/Process/Levy/Basic.lean` defines `IsLevyProcess`, stationary
-  increments, independent increments, and almost-sure càdlàg paths.
-- `Probability/Process/IndepIncrements/FiniteDimensional.lean` derives finite
-  dimensional laws from independent increments, and
-  `Probability/Process/IndepIncrements/DisjointPaths.lean` gives independence
-  of paths on adjacent intervals. These are the right inputs for exact
-  block-factorization arguments.
-- `Probability/Process/Path/Cadlag/MeasurableMap.lean` constructs measurable
-  càdlàg path realizations. `Topology/Cadlag/TerminalLeft.lean` provides the
-  deterministic terminal-left map and its `D₀` domain;
-  `MeasureTheory/MeasurableSpace/CadlagPath/TerminalLeft.lean` proves its
-  Borel measurability.
-- The stable reference process already has a unit-interval path law and a
-  stable-process `M₂` path-class rate. See
-  `Probability/Process/Stable/PathLaw/UnitInterval.lean`,
-  `Probability/Process/Stable/SmallDeviation/EscapeRate/PathLaw.lean`, and
-  `Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/Partition/Stable.lean`.
-  The stable range, endpoint, and inner/outer APIs provide the limit-model
-  estimates needed in a block squeeze.
-- The random-walk stable-domain functional limit and `M₂` rates are already
-  available in `Probability/Process/RandomWalk/FunctionalLimit/Stable/` and
-  `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/`.
-  They concern the step path made from unit-time increments, not the full
-  continuous-time path `t ↦ ξ(n t)`.
-- The generic Skorokhod tightness and finite-grid identification criteria,
-  together with the relative `M₃`/`M` rate adapters, can be reused after the
-  missing process-level bounds have been proved.
+where `C < 0` is the constant from Theorem 1. In the proof, Theorem 4 is
+reduced to the stable-process tube estimate of Lemma 1 and then to the same
+geometric proof used for Theorem 1.
 
-## Exact missing interfaces
+The article's pinned tube is
+\[
+I_c^b = \{f\in D(0,1): f(0)=0,\ \inf_{0\le t\le1} f(t)>c,\
+                         \sup_{0\le t\le1} f(t)<b\}.
+\]
+Thus `a⁻¹ I¹₋₁` is the set of paths starting at zero and staying strictly
+between `-a⁻¹` and `a⁻¹`; the terminal value in `D(0,1)` is the left limit.
 
-The current APIs do not compose to Theorem 4. The missing pieces are:
+## Existing Lean interfaces
 
-1. **A process-level stable functional limit.** There is no theorem deriving
-   weak convergence in `J₁` of the full path laws
-   `Law(t ↦ ξ(T t) / b(T))` to the stable Lévy path law from the scalar
-   stable-domain assumption and `IsLevyProcess`. The current stable path-limit
-   theorems take an i.i.d. increment law and prove convergence of its
-   piecewise-constant random-walk paths. That does not identify the law of
-   `ξ(T·)`: fluctuations and jumps inside unit-time intervals are omitted.
-   The finite-dimensional part can use stationary independent increments and
-   the scalar domain-of-attraction result. The missing analytic input is
-   `J₁` tightness for the full rescaled Lévy paths, including control of
-   within-interval oscillations.
-2. **A scalar-to-process norming bridge.** The source hypothesis is stated
-   for `ξ(B(n)) / B(n)` at real times and includes
-   `B*(B(n)) / n → 1`. The existing `IsStableNorming` and inverse-norming
-   interfaces are formulated for the law of one i.i.d. increment and natural
-   time indices. A verified bridge must identify the unit-time increment law
-   `ν = Law(ξ(1) - ξ(0))`, recover the required norming/regular variation
-   from the source's continuous-time assumption, and relate real block times
-   `B*(A x)` to that norming. This conversion must retain the centering
-   convention, especially at `α = 1`.
-3. **A full-path one-block squeeze for the nonstable process.** The stable
-   process `M₂` rate is a theorem about the limiting stable process; the
-   random-walk `M₂` rate is about the discrete skeleton. Neither gives the
-   probability that the original process path stays in a corridor throughout
-   a long block, with an endpoint in a prescribed core. The missing lemma
-   must transfer open inner and closed outer full-path corridors through the
-   process-level `J₁` limit, then take the stable small-width limit. It must
-   provide both the range upper estimate and the endpoint-core lower estimate
-   needed for `M₂` block concatenation.
-4. **The paper's path regularity and terminal endpoint.** The paper states
-   almost-sure right continuity, whereas `IsLevyProcess` asks for
-   almost-sure càdlàg paths. Either prove left limits from the stated
-   independent/stationary-increment and continuity assumptions, or expose the
-   necessary càdlàg hypothesis explicitly. The `D₀` endpoint convention also
-   needs a proof that the process has no jump at each deterministic terminal
-   time used in the block argument, or an exact terminal-left path-law
-   formulation that avoids assuming this silently.
+- `Probability/Process/Levy/Basic.lean` defines `IsLevyProcess` and proves
+  closure under continuous measurable additive state maps and continuous
+  additive time changes. Thus `t ↦ ξ(nt) / B(n)` has the required process
+  structure once the source process has been packaged as an `IsLevyProcess`.
+- `Probability/Process/StationaryIncrements/Basic.lean` proves that a
+  zero-start process with stationary increments satisfies
+  `Law(X(s+t) - X(s)) = Law(X(t))` for every `s,t ≥ 0`. The same layer now
+  supplies the increment-to-marginal identity used by path-law convergence.
+- `Probability/Process/Levy/MarginalLaws.lean` proves that every fixed-time
+  marginal of a real-valued Lévy process is infinitely divisible: for every
+  `n ≥ 1`, `Law(X(t))` is the `n`-fold convolution of the common law of `n`
+  equal-length stationary increments. This places the process marginals in
+  the measure-level framework used by the Lévy--Khintchine semigroup API.
+- `Probability/Process/Levy/DomainOfAttraction/IntegerTime.lean` transfers a
+  scalar domain-of-attraction limit of the time-one marginal to the process at
+  integer times. If `ν = Law(X(1))` and the normalized i.i.d. sums of law `ν`
+  converge to `μ`, then the same centered and normalized `X(n)` converges to
+  `μ`. The underlying exact equality between `Law(X(n))` and the canonical
+  i.i.d. sum law is in `Levy/MarginalLaws.lean`.
+- `Probability/Process/Levy/PathLaw/UnitInterval.lean` constructs the law of
+  `t ↦ X(Tt)` on `CadlagPath unitInterval ℝ`, identifies every finite
+  evaluation law, identifies the unit-interval law of `t ↦ X(Tt)` with the
+  horizon-`T` law, and proves that spatial scaling by `q` pushes this law
+  forward by `f ↦ qf`. These are the path-law interfaces needed for the
+  normalized process in equation (38).
+- `Probability/Process/Levy/PathLaw/Corridor.lean` identifies the path-law
+  probability of a zero-start open corridor with the original process's
+  complete-segment corridor probability, and also handles a corridor with an
+  open terminal window. These are path-representation identities needed when
+  equation (38) is applied to tube events; the weak convergence and boundary
+  comparison remain separate obligations.
+- `Probability/Process/Stable/PathLaw/SelfSimilarity.lean` identifies stable
+  unit-interval path laws from their rational-coordinate laws and proves the
+  stable time-space identity
+  \(\mathcal L((r^{-1/\alpha}X_{rt})_{0\le t\le1})=
+  \mathcal L((X_t)_{0\le t\le1})\). This supplies the stable-process scaling
+  at the path-law level; it does not establish equation (38)'s convergence of
+  the rescaled source processes.
+- `Probability/Process/Levy/PathLaw/Convergence.lean` proves that tightness of
+  a family of unit-interval Lévy path laws and convergence of every interval
+  increment law imply weak convergence of the path laws. It uses
+  `Probability.Process.IndepIncrements.Convergence` to assemble the finite-grid
+  position limits and the generic tightness-plus-finite-grid theorem to
+  identify the path-space limit. Its Lévy-process corollary derives the
+  increment limits from convergence of every rescaled one-time marginal, using
+  stationary increments and the zero-start property. This completes the
+  path-level assembly once tightness and the rescaled marginal limits have
+  been supplied.
+- `Probability/Distributions/InfinitelyDivisible/LevyKhintchine/Semigroup/Convergence.lean`
+  proves that pointwise convergence of the exponents of a sequence of
+  convolution semigroups implies weak convergence of each fixed positive-time
+  member, using `ProbabilityMeasure.tendsto_iff_tendsto_charFun`. This gives a
+  reusable route from exponent limits to the marginal inputs above; obtaining
+  those exponent limits from Theorem 4's scalar domain-of-attraction
+  assumption remains a separate obligation.
+- `Probability/Process/Levy/PathContinuity.lean` proves
+  `IsLevyProcess.ae_leftLim_eq_eval`: a càdlàg Lévy process has no jump at
+  any fixed positive time, almost surely. At time `1`, this identifies the
+  value-at-1 path law with Mogul'skii's terminal-left convention in Theorem 4,
+  Section 5.
+- `Probability/Process/Stable/PathLaw/UnitInterval.lean` and the stable
+  process escape-rate modules provide the limiting stable path law and its
+  range-tube rate input. `Probability/Process/Stable/SmallDeviation/EscapeRate/PathLaw/Transfer.lean`
+  transfers Mogul'skii's Lemma 1(II) centered-corridor rate to that path law:
+  the probability of `stableProcessCenteredCorridor(a)` has the same
+  logarithmic rate as the process event `I^a_{-a}`.
+- `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Scale/SlowMultiplier.lean`
+  now formalizes the rounded regular-variation ratio in equation (43): for
+  a slowly increasing multiplier $a_n$ compatible with the smaller path scale,
+  $\lfloor B^*(a_nx_n)\rfloor/(a_n^\alpha B^*(x_n))\to1$. This proves the
+  floor step from regular variation and $B^*(a_nx_n)\to\infty$; it does not
+  supply the preceding fixed-tube probability comparison.
+- `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Lemmas/Theorem4/Scale/EscapeRate.lean`
+  combines that rounded ratio with the centered stable path-law escape rate to prove
+  $B^*(x_n)\lfloor B^*(a_nx_n)\rfloor^{-1}
+  \log\mathbb P_P(a_n^{-1}I_{-1}^{1})\to C$, the stable-path contribution
+  to equation (44). The comparison between the original process tube and
+  this stable corridor remains a separate step.
+- The deterministic corridor comparisons and the finite-partition extension
+  for Theorem 1 are already formalized under
+  `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Rate/`.
 
-The integer skeleton cannot close these gaps by asserting that its path event
-differs from the full-process event by `o(1)`. The target probability is
-exponentially small at scale
-`ρ(n) = n x(n)^(-α) L*(x(n))`; an additive `o(1)` error can be much larger than
-the probability itself. In addition, a unit-block path excursion can have
-probability of order `L*(x) x^(-α)`, which contributes at the target
-exponential scale after `n` blocks.
+## The proof in the article
 
-## Non-circular proof dependency order
+Mogul'skii states that the proof of Theorem 4 is “almost verbatim” the proof
+of Theorem 1. The proof on Russian-original pages 762--763 (English
+translation, pp. 733--734) proceeds through equations (38)--(44):
 
-1. **Package the process input.** From stationary increments, define the
-   common unit-time increment law `ν`; derive measurability of every
-   increment and the exact finite-grid product law from
-   `HasIndepIncrements`. Build the time-restricted path law using the
-   existing càdlàg path-map API, then apply the terminal-left map to match
-   `D₀`.
-2. **Formalize the continuous-time stable functional limit.** Let `T → ∞`
-   and let `b(T)` be the stable norming. Prove finite-dimensional convergence
-   from the increment laws. Prove full `J₁` tightness from direct
-   Lévy-process range and oscillation bounds (or an independently proved
-   comparison with the skeleton that controls path oscillations at the
-   probability level required by tightness). Apply the existing generic
-   tightness-plus-finite-grid identification theorem to obtain convergence
-   to the stable path law. This step proves weak convergence only; it does
-   not invoke Theorem 4 or a small-deviation rate.
-3. **Derive one-block bounds at a fixed `A`.** For `A > 0`, take block time
-   `T_x(A) = B*(A x)`. The norming inverse gives
-   `b(T_x(A)) / (A x) → 1`. Apply the process functional limit to
-   `ξ(T_x(A)·)/(A x)`. Use Portmanteau on an open inner corridor and a closed
-   outer range corridor. Apply the already proved stable-process escape and
-   endpoint-core rates to these two limiting events. Keep both bounds as
-   logarithmic inequalities; do not claim probability convergence unless a
-   boundary-null result has been established.
-4. **Assemble `M₂` blocks with exact independence.** For fixed `A`, partition
-   the full time interval into complete blocks of length `T_{x(n)}(A)` and a
-   terminal remainder. For the upper bound, a path in the target corridor
-   forces each translated block path to satisfy a range event. For the lower
-   bound, impose inner block corridors and endpoint-core events that imply
-   the complete path belongs to the target. Use independent adjacent path
-   increments to factor these events exactly. Handle the terminal remainder
-   by the same corridor/core inequalities, not an additive probability
-   approximation.
-5. **Pass from `M₂` to the source classes.** Use the existing deterministic
-   finite partition decomposition to evaluate `Hα` and sum the block rates.
-   Then use the existing finite-union and inner/outer `M₃`/`M` adapters,
-   preserving the source's strict membership and measurability assumptions.
-6. **Choose a slow diagonal and identify the coefficient.** First take
-   `n → ∞` for fixed `A`, then `A → ∞` using the stable escape rate. Choose
-   `A = A(n) → ∞` slowly enough that
-   `A(n) x(n) / B(n) → 0` and every fixed-`A` estimate remains eventual.
-   Regular variation gives
-   `B*(A(n) x(n)) / B*(x(n)) ~ A(n)^α`; hence the number of complete blocks
-   times the one-block rate is asymptotic to
-   `C Hα(G) ρ(n)`. The order of these limits must remain explicit.
+1. **Fixed-tube transfer, equation (38).** For each fixed `a > 0`, functional
+   convergence of `t ↦ ξ(nt)/B(n)` to the strictly stable process transfers
+   the probability of the fixed tube `a⁻¹ I¹₋₁`. Written in terms of
+   `s_n(t) = ξ(nt)/x(n)`, this gives the probability comparison for
+   `s_n ∈ a⁻¹ B(n) x(n)⁻¹ I¹₋₁`.
+2. **Change the observation horizon, equations (39)--(41).** For a sequence
+   `y(n) → ∞`, the article compares that tube event with the same process
+   observed for `⌊y(n)⌋` units of time. It then sets
+   `y(n) = ⌊B*(a x(n))⌋`. The asymptotic-inverse relation gives
+   `B(⌊B*(a x(n))⌋)/(a x(n)) → 1`, yielding the fixed-scale stable tube
+   comparison.
+3. **Slowly increase `a`, equations (42)--(44).** Choose `a(n) → ∞` slowly
+   enough that the preceding eventual comparisons remain valid. Lemma 1(I)
+   gives the range-tube rate, and Lemma 1(II) transfers the same constant to
+   the centered corridor `I^1₋₁` used in equation (44). The rounded
+   regular-variation factor in equation (43) is supplied by
+   `exists_tendsto_slowStableScaleTime_floor_scaleTime_ratio`, and the proof-support
+   lemma `exists_tendsto_slowMultiplier_centeredCorridorLogRatio_of_escapeRate`
+   combines these limits for the stable path contribution to equation (44). The full
+   probability comparison in equation (42) remains to be assembled with
+   these scale identities to obtain the exponent
+   `n x(n)⁻α L*(x(n))` and the constant `C`.
+4. **Extend from the tube to `G ∈ 𝔐`.** The article finishes by reusing the
+   proof of Theorem 1. The finite partition, inner and outer tube comparisons,
+   and the functional `Hα` are the same deterministic argument as there.
 
-## Concrete model to use as an eventual application test
+Accordingly, a separate nonstable block-concatenation or one-block squeeze is
+not part of this proof route. Equation (38) is the process-level convergence
+input; the rest is the scaling comparison in equations (39)--(44) and the
+reuse of Theorem 1.
 
-A useful nonstable test case is a symmetric compound-Poisson Lévy process
-whose jump distribution has a regularly varying tail of index `-α`, for
-`0 < α < 2`. Its unit-time increment law is in the symmetric strictly
-`α`-stable domain of attraction, its mean is zero whenever it exists, and
-`0 < Fα(0) < 1`. Once the four missing interfaces above exist, instantiate
-Theorem 4 with a simple finite-step corridor from `M₂`, then check the
-coefficient against the stable unit-range escape API. This is a test plan,
-not a claim that the compound-Poisson example has already been constructed
-or verified in Lean.
+## Process-convergence input and literature
+
+The introduction invokes a known functional limit theorem for normalized
+process paths (equation (6)) and cites I. I. Gikhman and A. V. Skorokhod,
+*Theory of Random Processes*, Vol. I (1972), and Yu. V. Prokhorov,
+“Convergence of Random Processes and Limit Theorems in Probability Theory,”
+*Theory of Probability and Its Applications* 1 (1956), 177--238. In Section 5,
+equation (38) uses precisely this kind of process convergence for the
+rescaled Lévy processes.
+
+A modern general criterion suitable for formalization is Jacod and Shiryaev,
+*Limit Theorems for Stochastic Processes*, 2nd ed. (2003), Chapter VII,
+Section 3.a, Corollary 3.6, p. 415. It states that for zero-start real Lévy
+processes, weak convergence of the marginal at one positive time is
+equivalent to weak convergence of the process laws on `D([0,∞), ℝ)`. The
+statement is reproduced as Theorem B.8 in Broutin, Duquesne, and Wang,
+“Limits of Multiplicative Inhomogeneous Random Graphs and Lévy Trees: Limit
+Theorems,” *Probability Theory and Related Fields* 181 (2021), 865--973.
+See the [Springer record for Jacod--Shiryaev](https://link.springer.com/book/10.1007/978-3-662-05265-5)
+and [Theorem B.8 in Broutin--Duquesne--Wang](https://perso.lpsm.paris/~tduquesne/Documents/Broutin_Duquesne_Wang_Limits_Mult_graphs_PTRF_2021.pdf).
+
+For Mogul'skii's Theorem 4, apply this criterion to
+`Zⁿ(t) = ξ(nt)/B(n)`: the process closure results give the Lévy hypotheses,
+and the theorem's scalar convergence at time `1` gives `Zⁿ(1) ⇒ Fα`. The
+resulting process limit is identified with the strictly stable Lévy process
+by its increment laws. Restriction from
+`[0,∞)` to `[0,1]` requires the usual continuity-at-the-terminal-time
+argument; the fixed-time no-jump result above supplies that condition once
+the process in Theorem 4 has been given a càdlàg version.
+
+## Remaining formalization work, in source order
+
+1. **Package the process.** Mogul'skii's Theorem 4 assumes almost-sure right
+   continuity. The current `IsLevyProcess` requires càdlàg paths. Prove the
+   left-limit existence needed for a right-continuous independent-increment
+   process under the article's hypotheses, or state exactly which standard
+   càdlàg modification theorem is being formalized. Preserve the original
+   assumptions and centering, especially at `α = 1`.
+2. **Obtain process-level convergence from the scalar domain of attraction
+   input.** The integer-time marginal transfer is now formalized in
+   `Levy/DomainOfAttraction/IntegerTime.lean`. The reusable path-level
+   conclusion is formalized in
+   `Probability.Process.Levy.PathLaw.Convergence`: one result takes convergence
+   of all interval-increment laws, and its Lévy-process corollary takes
+   convergence of every rescaled one-time marginal and derives the increment
+   limits from stationarity and zero start. The semigroup result in
+   `Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Semigroup.Convergence`
+   turns pointwise exponent convergence into fixed-time marginal convergence.
+   The remaining step is the functional convergence used in equation (38):
+   derive the rescaled-time marginal limits and tightness from the integer-time
+   domain-of-attraction limit, or formalize the cited Jacod--Shiryaev criterion
+   directly. Then identify the limit as the stable unit-interval path law and
+   restrict from `[0,∞)` to `[0,1]`.
+3. **Formalize equations (38)--(44) exactly.** The unit-interval path-law
+   module now identifies the centered corridor event with the corresponding
+   process event. The remaining fixed-tube comparison uses the process limit
+   in equation (38) together with the boundary condition or the open/closed
+   tube squeeze required by Portmanteau.
+   Then formalize the arbitrary `y(n)` comparison, the choice
+   `y(n) = ⌊B*(a x(n))⌋`, the asymptotic-inverse estimate, the slowly
+   increasing diagonal `a(n)`, and the regular-variation calculation in
+   (43)--(44). Reuse the existing regular-variation and inverse-scale APIs
+   after checking their hypotheses against the article.
+4. **Reuse Theorem 1's geometric proof.** Apply the existing finite-partition
+   and inner/outer corridor argument to extend the tube estimate to every
+   `G ∈ 𝔐` and recover `Hα(G)`. Keep this proof structurally aligned with the
+   statement in Section 5 that Theorem 4 repeats the proof of Theorem 1.
 
 ## Status
 
-Theorem 4 is **not implemented**. Existing independent-increment,
-càdlàg-path, stable-process escape, and random-walk stable-domain APIs cover
-parts of the dependency chain, but the full-process functional limit and its
-full-path one-block squeeze are not present. The next proof package should
-implement and verify those two interfaces before adding a theorem wrapper;
-the source theorem itself should not be introduced with an unproved path
-convergence or a skeleton-probability shortcut.
+Theorem 4 is **not implemented**. The exact integer-time marginal/i.i.d.-sum
+identity and the transfer of a scalar domain-of-attraction limit to
+normalized integer-time marginals are formalized. The unit-interval path law, its
+finite-evaluation identity, its spatial-scaling pushforward, and the generic
+tightness-plus-increment-convergence path-law theorem are available. The next
+substantive step is functional convergence in equation (38) from Theorem 4's
+scalar domain-of-attraction input, followed by the fixed-tube probability
+comparison and Mogul'skii's scale calculations in equations (39)--(44). The
+path-law/process-event identity needed by the tube comparison is formalized.
+The previous proposed nonstable block-squeeze route has been removed because
+it does not follow the article's proof.

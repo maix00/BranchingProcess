@@ -6,13 +6,30 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.IndepIncrements
+public import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
 
 /-!
-# Disjoint increments
+# Independent increments on separated intervals
 
-Independent increments on a four-point time grid give independence of two
-increments even when there is an unused interval between them.
+## Public declarations
+
+* `HasIndepIncrements.indepFun_disjoint_sub_sub`: if `a ≤ b ≤ c ≤ d`, then
+  `(ω ↦ X b ω - X a ω) ⟂ᵢ[P] (ω ↦ X d ω - X c ω)`.
+* `HasIndepIncrements.indepFun_increment_vectors`: for a monotone time grid,
+  a.e.-measurable process coordinates, measurable subtraction, and disjoint
+  finite index sets `S,T`, the vectors
+  `i ↦ X (t (i+1)) - X (t i)` on `S` and `T` are independent.
+
+For ordered times `a≤b≤c≤d`, and more generally for disjoint finite sets of
+indices in a monotone grid, the independent-increment conclusions are
+
+\[\begin{aligned}
+\operatorname{IndepFun}_P(X_b-X_a,X_d-X_c),\\
+S\cap T=\varnothing&\Longrightarrow
+  \operatorname{IndepFun}_P
+    \left((X_{t(i+1)}-X_{t(i)})_{i\in S},
+          (X_{t(i+1)}-X_{t(i)})_{i\in T}\right).
+\end{aligned}\]
 -/
 
 @[expose] public section
@@ -24,6 +41,7 @@ open MeasureTheory
 variable {Time Ω E : Type*} [Preorder Time] [MeasurableSpace Ω]
   [MeasurableSpace E] [Sub E] {P : Measure Ω} {X : Time → Ω → E}
 
+/-- Increments on ordered, disjoint time intervals are independent. -/
 theorem HasIndepIncrements.indepFun_disjoint_sub_sub
     (hX : HasIndepIncrements X P) {a b c d : Time}
     (hab : a ≤ b) (hbc : b ≤ c) (hcd : c ≤ d) :
@@ -45,20 +63,6 @@ theorem HasIndepIncrements.indepFun_disjoint_sub_sub
     all_goals omega
   have h := (hX.nat hmono).indepFun (by decide : (0 : ℕ) ≠ 2)
   simpa [τ] using h
-
-/-- A monotone sequence of separated intervals yields a mutually independent
-family of increments. The intervening intervals may have nonzero length; no
-adjacency assumption is needed. -/
-theorem HasIndepIncrements.iIndepFun_even_sub
-    (hX : HasIndepIncrements X P) (t : ℕ → Time) (ht : Monotone t) :
-    iIndepFun (fun i ω => X (t (2 * i + 1)) ω - X (t (2 * i)) ω) P := by
-  let even : ℕ → ℕ := fun i => 2 * i
-  have heven : Function.Injective even := by
-    intro i j hij
-    dsimp [even] at hij
-    omega
-  have h := (hX.nat ht).precomp heven
-  simpa [even] using h
 
 /-- Finite vectors of elementary increments on disjoint parts of a time grid
 are independent. This is the finite-coordinate input for independence of

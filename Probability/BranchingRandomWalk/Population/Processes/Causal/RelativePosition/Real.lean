@@ -4,16 +4,49 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition.Finite
-import Combinatorics.BranchingWalk.Step.ExponentialWeight
+module
+
+public import Combinatorics.UlamHarris.Relation
+
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition.Finite
+public import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
+public import Probability.Process.Path.Restart.Basic
+import Combinatorics.UlamHarris.Relation
 
 /-!
 # Real-valued restarted relative-position populations
 
+## Public declarations
+
+- `RootIndexed.CausalPopulation.ofRestartedRealPositionSetsOfFiniteWeight`:
+  constructs a real-valued restarted population when the negative-exponential
+  offspring weight is finite at every parent.
+- `RootIndexed.CausalPopulation.ofRestartedRealPositionSets`: a total
+  construction that kills children at parents with infinite negative-exponential
+  weight; it has finite slices for countable child labels.
+- `ofRestartedRealPositionSets_finiteSlices`: each generation of that total
+  construction is finite.
+- `mem_ofRestartedRealPositionSets_window` and
+  `mem_ofRestartedRealPositionSets_all_windows`: retained particles, and their
+  positive-time prefixes, satisfy the corresponding relative-position windows.
+
 This file specializes the finite relative-position construction to negative
 exponential offspring weights and proves the finite-slice and window-membership
 interfaces used by the path and coupling layers.
+
+For the total restarted real-valued construction `P`, every retained particle
+and each of its positive-time prefixes satisfy their corresponding window
+constraint; when the child-label type is countable, every slice is finite:
+
+\[\begin{aligned}
+q\in P_n(\omega),\ 0<k\le n
+&\Longrightarrow
+  \operatorname{relPos}_{a_c(k),k}(q_{\le k},\omega)\in W_k,\\
+\forall n,\omega&\qquad P_n(\omega)\text{ is finite}.
+\end{aligned}\]
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
@@ -22,7 +55,7 @@ namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed.CausalPopulation
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open ProbabilityTheory.RandomWalk
+open ProbabilityTheory.Process.Path
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 noncomputable def ofRestartedRealPositionSetsOfFiniteWeight
@@ -80,7 +113,7 @@ noncomputable def ofRestartedRealPositionSets
   let keep : ℕ → RootIndexed.StepField Root α Mark →
       RootIndexed.TreeNode Root α → Prop := fun n field q =>
     (n = 0 ∨ q.2.length ≠ n ∨ totalPotentialWeight potential (-1)
-        (field (parent q).1 (parent q).2) ≠ ∞) ∧
+        (field (RootIndexed.parent q).1 (RootIndexed.parent q).2) ≠ ∞) ∧
       RootIndexed.relativePositionAtGeneration initialPosition d
         (restartAnchor cutoff n) n q field ∈ window n
   apply ofPredicate initial hinitialDepth keep
@@ -88,11 +121,11 @@ noncomputable def ofRestartedRealPositionSets
     let goodParents := parents.filter fun p =>
       totalPotentialWeight potential (-1) (field p.1 p.2) ≠ ∞
     have hfinite :
-        {q | q ∈ RootIndexed.childrenAtGeneration n goodParents field ∧
+        {q | q ∈ Combinatorics.Branching.Population.childrenAtGeneration n goodParents field ∧
           RootIndexed.relativePositionAtGeneration initialPosition d
             (restartAnchor cutoff (n + 1)) (n + 1) q field ∈
               window (n + 1)}.Finite := by
-      apply RootIndexed.childrenAtGeneration_filter_finite_of_upperBound
+      apply Combinatorics.Branching.Population.childrenAtGeneration_filter_finite_of_upperBound
         n goodParents field
         (fun q => RootIndexed.relativePositionAtGeneration initialPosition d
           (restartAnchor cutoff (n + 1)) (n + 1) q field)
@@ -122,13 +155,13 @@ noncomputable def ofRestartedRealPositionSets
     apply hfinite.subset
     intro q hq
     obtain ⟨p, hp, hpdepth, i, hi, rfl⟩ :=
-      (RootIndexed.mem_childrenAtGeneration_iff n parents field q).mp hq.1
+      (Combinatorics.Branching.Population.mem_childrenAtGeneration_iff n parents field q).mp hq.1
     have hpweight : totalPotentialWeight potential (-1)
         (field p.1 p.2) ≠ ∞ := by
       have hguard := hq.2.1
       simp [hpdepth] at hguard
       exact hguard
-    refine ⟨RootIndexed.childAddress_mem_childrenAtGeneration n goodParents field
+    refine ⟨Combinatorics.Branching.Population.childAddress_mem_childrenAtGeneration n goodParents field
       p (Finset.mem_filter.mpr ⟨hp, hpweight⟩) hpdepth i hi, hq.2.2⟩
   · intro n q
     let _ : MeasurableSpace (RootIndexed.StepField Root α Mark) :=
@@ -145,20 +178,20 @@ noncomputable def ofRestartedRealPositionSets
     · apply measurableSet_setOfPred.mp
       simpa [keep, hn] using hposition
     by_cases hdepth : q.2.length = n
-    · have hparent : (parent q).2.length < n := by
-        simp [parent]
+    · have hparent : (RootIndexed.parent q).2.length < n := by
+        simp [RootIndexed.parent]
         omega
       have hweight : MeasurableSet
           {field : RootIndexed.StepField Root α Mark |
             totalPotentialWeight potential (-1)
-              (field (parent q).1 (parent q).2) ≠ ∞} :=
+              (field (RootIndexed.parent q).1 (RootIndexed.parent q).2) ≠ ∞} :=
         ((totalPotentialWeight_measurable potential (-1)).comp
             (RootIndexed.step_measurable (X := Mark)
-              (parent q).1 (parent q).2 hparent))
+              (RootIndexed.parent q).1 (RootIndexed.parent q).2 hparent))
           (measurableSet_singleton (∞ : ENNReal)) |>.compl
       have hweight' : Measurable fun field : RootIndexed.StepField Root α Mark =>
           totalPotentialWeight potential (-1)
-            (field (parent q).1 (parent q).2) ≠ ∞ :=
+            (field (RootIndexed.parent q).1 (RootIndexed.parent q).2) ≠ ∞ :=
         measurableSet_setOfPred.mp hweight
       have hposition' : Measurable fun field : RootIndexed.StepField Root α Mark =>
           RootIndexed.relativePositionAtGeneration initialPosition d
@@ -208,7 +241,7 @@ theorem mem_ofRestartedRealPositionSets_window
   let keep : ℕ → RootIndexed.StepField Root α Mark →
       RootIndexed.TreeNode Root α → Prop := fun k sample p =>
     (k = 0 ∨ p.2.length ≠ k ∨ totalPotentialWeight potential (-1)
-        (sample (parent p).1 (parent p).2) ≠ ∞) ∧
+        (sample (RootIndexed.parent p).1 (RootIndexed.parent p).2) ≠ ∞) ∧
       RootIndexed.relativePositionAtGeneration initialPosition d
         (restartAnchor cutoff k) k p sample ∈ window k
   change q ∈ selectedBy initial keep _ (n + 1) field at hq

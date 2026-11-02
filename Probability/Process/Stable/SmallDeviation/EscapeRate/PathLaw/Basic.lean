@@ -6,11 +6,12 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Stable.PathLaw
+public import Probability.Process.Stable.PathLaw.Basic
 public import Probability.Process.Stable.PathLaw.UnitInterval
+public import Probability.MeasureTheory.Asymptotics.SmallDeviation
 public import Mathlib.Topology.UnitInterval
-public import Topology.Cadlag.Skorokhod.Oscillation
-public import Topology.Cadlag.Skorokhod.Endpoint
+public import Topology.Cadlag.Skorokhod.Oscillation.Basic
+public import Topology.Cadlag.Skorokhod.Path.Endpoint
 public import Topology.Cadlag.Skorokhod.SmallDeviation.PathSets
 
 /-!
@@ -28,7 +29,24 @@ The set `J_a` in Lemma 1(I) consists of paths starting at zero whose range
 has diameter less than `2 * a`. This is translation invariant in space: the
 range need not lie in `(-a, a)`. We encode the strict diameter bound with a
 positive uniform margin below `2 * a`; that is an open event in the Skorokhod
-`J₁` topology.
+`J₁` topology. The centered corridor `I^a_{-a}` from Lemma 1(II) is a
+separate path event. Its escape-rate specification is recorded separately;
+the process-level comparison of these rates is in
+`Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor`.
+## Public declarations
+
+- `stableProcessRangeTube a` is the open path event with range diameter
+  strictly below $2a$; `stableProcessTube a` adds the zero-start condition.
+- `measure_stableProcessTube_eq_rangeTube` identifies their probabilities
+  under an almost-surely zero-start stable-clock law.
+- `HasStableProcessEscapeRate α μ P C` records the stable-clock path law and
+  the limit $a^\alpha\log\mathbb P_P(\texttt{stableProcessTube}(a))\to C$.
+  Its API gives positivity, negativity of $C$, spatial scaling, and the
+  equivalent large-scale logarithmic limit.
+- `stableProcessCenteredCorridor a` is the zero-start open corridor
+  $(-a,a)$, and `HasStableCenteredCorridorEscapeRate α μ P C` records its
+  logarithmic rate on a stable-clock path law.
+
 -/
 
 open Filter MeasureTheory
@@ -48,18 +66,32 @@ starting value. -/
 def stableProcessTube (a : ℝ) : Set (CadlagPath unitInterval ℝ) :=
   Skorokhod.rangeTubeStartingAtZero a
 
+/-- The zero-start open corridor `I^a_{-a}` from Lemma 1(II). -/
+def stableProcessCenteredCorridor (a : ℝ) : Set (CadlagPath unitInterval ℝ) :=
+  Skorokhod.corridorStartingAtZero (-a) a
+
 /-- Initial evaluation is continuous in `J₁`, and the range condition is the open Skorokhod corridor. -/
 theorem measurableSet_stableProcessTube (a : ℝ) :
     MeasurableSet (stableProcessTube a) := by
   exact Skorokhod.measurableSet_rangeTubeStartingAtZero a
 
+/-- The centered corridor event is measurable in Skorokhod path space. -/
+theorem measurableSet_stableProcessCenteredCorridor (a : ℝ) :
+    MeasurableSet (stableProcessCenteredCorridor a) := by
+  rw [stableProcessCenteredCorridor, Skorokhod.corridorStartingAtZero]
+  have hstart : MeasurableSet
+      {f : CadlagPath unitInterval ℝ | f ⊥ = (0 : ℝ)} :=
+    (measurableSet_singleton (0 : ℝ)).preimage
+      (Skorokhod.measurable_apply ⊥)
+  exact hstart.inter (Skorokhod.measurableSet_rangeInOpenInterval (-a) a)
+
 /-- For a process law started at zero almost surely, adding the explicit
-starting-value condition to the source's range tube does not change its
-probability. -/
+starting-value condition to the range-diameter event defined above does not
+change its probability. -/
 theorem measure_stableProcessTube_eq_rangeTube
     {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
     [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P) (a : ℝ) :
+    (hP : IsStableClockProcessLaw α μ unitInterval.clock P) (a : ℝ) :
     P (stableProcessTube a) = P (stableProcessRangeTube a) := by
   have heq : stableProcessTube a =ᵐ[P] stableProcessRangeTube a := by
     filter_upwards [hP.ae_start_eq_zero] with f hf
@@ -67,78 +99,70 @@ theorem measure_stableProcessTube_eq_rangeTube
       stableProcessRangeTube, hf]
   exact measure_congr heq
 
-/-- The paper's constant `C` of Lemma 1 I, stated as the limit of
-`a ^ α * log P(stableProcessTube a)` as `a ↓ 0`. -/
-def IsStableEscapeRate (α C : ℝ) (tubeProbability : ℝ → ℝ) : Prop :=
-  C < 0 ∧
-    (∀ᶠ a in 𝓝[>] (0 : ℝ), 0 < tubeProbability a) ∧
-    Tendsto (fun a => a ^ α * Real.log (tubeProbability a))
-      (𝓝[>] (0 : ℝ)) (𝓝 C)
-
-namespace IsStableEscapeRate
-
-variable {α C : ℝ} {tubeProbability : ℝ → ℝ}
-
-theorem negative (h : IsStableEscapeRate α C tubeProbability) : C < 0 := h.1
-
-theorem eventually_tubeProbability_pos (h : IsStableEscapeRate α C tubeProbability) :
-    ∀ᶠ a in 𝓝[>] (0 : ℝ), 0 < tubeProbability a := h.2.1
-
-theorem tendsto (h : IsStableEscapeRate α C tubeProbability) :
-    Tendsto (fun a => a ^ α * Real.log (tubeProbability a))
-      (𝓝[>] (0 : ℝ)) (𝓝 C) := h.2.2
-
-/-- Multiplying every spatial radius by a fixed positive factor `q` multiplies
-the escape constant by `q ^ α`. The probability at the new radius is read at
-the old radius divided by `q`. -/
-theorem spatialScale {q : ℝ} (h : IsStableEscapeRate α C tubeProbability)
-    (hq : 0 < q) :
-    IsStableEscapeRate α (q ^ α * C) (fun a => tubeProbability (a / q)) := by
-  have hqα : 0 < q ^ α := Real.rpow_pos_of_pos hq _
-  have hratioNhd : Tendsto (fun a : ℝ => a / q)
-      (𝓝[>] (0 : ℝ)) (𝓝 (0 : ℝ)) := by
-    simpa using
-      ((by fun_prop : ContinuousAt (fun a : ℝ => a / q) 0).tendsto.mono_left
-        (nhdsWithin_le_nhds : 𝓝[>] (0 : ℝ) ≤ 𝓝 (0 : ℝ)))
-  have hratioPos : ∀ᶠ a : ℝ in 𝓝[>] (0 : ℝ), 0 < a / q := by
-    filter_upwards [self_mem_nhdsWithin] with a ha
-    exact div_pos ha hq
-  have hratio : Tendsto (fun a : ℝ => a / q)
-      (𝓝[>] (0 : ℝ)) (𝓝[>] (0 : ℝ)) :=
-    tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within _ hratioNhd hratioPos
-  have hscaledPos : ∀ᶠ a : ℝ in 𝓝[>] (0 : ℝ),
-      0 < tubeProbability (a / q) := hratio.eventually h.2.1
-  have hcomp := h.2.2.comp hratio
-  have hproduct :=
-    (tendsto_const_nhds : Tendsto (fun _ : ℝ => q ^ α)
-      (𝓝[>] (0 : ℝ)) (𝓝 (q ^ α))).mul hcomp
-  have hpow : ∀ᶠ a : ℝ in 𝓝[>] (0 : ℝ),
-      a ^ α = q ^ α * (a / q) ^ α := by
-    filter_upwards [self_mem_nhdsWithin] with a ha
-    have ha_nonneg : 0 ≤ a := le_of_lt ha
-    have hdiv_nonneg : 0 ≤ a / q := div_nonneg ha_nonneg hq.le
-    have hmul : q * (a / q) = a := by field_simp [ne_of_gt hq]
-    calc
-      a ^ α = (q * (a / q)) ^ α :=
-        congrArg (fun x : ℝ => x ^ α) hmul.symm
-      _ = q ^ α * (a / q) ^ α := Real.mul_rpow hq.le hdiv_nonneg
-  have heq : (fun a : ℝ => a ^ α * Real.log (tubeProbability (a / q))) =ᶠ[
-      𝓝[>] (0 : ℝ)]
-      (fun a => q ^ α * ((a / q) ^ α * Real.log (tubeProbability (a / q)))) := by
-    filter_upwards [hpow] with a ha
-    rw [ha]
-    ring
-  refine ⟨mul_neg_of_pos_of_neg hqα h.1, hscaledPos, ?_⟩
-  exact hproduct.congr' heq.symm
-
-end IsStableEscapeRate
-
 /-- Lemma 1 I for a stable process path law: the probabilities of its strict range-diameter tubes decay at rate `C`,
 that is `a ^ α * log P(stableProcessTube a) → C` as `a ↓ 0`. -/
 def HasStableProcessEscapeRate (α : ℝ) (μ : Measure ℝ)
     (P : Measure (CadlagPath unitInterval ℝ)) (C : ℝ) [IsProbabilityMeasure P] : Prop :=
-  IsStableClockProcessLaw α μ UnitInterval.clock P ∧
-    IsStableEscapeRate α C fun a => (P (stableProcessTube a)).toReal
+  IsStableClockProcessLaw α μ unitInterval.clock P ∧
+    HasPowerLawSmallDeviationRate α C fun a => (P (stableProcessTube a)).toReal
+
+/-- A stable-clock path law has centered-corridor escape rate `C` when
+\(a^\alpha\log P(I^a_{-a})\to C\) as \(a\downarrow0\). This records the
+centered event separately from the translation-invariant range event of
+`HasStableProcessEscapeRate`. -/
+def HasStableCenteredCorridorEscapeRate (α : ℝ) (μ : Measure ℝ)
+    (P : Measure (CadlagPath unitInterval ℝ)) (C : ℝ) [IsProbabilityMeasure P] : Prop :=
+  IsStableClockProcessLaw α μ unitInterval.clock P ∧
+    HasPowerLawSmallDeviationRate α C fun a =>
+      (P (stableProcessCenteredCorridor a)).toReal
+
+namespace HasStableCenteredCorridorEscapeRate
+
+variable {α : ℝ} {μ : Measure ℝ}
+  {P : Measure (CadlagPath unitInterval ℝ)} {C : ℝ}
+variable [IsProbabilityMeasure P]
+
+/-- The defining centered-corridor escape-rate limit. -/
+theorem tendsto (h : HasStableCenteredCorridorEscapeRate α μ P C) :
+    Tendsto (fun a => a ^ α *
+      Real.log ((P (stableProcessCenteredCorridor a)).toReal))
+      (𝓝[>] (0 : ℝ)) (𝓝 C) := h.2.tendsto
+
+/-- Rescaling the centered-corridor radius by a diverging spatial factor
+converts its small-radius escape rate into a logarithmic rate in that factor.
+For fixed `r > 0`, `c⁻ᵅ log P(I^{r/c}_{-r/c}) → C / r^α` as `c → ∞`. -/
+theorem tendsto_inv_rpow_mul_log
+    (h : HasStableCenteredCorridorEscapeRate α μ P C) {r : ℝ} (hr : 0 < r) :
+    Tendsto (fun c : ℝ => c⁻¹ ^ α *
+      Real.log ((P (stableProcessCenteredCorridor (r / c))).toReal))
+      atTop (𝓝 (C / r ^ α)) := by
+  have hzero : Tendsto (fun c : ℝ => r / c) atTop (𝓝 0) := by
+    simpa [div_eq_mul_inv] using
+      (tendsto_const_nhds.mul tendsto_inv_atTop_zero :
+        Tendsto (fun c : ℝ => r * c⁻¹) atTop (𝓝 (r * 0)))
+  have hpos : ∀ᶠ c : ℝ in atTop, 0 < r / c := by
+    filter_upwards [eventually_gt_atTop (0 : ℝ)] with c hc
+    exact div_pos hr hc
+  have hwithin : Tendsto (fun c : ℝ => r / c) atTop
+      (nhdsWithin 0 (Set.Ioi 0)) :=
+    tendsto_nhdsWithin_iff.mpr ⟨hzero, hpos⟩
+  have hcomp := h.tendsto.comp hwithin
+  have hquot : Tendsto (fun c : ℝ =>
+      ((r / c) ^ α *
+        Real.log ((P (stableProcessCenteredCorridor (r / c))).toReal)) /
+          r ^ α) atTop (𝓝 (C / r ^ α)) := by
+    simpa using hcomp.div_const (r ^ α)
+  apply hquot.congr'
+  filter_upwards [eventually_gt_atTop (0 : ℝ)] with c hc
+  have hrc : (r / c) ^ α = r ^ α / c ^ α :=
+    Real.div_rpow hr.le hc.le α
+  have hcInv : (c⁻¹) ^ α = (c ^ α)⁻¹ := Real.inv_rpow hc.le α
+  rw [hrc, hcInv]
+  have hrpow : r ^ α ≠ 0 := (Real.rpow_pos_of_pos hr α).ne'
+  have hcpow : c ^ α ≠ 0 := (Real.rpow_pos_of_pos hc α).ne'
+  field_simp
+
+end HasStableCenteredCorridorEscapeRate
 
 namespace HasStableProcessEscapeRate
 
@@ -147,7 +171,7 @@ variable [IsProbabilityMeasure P]
 
 /-- The path law underlying the finite-horizon tube estimate. -/
 theorem isStableClockProcessLaw (h : HasStableProcessEscapeRate α μ P C) :
-    IsStableClockProcessLaw α μ UnitInterval.clock P := h.1
+    IsStableClockProcessLaw α μ unitInterval.clock P := h.1
 
 /-- The defining limit of the escape rate: `a ^ α * log P (ξ (·) ∈ tube a) → C` as `a ↓ 0`. -/
 theorem tendsto (h : HasStableProcessEscapeRate α μ P C) :
@@ -160,7 +184,7 @@ must not turn a zero probability into the real number zero before taking a
 logarithm. -/
 theorem eventually_tubeProbability_pos (h : HasStableProcessEscapeRate α μ P C) :
     ∀ᶠ a in 𝓝[>] (0 : ℝ), 0 < (P (stableProcessTube a)).toReal :=
-  h.2.eventually_tubeProbability_pos
+  h.2.eventually_probability_pos
 
 /-- The escape exponent is strictly negative, as in Lemma 1 I. -/
 theorem negative (h : HasStableProcessEscapeRate α μ P C) : C < 0 := h.2.negative
@@ -187,7 +211,7 @@ theorem HasStableProcessEscapeRate.spatialScale
   letI : IsProbabilityMeasure Q :=
     (Measure.isProbabilityMeasure_map_iff hcontScale.aemeasurable).2 inferInstance
   have hpath : IsStableClockProcessLaw α (μ.map fun x => q * x)
-      UnitInterval.clock Q := by
+      unitInterval.clock Q := by
     simpa [Q] using h.1.spatialScale q hq
   have hpreimage (a : ℝ) :
       (Skorokhod.scalePath q) ⁻¹' stableProcessTube a =
@@ -200,7 +224,7 @@ theorem HasStableProcessEscapeRate.spatialScale
         P (stableProcessTube (a / q)) := by
     rw [Measure.map_apply hcontScale.measurable
       (measurableSet_stableProcessTube a), hpreimage]
-  have hrate : IsStableEscapeRate α (q ^ α * C)
+  have hrate : HasPowerLawSmallDeviationRate α (q ^ α * C)
       (fun a => (P (stableProcessTube (a / q))).toReal) := by
     exact h.2.spatialScale hq
   refine ⟨hpath, ?_⟩
@@ -266,7 +290,7 @@ theorem HasStableProcessEscapeRate.eventually_tubeProbability_lt_exp
     exact hc
   have hprobPos : ∀ᶠ c : ℝ in atTop,
       0 < (P (stableProcessTube (r / c))).toReal := by
-    have hsmall := h.2.eventually_tubeProbability_pos
+    have hsmall := h.2.eventually_probability_pos
     have harg : Tendsto (fun c : ℝ => r / c) atTop (nhdsWithin 0 (Set.Ioi 0)) := by
       have hzero : Tendsto (fun c : ℝ => r / c) atTop (𝓝 0) := by
         simpa [div_eq_mul_inv] using

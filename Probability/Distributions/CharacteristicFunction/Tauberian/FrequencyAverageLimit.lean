@@ -6,10 +6,35 @@ Authors: Codex
 module
 
 public import Probability.Distributions.CharacteristicFunction.Tauberian.FrequencyAverage
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
 # Asymptotics of frequency-averaged cosine defects
+
+## Public declarations
+
+- `exists_pos_closedAbsTail_le_cosineDefectFrequencyAverage_all` gives one
+  positive coercivity constant valid at every scale.
+- `tendsto_closedAbsTail_div_cosineDefect_atTop` states that compact-uniform
+  regular variation of index two for a cosine defect forces its closed
+  two-sided tail to be little-o of the defect at reciprocal scale.
+- `tendsto_symmetrizedClosedAbsTail_div_normDefect_atTop` gives this result
+  for the symmetrized law, using the squared-modulus characteristic defect.
+
+Writing `D_μ(u) = ∫ (1 - cos(uy)) μ(dy)`, the regular-variation hypothesis is
+the compact-uniform ratio limit
+\[
+  \frac{D_\mu(tu)}{D_\mu(u)}\longrightarrow t^2
+  \quad(u\downarrow0),\qquad\text{uniformly for }t\in[1,2],
+\]
+with `D_μ(u) > 0` for all sufficiently small positive `u`. It implies
+\[
+  \frac{\mu\{|y|\ge x\}}{D_\mu(x^{-1})}\longrightarrow0
+  \quad(x\to\infty).
+\]
+For a probability law `ν`, the corresponding source-facing statement uses
+`D_ν(u) = 1 - ‖charFun ν u‖²` in the ratio and denominator, and the numerator
+is the closed two-sided tail of `symmetrizedMeasure ν`.
 
 Compact-uniform regular variation of index two makes the leading terms in a
 frequency-averaged cosine defect cancel. This module provides the deterministic
@@ -28,7 +53,7 @@ namespace ProbabilityTheory
 /- The compact-uniform ratio limit cancels the two leading quadratic terms
 in the averaged cosine defect. The base `2 * u` ratio covers multipliers in
 `[2, 4]`. -/
-theorem tendsto_frequencyCancellation_ratio_nhdsGT_zero
+private lemma tendsto_frequencyCancellation_ratio_nhdsGT_zero
     {f : ℝ → ℝ} (hf : Continuous f)
     (hpos : ∀ᶠ u : ℝ in 𝓝[>] (0 : ℝ), 0 < f u)
     (hratio : TendstoUniformlyOn
@@ -180,12 +205,12 @@ theorem tendsto_frequencyCancellation_ratio_nhdsGT_zero
     (μ := volume) (a := (1 : ℝ)) (b := 2) hHContinuous
   simpa [H, intervalIntegral.integral_div] using hIntegral
 
-private theorem frequencyAverage_nonneg (z : ℝ) :
+private lemma frequencyAverage_nonneg (z : ℝ) :
     0 ≤ cosineSquareFrequencyAverage z := by
   exact intervalIntegral.integral_nonneg_of_forall (by norm_num)
     (fun t => sq_nonneg (1 - Real.cos (t * z)))
 
-private theorem frequencyAverage_le_four (z : ℝ) :
+private lemma frequencyAverage_le_four (z : ℝ) :
     cosineSquareFrequencyAverage z ≤ 4 := by
   let f : ℝ → ℝ := fun t => (1 - Real.cos (t * z)) ^ 2
   have hfcont : Continuous f := by fun_prop

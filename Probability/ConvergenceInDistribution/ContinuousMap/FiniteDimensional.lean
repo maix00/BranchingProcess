@@ -18,6 +18,24 @@ public import Mathlib.MeasureTheory.Measure.Prokhorov
 This file contains the general path-space interface connecting functional
 convergence with finite-dimensional convergence.  It is independent of any
 particular random walk or limiting process.
+
+## Public declarations
+
+- `ProbabilityTheory.ContinuousMap.finiteEvaluation` is the evaluation map
+  $e_t(f)=(f(t_i))_{i\in I}$.
+- `ProbabilityTheory.ContinuousMap.continuous_finiteEvaluation` proves this
+  evaluation map is continuous for a finite time index.
+- `ProbabilityTheory.ContinuousMap.measurableEmbedding_finiteEvaluation_of_denseRange`:
+  $e_t$ is a measurable embedding when $I$ is countable and $(t_i)$ is dense.
+- `ProbabilityTheory.ContinuousMap.measure_eq_of_map_finiteEvaluation_eq_of_denseRange`:
+  if $\mu\circ e_{t|_J}^{-1}=\nu\circ e_{t|_J}^{-1}$ for every finite
+  $J\subset I$ and dense $(t_i)$, then $\mu=\nu$.
+- `ProbabilityTheory.ContinuousMap.ProbabilityMeasure.tendsto_of_tight_of_finiteEvaluation`:
+  tightness and $\mu_n\circ e_{t|_J}^{-1}\Rightarrow
+  \mu\circ e_{t|_J}^{-1}$ for every finite $J$ imply $\mu_n\Rightarrow\mu$.
+- `ProbabilityTheory.ContinuousMap.tendstoInDistribution_finiteEvaluation`:
+  $X_n\Rightarrow X$ in $C(T,S)$ implies $e_t(X_n)\Rightarrow e_t(X)$ for
+  every finite family of times.
 -/
 
 @[expose] public section

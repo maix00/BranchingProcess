@@ -6,20 +6,58 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Displace
+public import Combinatorics.BranchingWalk.Basic.Position.Displace
 public import Combinatorics.BranchingWalk.Basic.Map
 public import Combinatorics.BranchingWalk.StepField
-public import Combinatorics.BranchingWalk.Basic.SiblingClosable
-public import Combinatorics.BranchingWalk.Step.SiblingClosable
+public import Combinatorics.BranchingWalk.Basic.Sibling.Closed
+public import Combinatorics.BranchingWalk.Basic.Sibling.Closable
+public import Combinatorics.BranchingWalk.Step.Ordering.Sibling.Closable
 public import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
-public import Mathlib.Tactic.Abel
+import Mathlib.Tactic.Abel
 
 /-!
 # Reading a step field off a marked tree
 
+## Public declarations
+
+* `Combinatorics.Branching.markedTreeOfStep` has carrier
+  $\{u\mid\operatorname{surviveAlong}(\beta,[],u)\}$ and marks
+  $u\mapsto\operatorname{displace}(\beta,[],u)$.
+* `Combinatorics.Branching.stepOfMarkedTree` has value
+  $\operatorname{some}(M.mark(u++[i])-M.mark(u))$ when $u++[i]$ is in the
+  tree, and `none` otherwise.
+  `Combinatorics.Branching.stepOfMarkedTree_apply_of_mem` and
+  `Combinatorics.Branching.stepOfMarkedTree_apply_of_notMem` state these two
+  cases, including the parent-membership proof used by the dependent mark.
+* `Combinatorics.Branching.survive_stepOfMarkedTree_iff` states
+  $\operatorname{survive}(\operatorname{stepOfMarkedTree}(M)(u),i)
+  \leftrightarrow u++[i]\in M.tree.carrier$.
+  `Combinatorics.Branching.surviveAlong_root_stepOfMarkedTree_iff` extends this
+  to complete addresses:
+  $\operatorname{surviveAlong}(\operatorname{stepOfMarkedTree}(M),[],u)
+  \leftrightarrow u\in M.tree.carrier$.
+* `Combinatorics.Branching.StepField.IsSiblingClosed_stepOfMarkedTree` states that the
+  field read from any marked tree is sibling closed.
+  `Combinatorics.Branching.stepOfMarkedTree_markedTreeOfStep_of_realized`
+  states that reading a field back from its generated tree returns $\beta(u)$
+  at each address surviving in $\beta$.
+* `Combinatorics.Branching.markedTreeOfStep_stepOfMarkedTree` is the other
+  round trip: if $M.rootMark=0$, then reading a field from $M$ and making its
+  marked tree recovers $M$.
+* `Combinatorics.Branching.StepField.markedTreeOfClosable` uses a sibling-
+  closability witness to relabel each local step into sibling-closed form and
+  then reads off the marked tree.
+  `Combinatorics.Branching.StepField.positionedMarkedTreeOfClosable` maps the
+  relabeled edge marks into an additive position group before accumulating
+  them along each path.
+
+For a step field $\beta$ and a marked tree $M$ over the same slot and mark
+types, the two readings recover the realized part of $\beta$ and, when
+$M.rootMark=0$, recover $M$ itself.
+
 `markedTreeOfStep` derives a marked tree from a step field: the realized addresses
 carry their displacements. `stepOfMarkedTree` reads a step field back off a
-marked tree: the slot `i` at the address `u` is survive exactly when `u ++ [i]`
+marked tree: the slot `i` at the address `u` survives exactly when `u ++ [i]`
 is a realized node, and its value is the displacement of that node relative to
 its parent, `mark (u ++ [i]) - mark u`. So the two readings are inverse on the
 realized part of a field, and the round trips proved here turn this into
@@ -27,7 +65,7 @@ the equivalence between step fields and marked trees whose root mark vanishes.
 
 Reading a field off a tree needs the relative displacement, so this file works
 over an additive group. Order compatibility is separated into
-`MarkedTree/Order.lean`.
+`MarkedTree/SiblingMonotonicity.lean`.
 This file is the per-root core: the walk-level object is
 `RootIndexed.BranchingWalk.positionedMarkedTree` in
 `MarkedTree/OfBranchingWalk.lean`, which is the accumulated-position
@@ -55,7 +93,7 @@ ones whose root path survives, and each of them carries its displacement
 (`Step.IsSiblingClosed`), and it is parent closed because a prefix of a realized
 path is realized. -/
 noncomputable def markedTreeOfStep (step : StepField α X)
-    (hpresence : IsSiblingClosed step) : MarkedTree α X where
+    (hpresence : StepField.IsSiblingClosed step) : MarkedTree α X where
   tree :=
     { carrier := {u | surviveAlong step [] u}
       root_mem := surviveAlong_nil step []
@@ -121,7 +159,7 @@ theorem surviveAlong_root_stepOfMarkedTree_iff {M : MarkedTree α X} (u : TreeNo
 
 /-- The field read off a marked tree lists the survive slots of every address
 from the left, because the tree of a marked tree is sibling closed. -/
-theorem Step.IsSiblingClosed_stepOfMarkedTree {M : MarkedTree α X} (u : TreeNode α) :
+private lemma Step.IsSiblingClosed_stepOfMarkedTree {M : MarkedTree α X} (u : TreeNode α) :
     Step.IsSiblingClosed (stepOfMarkedTree M u) := by
   intro i j hij hj
   by_contra h
@@ -132,23 +170,16 @@ theorem Step.IsSiblingClosed_stepOfMarkedTree {M : MarkedTree α X} (u : TreeNod
 
 /-- The zero-defaulted slot of the field read off a marked tree is the
 displacement of the child relative to its parent. -/
-theorem value'_stepOfMarkedTree_of_mem {M : MarkedTree α X} {u : TreeNode α}
+private lemma value'_stepOfMarkedTree_of_mem {M : MarkedTree α X} {u : TreeNode α}
     {i : α} (h : u ++ [i] ∈ M.tree.carrier) :
     value' (stepOfMarkedTree M u) i =
       M.mark (u ++ [i]) h - M.mark u (M.tree.parent_closed h) :=
   value'_some _ _ _ (stepOfMarkedTree_apply_of_mem (M := M) h)
 
-/-- A slot of the field read off a marked tree whose child is not realized is
-absent, so the zero-defaulted reading is zero. -/
-theorem value'_stepOfMarkedTree_of_notMem {M : MarkedTree α X} {u : TreeNode α}
-    {i : α} (h : u ++ [i] ∉ M.tree.carrier) :
-    value' (stepOfMarkedTree M u) i = 0 :=
-  value'_none _ _ (stepOfMarkedTree_apply_of_notMem (M := M) h)
-
 /-- The displacement of a realized node in the field read off a marked tree is
 that mark, up to the root mark: the relative displacements along the root path
 telescope. -/
-theorem displace_stepOfMarkedTree {M : MarkedTree α X} :
+private lemma displace_stepOfMarkedTree {M : MarkedTree α X} :
     ∀ (u : TreeNode α) (hu : u ∈ M.tree.carrier),
       displace (stepOfMarkedTree M) [] u = M.mark u hu - M.rootMark := by
   intro u
@@ -168,7 +199,7 @@ theorem displace_stepOfMarkedTree {M : MarkedTree α X} :
 /-- Reading a presence-closed step field off its own marked tree returns the
 field on every realized address. -/
 theorem stepOfMarkedTree_markedTreeOfStep_of_realized (step : StepField α X)
-    (hpresence : IsSiblingClosed step) {u : TreeNode α}
+    (hpresence : StepField.IsSiblingClosed step) {u : TreeNode α}
     (hu : surviveAlong step [] u) :
     stepOfMarkedTree (markedTreeOfStep step hpresence) u = step u := by
   funext i
@@ -193,17 +224,17 @@ theorem stepOfMarkedTree_markedTreeOfStep_of_realized (step : StepField α X)
 
 /-- A step field read off a marked tree is sibling closed: the condition is per step, so the
 field-level form is the pointwise one. -/
-theorem IsSiblingClosed_stepOfMarkedTree {M : MarkedTree α X} :
-    IsSiblingClosed (stepOfMarkedTree M) :=
+theorem StepField.IsSiblingClosed_stepOfMarkedTree {M : MarkedTree α X} :
+    StepField.IsSiblingClosed (stepOfMarkedTree M) :=
   fun u => Step.IsSiblingClosed_stepOfMarkedTree u
 
 /-- Marking the field read off a marked tree returns that tree, as soon as the
 root mark vanishes: the relative displacements along a root path telescope back
 to the marks. -/
 theorem markedTreeOfStep_stepOfMarkedTree (M : MarkedTree α X) (hroot : M.rootMark = 0) :
-    markedTreeOfStep (stepOfMarkedTree M) IsSiblingClosed_stepOfMarkedTree = M := by
+    markedTreeOfStep (stepOfMarkedTree M) StepField.IsSiblingClosed_stepOfMarkedTree = M := by
   have htree : (markedTreeOfStep (stepOfMarkedTree M)
-      IsSiblingClosed_stepOfMarkedTree).tree = M.tree := by
+      StepField.IsSiblingClosed_stepOfMarkedTree).tree = M.tree := by
     refine Tree.ext ?_
     ext u
     exact surviveAlong_root_stepOfMarkedTree_iff u

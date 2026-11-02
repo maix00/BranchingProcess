@@ -8,14 +8,31 @@ module
 
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
 
+import MeasureTheory.Measure.Partition
+
 /-!
 # Stopped vectors of subtrees in a root-indexed field
 
-At a stopping generation, a stopped-measurable family of distinct roots has
-fresh descendant fields with the product law, on the event that the stopping
-generation is finite.  The root set may have arbitrary index type; only its
-range is required to be countable so the stopped event can be partitioned into
-fixed-root cells.
+## Public declarations
+
+The public declaration in namespace `ProbabilityTheory.BranchingRandomWalk`
+is `RootIndexed.stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite μ τ hτ roots hcount hfiber hdepth hinj A B hA hB`. For
+$A\in\mathcal F_\tau$ and measurable $B$, it states
+\[
+  \nu_{\mathrm{Root}}\bigl((A\cap\{\tau<\infty\})\cap\Phi^{-1}(B)\bigr)
+  =\nu_{\mathrm{Root}}(A\cap\{\tau<\infty\})\,\nu_\kappa(B),
+\]
+where
+\[
+  \Phi(\omega)(i,v)=\omega((\operatorname{roots}(\omega)(i))_1,
+    (\operatorname{roots}(\omega)(i))_2\mathbin{++}v),
+\]
+with
+$\nu_{\mathrm{Root}}=\operatorname{RootIndexed.stepFieldLaw}(\operatorname{Root}=\mathrm{Root},\mu)$ and
+$\nu_\kappa=\operatorname{RootIndexed.stepFieldLaw}(\operatorname{Root}=\kappa,\mu)$.
+The roots have arbitrary index type; the assumptions require countable range
+and stopped-measurable fibres, depth equal to $\tau$ on finite-time cells, and
+injectivity whenever $\tau<\infty$.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -160,15 +177,12 @@ theorem RootIndexed.stopped_selectedSubtreeStepFieldVector_event_factorization_o
           refine ⟨p, ?_⟩
           exact ⟨⟨⟨⟨hAω, hfiniteω⟩, rfl⟩, rfl⟩,
             by simpa [RootIndexed.selectedSubtreeStepFieldVector, p] using hBω⟩
-  have hCsum : (∑' p, P (C p)) = P A' := by
-    rw [← hCunion]
-    exact (measure_iUnion hCpair hCmeas).symm
   calc
     P (A' ∩ RootIndexed.selectedSubtreeStepFieldVector roots ⁻¹' B) =
         P (⋃ p, D p) := by rw [hDunion]
-    _ = ∑' p, P (D p) := measure_iUnion hDpair hDmeas
-    _ = ∑' p, P (C p) * Q B := tsum_congr hcell
-    _ = (∑' p, P (C p)) * Q B := ENNReal.tsum_mul_right
-    _ = P A' * Q B := by rw [hCsum]
+    _ = P (⋃ p, C p) * Q B :=
+      measure_iUnion_eq_mul_of_disjoint_factor P C D (Q B)
+        hCmeas hDmeas hCpair hDpair hcell
+    _ = P A' * Q B := by rw [hCunion]
 
 end ProbabilityTheory.BranchingRandomWalk

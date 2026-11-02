@@ -7,15 +7,39 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
-public import Combinatorics.BranchingWalk.Selection.NSelection.Hall
+public import Combinatorics.Selection.NSelection.Matching.Hall
 
 /-!
 # Address-order-free domination under dynamic leftmost selection
 
-This is the deterministic one-generation selection step used in the coupling.
-The target candidates are sorted by their observed positions at the current
-slice, with particle labels only breaking ties.  Hall's theorem turns the
-resulting threshold comparison into one coherent injective particle matching.
+The target candidates are ordered by their observed positions at the current
+slice, with particle labels breaking ties. The finite lower-level-set count
+bound follows from `Order.DominatingMap.card_filter_le`; Hall's theorem then
+produces one injective matching into the selected target population.
+
+## Public declarations
+
+If the cloud \(C\) injectively dominates \(D\) at time \(t\), then every
+retained source set \(R_t\subseteq C_t\) of size at most \(N\) injectively
+dominates the target's first \(N\) particles ordered by observed position,
+with particle labels breaking ties:
+
+\[R_t\subseteq C_t,\quad |R_t|\le N,\quad
+  C\succeq_{\mathrm{inj},\phi}D\text{ at time }t
+  \Longrightarrow
+  C_R\succeq_{\mathrm{inj},\phi}D^{[N]}_{\phi,t}.\]
+
+Here \(C_R\) is \(C\) restricted to \(R_t\), and
+\(D^{[N]}_{\phi,t}:=\operatorname{selectFirstNBy}
+(N,q\mapsto\phi(\operatorname{position}_D(q)),D_t)\).
+The relation \(\succeq_{\mathrm{inj},\phi}\) denotes injective domination
+after observing positions through \(\phi\).
+
+- `Cloud.injectivelyDominatesBy_selectFirstNBy_of_subset` says that a retained
+  source set `R ⊆ C.particles t` with `card(R) ≤ N` is injectively dominated by
+  the target set selected by `selectFirstNBy N`, whenever `C` injectively
+  dominates `D`. No compatibility between address order and observed values
+  is required.
 -/
 
 open Combinatorics.UlamHarris
@@ -28,31 +52,9 @@ open Selection.NSelection
 
 variable {Time Root α Position Value : Type*}
 
-/-- An injective spatial matching bounds every finite lower-tail count. -/
-theorem Cloud.filter_card_le_of_injectivelyDominatesBy
-    [Preorder Value] [DecidableRel (· ≤ · : Value → Value → Prop)]
-    (φ : Position → Value) {C D : Cloud Time Root α Position} (t : Time)
-    (hCfinite : (C.particles t).Finite)
-    (hDfinite : (D.particles t).Finite)
-    (hdom : C.InjectivelyDominatesBy φ D t) (a : Value) :
-    (hCfinite.toFinset.filter fun p => φ (C.position p.1 p.2) ≤ a).card ≤
-      (hDfinite.toFinset.filter fun q => φ (D.position q.1 q.2) ≤ a).card := by
-  classical
-  obtain ⟨f, hfmem, hfinj, hfle⟩ := hdom
-  apply Finset.card_le_card_of_injOn f
-  · intro p hp
-    obtain ⟨hpC, hpvalue⟩ := Finset.mem_filter.mp hp
-    apply Finset.mem_filter.mpr
-    exact ⟨hDfinite.mem_toFinset.mpr (hfmem (hCfinite.mem_toFinset.mp hpC)),
-      (hfle p (hCfinite.mem_toFinset.mp hpC)).trans hpvalue⟩
-  · intro p hp q hq hpq
-    exact hfinj
-      (hCfinite.mem_toFinset.mp (Finset.mem_filter.mp hp).1)
-      (hCfinite.mem_toFinset.mp (Finset.mem_filter.mp hq).1) hpq
-
 /-- A retained subpopulation of at most `N` particles is injectively dominated
 by the dynamic leftmost `N` selection from a dominating target candidate
-cloud.  No order compatibility for Ulam--Harris addresses is assumed. -/
+cloud. No order compatibility for Ulam--Harris addresses is assumed. -/
 theorem Cloud.injectivelyDominatesBy_selectFirstNBy_of_subset
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (φ : Position → Value) (N : ℕ)
@@ -68,14 +70,18 @@ theorem Cloud.injectivelyDominatesBy_selectFirstNBy_of_subset
         selectFirstNBy N (fun q => φ (D.position q.1 q.2)) hDfinite.toFinset)) t := by
   classical
   let selected := selectFirstNBy N (fun q => φ (D.position q.1 q.2)) hDfinite.toFinset
+  obtain ⟨g, hgmem, hginj, hgle⟩ := hdom
+  let dominatingMap : Order.DominatingMap (C.particles t) (D.particles t)
+      (fun p => φ (C.position p.1 p.2))
+      (fun q => φ (D.position q.1 q.2)) := ⟨g, hgmem, hginj, hgle⟩
   have hretainedFinset : retained ⊆ hCfinite.toFinset := by
     intro p hp
     exact hCfinite.mem_toFinset.mpr (hretained hp)
   have hthreshold : ∀ a : Value,
       (hCfinite.toFinset.filter fun p => φ (C.position p.1 p.2) ≤ a).card ≤
-        (hDfinite.toFinset.filter fun q => φ (D.position q.1 q.2) ≤ a).card :=
-    fun a => C.filter_card_le_of_injectivelyDominatesBy φ t
-      hCfinite hDfinite hdom a
+        (hDfinite.toFinset.filter fun q => φ (D.position q.1 q.2) ≤ a).card := by
+    intro a
+    exact dominatingMap.card_filter_le hCfinite hDfinite a
   obtain ⟨f, hfmem, hfle, hfinj⟩ :=
     exists_injective_le_selectFirstNBy N
       (fun p => φ (C.position p.1 p.2))

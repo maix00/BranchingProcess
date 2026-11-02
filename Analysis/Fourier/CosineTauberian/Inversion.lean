@@ -6,10 +6,26 @@ Authors: Codex
 module
 
 public import Analysis.Fourier.CosineTauberian.Kernel
-public import Mathlib.Analysis.Fourier.Inversion
+import Mathlib.Analysis.Fourier.Inversion
 
 /-!
 # Fourier inversion for the cosine Tauberian kernel
+
+## Public declarations
+
+- `cosineTauberianProfile x` is the compactly supported cubic profile
+  $\frac{(\max(1-|x|,0))^2(1+2|x|)}{6}$;
+  `continuous_cosineTauberianProfile` proves continuity.
+- `cosineTauberianProfile_gap_eq_cappedCubic` states that for $x>0$,
+  $x^3(\Phi(0)-\Phi(y/x))=
+  \frac{x(\min(|y|,x))^2}{2}-\frac{(\min(|y|,x))^3}{3}$.
+- `integral_cosineTauberianKernel_cos` gives the full-line transform
+  $\int_{\mathbb R}\cos(sx)K(s)\,ds=\pi\Phi(x)$;
+  `integral_Ioi_cosineTauberianKernel_cos` gives its half-line form with
+  coefficient $\pi/2$.
+- `integral_Ioi_one_sub_cos_mul_cosineTauberianKernel` gives
+  $\int_0^\infty(1-\cos(sx))K(s)\,ds=
+  \frac{\pi}{2}(\Phi(0)-\Phi(x))$.
 
 A compactly supported spline has the Tauberian kernel as its cosine transform.
 Fourier inversion then gives the kernel identity needed for the twice-integrated tail.
@@ -32,14 +48,14 @@ theorem continuous_cosineTauberianProfile :
   change Continuous fun x : ℝ => (max (1 - |x|) 0) ^ 2 * (1 + 2 * |x|) / 6
   fun_prop
 
-private theorem cosineTauberianProfile_eq_poly {r : ℝ}
+private lemma cosineTauberianProfile_eq_poly {r : ℝ}
     (hr₀ : 0 ≤ r) (hr₁ : r ≤ 1) :
     cosineTauberianProfile r = 1 / 6 - r ^ 2 / 2 + r ^ 3 / 3 := by
   simp [cosineTauberianProfile, abs_of_nonneg hr₀,
     max_eq_left (sub_nonneg.mpr hr₁)]
   ring
 
-private theorem cosineTauberianProfile_zero_of_abs_ge {x : ℝ}
+private lemma cosineTauberianProfile_zero_of_abs_ge {x : ℝ}
     (hx : 1 ≤ |x|) : cosineTauberianProfile x = 0 := by
   simp [cosineTauberianProfile, max_eq_right (sub_nonpos.mpr hx)]
 
@@ -83,7 +99,7 @@ theorem cosineTauberianProfile_gap_eq_cappedCubic
     ring
 
 /-- The Fourier inversion profile has compact support in `[-1,1]`. -/
-private theorem cosineTauberianProfile_hasCompactSupport :
+private lemma cosineTauberianProfile_hasCompactSupport :
     HasCompactSupport cosineTauberianProfile := by
   apply HasCompactSupport.of_support_subset_isCompact isCompact_Icc
   apply Function.support_subset_iff'.2
@@ -102,14 +118,14 @@ private theorem cosineTauberianProfile_hasCompactSupport :
       linarith
     exact cosineTauberianProfile_zero_of_abs_ge hax
 
-private theorem cosineTauberianProfile_integrable :
+private lemma cosineTauberianProfile_integrable :
     Integrable cosineTauberianProfile :=
   continuous_cosineTauberianProfile.integrable_of_hasCompactSupport
     cosineTauberianProfile_hasCompactSupport
 
 /-- On the positive half of its support, the spline's cosine transform is the
 Tauberian kernel. -/
-private theorem intervalIntegral_cosineTauberianProfile_mul_cos_eq_kernel
+private lemma intervalIntegral_cosineTauberianProfile_mul_cos_eq_kernel
     {t : ℝ} (ht : 0 < t) :
     (∫ r in (0 : ℝ)..1,
       cosineTauberianProfile r * Real.cos (t * r)) = cosineTauberianKernel t := by
@@ -163,16 +179,9 @@ private theorem intervalIntegral_cosineTauberianProfile_mul_cos_eq_kernel
       field_simp [ne_of_gt ht]
       ring
     _ = cosineTauberianKernel t := by
-      rw [cosineTauberianKernel_eq_quotient ht]
+      rw [cosineTauberianKernel_eq_quotient (ne_of_gt ht)]
 
-private theorem cosineTauberianKernel_neg (t : ℝ) :
-    cosineTauberianKernel (-t) = cosineTauberianKernel t := by
-  unfold cosineTauberianKernel
-  apply intervalIntegral.integral_congr
-  intro r _
-  simp [Real.sinc_neg]
-
-private theorem integrable_cosineTauberianKernel :
+private lemma integrable_cosineTauberianKernel :
     Integrable cosineTauberianKernel := by
   have hneg : IntegrableOn cosineTauberianKernel (Iio (0 : ℝ)) := by
     have hcomp := integrableOn_cosineTauberianKernel.comp_neg
@@ -182,7 +191,7 @@ private theorem integrable_cosineTauberianKernel :
     rw [← hset]
     apply hcomp.congr_fun
     · intro x _
-      exact cosineTauberianKernel_neg x
+      exact even_cosineTauberianKernel x
     · rw [hset]
       exact measurableSet_Iio
   have hrest : IntegrableOn cosineTauberianKernel
@@ -202,7 +211,7 @@ private theorem integrable_cosineTauberianKernel :
 
 /-- The spline cosine transform agrees with the kernel at every nonzero
 frequency. -/
-private theorem intervalIntegral_cosineTauberianProfile_mul_cos_eq_kernel_of_ne
+private lemma intervalIntegral_cosineTauberianProfile_mul_cos_eq_kernel_of_ne
     {t : ℝ} (ht : t ≠ 0) :
     (∫ r in (0 : ℝ)..1,
       cosineTauberianProfile r * Real.cos (t * r)) = cosineTauberianKernel t := by
@@ -224,25 +233,25 @@ private theorem intervalIntegral_cosineTauberianProfile_mul_cos_eq_kernel_of_ne
           cosineTauberianProfile r * Real.cos ((-t) * r) := hcos
       _ = cosineTauberianKernel (-t) :=
         intervalIntegral_cosineTauberianProfile_mul_cos_eq_kernel hneg
-      _ = cosineTauberianKernel t := cosineTauberianKernel_neg t
+      _ = cosineTauberianKernel t := even_cosineTauberianKernel t
 
 private noncomputable def cosineTauberianComplexProfile (x : ℝ) : ℂ :=
   (cosineTauberianProfile x : ℂ)
 
-private theorem cosineTauberianComplexProfile_continuous :
+private lemma cosineTauberianComplexProfile_continuous :
     Continuous cosineTauberianComplexProfile := by
   exact Complex.continuous_ofReal.comp continuous_cosineTauberianProfile
 
 private noncomputable def cosineTauberianFourierIntegrand (t x : ℝ) : ℂ :=
   Complex.exp ((↑(-t * x) : ℂ) * Complex.I) * cosineTauberianComplexProfile x
 
-private theorem cosineTauberianProfile_neg (x : ℝ) :
+private lemma cosineTauberianProfile_neg (x : ℝ) :
     cosineTauberianProfile (-x) = cosineTauberianProfile x := by
   simp [cosineTauberianProfile, abs_neg]
 
 /-- The Fourier transform of the compact spline is twice the cosine kernel
 away from the single frequency zero. -/
-private theorem fourier_cosineTauberianComplexProfile_eq
+private lemma fourier_cosineTauberianComplexProfile_eq
     {ξ : ℝ} (hξ : ξ ≠ 0) :
     𝓕 cosineTauberianComplexProfile ξ =
       (2 * cosineTauberianKernel (2 * Real.pi * ξ) : ℂ) := by
@@ -399,7 +408,7 @@ private theorem fourier_cosineTauberianComplexProfile_eq
     _ = ∫ r in (0 : ℝ)..1, (g (-r) + g r) := hmiddle
     _ = (2 * cosineTauberianKernel t : ℂ) := hpairIntegral
 
-private theorem integrable_fourier_cosineTauberianComplexProfile :
+private lemma integrable_fourier_cosineTauberianComplexProfile :
     Integrable (𝓕 cosineTauberianComplexProfile) := by
   have hscale : (2 : ℝ) * Real.pi ≠ 0 := by positivity
   have hscaled : Integrable
@@ -420,7 +429,7 @@ private theorem integrable_fourier_cosineTauberianComplexProfile :
     exact fourier_cosineTauberianComplexProfile_eq hξ
   exact hscaledComplex.congr hEq.symm
 
-private theorem inverse_fourier_cosineTauberianProfile (x : ℝ) :
+private lemma inverse_fourier_cosineTauberianProfile (x : ℝ) :
     (∫ ξ : ℝ,
       Complex.exp (↑(2 * Real.pi * ξ * x) * Complex.I) *
         ((2 : ℂ) * (cosineTauberianKernel (2 * Real.pi * ξ) : ℂ))) =
@@ -464,7 +473,7 @@ private theorem inverse_fourier_cosineTauberianProfile (x : ℝ) :
 private noncomputable def cosineTauberianOscillator (x s : ℝ) : ℂ :=
   Complex.exp (↑(s * x) * Complex.I) * (cosineTauberianKernel s : ℂ)
 
-private theorem integrable_cosineTauberianOscillator (x : ℝ) :
+private lemma integrable_cosineTauberianOscillator (x : ℝ) :
     Integrable (cosineTauberianOscillator x) := by
   have hKabs : Integrable (fun s : ℝ => |cosineTauberianKernel s|) := by
     simpa [Real.norm_eq_abs] using integrable_cosineTauberianKernel.norm
@@ -490,7 +499,7 @@ private theorem integrable_cosineTauberianOscillator (x : ℝ) :
       Complex.norm_real, Real.norm_eq_abs]
   exact hKabs.mono' hmeas hbound
 
-private theorem integral_cosineTauberianOscillator (x : ℝ) :
+private lemma integral_cosineTauberianOscillator (x : ℝ) :
     (∫ s : ℝ, cosineTauberianOscillator x s) =
       (Real.pi : ℂ) * (cosineTauberianProfile x : ℂ) := by
   let c : ℝ := 2 * Real.pi
@@ -541,7 +550,7 @@ private theorem integral_cosineTauberianOscillator (x : ℝ) :
           field_simp [hπne]
     _ = (Real.pi : ℂ) * (cosineTauberianProfile x : ℂ) := by rw [hcoeff]
 
-private theorem integrable_cosineTauberianCosIntegrand (x : ℝ) :
+private lemma integrable_cosineTauberianCosIntegrand (x : ℝ) :
     Integrable (fun s : ℝ => Real.cos (s * x) * cosineTauberianKernel s) := by
   have hKabs : Integrable (fun s : ℝ => |cosineTauberianKernel s|) := by
     simpa [Real.norm_eq_abs] using integrable_cosineTauberianKernel.norm
@@ -594,7 +603,10 @@ theorem integral_Ioi_cosineTauberianKernel_cos (x : ℝ) :
   have hfint : Integrable f := by
     simpa [f] using integrable_cosineTauberianCosIntegrand x
   have heven (s : ℝ) : f (-s) = f s := by
-    simp [f, Real.cos_neg, cosineTauberianKernel_neg]
+    change Real.cos ((-s) * x) * cosineTauberianKernel (-s) =
+      Real.cos (s * x) * cosineTauberianKernel s
+    rw [show (-s) * x = -(s * x) by ring, Real.cos_neg,
+      even_cosineTauberianKernel]
   have hchange : (∫ s in Ioi (0 : ℝ), f (-s)) =
       ∫ s in Iio (0 : ℝ), f s := by
     let g : ℝ → ℝ := (Iio (0 : ℝ)).indicator f

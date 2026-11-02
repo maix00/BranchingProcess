@@ -36,6 +36,36 @@ relation `TreeNode.IsChild` in `Combinatorics.UlamHarris.Relation`.
 The multigraph `Graph α β` of `Mathlib/Combinatorics/Graph/Basic.lean` is not
 used: a node of a tree has at most one edge to each child, so its parent--child
 structure is already carried faithfully by a digraph.
+
+## Public declarations
+
+* `Combinatorics.UlamHarris.Tree.childDigraph T` has vertex type
+  `↥T.carrier`; `Combinatorics.UlamHarris.Tree.childDigraph_adj_iff` states
+  `(childDigraph T).Adj a b ↔ TreeNode.IsChild a.1 b.1`;
+  `Combinatorics.UlamHarris.Tree.childDigraph_adj_irrefl` states
+  `¬ (childDigraph T).Adj a a`.
+* `Combinatorics.UlamHarris.Tree.childQuiver T` has arrows labelled by child
+  addresses, and `Combinatorics.UlamHarris.Tree.childQuiver_hom_iff` states
+  `Nonempty (a ⟶ b) ↔ (childDigraph T).Adj a b`.
+* `Combinatorics.UlamHarris.Tree.childGraph T` forgets edge orientation, and
+  `Combinatorics.UlamHarris.Tree.childGraph_adj` states
+  `(childGraph T).Adj a b ↔ IsChild a.1 b.1 ∨ IsChild b.1 a.1`.
+* `Combinatorics.UlamHarris.RootIndexed.Tree.ForestVertex T` is the subtype of
+  realized `(root, address)` pairs, and
+  `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph T` joins vertices only
+  within one root coordinate. `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph_adj`
+  gives its adjacency predicate, while
+  `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph_adj_mk_iff` identifies
+  each root component with `Combinatorics.UlamHarris.Tree.childGraph (T r)`.
+* `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph_walk_root_eq` and
+  `Combinatorics.UlamHarris.RootIndexed.Tree.forestGraph_reachable_root_eq`
+  state that a walk or reachable pair in `forestGraph T` has equal root
+  coordinates.
+
+The defining adjacency formulas are
+`\(childDigraph(T).Adj(a,b)\iff IsChild(a.1,b.1)\)` and
+`\(childGraph(T).Adj(a,b)\iff IsChild(a.1,b.1)\lor IsChild(b.1,a.1)\)`.
+In the root-indexed graph, adjacency also requires equal root coordinates.
 -/
 
 @[expose] public section

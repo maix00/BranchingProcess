@@ -4,20 +4,66 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.AddressFiltration
+
+public import Combinatorics.BranchingWalk.Step.Basic
+public import Combinatorics.UlamHarris.Basic
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Subtree
+
+import Combinatorics.UlamHarris.Generation
 
 /-!
 # Joint law of an arbitrary family of abstract branching subtrees
+
+## Public declarations
 
 Distinct roots at one generation use disjoint coordinates.  Their descendant
 step fields therefore have the joint law of independent copies of the full
 pre-sampled branching-step field. Neither the family index nor the child-slot
 type is restricted to a finite or countable type in this product-law theorem.
+
+If the roots `r_i` are distinct and all have generation `n`, let
+`\Phi(\omega)(i)(v)=\omega(r_i\mathbin{+\!+}v)` and let `\nu` be the
+pre-sampled step-field law. Their joint subtree law and its independence from
+the generation-`n` past are
+
+\[\begin{aligned}
+\Phi_{\#}\nu&=\nu^{\otimes\kappa},\\
+\nu\bigl(A\cap\Phi^{-1}(B)\bigr)
+&=\nu(A)\,\nu^{\otimes\kappa}(B),
+\quad A\in\mathscr F_n^-,\ B\text{ measurable}.
+\end{aligned}\]
+
+- `subtreeStepFieldVector roots ω` is the family
+  `i ↦ (v ↦ ω (roots i ++ v))`; `subtreeStepFieldVector_measurable` proves
+  measurability.
+- `fixed_subtreeStepFieldVector_law` states, for same-generation distinct
+  roots, that
+  `Measure.map (offspringFieldLaw μ) (subtreeStepFieldVector roots) =
+  Measure.infinitePi (fun _ : κ => offspringFieldLaw μ)`.
+  `fixed_subtreeStepFieldVector_independent` states independence of the
+  generation-`n` past and this vector field; its event form is
+  `ν (A ∩ Φ ⁻¹' B) = ν A * (Measure.infinitePi (fun _ : κ => ν)) B`,
+  where `ν = offspringFieldLaw μ` and `Φ = subtreeStepFieldVector roots`.
+- `fixed_subtreeStepFieldVector_event_factorization` states this event
+  factorization explicitly for measurable `A` in the generation-`n` past and
+  measurable `B`, assuming the roots have depth `n` and are injectively
+  indexed.
+- `stepDescendantSpace_le_future` and
+  `subtreeStepFieldVector_future_measurable` place these descendants in the
+  future-coordinate sigma-algebra.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
@@ -37,31 +83,30 @@ theorem subtreeStepFieldVector_measurable
   intro i
   exact subtreeStepField_measurable (roots i)
 
-theorem rootedBranchingAddresses_injective {κ : Type*} {n : ℕ}
-    (roots : κ → TreeNode α)
-    (hlen : ∀ i, (roots i).length = n)
-    (hinj : Function.Injective roots) :
-    Function.Injective (fun p : κ × TreeNode α => roots p.1 ++ p.2) := by
-  rintro ⟨i, a⟩ ⟨j, b⟩ h
-  have hp := congrArg (List.take n) h
-  have hroot : roots i = roots j := by
-    simpa [hlen i, hlen j] using hp
-  have hij : i = j := hinj hroot
-  subst j
-  exact Prod.ext rfl (List.append_cancel_left h)
-
 theorem fixed_subtreeStepFieldVector_law
     {α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     {κ : Type*} {n : ℕ} (roots : κ → TreeNode α)
     (hlen : ∀ i, (roots i).length = n)
     (hinj : Function.Injective roots) :
-    (stepFieldLaw μ).map (subtreeStepFieldVector roots) =
-      Measure.infinitePi (fun _ : κ => stepFieldLaw μ) := by
+    (offspringFieldLaw μ).map (subtreeStepFieldVector roots) =
+      Measure.infinitePi (fun _ : κ => offspringFieldLaw μ) := by
+  let rooted : κ → Unit × TreeNode α := fun i => ((), roots i)
+  have hrooted : Function.Injective rooted := by
+    intro i j hij
+    exact hinj (congrArg Prod.snd hij)
+  have happend :=
+    Combinatorics.UlamHarris.RootIndexed.appendAddresses_injective
+      rooted hlen hrooted
+  have hflatInjective : Function.Injective
+      (fun p : κ × TreeNode α => (rooted p.1).2 ++ p.2) := by
+    intro p q hp
+    apply happend
+    exact Prod.ext rfl hp
   have hflat := Measure.map_infinitePi_infinitePi_of_inj
     (P := fun _ : TreeNode α => μ)
-    (f := fun p : κ × TreeNode α => roots p.1 ++ p.2)
-    (rootedBranchingAddresses_injective roots hlen hinj)
+    (f := fun p : κ × TreeNode α => (rooted p.1).2 ++ p.2)
+    hflatInjective
   have hcurry := Measure.infinitePi_map_curry
     (μ := fun (_ : κ) (_ : TreeNode α) => μ)
   change (Measure.infinitePi (fun _ : TreeNode α => μ)).map
@@ -82,8 +127,11 @@ theorem stepDescendantSpace_le_future
     (n : ℕ) (u : TreeNode α) (hu : n ≤ u.length) :
     stepDescendantSpace (X := X) u ≤
       stepFutureSpace n := by
+  rw [stepDescendantSpace_eq_iSup]
   apply iSup_le
-  intro v
+  intro w
+  apply iSup_le
+  rintro ⟨v, rfl⟩
   have hdepth : n ≤ (u ++ v).length := by simp; omega
   exact le_iSup_of_le (u ++ v) (le_iSup_of_le hdepth le_rfl)
 
@@ -109,7 +157,7 @@ theorem fixed_subtreeStepFieldVector_independent
     (hlen : ∀ i, (roots i).length = n) :
     Indep (generationFiltration (M := Step α X) n)
       (MeasurableSpace.comap (subtreeStepFieldVector roots) inferInstance)
-      (stepFieldLaw μ) :=
+      (offspringFieldLaw μ) :=
   indep_of_indep_of_le_right
     (generation_stepFuture_independent μ n)
     (subtreeStepFieldVector_future_measurable roots hlen).comap_le
@@ -125,9 +173,9 @@ theorem fixed_subtreeStepFieldVector_event_factorization
     (hA : MeasurableSet[
       generationFiltration (M := Step α X) n] A)
     (hB : MeasurableSet B) :
-    stepFieldLaw μ (A ∩ subtreeStepFieldVector roots ⁻¹' B) =
-      stepFieldLaw μ A *
-        (Measure.infinitePi (fun _ : κ => stepFieldLaw μ)) B := by
+    offspringFieldLaw μ (A ∩ subtreeStepFieldVector roots ⁻¹' B) =
+      offspringFieldLaw μ A *
+        (Measure.infinitePi (fun _ : κ => offspringFieldLaw μ)) B := by
   have hB' : MeasurableSet[
       MeasurableSpace.comap (subtreeStepFieldVector roots) inferInstance]
       (subtreeStepFieldVector roots ⁻¹' B) := ⟨B, hB, rfl⟩
@@ -138,3 +186,5 @@ theorem fixed_subtreeStepFieldVector_event_factorization
   exact h
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

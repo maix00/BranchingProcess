@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Path.Restart.Basic
-public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
+public import Probability.Process.RandomWalk.Path.Restart.Interval
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 
 /-!
 # Restarted horizontal-corridor laws
@@ -15,6 +15,20 @@ public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
 The generic restarted-window law is defined in `Restart.Basic`.  This file
 contains the IID factorization for constant horizontal corridors, after the
 ordinary horizontal-tube probability has been introduced.
+
+## Public declarations
+
+* `ProbabilityTheory.RandomWalk.restartedWindowProbability_horizontal_add_eq_mul`
+  factors a constant horizontal-tube event through `cutoff + tail` into the
+  product of the two zero-start horizontal-tube probabilities.
+* `ProbabilityTheory.RandomWalk.restartedWindowProbability_horizontal_eq`
+  gives the corresponding formula at every observation time, using one tube
+  probability before the cutoff and the prefix-tail product afterwards.
+
+Writing \(R_m(n)\) for the restarted probability and \(Q_j\) for the
+zero-start tube probability, the formulas are
+\(R_m(m+r)=Q_mQ_r\) and
+\(R_m(n)=Q_n\) for \(n\le m\), while \(R_m(n)=Q_mQ_{n-m}\) for \(m<n\).
 -/
 
 @[expose] public section

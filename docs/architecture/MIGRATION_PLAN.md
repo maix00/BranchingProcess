@@ -10,19 +10,28 @@ It does not claim that the separate open limit-theorem obligations in
 
 | Topic | Current owner | Result |
 | --- | --- | --- |
-| General event-measure limits | `MeasureTheory/Measure/SetLimits.lean` | Moved out of the probability application layer |
-| Positive half-line mass | `MeasureTheory/Measure/PositiveTail.lean` | General measure statement; no probability-measure assumption added |
+| General event-measure limits | `MeasureTheory/Measure/EventLimits.lean` | Moved out of the probability application layer |
+| Positive half-line mass | `MeasureTheory/Measure/Tails/Positive.lean` | General measure statement; no probability-measure assumption added |
 | Restricted nonnegative-integral limits | `MeasureTheory/Integral/Lebesgue/RestrictLimit.lean` | General result separated from the Poisson variation application |
 | Truncation inequalities | `Order/Bounds/Truncation.lean` | Deterministic bounds separated from independent-event integration |
-| Independent-event integration | `Probability/Independence/Integration.lean` | Independence-specific statements remain in probability |
+| Independent-event integration | `Probability/Independence/Integration/Basic.lean` | Independence-specific statements remain in probability |
 | Feedback and one-jump bounds | `Order/Bounds/Feedback.lean`, `Order/Bounds/Corridor.lean` | Real/order arguments no longer live under Skorokhod geometry |
 | Finite weighted-sum bounds | `Algebra/Order/BigOperators/WeightedSum.lean` | General sum inequalities separated from matrix spectral results |
 | Declared-success stopping times | `Probability/Process/HittingTime/Declarations.lean` | General filtration statements use Mathlib stopping-time interfaces |
 | Observable candidates and adapted recursion | `Probability/Process/HittingTime/ObservableCandidates.lean`, `Probability/Process/Adapted/Recursion.lean` | General process interfaces separated from branching applications |
 | Reserve/restart estimates | `Probability/BranchingRandomWalk/Restart/` | Branching-specific hypotheses remain in the branching layer |
-| Poisson window-integral vectors | `Probability/RandomMeasure/Poisson/WindowIntegral.lean` | Generic construction separated from stable-law identification |
-| Cutoff Poisson path identities | `Probability/Process/Levy/Jump/PoissonConfiguration/Path.lean` | Reusable jump-configuration facts separated from stable-process laws |
+| Poisson window-integral vectors | `Probability/RandomMeasure/Poisson/Integration/WindowIntegral.lean` | Generic construction separated from stable-law identification |
+| Poisson jump-path endpoint and increment identities | `Probability/RandomMeasure/Poisson/JumpPath/Entrance/{Endpoint,Increment}.lean`; cutoff specializations in `Probability/Process/Levy/Jump/PoissonConfiguration/` | Supported-path formulas are owned by the marked Poisson path layer; only identities that use Lévy cutoff bands remain in the Lévy process layer |
+| One-jump corridor entrance probability | `Probability/Process/Corridor/PoissonEntrance.lean` | The path-event bound has no Lévy-process hypothesis; the canonical finite-variation intensity adapter remains under `Probability/Process/Levy/Jump/Intensity/Entrance/Canonical.lean` |
+| Uniform-block prefix power recurrence | `Algebra/Order/Monoid/Recurrence.lean` | Removed the two corridor-event wrappers because they only instantiate `IsOrderedMonoid.pow_le_of_mul_le_succ`; the stable clients now apply the generic theorem directly, with no duplicate public API or proof-only `Lemmas` module |
+| Root-step batch law | `Probability/BranchingRandomWalk/Genealogy/RootIndexed/Law/RootBatch.lean` | The arbitrary-index root-coordinate batch and its infinite product law are separated from the generation-selected subtree batch adapter; finite clients use Mathlib's `Measure.infinitePi_eq_pi` |
 | Convolution powers | `MeasureTheory/Measure/Convolution/Power.lean` | One recursive API remains; the old `convPow` module and definition were removed after proving the convolution-rotation relation |
+| Selection/NSelection boundary | `Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field/Measurability.lean`, `Spine/Tube/`, `Selection/Finite/`, and `Selection/NSelection/{Speed,Tail}/` | Generic root-indexed position observations and path/tube estimates are separated from deterministic first-`N` speed and endpoint arguments; random finite-by-value constructors are under `Selection/Finite/` |
+| Branching-walk structure | `Combinatorics/BranchingWalk/Basic/BranchingWalk.lean` | The root-indexed step-field and initial-position structure, its single-root specialization, and parent-closure interface have a semantic module name; declarations remain in `Combinatorics.Branching` because their mathematical ownership is unchanged |
+| Paley--Zygmund inequality | `Probability/MeasureTheory/Moments/PaleyZygmund.lean` | The bound `(𝔼[X] - t)^2 / 𝔼[X^2] ≤ ℙ(t ≤ X)` now lives at its general probability-space level; Galton--Watson moment recurrences and endpoint-deviation rates remain in their owning modules |
+| Positive-`a` first-stage proof chain | `Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/FirstStage/` | `LowCountPower.lean` is the first-stage conclusion; its one-use corridor budget and PZ assembly are grouped under `FirstStage/Lemmas/`. The folder name describes the proof stage, while the `positiveA...` declarations retain the parameter regime. |
+| Positive-`a` spine capacity estimate | `Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/Drawdown/Spine/` | `Capacity.lean` exposes the affine-corridor first-stage low-count estimate; `Window.lean` and `SecondStageTube.lean` own the restarted windows and second-stage path events; `FailureProbability.lean` is the entry for the endpoint-gap polynomial bound; six theorem-specific proof-chain modules remain under `Lemmas/`. The parameter condition remains in declaration names. |
+| Infinite-offspring Kingman interface | `Probability/BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed/Limit/InfiniteOffspring/` | Measurable batch repair, the subadditive array, Kingman limits, and leftmost speed have separate subject modules. `Kingman/Limit.lean` sits beside its proof chain in `Kingman/Lemmas/`; the unused reflection-based rightmost route was removed because `Rightmost.lean` obtains that result through `OrderDual`. |
 
 The former source modules for M01--M10 and M13 have been removed. Mixed
 application files for M03, M11, and M12 remain only for the results whose

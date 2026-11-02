@@ -12,9 +12,27 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
 /-!
 # Local oscillation bounds for càdlàg functions
 
+## Public declarations
+
+- `IsCadlag.exists_left_oscillation_radius`: for every `t` and `ε > 0`, some
+  radius makes `dist (f s) (f u) ≤ ε` whenever both `s` and `u` lie within
+  that radius to the left of `t`.
+- `IsCadlag.exists_right_oscillation_radius`: for every `t` and `ε > 0`, some
+  radius gives the same bound when both points lie within that radius to the
+  right of `t`, including `t` itself.
+
 Right continuity and the existence of left limits give separate local
 oscillation bounds on the two sides of every time. These are the local inputs
 for finite oscillation partitions.
+Precisely, for every `t` and `ε > 0`, there are positive radii on each side
+such that
+\[
+  s,u<t,\ d_T(s,t),d_T(u,t)<\delta_-
+    \Longrightarrow d_E(f(s),f(u))\le\varepsilon,
+  \qquad
+  t\le s,u,\ d_T(s,t),d_T(u,t)<\delta_+
+    \Longrightarrow d_E(f(s),f(u))\le\varepsilon.
+\]
 -/
 
 @[expose] public section

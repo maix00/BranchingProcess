@@ -8,6 +8,7 @@ module
 
 public import Algebra.BigOperators.PartialSum
 public import Probability.Process.RandomWalk.Path.Block.Corridor.Basic
+import Probability.Process.RandomWalk.Path.Block.Corridor.Geometry
 public import Probability.Process.RandomWalk.Path.Window.Basic
 
 /-!
@@ -15,6 +16,34 @@ public import Probability.Process.RandomWalk.Path.Window.Basic
 
 Deterministic identities and error bounds for reconstructing partition
 endpoints from consecutive block sums.
+
+## Public declarations
+
+* `partialSum_blockCoordinates` states
+  `Fin.partialSum (blockCoordinates start length increment) j =
+  AdditivePath.blockSum start j increment`.
+* `blockCoordinates_prefix_add_partialSum_eq_displacement` reconstructs the
+  full-path displacement at time `start + j` from the first `start`
+  coordinates and the partial sum of the following block.
+* `exists_eq_blockStart_add_of_lt_of_le_mul` decomposes an index below a
+  covered horizon as `index = block * length + offset`, with
+  `block < blocks` and `offset < length`.
+* `abs_displacement_sub_le_three_mul_of_blockBounds` bounds the difference
+  between two walk positions by `3 * radius` when their time difference is at
+  most one block and every block has displacement at most `radius`.
+* `displacement_mul_eq_sum_blockSum` states
+  `AdditivePath.displacement (blocks * length) increment =
+  ∑ j ∈ Finset.range blocks, AdditivePath.blockSum (j * length) length increment`.
+* `partialSum_blockSum` identifies the `j`th partial sum of consecutive
+  equal-length block sums with `AdditivePath.displacement (j * length) increment`.
+* `inClosedInterval_mul_iff_forall_block` identifies confinement through
+  `blocks * length` with confinement on every overlapping block interval.
+
+For a block starting at `\(s\)` with length `\(L\)`, its `\(j\)`th
+partial sum is `\(\sum_{i<j}\xi_{s+i}\)`. Across `\(N\)` blocks,
+`\(S_{NL}=\sum_{j<N}(S_{(j+1)L}-S_{jL})\)`; if every block displacement
+is at most `\(r\)`, positions at times at most one block apart differ by
+at most `\(3r\)`.
 -/
 
 open scoped BigOperators
@@ -40,7 +69,27 @@ theorem partialSum_blockCoordinates {length : ℕ}
     rw [AdditivePath.blockSum_add start (j : ℕ) 1]
     simp [AdditivePath.blockSum]
 
-/-- Every index before a covered horizon has a unique quotient-remainder
+/-- The prefix coordinates followed by a partial block reconstruct the
+displacement of the full additive path at that time. -/
+theorem blockCoordinates_prefix_add_partialSum_eq_displacement
+    {length : ℕ} (start : ℕ) (increment : ℕ → E)
+    (j : Fin (length + 1)) :
+    (∑ i : Fin start,
+      Combinatorics.Sequence.blockCoordinates 0 start increment i) +
+      Fin.partialSum
+        (Combinatorics.Sequence.blockCoordinates start length increment) j =
+      AdditivePath.displacement (start + (j : ℕ)) increment := by
+  have hprefix :
+      (∑ i : Fin start,
+        Combinatorics.Sequence.blockCoordinates 0 start increment i) =
+        AdditivePath.displacement start increment := by
+    simp [Combinatorics.Sequence.blockCoordinates, AdditivePath.displacement,
+      Fin.sum_univ_eq_sum_range]
+  rw [hprefix, partialSum_blockCoordinates]
+  exact (AdditivePath.displacement_add_eq_add_blockSum
+    start (j : ℕ) increment).symm
+
+/-- Every index before a covered horizon has a quotient-remainder
 location in one of the equal-length blocks. -/
 theorem exists_eq_blockStart_add_of_lt_of_le_mul
     {horizon blocks length index : ℕ} (hlength : 0 < length)
@@ -54,7 +103,7 @@ theorem exists_eq_blockStart_add_of_lt_of_le_mul
 
 /-- Two ordered indices separated by at most one block length have block
 quotients differing by at most one. -/
-theorem div_le_div_add_one_of_sub_le
+private lemma div_le_div_add_one_of_sub_le
     {length left right : ℕ} (hlength : 0 < length)
     (hle : left ≤ right) (hdistance : right - left ≤ length) :
     right / length ≤ left / length + 1 := by

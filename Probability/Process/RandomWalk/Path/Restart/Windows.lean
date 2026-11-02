@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Process.Path.Restart.Basic
 public import Probability.Process.RandomWalk.Path.Window.Basic
 
 /-!
@@ -15,44 +16,31 @@ A restarted window compares a path with its time-zero value up to a cutoff
 and with its value at the cutoff afterwards.  This file contains only the
 deterministic path construction; measurability and laws belong to the
 probability layer.
+
+## Public declarations
+
+For every increment sequence $\xi$ and initial position $x$,
+$\operatorname{InRestartedWindows}(c,W,\operatorname{history}(n,x,\xi))\iff
+\operatorname{InRestartedWindows}(c,W,\operatorname{history}(n,0,\xi))$.
+For a constant interval window and $n\le c$, this event is
+$\operatorname{InClosedInterval}(a,b,n,0,\xi)$; through time $c+m$ it is
+equivalent to the intersection of that event at time $c$ and the same event
+of length $m$ for the shifted increments $k\mapsto\xi_{c+k}$.
+
+* `ProbabilityTheory.RandomWalk.inRestartedWindows_history_iff` shows the
+  event is independent of the absolute initial position.
+* `ProbabilityTheory.RandomWalk.inRestartedWindows_Icc_of_le_iff` identifies
+  the pre-cutoff constant-window event with `InClosedInterval`.
+* `ProbabilityTheory.RandomWalk.inRestartedWindows_Icc_add_iff` identifies a
+  constant-window event through `cutoff + tail` with the intersection of the
+  prefix and shifted-tail `InClosedInterval` events.
 -/
 
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 
-/-- Use time zero as reference through `cutoff`, then use time `cutoff` as
-reference. -/
-def restartAnchor (cutoff n : ℕ) : ℕ :=
-  if n ≤ cutoff then 0 else cutoff
-
-theorem restartAnchor_le (cutoff n : ℕ) : restartAnchor cutoff n ≤ n := by
-  by_cases h : n ≤ cutoff
-  · simp [restartAnchor, h]
-  · simp only [restartAnchor, h, ↓reduceIte]
-    omega
-
-theorem restartAnchor_succ_le_parent (cutoff n : ℕ) :
-    restartAnchor cutoff (n + 1) ≤ n := by
-  by_cases h : n + 1 ≤ cutoff
-  · simp [restartAnchor, h]
-  · simp only [restartAnchor, h, ↓reduceIte]
-    omega
-
-@[simp] theorem restartAnchor_eq_zero {cutoff n : ℕ} (h : n ≤ cutoff) :
-    restartAnchor cutoff n = 0 := by
-  simp [restartAnchor, h]
-
-@[simp] theorem restartAnchor_eq_cutoff {cutoff n : ℕ} (h : cutoff < n) :
-    restartAnchor cutoff n = cutoff := by
-  simp [restartAnchor, Nat.not_le_of_lt h]
-
-/-- A finite path remains in the prescribed windows after subtracting the
-path value at the deterministic restart anchor. -/
-def InRestartedWindows {n : ℕ} (cutoff : ℕ) (window : ℕ → Set ℝ)
-    (path : Fin (n + 1) → ℝ) : Prop :=
-  ∀ k : Fin (n + 1), path k - path
-    ⟨restartAnchor cutoff k, (restartAnchor_le cutoff k).trans_lt k.2⟩ ∈ window k
+open ProbabilityTheory.Process.Path
 
 /-- Restarted-window membership depends only on increments, not on the
 absolute initial position. -/

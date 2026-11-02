@@ -13,9 +13,34 @@ public import Mathlib.Probability.Kernel.Composition.MapComap
 /-!
 # Sub-Markov kernels
 
+## Public declarations
+
+- `IsSubMarkovKernel` means `κ a univ ≤ 1` for every source state; its
+  `measure_le_one` theorem bounds every measurable target mass by one.
+- `IsSubMarkovKernel.isFiniteKernel`, `isSubMarkovKernel_zero`, and
+  `IsMarkovKernel.isSubMarkovKernel` provide finiteness, the zero-kernel
+  instance, and the inclusion of Markov kernels.
+- `IsSubMarkovKernel.restrict`, `IsSubMarkovKernel.comap`,
+  `IsSubMarkovKernel.comapRight`, `IsSubMarkovKernel.comp`, and
+  `IsSubMarkovKernel.pow` show closure under target restriction, source
+  reindexing, measurable target embeddings, composition, and iteration.
+- `isMarkovKernel_iff_measure_univ_eq_one` states that a sub-Markov kernel is
+  Markov exactly when every row has total mass one.
+
 A sub-Markov kernel has total mass at most one at every source point.  The
 missing mass is interpreted as killing.  Markov kernels are the mass-one
 special case.
+
+For every source state `x`, with `Ω` denoting the target space, the
+row-mass condition and its target-set consequence are
+
+\[
+K(x,\Omega)\le1,
+\qquad
+K(x,A)\le1\quad(A\text{ measurable});
+\]
+
+the Markov-kernel case is characterized by `K(x,Ω)=1` for every `x`.
 -/
 
 @[expose] public section

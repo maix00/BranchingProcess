@@ -7,15 +7,34 @@ Authors: WANG Yiyang
 module
 
 public import Order.Interval.RationalCoordinate.UnitInterval
-public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks
-import Topology.Order.UnitInterval.Rational
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Basic
 
 /-!
 # Prefix paths for uniform block partitions
 
-This module contains the deterministic prefix path and prefix tube set for a
-uniform rational partition.  Process laws and independence are supplied by
-the layers that instantiate this construction.
+This module contains the deterministic stopped path for a uniform rational
+partition. Process laws and independence are supplied by the layers that
+instantiate this construction.
+
+## Public declarations
+
+`rationalUniformBlockBoundaryTime hblocks k` is the rational boundary
+`min(k, blocks) / blocks`; its initial value is characterized by
+`rationalUniformBlockBoundaryTime_zero`, and
+`rationalUniformBlockBoundaryTime_eq_blockStart` and
+`rationalUniformBlockBoundaryTime_succ_eq_blockEnd` identify adjacent block
+endpoints.
+
+`rationalUniformPrefixPath X blocks m hblocks ω q` is the path stopped at
+boundary `m` and normalized by subtracting `X 0`. Its endpoint identity is
+`rationalUniformPrefixPath_top`; for `k < m`,
+`rationalUniformPrefixPath_blockIncrement_eq` identifies its `k`th block
+increment with the translated process block.
+
+For `\(N=blocks\)`, the boundary is `\(\tau_k=\min(k,N)/N\)`, and the
+stopped path is `\(X^{[m]}(q)=X(\min(q,\tau_m))-X(0)\)`. For `\(k<m\)`,
+its translated increment on block `k` is
+`\(X(\tau_k+q/N)-X(\tau_k)\)`.
 -/
 
 @[expose] public section
@@ -108,23 +127,6 @@ theorem rationalUniformPrefixPath_blockIncrement_eq
   rw [min_eq_left hq, min_eq_left hzero]
   ring
 
-/-- The measurable event on a rational-coordinate path that its first `m`
-uniform blocks all lie in the requested oscillation tube. -/
-def rationalUniformPrefixTubeSet (width : ℝ) {blocks : ℕ}
-    (hblocks : 0 < blocks) (m : ℕ) :
-    Set (↑RationalCoordinate.UnitInterval → ℝ) :=
-  ⋂ k : Fin blocks,
-    if k.val < m then rationalTubeBlockEvent width hblocks k else Set.univ
-
-theorem measurableSet_rationalUniformPrefixTubeSet (width : ℝ)
-    {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) :
-    MeasurableSet (rationalUniformPrefixTubeSet width hblocks m) := by
-  unfold rationalUniformPrefixTubeSet
-  apply MeasurableSet.iInter
-  intro k
-  split_ifs
-  · exact measurableSet_rationalTubeBlockEvent width hblocks k
-  · exact MeasurableSet.univ
 
 end ProbabilityTheory
 

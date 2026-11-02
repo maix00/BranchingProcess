@@ -4,15 +4,61 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.RandomMeasure.Poisson.CharacteristicFunction.LevyCutoff
+module
+
+public import Probability.RandomMeasure.Poisson.CharacteristicFunction.LevyCutoff
+public import Mathlib.MeasureTheory.Constructions.UnitInterval
+import all Probability.RandomMeasure.Poisson.Intensity.Lemmas.TimeWindowIntegral
 
 /-!
 # Characteristic functions of finite weighted collections of windows
 
-The characteristic formula for one Poisson integral applies directly to a
-finite linear combination of time-window integrals. This is the scalar
-characteristic-function input for finite-dimensional jump-process laws.
+## Public declarations
+
+- `ProbabilityTheory.finiteWindowIntegrand` is the mark integrand
+  `z ↦ ∑ i, if z.1 ∈ S i then u i * z.2 else 0` for finitely many weighted
+  time windows.
+- `ProbabilityTheory.finiteWindowIntegral` is the corresponding sum
+  `∑ i, u i * ∫ z, if z.1 ∈ S i then z.2 else 0 ∂N`.
+- `ProbabilityTheory.integral_exp_finiteWindowIntegrand_prod`: for pairwise disjoint measurable
+  windows and integrable Lévy exponents, the product-intensity integral of
+  `exp (i ξ finiteWindowIntegrand) - 1` equals the sum of each window's
+  Lebesgue measure times its mark exponent.
+- `MeasureTheory.IsLevyMeasure.integral_exp_finiteWindowIntegrand_cutoff_add`:
+  the small- and large-jump cutoff integrals of that exponent sum to the same
+  finite-window exponent for the full Lévy measure.
+- `MeasureTheory.IsLevyMeasure.integral_exp_finiteWindow_sum_cutoff_poissonRandomMeasures`:
+  the characteristic exponent of the combined finite-window integrand of two
+  independent cutoff Poisson sources is the corresponding finite sum of
+  window exponents.
+- `MeasureTheory.IsLevyMeasure.integral_exp_finiteWindowIntegrals_cutoff_poissonRandomMeasures`:
+  the joint characteristic exponent of the finite family of cutoff window
+  integrals is `∑ i, |S i| ∫ (exp (i ξ u i x) - 1) dν`.
+- `ProbabilityTheory.integral_exp_finiteWindow_sum_split_poissonRandomMeasures`: for two
+  independent Poisson random measures, the exponential integral of the sum
+  has exponent equal to the sum of the two intensity integrals.
+
+These formulas provide the scalar and finite-dimensional characteristic
+function inputs for jump-process laws.
+
+Let `N_s` and `N_b` be independent Poisson random measures with intensities
+`\lambda_{[0,1]}\otimes(\nu|_{\mathrm{smallJumpBand}(n)})` and
+`\lambda_{[0,1]}\otimes(\nu|_{\mathrm{largeJumpBand}(n)})`, and put
+`I_i=\int_{S_i\times\mathbb R}x\,(N_s+N_b)(dt,dx)`. For pairwise-disjoint
+measurable windows `S_i` and weights `u_i`, the joint characteristic exponent
+of this finite vector is
+
+\[
+\mathbb E_{P_s\otimes P_b}\exp\!\left(i\sum_{i\in I}u_i I_i\right)
+=\exp\!\left(\sum_{i\in I}|S_i|
+  \int_{\mathbb R}(e^{iu_i x}-1)\,\nu(dx)\right),
+\]
+
+with the corresponding cutoff identities obtained by splitting the Lévy
+measure into its small- and large-jump parts.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -35,7 +81,7 @@ def finiteWindowIntegral {ι : Type*} [Fintype ι]
 
 /-- Pairwise disjoint windows make the integrand select at most one
 coefficient at each time. -/
-theorem finiteWindowIntegrand_eq_single_of_mem
+private theorem finiteWindowIntegrand_eq_single_of_mem
     {ι : Type*} [Fintype ι]
     (S : ι → Set unitInterval) (u : ι → ℝ)
     (hdisj : ∀ i j, i ≠ j → Disjoint (S i) (S j))
@@ -53,7 +99,7 @@ theorem finiteWindowIntegrand_eq_single_of_mem
   · simp
 
 /-- If a time belongs to no window, the combined integrand vanishes. -/
-theorem finiteWindowIntegrand_eq_zero_of_not_mem
+private theorem finiteWindowIntegrand_eq_zero_of_not_mem
     {ι : Type*} [Fintype ι]
     (S : ι → Set unitInterval) (u : ι → ℝ)
     {z : unitInterval × ℝ} (hz : ∀ i, z.1 ∉ S i) :
@@ -66,7 +112,7 @@ theorem finiteWindowIntegrand_eq_zero_of_not_mem
 
 /-- On pairwise disjoint windows, the exponential jump integrand splits
 pointwise into the sum of the individual window exponents. -/
-theorem exp_finiteWindowIntegrand_sub_one_eq_sum
+private theorem exp_finiteWindowIntegrand_sub_one_eq_sum
     {ι : Type*} [Fintype ι]
     (S : ι → Set unitInterval) (u : ι → ℝ)
     (hdisj : ∀ i j, i ≠ j → Disjoint (S i) (S j))
@@ -156,7 +202,7 @@ theorem integral_exp_finiteWindowIntegrand_prod
 
 /-- Integrability of the product-intensity exponential follows from the
 finite disjoint-window decomposition and integrability of each mark exponent. -/
-theorem integrable_exp_finiteWindowIntegrand_prod
+private theorem integrable_exp_finiteWindowIntegrand_prod
     {ι : Type*} [Fintype ι]
     (ν : Measure ℝ) [SigmaFinite ν]
     (S : ι → Set unitInterval) (u : ι → ℝ)
@@ -323,7 +369,7 @@ theorem _root_.MeasureTheory.IsLevyMeasure.integral_exp_finiteWindow_sum_cutoff_
 
 /-- Integrating the weighted window integrand is the same as summing the
 individual window integrals. -/
-theorem integral_finiteWindowIntegrand
+private theorem integral_finiteWindowIntegrand
     {ι : Type*} [Fintype ι]
     (S : ι → Set unitInterval) (u : ι → ℝ)
     (N : Measure (unitInterval × ℝ))

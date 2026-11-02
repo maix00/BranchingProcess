@@ -12,10 +12,48 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 /-!
 # Stable probability laws
 
-This file defines stable laws through the distribution of weighted sums of
-two independent copies.  It does not choose a density or a characteristic
-function parametrization, so it covers discrete proof interfaces and future
-multivariate generalizations without introducing a random-variable wrapper.
+This file defines real-valued stable laws through the distribution of weighted
+sums of two independent copies.  It does not choose a density or a
+characteristic-function parametrization, and keeps the stability predicates at
+the probability-measure level without introducing a random-variable wrapper.
+
+For `0 < α ≤ 2`, the scale and maps are
+
+\[
+\kappa_\alpha(a,b)=(a^\alpha+b^\alpha)^{1/\alpha},\qquad
+S_{a,b}(x,y)=ax+by,\qquad A_{r,c}(x)=rx+c.
+\]
+
+An `α`-stable probability measure `μ` satisfies, for each `a,b>0`,
+
+\[
+(\mu\otimes\mu)\circ S_{a,b}^{-1}
+=\mu\circ A_{\kappa_\alpha(a,b),c}^{-1}
+\quad\text{for some }c\in\mathbb R.
+\]
+
+Strict stability uses the same scaling with `c=0`.
+
+## Public declarations
+
+* `alphaStableScale α a b = (a^α + b^α)^(1/α)`,
+  `weightedSum a b (x,y) = a*x + b*y`, and
+  `affine scale shift x = scale*x + shift` define the scaling and maps used
+  in the stability predicates.
+* `IsAlphaStable α μ` requires `0 < α ≤ 2`, a nondegenerate probability law,
+  and `(μ.prod μ).map (weightedSum a b) = μ.map (affine (alphaStableScale α a b) shift)`
+  for every `a,b > 0` and some shift.
+* `IsStrictlyAlphaStable α μ` uses the same parameter range and nondegeneracy
+  conditions, with the scaling identity
+  `(μ.prod μ).map (weightedSum a b) = μ.map (alphaStableScale α a b ·)`.
+* `alphaStableScale_two_sq` and `alphaStableScale_two_nonneg` give
+  `alphaStableScale 2 a b ^ 2 = a ^ 2 + b ^ 2` and
+  `0 ≤ alphaStableScale 2 a b`.
+* `measurable_weightedSum` and `measurable_affine` establish measurability of
+  the two maps. `IsAlphaStable.alpha_pos`, `.alpha_le_two`, `.isProbabilityMeasure`,
+  and `.nondegenerate` project the corresponding hypotheses; strict stability
+  implies ordinary stability and has matching probability and nondegeneracy
+  projections.
 -/
 
 open MeasureTheory
@@ -27,6 +65,19 @@ namespace ProbabilityTheory
 /-- The scale forced by the stability exponent for two positive weights. -/
 noncomputable def alphaStableScale (α a b : ℝ) : ℝ :=
   (a ^ α + b ^ α) ^ (1 / α)
+
+/-- The strictly stable scale at index two satisfies the Pythagorean identity. -/
+theorem alphaStableScale_two_sq (a b : ℝ) :
+    alphaStableScale 2 a b ^ 2 = a ^ 2 + b ^ 2 := by
+  rw [alphaStableScale, Real.rpow_two, Real.rpow_two]
+  rw [show (1 / (2 : ℝ)) = ((2 : ℕ) : ℝ)⁻¹ by norm_num]
+  exact Real.rpow_inv_natCast_pow (n := 2) (by positivity) (by norm_num)
+
+/-- The strictly stable scale at index two is nonnegative. -/
+theorem alphaStableScale_two_nonneg (a b : ℝ) :
+    0 ≤ alphaStableScale 2 a b := by
+  rw [alphaStableScale, Real.rpow_two, Real.rpow_two]
+  exact Real.rpow_nonneg (by positivity) _
 
 /-- The weighted sum of two real coordinates. -/
 def weightedSum (a b : ℝ) (p : ℝ × ℝ) : ℝ :=

@@ -14,6 +14,26 @@ public import Topology.Cadlag.Basic
 
 This layer adds almost-sure càdlàg paths to the general stable clock-increment
 interface. Lévy processes and path laws are defined in their own modules.
+
+The process interface is the conjunction of stable clock increments and
+almost-sure càdlàg paths:
+
+\[
+\operatorname{IsStableClockProcess}(α,μ,\mathrm{clock},X,P)
+\iff\operatorname{HasStableClockIncrements}(α,μ,\mathrm{clock},X,P)
+\;\land\;
+P\{\omega:t\mapsto X(t,\omega)\text{ is càdlàg}\}=1.
+\]
+
+## Public declarations
+
+- `ProbabilityTheory.IsStableClockProcess α μ clock X P` specifies stable
+  clock increments and almost-sure càdlàg paths:
+  `HasStableClockIncrements α μ clock X P ∧ ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω)`.
+- `ProbabilityTheory.IsStableClockProcess.increments` projects the stable
+  clock-increment specification.
+- `ProbabilityTheory.IsStableClockProcess.ae_cadlag` gives the almost-sure
+  càdlàg path property.
 -/
 
 open MeasureTheory Set

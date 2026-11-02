@@ -16,6 +16,15 @@ This file collects the elementary conversion from an ENNReal probability
 product bound to a real logarithmic sum. It is useful when independent-event
 factorization supplies the product estimate and the event being bounded has
 positive probability.
+
+## Public declarations
+
+- `ProbabilityTheory.measure_log_toReal_le_sum_log_toReal_of_le_finsetProduct`:
+  if $0<P(G)$ and $P(G)\le\prod_{i\in s}P(E_i)$, then
+  $\log(P(G).\mathrm{toReal})\le\sum_{i\in s}\log(P(E_i).\mathrm{toReal})$.
+- `ProbabilityTheory.sum_log_toReal_le_measure_log_toReal_of_finsetProduct_le`:
+  if $0<\prod_{i\in s}P(E_i)$ and $\prod_{i\in s}P(E_i)\le P(G)$, then
+  $\sum_{i\in s}\log(P(E_i).\mathrm{toReal})\le\log(P(G).\mathrm{toReal})$.
 -/
 
 @[expose] public section

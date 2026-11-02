@@ -14,6 +14,11 @@ public import Mathlib.Order.Interval.Set.Basic
 
 The rational subtype used for coordinates in `[0, 1]`. It is independent of
 finite-grid constructions and can be shared by order and topology adapters.
+
+## Public declarations
+
+- `RationalCoordinate.UnitInterval` is the subtype
+  $\{q\in\mathbb Q:0\leq q\leq1\}$.
 -/
 
 @[expose] public section
