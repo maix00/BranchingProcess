@@ -18,10 +18,31 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Identify the pinned Mathlib revision
+        id: mathlib-revision
+        run: echo "sha=$(git -C Vendor/Mathlib rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      # The Mathlib cache service has no matching artifact set for this pinned source
+      # tree. lean-action caches the root .lake directory, while this path belongs to
+      # the Mathlib submodule and needs its own stable cache.
+      - name: Restore the Mathlib build cache
+        id: mathlib-build-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: Vendor/Mathlib/.lake/build
+          key: mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib-revision.outputs.sha }}
+
       - name: Install Lean and build the package
         uses: leanprover/lean-action@v1
         with:
           use-mathlib-cache: true
+
+      - name: Save the Mathlib build cache
+        if: success() && steps.mathlib-build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: Vendor/Mathlib/.lake/build
+          key: mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib-revision.outputs.sha }}
 
       - name: Check stable APIs, proof dependencies, and import boundaries
         run: |
