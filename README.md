@@ -110,6 +110,22 @@ lake exe cache get
 lake build
 ```
 
+If the pinned Mathlib fork commit has no published cache, first try its most
+recent cached ancestor from the Mathlib checkout:
+
+```sh
+cd Vendor/Mathlib
+lake exe cache get --unsafe
+cd ../..
+lake build
+```
+
+Mathlib's `--unsafe` option reports that it is reading a non-default fork
+cache. It searches recent ancestor commits and reuses artifacts whose source
+hashes match the checkout. If no ancestor has a cache, the first build compiles
+the missing modules locally. Keep `.lake/build` between builds; Lake then
+rebuilds modules affected by source changes and reuses the rest.
+
 Run `lake update` only when intentionally refreshing dependency revisions, then
 review the resulting manifest changes and rebuild the package.
 
