@@ -8,37 +8,49 @@ module
 
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.BigOperators.Fin
+public import Algebra.BigOperators.PartialSum
 public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 public import Mathlib.MeasureTheory.Constructions.Pi
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
-import all Probability.Process.RandomWalk.SmallDeviation.Entrance.Lemmas.Rotation.FinitePath
 
 /-!
 # Finite normal-domain entrance events
 
 ## Public declarations
 
+- `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteNormalizedStepKnots`:
+  maps $x\in\mathbb R^n$ to the normalized partial-sum knots
+  $j\mapsto scale^{-1}\sum_{i<j}x_i$ for $0\le j\le n$.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.finiteMovingEntranceEvent`:
-  for \(z_j=scale^{-1}\sum_{i<j}x_i\), the event
-  \(\{x:\forall j\le n,\ -u+dj\le z_j\le1-u+dj,\quad
-  \frac13-u+dn\le z_n\le\frac23-u+dn\}\).
+  for \(z_j=\frac{1}{scale}\sum_{i<j}x_i\), the event
+  \(\{x:\forall j\le n,\ -u+\mathrm{drift}\,j\le z_j\le
+  1-u+\mathrm{drift}\,j,\quad
+  \frac13-u+\mathrm{drift}\,n\le z_n\le
+  \frac23-u+\mathrm{drift}\,n\}\).
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.mem_finiteMovingEntranceEvent_iff`:
   states exactly the displayed partial-sum membership equivalence.
 - `ProbabilityTheory.RandomWalk.SmallDeviation.Entrance.measurableSet_finiteMovingEntranceEvent`:
   states that this event belongs to the finite product \(\sigma\)-algebra.
 
+The knot map is the common coordinate representation for these events and
+their endpoint bridges. The càdlàg interpolation and its $J_1$-ball encoding
+remain internal proof support under `Entrance/Lemmas/Rotation/`.
+
 These events are used in Wang Yiyang, *Asymptotic Speed of the N-Branching
 Random Walk with Infinite Offspring* (master's thesis, Fudan University,
 2026), Appendix A.2, Lemma A.7, used in the proof of Chapter 3, Lemma 3.5.
-The finite path representation needed to construct them remains private proof
-support under `Entrance/Lemmas/Rotation/`.
 -/
 
 public section
 
-open MeasureTheory ProbabilityTheory
+open MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Entrance
+
+/-- The normalized partial-sum knots of a finite increment vector. -/
+noncomputable abbrev finiteNormalizedStepKnots (scale : ℝ) {n : ℕ}
+    (x : Fin n → ℝ) : Fin (n + 1) → ℝ :=
+  fun j => scale⁻¹ * Fin.partialSum x j
 
 /-- The finite-step entrance event in the original moving corridor. Time is
 normalized to `[0,1]`; `drift` is the boundary displacement per step in these
