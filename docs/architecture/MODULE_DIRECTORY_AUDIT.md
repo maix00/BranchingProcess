@@ -29047,3 +29047,16 @@ root count `m`. Its focused dependency build completed successfully in 4,877
 Lake jobs. The remaining positive-`a` endpoint task requires this estimate to
 work with a varying ambient root count `m n` before it can be combined with
 the existing low-root and capacity-failure bounds.
+
+## Axiom-report name synchronization (2026-11-02)
+
+The first standalone CI run for the current preflight head completed the
+3,763-job production build and all 31 import-boundary unit checks, then failed
+in the axiom-report check for
+`BranchingProcessTest/Analysis/Asymptotics/RegularVariationInverse.lean`.
+The test and production declaration use
+`Asymptotics.IsRegularlyVaryingAtTop.tendsto_div_of_tendsto_powerQuotient_ratio`,
+but `scripts/run-all-lean-tests.py` still listed the former
+`...squareQuotient...` name. The allowlist now matches the current declaration;
+the remaining pull-request run was still executing when this correction was
+made, so the corrected preflight head requires a fresh CI run.

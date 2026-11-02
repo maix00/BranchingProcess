@@ -394,7 +394,7 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/Analysis/Asymptotics/RegularVariationInverse.lean"): (
         "Asymptotics.IsRegularlyVaryingAtTop.tendstoUniformlyOn_ratio_of_eventuallyMonotone",
         "Asymptotics.IsRegularlyVaryingAtTop.tendsto_div_of_tendsto_value_ratio",
-        "Asymptotics.IsRegularlyVaryingAtTop.tendsto_div_of_tendsto_squareQuotient_ratio",
+        "Asymptotics.IsRegularlyVaryingAtTop.tendsto_div_of_tendsto_powerQuotient_ratio",
         "ProbabilityTheory.truncatedSecondMoment_isRegularlyVarying_of_stableSlowVariation",
         "ProbabilityTheory.stableScaleTime_tendsto_atTop_of_stableSlowVariation",
         "ProbabilityTheory.IsStableNorming.tendsto_floorBlock_normalization_div_scale",
