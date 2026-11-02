@@ -29024,9 +29024,9 @@ the fixed-horizon interfaces in `Basic.lean`, `Closure.lean`, and
 ## Current-tree verification (2026-11-02)
 
 The source tree contains 1,782 Lean files outside `.lake/` and `Vendor/`: 1,644
-production modules, 137 `BranchingProcessTest` modules, and the Lake
-configuration. The production paths match all 1,644 rows in
-`MODULE_AUDIT_LEDGER.csv`; every row records a passing structural scan,
+production modules, 137 `BranchingProcessTest` modules, and the Lean helper
+script `scripts/parse_lean_imports.lean`. The production paths match all 1,644
+rows in `MODULE_AUDIT_LEDGER.csv`; every row records a passing structural scan,
 semantic review, and Lake build. A fresh path scan across all 1,782 files found
 zero direct-module directories with more than eight files, same-level
 file/directory stem collisions, parent-prefixed file stems, paired or multiple
