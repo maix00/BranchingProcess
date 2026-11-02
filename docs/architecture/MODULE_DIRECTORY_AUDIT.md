@@ -29034,6 +29034,11 @@ file/directory stem collisions, parent-prefixed file stems, paired or multiple
 `Lemmas/` modules. This includes the test tree, which is not part of the
 production-module ledger.
 
+The test-import review found one deprecated Mathlib import in
+`BranchingProcessTest/Algebra/WeightedSum.lean`: it used the re-export
+`Mathlib.Data.Real.Basic`, deprecated in favor of `Mathlib.Basic.Real.Basic`.
+The test now imports the canonical module and passes `lake env lean`.
+
 The terminal-extinction estimate in
 `Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SecondStage/Failure/Bound.lean`
 now accepts a sequence of selected-root thresholds `K n`, assuming
