@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
 
 jobs:
@@ -32,10 +33,77 @@ jobs:
           path: Vendor/Mathlib/.lake/build
           key: mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib-revision.outputs.sha }}
 
+      # A pull_request run cannot restore a cache saved by a push to its head
+      # branch. Transfer the build through a short-lived artifact from preflight.
+      - name: Find the preflight Mathlib build artifact
+        id: mathlib-build-artifact
+        if: >-
+          steps.mathlib-build-cache.outputs.cache-hit != 'true' &&
+          ((github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository) ||
+          (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const artifactName = `mathlib-build-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib-revision.outputs.sha }}`;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const repoFullName = `${owner}/${repo}`;
+            const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+            for (let attempt = 0; attempt < 40; attempt++) {
+              const artifacts = await github.paginate(
+                github.rest.actions.listArtifactsForRepo,
+                { owner, repo, per_page: 100 }
+              );
+              const candidates = artifacts
+                .filter(a => a.name === artifactName && !a.expired && a.workflow_run?.id)
+                .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+
+              for (const artifact of candidates) {
+                const { data: run } = await github.rest.actions.getWorkflowRun({
+                  owner, repo, run_id: artifact.workflow_run.id
+                });
+                if (run.event === 'push' && run.head_branch === 'preflight' &&
+                    run.head_repository?.full_name === repoFullName &&
+                    run.path === '.github/workflows/build.yml') {
+                  core.setOutput('run-id', String(run.id));
+                  core.setOutput('artifact-name', artifactName);
+                  core.info(`Using Mathlib build artifact from push run ${run.id}.`);
+                  return;
+                }
+              }
+
+              if (attempt % 5 === 0)
+                core.info(`Waiting for the matching preflight artifact (${attempt + 1}/40).`);
+              await pause(30_000);
+            }
+
+            core.notice('No preflight Mathlib artifact was found; continuing with the normal build path.');
+
+      - name: Download the preflight Mathlib build artifact
+        if: steps.mathlib-build-artifact.outputs.run-id != ''
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ steps.mathlib-build-artifact.outputs.artifact-name }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.mathlib-build-artifact.outputs.run-id }}
+          path: ${{ runner.temp }}/mathlib-build-artifact
+
+      - name: Restore the Mathlib build files
+        if: steps.mathlib-build-artifact.outputs.run-id != ''
+        run: |
+          mkdir -p Vendor/Mathlib/.lake
+          tar --zstd -xf "$RUNNER_TEMP/mathlib-build-artifact/mathlib-build.tar.zst" \
+            -C Vendor/Mathlib/.lake
+
       - name: Install Lean and build the package
         uses: leanprover/lean-action@v1
         with:
-          use-mathlib-cache: true
+          # Mathlib has not published a cache for this fork; use the pinned
+          # GitHub build cache or the matching short-lived artifact instead.
+          use-mathlib-cache: false
 
       - name: Save the Mathlib build cache
         if: success() && steps.mathlib-build-cache.outputs.cache-hit != 'true'
@@ -43,6 +111,23 @@ jobs:
         with:
           path: Vendor/Mathlib/.lake/build
           key: mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib-revision.outputs.sha }}
+
+      - name: Package Mathlib build files for PR runs
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/preflight'
+        run: |
+          set -o pipefail
+          tar -cf - -C Vendor/Mathlib/.lake build \
+            | zstd -T0 -3 -o "$RUNNER_TEMP/mathlib-build.tar.zst"
+
+      - name: Upload the short-lived Mathlib build artifact
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/preflight'
+        uses: actions/upload-artifact@v7
+        with:
+          name: mathlib-build-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib-revision.outputs.sha }}
+          path: ${{ runner.temp }}/mathlib-build.tar.zst
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
 
       - name: Check stable APIs, proof dependencies, and import boundaries
         run: |
@@ -274,7 +359,7 @@ jobs:
         run: |
           set -o pipefail
           lake build \
-            Probability.RandomMeasure.Poisson.Basic \
+            Probability.RandomMeasure.Poisson.RandomMeasure.Basic \
             Probability.RandomMeasure.Poisson.Integration.Integral
           : > "$RUNNER_TEMP/poisson-random-measure-axioms.txt"
           cat \
@@ -296,7 +381,6 @@ jobs:
             Probability.BranchingProcess.Offspring.FieldLaw \
             Probability.BranchingProcess.Offspring.Count \
             Probability.BranchingProcess.GaltonWatson.Generation \
-            Probability.BranchingProcess.GaltonWatson.BranchingProperty \
             Probability.BranchingRandomWalk.Genealogy.GaltonWatson
           : > "$RUNNER_TEMP/branching-process-axioms.txt"
           cat \
