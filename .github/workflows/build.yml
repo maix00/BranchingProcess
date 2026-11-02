@@ -186,7 +186,8 @@ jobs:
             Combinatorics.BranchingWalk.Walk.Equiv \
             Probability.BranchingRandomWalk.Walk.Path.Scaling
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
-          python3 scripts/run-all-lean-tests.py --output-dir "$RUNNER_TEMP/lean-tests"
+          # Compile independent test modules across ubuntu-latest's four CPUs.
+          python3 scripts/run-all-lean-tests.py --jobs 4 --output-dir "$RUNNER_TEMP/lean-tests"
           : > "$RUNNER_TEMP/positive-definite-axioms.txt"
           cat \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/Fourier/PositiveDefinite.lean.log" \
