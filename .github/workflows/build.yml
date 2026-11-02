@@ -246,7 +246,6 @@ jobs:
             Skorokhod.continuousAt_integralAlongTimeChange \
             Skorokhod.instSeparableSpaceCadlagPath \
             Skorokhod.instIsCompletelyMetrizableSpaceCadlagPath \
-            Skorokhod.measurable_rationalEvaluation \
             Skorokhod.measurableEmbedding_rationalEvaluation \
             Skorokhod.borel_eq_comap_rationalEvaluation
 
