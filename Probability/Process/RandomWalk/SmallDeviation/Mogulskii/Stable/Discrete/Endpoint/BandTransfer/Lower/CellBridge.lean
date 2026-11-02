@@ -13,7 +13,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Sca
 public import Probability.Distributions.Stable.Attraction.Norming.Basic
 public import Combinatorics.Sequence.BalancedPartition
 public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
-import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.BandTransfer.Lower.Lemmas.StableReturnBlocks
+import all Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.BandTransfer.Lower.Lemmas.ReturnBlocks
 
 /-!
 # Stable discrete endpoint-core return lower bound
