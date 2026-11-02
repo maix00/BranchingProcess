@@ -8,21 +8,6 @@ open Skorokhod.PathClass.StepCorridor
 open scoped ENNReal Topology
 
 example {Ω : Type*} [MeasurableSpace Ω]
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    {ν : Measure ℝ} [IsProbabilityMeasure ν]
-    {coordinate : ℕ → Ω → ℝ}
-    (hindep : iIndepFun coordinate P)
-    (hmeasurable : ∀ k, Measurable (coordinate k))
-    (hlaw : ∀ k, HasLaw (coordinate k) ν P)
-    (scale : ℕ → ℝ) {α : ℝ} (C : FiniteCorridorUnion α) (n : ℕ) :
-    P {ω | terminalLeftNormalizedStepCadlagPathIcc scale n
-        (fun k => coordinate k ω) ∈ C.toSet} =
-      iidSequenceLaw ν {increment |
-        terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet} :=
-  measure_sourceFiniteCorridorUnionEvent_eq_of_iid
-    hindep hmeasurable hlaw scale n C
-
-example {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P]
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {α κ : ℝ} {g : ℕ → ℝ}
@@ -44,5 +29,4 @@ example {Ω : Type*} [MeasurableSpace Ω]
   existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_iid
     P hg hκ hindep hmeasurable hlaw scale hcanonicalFiniteUnionRate hG
 
-#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.measure_sourceFiniteCorridorUnionEvent_eq_of_iid
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_iid

@@ -10,7 +10,6 @@ natural-number order is an infinite population with a valid first-N segment.
 -/
 
 open _root_.Combinatorics.Selection.NSelection
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 open Combinatorics.Branching
 
 def negNatOffspring : Combinatorics.Branching.Step ℕ ℝ :=

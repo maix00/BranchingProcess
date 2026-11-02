@@ -290,7 +290,6 @@ example (lower upper : C(unitInterval, ℝ)) (scale : ℕ → ℝ) (n : ℕ) :
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.rawNormalContinuousBoundaryRateData_of_centered_unitVariance
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.rawNormalContinuousBoundaryProbabilityRate_of_rawSource
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.centeredUnitVariance_sourceRelativeContinuousBoundaryProbabilityRate
-#print axioms ProbabilityTheory.RandomWalk.terminalLeftNormalizedStepCadlagPathIcc_mem_relativeContinuousBoundaryCorridorSet_iff
 #print axioms ProbabilityTheory.RandomWalk.measurableSet_terminalLeftNormalizedStepCadlagPathIcc_preimage_relativeContinuousBoundaryCorridorSet
 
 end

@@ -71,7 +71,7 @@ theorem concrete_reserve_split_completion_ae_finite
   letI : IsProbabilityMeasure L.sorted := inferInstance
   obtain ⟨M, hpositive, hsplitMeas⟩ :=
     ProbabilityTheory.BranchingRandomWalk.exists_nat_cutoff_positive_reserveSplit
-      L hnonempty hsupercritical
+      L hsupercritical
   let R : Step.FiniteSelection α X :=
     Combinatorics.Branching.Step.FiniteSelection.reserveSelectionBelowPotential
       (Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2)

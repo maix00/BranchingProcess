@@ -7,10 +7,10 @@ finite-horizon probability bound used in the polynomial endpoint sublevel proof.
 -/
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measurableSet_hasFirstPassageBelow
+  ProbabilityTheory.BranchingRandomWalk.Spine.measurableSet_hasFirstPassageBelow
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_hasFirstPassageBelow_le
+  ProbabilityTheory.BranchingRandomWalk.Spine.measure_hasFirstPassageBelow_le
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_selectedFirstPassageBelowByHorizon_le

@@ -5,6 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Sequence.IID.GeometricReward.FirstMoment
+import Probability.Sequence.IID.GeometricReward.ExponentialTransform
 
 /-!
 # Axiom audit for iid geometric-trial moment identities

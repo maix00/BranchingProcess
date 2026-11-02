@@ -9,7 +9,7 @@ import sys
 
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 AXIOM_REPORT = re.compile(
-    r"(?m)^'([^']+)' depends on axioms:\s*\[([^\]]*)\]", re.DOTALL
+    r"(?m)^'([^\r\n]+)' depends on axioms:\s*\[([^\]]*)\]"
 )
 
 

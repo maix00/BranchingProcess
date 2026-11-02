@@ -5,6 +5,7 @@ Authors: WANG Yiyang
 -/
 import Probability.MeasureTheory.Moments.SecondMomentGrowth
 import Probability.MeasureTheory.Moments.PaleyZygmund
+import Probability.BranchingProcess.GaltonWatson.BoundedGrowth
 import Mathlib.Probability.Distributions.Bernoulli
 import Mathlib.Topology.UnitInterval
 

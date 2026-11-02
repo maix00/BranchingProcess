@@ -9,7 +9,6 @@ law for the marks sampled at the adaptive spine vertices.
 -/
 
 #print axioms
-#print axioms
   Combinatorics.Branching.Step.FiniteSelection.potentialValue'_reserveSpineSlot_le_cutoff_add_firstSelectedSlotPositive
 
 #print axioms
