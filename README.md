@@ -126,6 +126,14 @@ hashes match the checkout. If no ancestor has a cache, the first build compiles
 the missing modules locally. Keep `.lake/build` between builds; Lake then
 rebuilds modules affected by source changes and reuses the rest.
 
+GitHub Actions also keeps `Vendor/Mathlib/.lake/build` under a cache key for
+the pinned Mathlib revision. If that revision changes, CI first restores the
+most recent cache for the same operating system and Lean toolchain, then Lake
+rebuilds artifacts whose dependency traces changed and saves the result under
+the new revision key. The separate `lake exe cache get` message about missing
+fork artifacts describes Mathlib's download cache; it does not report whether
+Lake can reuse an existing local build directory.
+
 Run `lake update` only when intentionally refreshing dependency revisions, then
 review the resulting manifest changes and rebuild the package.
 
