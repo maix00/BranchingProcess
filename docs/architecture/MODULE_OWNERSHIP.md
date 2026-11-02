@@ -1294,8 +1294,10 @@ declaration inventories in their headers. The affected filtration,
 random-walk adaptedness, stopping-time, and drifted-tube modules build with
 the pinned toolchain; the renamed independent-prefix axiom test compiles, the
 import-boundary checker passes its 10 public entries, and the run-all-test
-manifest points at the renamed test. The complete file, namespace, and
-citation audit remains open.
+manifest points at the renamed test. At this review checkpoint, the
+repository-wide file, namespace, and citation audit remained open. Its
+completed current-tree inventory and per-module review records are in
+`MODULE_DIRECTORY_AUDIT.md` and `MODULE_AUDIT_LEDGER.csv`.
 
 
 ## Mogul'skii rate-bound ownership
