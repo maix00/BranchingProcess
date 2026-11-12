@@ -13,7 +13,7 @@ import Probability.Process.Stopping.Selection.Ranked
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.FixedFamily
 
 /-!
-# Axiom audit for the causal reserve-source comparison
+# Axiom audit for the causal reserve-spine BRW population comparison
 -/
 
 #print axioms

@@ -1,7 +1,7 @@
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Reward.PositivePart
 
 /-!
-# Axiom audit for the causal reserve-source positive-part estimate
+# Axiom audit for the selected reserve-spine BRW population positive-part estimate
 
 The statements below are pathwise consequences of the reserve selector and
 the live-spine inclusion.  In particular, the audit does not certify an iid
