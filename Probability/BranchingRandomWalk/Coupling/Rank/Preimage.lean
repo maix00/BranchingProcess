@@ -27,8 +27,8 @@ recover the source value:
 \[\begin{aligned}
 \operatorname{valueAtMatchedRank}(\omega,q)
 &=\begin{cases}
-S(\omega,p),&\operatorname{preimageByRank}(\omega,q)=\operatorname{some}(p),\\
-F(\omega,q),&\operatorname{preimageByRank}(\omega,q)=\operatorname{none},
+S(\omega,p),&\operatorname{objectAtPartnerRankBy}(\omega,q)=\operatorname{some}(p),\\
+F(\omega,q),&\operatorname{objectAtPartnerRankBy}(\omega,q)=\operatorname{none},
 \end{cases}\\
 p\in\operatorname{source}(\omega),\quad
 |\operatorname{source}(\omega)|\le|\operatorname{target}(\omega)|
@@ -38,7 +38,7 @@ p\in\operatorname{source}(\omega),\quad
 \end{aligned}\]
 
 * `preimageByRank_function_range_countable` states that the actual range of
-  `(ω, q) ↦ preimageByRank (sourceValue ω) (targetValue ω) (source ω)
+  `(ω, q) ↦ objectAtPartnerRankBy (sourceValue ω) (targetValue ω) (source ω)
   (target ω) q` is countable when both random finite supports have countable
   actual ranges.
 * `matchByRankOrSelf_range_countable` states that the canonical equal-rank
@@ -88,7 +88,7 @@ private theorem particleAtSourceRankBy_range_countable
     (source : Ω → Finset Source) (target : Ω → Finset Target)
     (htargetRange : (Set.range target).Countable) (p : Source) :
     (Set.range fun ω =>
-      particleAtSourceRankBy (sourceValue ω) (targetValue ω)
+      partnerAtObjectRankBy (sourceValue ω) (targetValue ω)
         (source ω) (target ω) p).Countable := by
   let S : Set (Finset Target) := Set.range target
   let _ : Countable S := Set.countable_coe_iff.mpr htargetRange
@@ -96,7 +96,7 @@ private theorem particleAtSourceRankBy_range_countable
     Set.countable_iUnion fun s : S => s.1.countable_toSet.image Option.some
   apply (Set.countable_singleton none).union htargets |>.mono
   rintro o ⟨ω, rfl⟩
-  cases hlookup : particleAtSourceRankBy (sourceValue ω) (targetValue ω)
+  cases hlookup : partnerAtObjectRankBy (sourceValue ω) (targetValue ω)
       (source ω) (target ω) p with
   | none =>
       simp [hlookup]
@@ -105,7 +105,7 @@ private theorem particleAtSourceRankBy_range_countable
       apply Set.mem_iUnion_of_mem
         (⟨target ω, Set.mem_range_self ω⟩ : S)
       exact ⟨q,
-        (particleAtSourceRankBy_eq_some_iff.mp hlookup).1, hlookup.symm⟩
+        (partnerAtObjectRankBy_eq_some_iff.mp hlookup).1, hlookup.symm⟩
 
 omit [MeasurableSpace Ω] in
 /-- The guarded inverse match has countable actual range whenever the random
@@ -115,15 +115,15 @@ private theorem preimageByRank_range_countable
     (sourceValue targetValue : Ω → Particle → Value)
     (source target : Ω → Finset Particle)
     (hsourceRange : (Set.range source).Countable) (q : Particle) :
-    (Set.range fun ω => preimageByRank (sourceValue ω) (targetValue ω)
+    (Set.range fun ω => objectAtPartnerRankBy (sourceValue ω) (targetValue ω)
       (source ω) (target ω) q).Countable := by
   have hlookup := particleAtSourceRankBy_range_countable
     targetValue sourceValue target source hsourceRange q
   apply (Set.countable_singleton none).union hlookup |>.mono
   rintro o ⟨ω, rfl⟩
   by_cases hq : q ∈ target ω
-  · exact Set.mem_union_right _ ⟨ω, by simp [preimageByRank, hq]⟩
-  · exact Set.mem_union_left _ (by simp [preimageByRank, hq])
+  · exact Set.mem_union_right _ ⟨ω, by simp [objectAtPartnerRankBy, hq]⟩
+  · exact Set.mem_union_left _ (by simp [objectAtPartnerRankBy, hq])
 
 private lemma finite_optionMaps_supportedOn
     {Source Target : Type*} (source : Finset Source) (target : Finset Target) :
@@ -171,7 +171,7 @@ theorem preimageByRank_function_range_countable
     (source target : Ω → Finset Particle)
     (hsourceRange : (Set.range source).Countable)
     (htargetRange : (Set.range target).Countable) :
-    (Set.range fun ω q => preimageByRank (sourceValue ω) (targetValue ω)
+    (Set.range fun ω q => objectAtPartnerRankBy (sourceValue ω) (targetValue ω)
       (source ω) (target ω) q).Countable := by
   let S : Set (Finset Particle) := Set.range source
   let T : Set (Finset Particle) := Set.range target
@@ -193,9 +193,9 @@ theorem preimageByRank_function_range_countable
     (⟨target ω, Set.mem_range_self ω⟩ : T)
   constructor
   · intro q hq
-    simp [preimageByRank, hq]
+    simp [objectAtPartnerRankBy, hq]
   · intro q p hp
-    exact (preimageByRank_eq_some_iff.mp hp).2.1
+    exact (objectAtPartnerRankBy_eq_some_iff.mp hp).2.1
 
 omit [MeasurableSpace Ω] in
 /-- For a fixed source label, the total equal-rank match has countable actual
@@ -242,7 +242,7 @@ theorem measurableSet_particleAtSourceRankBy_eq_some
       valueKey (targetValue ω) q < valueKey (targetValue ω) p)
     (p : Source) (q : Target) :
     MeasurableSet {ω |
-      particleAtSourceRankBy (sourceValue ω) (targetValue ω)
+      partnerAtObjectRankBy (sourceValue ω) (targetValue ω)
         (source ω) (target ω) p = some q} := by
   exact measurableSet_particleAtRankBy_randomRank_eq_some
     targetValue target htargetFiber htargetRange htargetKey
@@ -267,7 +267,7 @@ private theorem measurableSet_particleAtSourceRankBy_eq
       valueKey (targetValue ω) q < valueKey (targetValue ω) p)
     (p : Source) (o : Option Target) :
     MeasurableSet {ω |
-      particleAtSourceRankBy (sourceValue ω) (targetValue ω)
+      partnerAtObjectRankBy (sourceValue ω) (targetValue ω)
         (source ω) (target ω) p = o} := by
   cases o with
   | some q =>
@@ -295,36 +295,36 @@ private theorem measurableSet_preimageByRank_eq
     (htargetKey : ∀ p q : Particle, Measurable fun ω =>
       valueKey (targetValue ω) q < valueKey (targetValue ω) p)
     (q : Particle) (o : Option Particle) :
-    MeasurableSet {ω | preimageByRank (sourceValue ω) (targetValue ω)
+    MeasurableSet {ω | objectAtPartnerRankBy (sourceValue ω) (targetValue ω)
       (source ω) (target ω) q = o} := by
   have hmem : MeasurableSet {ω | q ∈ target ω} :=
     measurableSet_mem_finset target htargetFiber htargetRange q
   have hlookup : ∀ o, MeasurableSet {ω |
-      particleAtSourceRankBy (targetValue ω) (sourceValue ω)
+      partnerAtObjectRankBy (targetValue ω) (sourceValue ω)
         (target ω) (source ω) q = o} :=
     measurableSet_particleAtSourceRankBy_eq targetValue sourceValue
       target source htargetFiber htargetRange hsourceFiber hsourceRange
       htargetKey hsourceKey q
   cases o with
   | some p =>
-      have hset : {ω | preimageByRank (sourceValue ω) (targetValue ω)
+      have hset : {ω | objectAtPartnerRankBy (sourceValue ω) (targetValue ω)
           (source ω) (target ω) q = some p} =
           {ω | q ∈ target ω} ∩ {ω |
-            particleAtSourceRankBy (targetValue ω) (sourceValue ω)
+            partnerAtObjectRankBy (targetValue ω) (sourceValue ω)
               (target ω) (source ω) q = some p} := by
         ext ω
-        by_cases hq : q ∈ target ω <;> simp [preimageByRank, hq]
+        by_cases hq : q ∈ target ω <;> simp [objectAtPartnerRankBy, hq]
       rw [hset]
       exact hmem.inter (hlookup (some p))
   | none =>
-      have hset : {ω | preimageByRank (sourceValue ω) (targetValue ω)
+      have hset : {ω | objectAtPartnerRankBy (sourceValue ω) (targetValue ω)
           (source ω) (target ω) q = none} =
           {ω | q ∈ target ω}ᶜ ∪
             ({ω | q ∈ target ω} ∩ {ω |
-              particleAtSourceRankBy (targetValue ω) (sourceValue ω)
+              partnerAtObjectRankBy (targetValue ω) (sourceValue ω)
                 (target ω) (source ω) q = none}) := by
         ext ω
-        by_cases hq : q ∈ target ω <;> simp [preimageByRank, hq]
+        by_cases hq : q ∈ target ω <;> simp [objectAtPartnerRankBy, hq]
       rw [hset]
       exact hmem.compl.union (hmem.inter (hlookup none))
 
@@ -344,16 +344,16 @@ theorem measurableSet_preimageByRank_function_eq
     (htargetKey : ∀ p q : Particle, Measurable fun ω =>
       valueKey (targetValue ω) q < valueKey (targetValue ω) p)
     (f : Particle → Option Particle) :
-    MeasurableSet {ω | (fun q => preimageByRank
+    MeasurableSet {ω | (fun q => objectAtPartnerRankBy
       (sourceValue ω) (targetValue ω) (source ω) (target ω) q) = f} := by
   let T : Set (Finset Particle) := Set.range target
   let _ : Countable T := Set.countable_coe_iff.mpr htargetRange
   let U := {t : T // ∀ q, q ∉ t.1 → f q = none}
-  have hset : {ω | (fun q => preimageByRank
+  have hset : {ω | (fun q => objectAtPartnerRankBy
       (sourceValue ω) (targetValue ω) (source ω) (target ω) q) = f} =
       ⋃ t : U, {ω | target ω = t.1.1} ∩
         ⋂ q : {q : Particle // q ∈ t.1.1},
-          {ω | preimageByRank (sourceValue ω) (targetValue ω)
+          {ω | objectAtPartnerRankBy (sourceValue ω) (targetValue ω)
             (source ω) (target ω) q.1 = f q.1} := by
     ext ω
     constructor
@@ -361,7 +361,7 @@ theorem measurableSet_preimageByRank_function_eq
       have hout : ∀ q, q ∉ target ω → f q = none := by
         intro q hq
         rw [← congrFun h q]
-        simp [preimageByRank, hq]
+        simp [objectAtPartnerRankBy, hq]
       let t : U := ⟨⟨target ω, Set.mem_range_self ω⟩, hout⟩
       apply Set.mem_iUnion_of_mem t
       constructor
@@ -379,7 +379,7 @@ theorem measurableSet_preimageByRank_function_eq
           rw [htarget]
           exact hq
         rw [t.2 q hq]
-        simp [preimageByRank, hq']
+        simp [objectAtPartnerRankBy, hq']
   rw [hset]
   apply MeasurableSet.iUnion
   intro t
@@ -400,7 +400,7 @@ noncomputable def valueAtMatchedRank
     (ω : Ω) (q : Particle) : Y :=
   Coupling.valueAtPreimage sourceData fallback
     (fun sample targetParticle =>
-      preimageByRank (sourceValue sample) (targetValue sample)
+      objectAtPartnerRankBy (sourceValue sample) (targetValue sample)
         (source sample) (target sample) targetParticle) ω q
 
 omit [MeasurableSpace Ω] in
@@ -419,8 +419,8 @@ theorem valueAtMatchedRank_matchByRankOrSelf
   have htarget := matchByRankOrSelf_mem
     (sourceValue ω) (targetValue ω) (source ω) (target ω) hcard hp
   simp [valueAtMatchedRank, Coupling.valueAtPreimage,
-    preimageByRank, htarget,
-    particleAtSourceRankBy_matchByRankOrSelf
+    objectAtPartnerRankBy, htarget,
+    partnerAtObjectRankBy_matchByRankOrSelf
       (sourceValue ω) (targetValue ω) (source ω) (target ω) hcard hp]
 
 /-- Rank-matched installation is measurable as a whole target-indexed
@@ -447,7 +447,7 @@ theorem valueAtMatchedRank_measurable
   apply measurable_pi_iff.mpr
   intro q
   let pre : Ω → Option Particle := fun ω =>
-    preimageByRank (sourceValue ω) (targetValue ω)
+    objectAtPartnerRankBy (sourceValue ω) (targetValue ω)
       (source ω) (target ω) q
   let field : Ω → Option Particle → Y := fun ω o =>
     o.elim (fallback ω q) (sourceData ω)

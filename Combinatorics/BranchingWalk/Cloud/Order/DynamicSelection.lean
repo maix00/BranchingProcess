@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
-public import Combinatorics.Selection.NSelection.Matching.Hall
+public import Combinatorics.Selection.NSelection.Matching.SelectedPopulation
 
 /-!
 # Address-order-free domination under dynamic leftmost selection
@@ -77,7 +77,7 @@ theorem Cloud.injectivelyDominatesBy_selectFirstNBy_of_subset
   have hretainedFinset : retained ⊆ hCfinite.toFinset := by
     intro p hp
     exact hCfinite.mem_toFinset.mpr (hretained hp)
-  have hthreshold : ∀ a : Value,
+  have hthresholdCount : ∀ a : Value,
       (hCfinite.toFinset.filter fun p => φ (C.position p.1 p.2) ≤ a).card ≤
         (hDfinite.toFinset.filter fun q => φ (D.position q.1 q.2) ≤ a).card := by
     intro a
@@ -87,7 +87,7 @@ theorem Cloud.injectivelyDominatesBy_selectFirstNBy_of_subset
       (fun p => φ (C.position p.1 p.2))
       (fun q => φ (D.position q.1 q.2))
       retained hCfinite.toFinset hDfinite.toFinset
-      hretainedFinset hcard hthreshold
+      hretainedFinset hcard hthresholdCount
   let matchParticle : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α :=
     fun p => if hp : p ∈ retained then f p hp else p
   refine ⟨matchParticle, ?_, ?_, ?_⟩

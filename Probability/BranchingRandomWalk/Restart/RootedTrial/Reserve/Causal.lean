@@ -42,20 +42,24 @@ the fixed candidate windows are independent of the success/failure outcomes.
       = \bigcup_{\substack{k\in\mathbb N\\k+1+\mathrm{duration}\le n}}
         \{\text{candidate }k\text{ succeeds}\}.
   \]
-* selectedReserveSpineRestartSourceSlice and selectedReserveSpineRestartSource define the
-  union of all enabled candidate populations through generation $n$;
-  selectedReserveSpineRestartSource_finiteSlices and
-  selectedReserveSpineRestartSource_card_le give finite-slice existence and the bound
+* `selectedReserveSpineRestartBRWPopulationSlice` and
+  `selectedReserveSpineRestartBRWPopulation` define the reserve-spine BRW
+  population formed by the spine particle and all enabled candidate
+  populations through generation \(n\);
+  selectedReserveSpineRestartBRWPopulation_finiteSlices and
+  selectedReserveSpineRestartBRWPopulation_card_le give finite-slice existence and the bound
   \[
-    |\mathrm{sourceSlice}(n)|
+    |P_n^{\mathrm{reserve}}|
       \le 1+(\mathrm{duration}+1)(2\,\mathrm{cap}).
   \]
-* `selectedReserveSpineRestartSourceSlice_contains_live_spine` states that
-  on the alive event, the source slice contains the address pair
+* `selectedReserveSpineRestartBRWPopulationSlice_contains_live_spine` states that
+  on the alive event, the population slice contains the address pair
   $(r,\operatorname{selectedReserveSpinePath}(R,r,n,\omega))$.
-* `selectedReserveSpineCandidate_subset_restartSource_at_endpoint` embeds an enabled
-  candidate at its completion generation; `selectedReserveSpineRestartSource_card_ge_of_candidate_success`
-  transfers its endpoint population lower bound to the source slice.
+* `selectedReserveSpineCandidate_subset_restartBRWPopulation_at_endpoint` embeds an enabled
+  candidate at its completion generation;
+  `selectedReserveSpineRestartBRWPopulation_card_ge_of_candidate_success`
+  transfers its endpoint population lower bound to the reserve-spine BRW
+  population slice.
 -/
 
 @[expose] public section
@@ -337,7 +341,7 @@ theorem selectedReserveSpineFirstSuccessfulCandidateCompletion_isStoppingTime
 The reserve spine contributes at most one particle; each enabled split
 generation contributes its cap-stopped first-child trial.
 -/
-noncomputable def selectedReserveSpineRestartSourceSlice
+noncomputable def selectedReserveSpineRestartBRWPopulationSlice
     {Root α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace X] [DecidableEq (RootIndexed.TreeNode Root α)]
@@ -349,8 +353,8 @@ noncomputable def selectedReserveSpineRestartSourceSlice
     selectedReserveSpineCandidatePopulation R growth hR cap duration r n ω
 
 /-- The active reserve spine is one of the addresses in the candidate-union
-source slice. -/
-theorem selectedReserveSpineRestartSourceSlice_contains_live_spine
+selected BRW slice. -/
+theorem selectedReserveSpineRestartBRWPopulationSlice_contains_live_spine
     {Root α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace X] [DecidableEq (RootIndexed.TreeNode Root α)]
@@ -359,8 +363,8 @@ theorem selectedReserveSpineRestartSourceSlice_contains_live_spine
     (ω : RootIndexed.StepField Root α X)
     (halive : selectedReserveSpineAlive R r n ω) :
     (r, selectedReserveSpinePath R r n ω) ∈
-      selectedReserveSpineRestartSourceSlice R growth hR cap duration r n ω := by
-  simp [selectedReserveSpineRestartSourceSlice, halive]
+      selectedReserveSpineRestartBRWPopulationSlice R growth hR cap duration r n ω := by
+  simp [selectedReserveSpineRestartBRWPopulationSlice, halive]
 
 /-- Membership in the finite-window candidate union is exactly membership in
 one enabled, fixed-start cap-stopped candidate. -/
@@ -430,12 +434,12 @@ private theorem selectedReserveSpineCandidate_node_depth
   rw [hrootDepth] at hqDepth
   omega
 
-/-- A pre-sampled candidate's cap-stopped population is included in the causal
-reserve source at its fixed endpoint. The split generation is read from the
-reserve spine, while the candidate subtree is the first selected child and
-the spine takes the second.
+/-- A pre-sampled candidate's cap-stopped population is included in the
+selected reserve-spine BRW population at its fixed endpoint. The split
+generation is read from the reserve spine; the candidate subtree follows the
+first selected child, while the spine follows the second.
 -/
-theorem selectedReserveSpineCandidate_subset_restartSource_at_endpoint
+theorem selectedReserveSpineCandidate_subset_restartBRWPopulation_at_endpoint
     {Root α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace X] [DecidableEq (RootIndexed.TreeNode Root α)]
@@ -447,7 +451,7 @@ theorem selectedReserveSpineCandidate_subset_restartSource_at_endpoint
     rootedCapStoppedPopulation growth cap ω
         ((selectedReserveSpineLineages (Root := Root) R hR).firstChildRootAt
           R r PUnit.unit (k + 1) ω) duration ⊆
-      selectedReserveSpineRestartSourceSlice R growth hR cap duration r
+      selectedReserveSpineRestartBRWPopulationSlice R growth hR cap duration r
         (k + 1 + duration) ω := by
   let candidateRoot :=
     (selectedReserveSpineLineages (Root := Root) R hR).firstChildRootAt
@@ -466,12 +470,12 @@ theorem selectedReserveSpineCandidate_subset_restartSource_at_endpoint
       Nat.add_sub_cancel_left] using hq
   exact Finset.mem_union_right _ hcandidate
 
-/-- A successful pre-sampled candidate is present in the causal reserve
-source at its fixed endpoint, with at least the trial's lower population
-bound.  The split generation is read from the reserve spine, while the
-candidate subtree is the first selected child and the spine takes the second.
+/-- A successful pre-sampled candidate contributes at least its lower
+population bound to the selected reserve-spine BRW population at its fixed
+endpoint. The candidate subtree follows the first selected child, while the
+spine follows the second.
 -/
-theorem selectedReserveSpineRestartSource_card_ge_of_candidate_success
+theorem selectedReserveSpineRestartBRWPopulation_card_ge_of_candidate_success
     {Root α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace X] [DecidableEq (RootIndexed.TreeNode Root α)]
@@ -486,26 +490,26 @@ theorem selectedReserveSpineRestartSource_card_ge_of_candidate_success
         let q := (selectedReserveSpineLineages (Root := Root) R hR).firstChildRootAt
           R r PUnit.unit (k + 1) ω
         ω q.1 (q.2 ++ v))) :
-    lower ≤ (selectedReserveSpineRestartSourceSlice R growth hR upper duration
+    lower ≤ (selectedReserveSpineRestartBRWPopulationSlice R growth hR upper duration
       r (k + 1 + duration) ω).card := by
   let lineages := selectedReserveSpineLineages (Root := Root) R hR
   let candidateRoot := lineages.firstChildRootAt R r PUnit.unit (k + 1) ω
   have hcandidate := rootedCapStoppedPopulation_card_ge_of_growthTrialSuccess
     growth lower upper duration ω candidateRoot hupper (by simpa [candidateRoot] using hsuccess)
-  have hsourceSubset : rootedCapStoppedPopulation growth upper ω candidateRoot duration ⊆
-      selectedReserveSpineRestartSourceSlice R growth hR upper duration r
+  have hcapStoppedCandidate_subset_selectedReserveSpineBRWPopulation : rootedCapStoppedPopulation growth upper ω candidateRoot duration ⊆
+      selectedReserveSpineRestartBRWPopulationSlice R growth hR upper duration r
         (k + 1 + duration) ω := by
     simpa [candidateRoot] using
-      selectedReserveSpineCandidate_subset_restartSource_at_endpoint
+      selectedReserveSpineCandidate_subset_restartBRWPopulation_at_endpoint
         R growth hR upper duration r k ω halive hsplit
-  have hcard := Finset.card_le_card hsourceSubset
+  have hcard := Finset.card_le_card hcapStoppedCandidate_subset_selectedReserveSpineBRWPopulation
   omega
 
-/-- A causal source process made from the reserve singleton and all
-generation-enabled cap-stopped first-child trials.  The candidate windows
+/-- The causal reserve-spine BRW population made from the reserve singleton
+and all generation-enabled cap-stopped first-child trials.  Candidate windows
 are defined on the common pre-sampled field before any success outcomes are
 examined. -/
-noncomputable def selectedReserveSpineRestartSource
+noncomputable def selectedReserveSpineRestartBRWPopulation
     {Root α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace X] [MeasurableSpace Root]
@@ -520,10 +524,10 @@ noncomputable def selectedReserveSpineRestartSource
       (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X)) id where
   toPopulation ω := {
     particles := fun n =>
-      ↑(selectedReserveSpineRestartSourceSlice R growth hR cap duration r n ω)
+      ↑(selectedReserveSpineRestartBRWPopulationSlice R growth hR cap duration r n ω)
     depth := by
       intro n q hq
-      rw [selectedReserveSpineRestartSourceSlice, Finset.mem_coe,
+      rw [selectedReserveSpineRestartBRWPopulationSlice, Finset.mem_coe,
         Finset.mem_union] at hq
       rcases hq with hspine | hcandidate
       · by_cases ha : selectedReserveSpineAlive R r n ω
@@ -535,7 +539,7 @@ noncomputable def selectedReserveSpineRestartSource
           duration r n ω q hcandidate
     successor := by
       intro n q hq
-      rw [selectedReserveSpineRestartSourceSlice, Finset.mem_coe,
+      rw [selectedReserveSpineRestartBRWPopulationSlice, Finset.mem_coe,
         Finset.mem_union] at hq
       rcases hq with hspine | hcandidate
       · have hactive := hspine
@@ -544,14 +548,14 @@ noncomputable def selectedReserveSpineRestartSource
               (R (ω r (selectedReserveSpinePath R r n ω))).Nonempty := by
             simpa only [selectedReserveSpineAlive] using ha
           have hq' : q = (r, selectedReserveSpinePath R r (n + 1) ω) := by
-            simpa [selectedReserveSpineRestartSourceSlice, ha] using hspine
+            simpa [selectedReserveSpineRestartBRWPopulationSlice, ha] using hspine
           subst q
           have hedge := selectedReserveSpinePath_succ_selected_of_nonempty
             R r n ω hactive'.2
           have hp : (r, selectedReserveSpinePath R r n ω) ∈
-              selectedReserveSpineRestartSourceSlice R growth hR
+              selectedReserveSpineRestartBRWPopulationSlice R growth hR
                 cap duration r n ω := by
-            simp [selectedReserveSpineRestartSourceSlice, hactive'.1]
+            simp [selectedReserveSpineRestartBRWPopulationSlice, hactive'.1]
           apply Combinatorics.Branching.Population.mem_offspringAddressSet.mpr
           refine ⟨(r, selectedReserveSpinePath R r n ω), hp,
             reserveSpineSlot R (ω r (selectedReserveSpinePath R r n ω)),
@@ -593,11 +597,11 @@ noncomputable def selectedReserveSpineRestartSource
             (ω r (selectedReserveSpinePath R r n ω))
           let parent := (r, selectedReserveSpinePath R r n ω)
           have hparent : parent ∈
-              selectedReserveSpineRestartSourceSlice R growth hR
+              selectedReserveSpineRestartBRWPopulationSlice R growth hR
                 cap duration r n ω := by
             have hk_parts := Finset.mem_filter.mp hk
             have halive : selectedReserveSpineAlive R r n ω := hk_parts.2.1
-            simp [parent, selectedReserveSpineRestartSourceSlice, halive]
+            simp [parent, selectedReserveSpineRestartBRWPopulationSlice, halive]
           apply Combinatorics.Branching.Population.mem_offspringAddressSet.mpr
           refine ⟨parent, hparent, slot, R.subset_support _ _ hroot', ?_⟩
           simp [parent, slot, hroot.1,
@@ -626,8 +630,8 @@ noncomputable def selectedReserveSpineRestartSource
                 R r PUnit.unit (k + 1) ω)) hparent
           rcases Combinatorics.Branching.Population.mem_offspringAddressSet.mp
               hsucc with ⟨p, hp, i, hi, hchild⟩
-          have hsourceParent : p ∈
-              selectedReserveSpineRestartSourceSlice R growth hR
+          have hselectedBRWParent : p ∈
+              selectedReserveSpineRestartBRWPopulationSlice R growth hR
                 cap duration r n ω := by
             apply Finset.mem_coe.mpr
             apply Finset.mem_union_right
@@ -640,7 +644,7 @@ noncomputable def selectedReserveSpineRestartSource
             exact ⟨k, hprevEnabled, by
               simpa [RootIndexed.ReserveLineages.capStoppedCandidate] using hpFin⟩
           apply Combinatorics.Branching.Population.mem_offspringAddressSet.mpr
-          refine ⟨p, hsourceParent, i, ?_, hchild⟩
+          refine ⟨p, hselectedBRWParent, i, ?_, hchild⟩
           exact growth.subset_support (ω p.1 p.2) i hi
   }
   adapted := by
@@ -666,9 +670,9 @@ noncomputable def selectedReserveSpineRestartSource
       · simp [ha, selectedReserveSpineSlice]
     have hcandidates := selectedReserveSpineCandidatePopulation_adapted
       R growth hR hgrowth cap duration r n
-    have hsource : Measurable[RootIndexed.stepFiltration
+    have hselectedBRWPopulationSliceMeasurable : Measurable[RootIndexed.stepFiltration
         (Root := Root) (α := α) (X := X) n]
-        (fun ω => selectedReserveSpineRestartSourceSlice R growth hR
+        (fun ω => selectedReserveSpineRestartBRWPopulationSlice R growth hR
           cap duration r n ω) := by
       have hunion : Measurable (fun ab :
           Finset (RootIndexed.TreeNode Root α) ×
@@ -687,11 +691,11 @@ noncomputable def selectedReserveSpineRestartSource
             Finset (RootIndexed.TreeNode Root α)) else ∅) ∪
           selectedReserveSpineCandidatePopulation R growth hR cap duration r n ω)
       exact hunion.comp (hreserve.prodMk hcandidates)
-    exact (measurable_finset_mem p).comp hsource
+    exact (measurable_finset_mem p).comp hselectedBRWPopulationSliceMeasurable
 
-/-- The causal reserve source has finite slices: each slice is represented
-by the finite union in `selectedReserveSpineRestartSourceSlice`. -/
-theorem selectedReserveSpineRestartSource_finiteSlices
+/-- The causal reserve-spine BRW population has finite slices: each slice is represented
+by the finite union in `selectedReserveSpineRestartBRWPopulationSlice`. -/
+theorem selectedReserveSpineRestartBRWPopulation_finiteSlices
     {Root α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace X] [MeasurableSpace Root]
@@ -701,16 +705,16 @@ theorem selectedReserveSpineRestartSource_finiteSlices
     [DecidableEq (RootIndexed.TreeNode Root α)]
     (R growth : Step.FiniteSelection α X) (hR : Measurable R.select)
     (hgrowth : Measurable growth.select) (cap duration : ℕ) (r : Root) :
-    (selectedReserveSpineRestartSource R growth hR hgrowth cap duration r).FiniteSlices := by
+    (selectedReserveSpineRestartBRWPopulation R growth hR hgrowth cap duration r).FiniteSlices := by
   intro n ω
-  change (↑(selectedReserveSpineRestartSourceSlice R growth hR cap duration r n ω) :
+  change (↑(selectedReserveSpineRestartBRWPopulationSlice R growth hR cap duration r n ω) :
     Set (RootIndexed.TreeNode Root α)).Finite
-  exact (selectedReserveSpineRestartSourceSlice R growth hR cap duration r n ω).finite_toSet
+  exact (selectedReserveSpineRestartBRWPopulationSlice R growth hR cap duration r n ω).finite_toSet
 
 /-- Deterministic cardinal bound for the finite presentation of the causal
-reserve source. It counts every still-open fixed candidate window; it makes
+reserve-spine BRW population. It counts every still-open fixed candidate window; it makes
 no assumption on trial outcomes or on nonempty offspring. -/
-theorem selectedReserveSpineRestartSource_card_le
+theorem selectedReserveSpineRestartBRWPopulation_card_le
     {Root α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace X] [MeasurableSpace Root]
@@ -722,11 +726,11 @@ theorem selectedReserveSpineRestartSource_card_le
     (hgrowth : Measurable growth.select) (cap duration : ℕ)
     (hbounded : growth.IsBoundedBy 2) (hcap : 1 ≤ cap) (r : Root)
     (hfinite :
-      (selectedReserveSpineRestartSource R growth hR hgrowth cap duration r).FiniteSlices)
+      (selectedReserveSpineRestartBRWPopulation R growth hR hgrowth cap duration r).FiniteSlices)
     (n : ℕ) (ω : RootIndexed.StepField Root α X) :
     (hfinite.toFinset n ω).card ≤ 1 + (duration + 1) * (2 * cap) := by
   have heq : hfinite.toFinset n ω =
-      selectedReserveSpineRestartSourceSlice R growth hR cap duration r n ω := by
+      selectedReserveSpineRestartBRWPopulationSlice R growth hR cap duration r n ω := by
     apply Finset.coe_injective
     rw [RootIndexed.CausalPopulation.FiniteSlices.coe_toFinset]
     rfl

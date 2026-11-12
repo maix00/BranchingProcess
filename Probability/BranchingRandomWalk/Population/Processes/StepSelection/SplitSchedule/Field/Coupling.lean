@@ -22,12 +22,12 @@ corresponding original-field population and preserves the potential values:
 \[\operatorname{Cloud}_{\phi}(\operatorname{activePopulation}_j)
   \succeq_{\mathrm{inj},\phi}
   \operatorname{Cloud}_{\phi}(\operatorname{originalPopulation}_j),\qquad
-  \operatorname{position}_{\mathrm{source}}(p)
-   =\operatorname{position}_{\mathrm{target}}(\Phi_j(p)).\]
+  \operatorname{position}_{\mathrm{active}}(p)
+   =\operatorname{position}_{\mathrm{original}}(\Phi_j(p)).\]
 
 * `activePopulation` reads the active roots at restart stage `j`;
   `coupledInjection` maps that population into the corresponding original
-  field population, while `originalPopulation` defines the target population.
+  field population, while `originalPopulation` defines the original-address population.
 * `iteratedPopulation_injectivelyDominatesBy_original` proves that the active
   population embeds injectively into the original population with matching
   spatial values under the potential map.
@@ -54,9 +54,9 @@ noncomputable def activePopulation
   RootIndexed.StepSelection.labelledPopulationOn R (activeRoots N) n
     (iteratedPoolField N R trial duration target fallback reserve stem j step)
 
-/-- Couple the finite active population of any iterated split pool to a
-causal first-`N` target by recursively installing equal-rank source steps.
-The base field and fallback target may be random, and the absolute initial
+/-- Couple the finite active population of an iterated split pool to its
+first-`N` BRW counterpart by recursively installing matched steps at equal rank.
+The base field and fallback field may be random, and the absolute initial
 positions may consequently depend on the same sample. -/
 noncomputable def coupledInjection
     {Ω Reserve α Mark Position Value : Type*}
@@ -88,29 +88,29 @@ noncomputable def coupledInjection
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
     (n : ℕ) (ω : Ω) :
-    let sourceStep := fun sample =>
+    let selectedBRWStepField := fun sample =>
       iteratedPoolField N R trial duration target restartFallback reserve stem
         j (base sample)
     let initialAt := fun sample =>
       iteratedPoolInitialPosition N R initial d trial duration target
         restartFallback reserve stem j (base sample)
-    let sourcePopulation := fun k sample =>
+    let selectedBRWPopulation := fun k sample =>
       activePopulation N R trial duration target restartFallback reserve stem
         j k (base sample)
-    let targetStep := ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.coupledField
+    let nSelectedBRWStepField := ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.coupledField
       N (activeRoots N) initialAt d φ hadmits
-        sourceStep fallback sourcePopulation n ω
-    let targetPopulation :=
+        selectedBRWStepField fallback selectedBRWPopulation n ω
+    let nSelectedBRWPopulation :=
       ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.coupledPopulation
-        N (activeRoots N) initialAt d φ hadmits sourceStep
-          fallback sourcePopulation n ω
+        N (activeRoots N) initialAt d φ hadmits selectedBRWStepField
+          fallback selectedBRWPopulation n ω
     Cloud.SliceDominatingMap φ
       (populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField (initialAt ω) (sourceStep ω))
-        (sourcePopulation n ω))
+        (RootIndexed.BranchingWalk.ofStepField (initialAt ω) (selectedBRWStepField ω))
+        (selectedBRWPopulation n ω))
       (populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField (initialAt ω) targetStep)
-        targetPopulation) () := by
+        (RootIndexed.BranchingWalk.ofStepField (initialAt ω) nSelectedBRWStepField)
+        nSelectedBRWPopulation) () := by
   dsimp only
   simpa [activePopulation] using
     (ProbabilityTheory.BranchingRandomWalk.Selection.Coupling.RootIndexed.coupledInjection_labelledPopulation

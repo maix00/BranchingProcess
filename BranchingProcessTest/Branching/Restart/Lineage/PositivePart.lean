@@ -1,7 +1,7 @@
 import Probability.BranchingRandomWalk.Restart.RootedTrial.Reward.PositivePart
 
 /-!
-# Axiom audit for the causal reserve-source positive-part estimate
+# Axiom audit for the selected reserve-spine BRW population positive-part estimate
 
 The statements below are pathwise consequences of the reserve selector and
 the live-spine inclusion.  In particular, the audit does not certify an iid
@@ -18,7 +18,7 @@ law for the marks sampled at the adaptive spine vertices.
   ProbabilityTheory.BranchingRandomWalk.selectedReserveSpinePath_positivePart_le_cutoff_add_firstChildSum
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartSourceSlice_contains_live_spine
+  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartBRWPopulationSlice_contains_live_spine
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartSourceMinPosition_positivePart_le
+  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartBRWPopulationMinPosition_positivePart_le

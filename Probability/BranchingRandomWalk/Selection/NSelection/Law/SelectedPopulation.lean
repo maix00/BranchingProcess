@@ -10,14 +10,14 @@ public import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Law
 public import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Measurability.Observables
 
 /-!
-# Product law with a concrete selected target population
+# Product law with a concrete first-\(N\) population
 
-This file closes the causal induction for recursive rank matching when the
-target population is the intrinsic first-`N` population of the field built so
-far.  Abstract matching remains independent of countability.  Countability is
-used here only for the concrete enumerable particle labels, which makes the
-finite-population range countable and supplies the existing measurable
-selection theorem.
+This file closes the causal induction for recursive rank matching from an
+input selected population to the intrinsic first-\(N\) population of the
+field built so far.  Abstract matching remains independent of countability.
+Countability is used here only for the concrete enumerable particle labels,
+which makes the finite-population range countable and supplies the existing
+measurable-selection theorem.
 
 
 ## Public declarations
@@ -49,10 +49,10 @@ open ProbabilityTheory.BranchingRandomWalk.Coupling
 open Combinatorics.UlamHarris Combinatorics.Branching
 open _root_.Combinatorics.Selection.NSelection
 
-/-- Recursive equal-rank installation into the totalized selected target is
-measurable and preserves the product step-field law. Source-population
-adaptedness remains explicit, so the result applies to selected, killed, and
-restarted source processes alike. -/
+/-- Recursive equal-rank installation from a selected population into the
+totalized first-`N` population is measurable and preserves the product
+step-field law. Adaptedness of the input population remains explicit, so the
+result applies to selected inputs, including restarted populations. -/
 theorem RootIndexed.rankInstalledField_totalizedSelectedPopulation_measurable_law
     {Root α Mark Position Value : Type*}
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
@@ -68,87 +68,87 @@ theorem RootIndexed.rankInstalledField_totalizedSelectedPopulation_measurable_la
     (N : ℕ) (roots : Finset Root) (initial : Root → Position)
     (d : Mark → Position) (hd : Measurable d)
     (φ : Position → Value) (hφ : Measurable φ)
-    (sourceValue : ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
+    (selectedBRWPopulationOrderKey : ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
       RootIndexed.TreeNode Root α → Value)
-    (source : ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
+    (selectedBRWPopulation : ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
       Finset (RootIndexed.TreeNode Root α))
-    (hsourceDepth : ∀ k field p, p ∈ source k field → p.2.length = k)
-    (hsourceFiber : ∀ k s, MeasurableSet[RootIndexed.stepFiltration
+    (hselectedBRWPopulationDepth : ∀ k field p, p ∈ selectedBRWPopulation k field → p.2.length = k)
+    (hselectedBRWPopulationFiber : ∀ k s, MeasurableSet[RootIndexed.stepFiltration
       (Root := Root ⊕ Root) (α := α) (X := Mark) k]
-      {field | source k field = s})
-    (hsourceRange : ∀ k, (Set.range (source k)).Countable)
-    (hsourceKey : ∀ k p q, Measurable[RootIndexed.stepFiltration
+      {field | selectedBRWPopulation k field = s})
+    (hselectedBRWPopulationRange : ∀ k, (Set.range (selectedBRWPopulation k)).Countable)
+    (hselectedBRWPopulationOrderKeyMeasurable : ∀ k p q, Measurable[RootIndexed.stepFiltration
       (Root := Root ⊕ Root) (α := α) (X := Mark) k]
-      fun field => valueKey (sourceValue k field) q <
-        valueKey (sourceValue k field) p) :
-    let targetValue := fun k
+      fun field => valueKey (selectedBRWPopulationOrderKey k field) q <
+        valueKey (selectedBRWPopulationOrderKey k field) p) :
+    let nSelectedBRWPopulationOrderKey := fun k
         (_ : RootIndexed.StepField (Root ⊕ Root) α Mark)
         (field : RootIndexed.StepField Root α Mark) =>
       RootIndexed.observedPositionAtGeneration initial d φ k field
-    let target := fun k
+    let nSelectedBRWPopulation := fun k
         (_ : RootIndexed.StepField (Root ⊕ Root) α Mark)
         (field : RootIndexed.StepField Root α Mark) =>
       RootIndexed.selectedPopulationTotalized N roots initial d φ k field
     ∀ n, Measurable
-        (RootIndexed.rankInstalledField sourceValue targetValue source target
+        (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
           RootIndexed.StepField.left RootIndexed.StepField.right n) ∧
       (RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ).map
-          (RootIndexed.rankInstalledField sourceValue targetValue source target
+          (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
             RootIndexed.StepField.left RootIndexed.StepField.right n) =
         RootIndexed.stepFieldLaw (Root := Root) μ := by
   dsimp only
-  let targetValue := fun k
+  let nSelectedBRWPopulationOrderKey := fun k
       (_ : RootIndexed.StepField (Root ⊕ Root) α Mark)
       (field : RootIndexed.StepField Root α Mark) =>
     RootIndexed.observedPositionAtGeneration initial d φ k field
-  let target := fun k
+  let nSelectedBRWPopulation := fun k
       (_ : RootIndexed.StepField (Root ⊕ Root) α Mark)
       (field : RootIndexed.StepField Root α Mark) =>
     RootIndexed.selectedPopulationTotalized N roots initial d φ k field
   have hstage : ∀ n,
       (Set.range (RootIndexed.rankInstalledBlockChoice
-        sourceValue targetValue source target n)).Countable ∧
+        selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation n)).Countable ∧
       ∀ choices, MeasurableSet[RootIndexed.stepFiltration
         (Root := Root ⊕ Root) (α := α) (X := Mark) n]
-        {field | RootIndexed.rankInstalledBlockChoice sourceValue targetValue
-          source target n field = choices} := by
+        {field | RootIndexed.rankInstalledBlockChoice selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey
+          selectedBRWPopulation nSelectedBRWPopulation n field = choices} := by
     intro n
     induction n using Nat.strong_induction_on with
     | h n ih =>
       have hpriorCount : ∀ k, k < n → (Set.range
-          (RootIndexed.rankInstalledBlockChoice sourceValue targetValue
-            source target k)).Countable := fun k hk => (ih k hk).1
+          (RootIndexed.rankInstalledBlockChoice selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey
+            selectedBRWPopulation nSelectedBRWPopulation k)).Countable := fun k hk => (ih k hk).1
       have hpriorFiber : ∀ k, k < n → ∀ choices,
           MeasurableSet[RootIndexed.stepFiltration
             (Root := Root ⊕ Root) (α := α) (X := Mark) k]
-            {field | RootIndexed.rankInstalledBlockChoice sourceValue targetValue
-              source target k field = choices} :=
+            {field | RootIndexed.rankInstalledBlockChoice selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey
+              selectedBRWPopulation nSelectedBRWPopulation k field = choices} :=
         fun k hk => (ih k hk).2
-      have htargetMeas : Measurable[RootIndexed.stepFiltration
+      have hnSelectedBRWPopulationMeasurable : Measurable[RootIndexed.stepFiltration
           (Root := Root ⊕ Root) (α := α) (X := Mark) n]
-          (fun field => target n field
-            (RootIndexed.rankInstalledField sourceValue targetValue source target
+          (fun field => nSelectedBRWPopulation n field
+            (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
               RootIndexed.StepField.left RootIndexed.StepField.right n field)) :=
         RootIndexed.selectedPopulationTotalized_rankInstalledField_measurable_of_lt
-          N roots initial d hd φ hφ sourceValue targetValue source target
-          hsourceDepth n hpriorCount hpriorFiber
-      have htargetFiber : ∀ s, MeasurableSet[RootIndexed.stepFiltration
+          N roots initial d hd φ hφ selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
+          hselectedBRWPopulationDepth n hpriorCount hpriorFiber
+      have hnSelectedBRWPopulationFiber : ∀ s, MeasurableSet[RootIndexed.stepFiltration
           (Root := Root ⊕ Root) (α := α) (X := Mark) n]
-          {field | target n field
-            (RootIndexed.rankInstalledField sourceValue targetValue source target
+          {field | nSelectedBRWPopulation n field
+            (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
               RootIndexed.StepField.left RootIndexed.StepField.right n field) = s} :=
-        fun s => htargetMeas (measurableSet_singleton s)
-      have htargetRange : (Set.range fun field => target n field
-          (RootIndexed.rankInstalledField sourceValue targetValue source target
+        fun s => hnSelectedBRWPopulationMeasurable (measurableSet_singleton s)
+      have hnSelectedBRWPopulationRange : (Set.range fun field => nSelectedBRWPopulation n field
+          (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
             RootIndexed.StepField.left RootIndexed.StepField.right n field)
           ).Countable := Set.to_countable _
-      have htargetKey : ∀ p q, Measurable[RootIndexed.stepFiltration
+      have hnSelectedBRWPopulationOrderKeyMeasurable : ∀ p q, Measurable[RootIndexed.stepFiltration
           (Root := Root ⊕ Root) (α := α) (X := Mark) n]
-          fun field => valueKey (targetValue n field
-            (RootIndexed.rankInstalledField sourceValue targetValue source target
+          fun field => valueKey (nSelectedBRWPopulationOrderKey n field
+            (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
               RootIndexed.StepField.left RootIndexed.StepField.right n field)) q <
-            valueKey (targetValue n field
-              (RootIndexed.rankInstalledField sourceValue targetValue source target
+            valueKey (nSelectedBRWPopulationOrderKey n field
+              (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
                 RootIndexed.StepField.left RootIndexed.StepField.right n field)) p := by
         let _ : MeasurableSpace
             (RootIndexed.StepField (Root ⊕ Root) α Mark) :=
@@ -156,62 +156,62 @@ theorem RootIndexed.rankInstalledField_totalizedSelectedPopulation_measurable_la
             (Root := Root ⊕ Root) (α := α) (X := Mark) n
         intro p q
         exact measurable_valueKey_lt
-          (fun field r => targetValue n field
-            (RootIndexed.rankInstalledField sourceValue targetValue source target
+          (fun field r => nSelectedBRWPopulationOrderKey n field
+            (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
               RootIndexed.StepField.left RootIndexed.StepField.right n field) r)
           (fun r => RootIndexed.observedPosition_rankInstalledField_measurable_of_lt
-            initial d hd φ hφ sourceValue targetValue source target hsourceDepth
+            initial d hd φ hφ selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation hselectedBRWPopulationDepth
             n hpriorCount hpriorFiber r) p q
       constructor
       · exact RootIndexed.rankBlockChoice_range_countable_of_supports n
-          (sourceValue n)
-          (fun field => targetValue n field
-            (RootIndexed.rankInstalledField sourceValue targetValue source target
+          (selectedBRWPopulationOrderKey n)
+          (fun field => nSelectedBRWPopulationOrderKey n field
+            (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
               RootIndexed.StepField.left RootIndexed.StepField.right n field))
-          (source n)
-          (fun field => target n field
-            (RootIndexed.rankInstalledField sourceValue targetValue source target
+          (selectedBRWPopulation n)
+          (fun field => nSelectedBRWPopulation n field
+            (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
               RootIndexed.StepField.left RootIndexed.StepField.right n field))
-          (hsourceRange n) htargetRange
+          (hselectedBRWPopulationRange n) hnSelectedBRWPopulationRange
       · intro choices
         exact RootIndexed.measurableSet_rankBlockChoice_eq_of_supports n
-          (sourceValue n)
-          (fun field => targetValue n field
-            (RootIndexed.rankInstalledField sourceValue targetValue source target
+          (selectedBRWPopulationOrderKey n)
+          (fun field => nSelectedBRWPopulationOrderKey n field
+            (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
               RootIndexed.StepField.left RootIndexed.StepField.right n field))
-          (source n)
-          (fun field => target n field
-            (RootIndexed.rankInstalledField sourceValue targetValue source target
+          (selectedBRWPopulation n)
+          (fun field => nSelectedBRWPopulation n field
+            (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
               RootIndexed.StepField.left RootIndexed.StepField.right n field))
-          (hsourceFiber n) (hsourceRange n) htargetFiber htargetRange
-          (hsourceKey n) htargetKey choices
-  have htargetMeas (n : ℕ) : Measurable[RootIndexed.stepFiltration
+          (hselectedBRWPopulationFiber n) (hselectedBRWPopulationRange n) hnSelectedBRWPopulationFiber hnSelectedBRWPopulationRange
+          (hselectedBRWPopulationOrderKeyMeasurable n) hnSelectedBRWPopulationOrderKeyMeasurable choices
+  have hnSelectedBRWPopulationMeasurable (n : ℕ) : Measurable[RootIndexed.stepFiltration
       (Root := Root ⊕ Root) (α := α) (X := Mark) n]
-      (fun field => target n field
-        (RootIndexed.rankInstalledField sourceValue targetValue source target
+      (fun field => nSelectedBRWPopulation n field
+        (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
           RootIndexed.StepField.left RootIndexed.StepField.right n field)) :=
     RootIndexed.selectedPopulationTotalized_rankInstalledField_measurable_of_lt
-      N roots initial d hd φ hφ sourceValue targetValue source target
-      hsourceDepth n (fun k hk => (hstage k).1)
+      N roots initial d hd φ hφ selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
+      hselectedBRWPopulationDepth n (fun k hk => (hstage k).1)
       (fun k hk => (hstage k).2)
-  have htargetFiber (n : ℕ) (s : Finset (RootIndexed.TreeNode Root α)) :
+  have hnSelectedBRWPopulationFiber (n : ℕ) (s : Finset (RootIndexed.TreeNode Root α)) :
       MeasurableSet[RootIndexed.stepFiltration
         (Root := Root ⊕ Root) (α := α) (X := Mark) n]
-        {field | target n field
-          (RootIndexed.rankInstalledField sourceValue targetValue source target
+        {field | nSelectedBRWPopulation n field
+          (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
             RootIndexed.StepField.left RootIndexed.StepField.right n field) = s} :=
-    htargetMeas n (measurableSet_singleton s)
-  have htargetRange (n : ℕ) : (Set.range fun field => target n field
-      (RootIndexed.rankInstalledField sourceValue targetValue source target
+    hnSelectedBRWPopulationMeasurable n (measurableSet_singleton s)
+  have hnSelectedBRWPopulationRange (n : ℕ) : (Set.range fun field => nSelectedBRWPopulation n field
+      (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
         RootIndexed.StepField.left RootIndexed.StepField.right n field)
       ).Countable := Set.to_countable _
-  have htargetKey (n : ℕ) : ∀ p q, Measurable[RootIndexed.stepFiltration
+  have hnSelectedBRWPopulationOrderKeyMeasurable (n : ℕ) : ∀ p q, Measurable[RootIndexed.stepFiltration
       (Root := Root ⊕ Root) (α := α) (X := Mark) n]
-      fun field => valueKey (targetValue n field
-        (RootIndexed.rankInstalledField sourceValue targetValue source target
+      fun field => valueKey (nSelectedBRWPopulationOrderKey n field
+        (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
           RootIndexed.StepField.left RootIndexed.StepField.right n field)) q <
-        valueKey (targetValue n field
-          (RootIndexed.rankInstalledField sourceValue targetValue source target
+        valueKey (nSelectedBRWPopulationOrderKey n field
+          (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
             RootIndexed.StepField.left RootIndexed.StepField.right n field)) p := by
     let _ : MeasurableSpace
         (RootIndexed.StepField (Root ⊕ Root) α Mark) :=
@@ -219,18 +219,18 @@ theorem RootIndexed.rankInstalledField_totalizedSelectedPopulation_measurable_la
         (Root := Root ⊕ Root) (α := α) (X := Mark) n
     intro p q
     exact measurable_valueKey_lt
-      (fun field r => targetValue n field
-        (RootIndexed.rankInstalledField sourceValue targetValue source target
+      (fun field r => nSelectedBRWPopulationOrderKey n field
+        (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
           RootIndexed.StepField.left RootIndexed.StepField.right n field) r)
       (fun r => RootIndexed.observedPosition_rankInstalledField_measurable_of_lt
-        initial d hd φ hφ sourceValue targetValue source target hsourceDepth n
+        initial d hd φ hφ selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation hselectedBRWPopulationDepth n
         (fun k hk => (hstage k).1) (fun k hk => (hstage k).2) r) p q
   have hmeas := RootIndexed.rankInstalledField_measurable_of_supports
-    sourceValue targetValue source target hsourceFiber hsourceRange
-    htargetFiber htargetRange hsourceKey htargetKey
-  have hlaw := RootIndexed.rankInstalledField_law_of_supports μ sourceValue targetValue
-    source target hsourceDepth hsourceFiber hsourceRange htargetFiber
-    htargetRange hsourceKey htargetKey
+    selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation hselectedBRWPopulationFiber hselectedBRWPopulationRange
+    hnSelectedBRWPopulationFiber hnSelectedBRWPopulationRange hselectedBRWPopulationOrderKeyMeasurable hnSelectedBRWPopulationOrderKeyMeasurable
+  have hlaw := RootIndexed.rankInstalledField_law_of_supports μ selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey
+    selectedBRWPopulation nSelectedBRWPopulation hselectedBRWPopulationDepth hselectedBRWPopulationFiber hselectedBRWPopulationRange hnSelectedBRWPopulationFiber
+    hnSelectedBRWPopulationRange hselectedBRWPopulationOrderKeyMeasurable hnSelectedBRWPopulationOrderKeyMeasurable
   exact fun n => ⟨hmeas n, hlaw n⟩
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection

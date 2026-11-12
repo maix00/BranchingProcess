@@ -21,7 +21,7 @@ fields.  The finite all-failure event therefore has an exact product law.
 This is the retrospective candidate construction for reserve siblings in
 finite branching trials. It proves
 the candidate event law; it does not identify the retrospectively restarted
-population with an adapted killed process.
+population with an adapted selected BRW process.
 
 ## Public declarations
 
