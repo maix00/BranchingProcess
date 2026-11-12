@@ -90,22 +90,22 @@ noncomputable def canonicalInjection
     fun p => φ (selectedBranchingWalk.position d p.1 p.2)
   let nSelectedBranchingWalkOrderKey : RootIndexed.TreeNode Root α → OrderKey :=
     fun q => φ (nSelectedBranchingWalk.position d q.1 q.2)
-  have hthreshold : ∀ a : OrderKey,
+  have hthresholdCount : ∀ a : OrderKey,
       (selectedBranchingWalkPopulation.filter fun p => selectedBranchingWalkOrderKey p ≤ a).card ≤
         (nSelectedBranchingWalkPopulation.filter fun q => nSelectedBranchingWalkOrderKey q ≤ a).card := by
     intro a
     simpa [selectedBranchingWalkOrderKey, nSelectedBranchingWalkOrderKey, populationCloud] using
       prior.card_filter_le selectedBranchingWalkPopulation.finite_toSet
         nSelectedBranchingWalkPopulation.finite_toSet a
-  let nSelectedChildOfSelectedChildOrSelf : RootIndexed.TreeNode Root α →
+  let matchedNSelectedChildOrSelf : RootIndexed.TreeNode Root α →
       RootIndexed.TreeNode Root α :=
     matchByRankOrSelf selectedBranchingWalkOrderKey nSelectedBranchingWalkOrderKey
       selectedBranchingWalkPopulation nSelectedBranchingWalkPopulation hcard
-  refine ⟨nSelectedChildOfSelectedChildOrSelf, ?_, ?_, ?_⟩
+  refine ⟨matchedNSelectedChildOrSelf, ?_, ?_, ?_⟩
   · intro p hp
     have hpr : p ∈ selectedBranchingWalkPopulation := by
       simpa [populationCloud] using hp
-    change nSelectedChildOfSelectedChildOrSelf p ∈ nSelectedBranchingWalkPopulation
+    change matchedNSelectedChildOrSelf p ∈ nSelectedBranchingWalkPopulation
     exact matchByRankOrSelf_mem selectedBranchingWalkOrderKey
       nSelectedBranchingWalkOrderKey selectedBranchingWalkPopulation
       nSelectedBranchingWalkPopulation hcard hpr
@@ -121,7 +121,7 @@ noncomputable def canonicalInjection
       simpa [populationCloud] using hp
     exact matchByRankOrSelf_partnerOrderKey_le selectedBranchingWalkOrderKey
       nSelectedBranchingWalkOrderKey selectedBranchingWalkPopulation
-      nSelectedBranchingWalkPopulation hcard hthreshold hpr
+      nSelectedBranchingWalkPopulation hcard hthresholdCount hpr
 
 @[simp] theorem canonicalInjection_apply
     [AddCommMonoid Position]

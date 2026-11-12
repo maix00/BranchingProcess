@@ -1205,7 +1205,7 @@ The generic finite order-statistic comparison by lower-tail counts belongs to
 `Combinatorics/Selection/NSelection/Mechanism/Finite/AtRank.lean`.
 The order-key-preserving partner-bijection theorem belongs to
 `Matching/ByRank.lean`, generic threshold-count matching belongs to
-`Matching/ThresholdCountMatching.lean`, and the first-`N` population matching
+`Matching/ThresholdCount.lean`, and the first-`N` population matching
 specialization belongs to `Matching/SelectedPopulation.lean`.
 
 The ranked offspring-batch law is part of
