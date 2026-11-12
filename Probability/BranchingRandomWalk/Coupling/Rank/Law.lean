@@ -27,7 +27,7 @@ paste along the guarded rank preimage and preserves the product law:
 
 \[\begin{aligned}
 \operatorname{rankInstalledStepField}
-&=\operatorname{paste}(\operatorname{preimageByRank}),\\
+&=\operatorname{paste}(\operatorname{objectAtPartnerRankBy}),\\
 \operatorname{rankInstalledStepField}_{\#}
 \operatorname{stepFieldLaw}_{R\oplus R}^{\mu}
 &=\operatorname{stepFieldLaw}_{R}^{\mu}.
@@ -35,7 +35,7 @@ paste along the guarded rank preimage and preserves the product law:
 
 - `ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.rankInstalledStepField_eq_paste`:
   identifies fixed equal-rank installation with
-  `StepField.paste (preimageByRank sourceValue targetValue source target)`.
+  `StepField.paste (objectAtPartnerRankBy sourceValue targetValue source target)`.
 - `ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.stepFieldLaw_rankInstalledStepField`:
   for independent product fields on two root copies, mapping the combined
   field through a fixed equal-rank installation gives the product law on one
@@ -66,12 +66,12 @@ theorem RootIndexed.rankInstalledStepField_eq_paste
         (fun sample r u => sample (Sum.inl r) u)
         (fun sample r u => sample (Sum.inr r) u) field =
       RootIndexed.StepField.paste
-        (preimageByRank sourceValue targetValue source target) field := by
+        (objectAtPartnerRankBy sourceValue targetValue source target) field := by
   funext r u
   simp only [RootIndexed.rankInstalledStepField, valueAtMatchedRank,
     Coupling.valueAtPreimage, RootIndexed.StepField.paste,
     RootIndexed.StepField.reindexCoordinates_apply]
-  cases h : preimageByRank sourceValue targetValue source target (r, u) <;>
+  cases h : objectAtPartnerRankBy sourceValue targetValue source target (r, u) <;>
     simp [RootIndexed.StepField.pasteCoordinate, h]
 
 /-- Installing a fixed equal-rank matching between two independent copies
@@ -96,13 +96,13 @@ theorem RootIndexed.stepFieldLaw_rankInstalledStepField
       (fun sample r u => sample (Sum.inl r) u)
       (fun sample r u => sample (Sum.inr r) u) field) =
       RootIndexed.StepField.paste
-        (preimageByRank sourceValue targetValue source target) by
+        (objectAtPartnerRankBy sourceValue targetValue source target) by
     funext field
     exact RootIndexed.rankInstalledStepField_eq_paste
       sourceValue targetValue source target field]
   exact RootIndexed.stepFieldLaw_paste μ
-    (preimageByRank sourceValue targetValue source target)
-    (fun q₁ q₂ p => preimageByRank_leftUnique
+    (objectAtPartnerRankBy sourceValue targetValue source target)
+    (fun q₁ q₂ p => objectAtPartnerRankBy_leftUnique
       sourceValue targetValue source target)
 
 end ProbabilityTheory.BranchingRandomWalk.Coupling

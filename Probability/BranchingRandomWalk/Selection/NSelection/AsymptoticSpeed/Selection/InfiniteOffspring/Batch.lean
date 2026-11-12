@@ -10,7 +10,7 @@ public import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
 public import Combinatorics.BranchingWalk.Step.Potential
 public import Combinatorics.BranchingWalk.Step.Ordering.ByPotential
 public import Combinatorics.BranchingWalk.Step.Ordering.Monotone
-public import Combinatorics.Selection.NSelection.Matching.Hall
+public import Combinatorics.Selection.NSelection.Matching.SelectedPopulation
 public import Combinatorics.Selection.NSelection.Matching.ByRank
 public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.Prod.Lex
@@ -189,7 +189,7 @@ theorem infiniteOffspringPosition_select_mono
       (selectedLabelAtRank_mem lowValue selectedLow hLowCard i)
       (hrank.trans hrank'.symm)
   rw [← hEq]
-  exact matchByRank_value_le highValue lowValue selectedHigh selectedLow
+  exact matchByRank_partnerOrderKey_le highValue lowValue selectedHigh selectedLow
     (by rw [hHighCard, hLowCard]) hthreshold q hq
 
 /-- A batch is admissible when each parent has finite negative exponential

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
-public import Combinatorics.Selection.NSelection.Matching.Hall
+public import Combinatorics.Selection.NSelection.Matching.SelectedPopulation
 
 /-!
 # Address-order-free domination under dynamic leftmost selection
