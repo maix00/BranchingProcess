@@ -23,24 +23,24 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Stoppin
 
 * `selectedReserveSpineRestartEndpoint_success_of_finite` identifies every finite endpoint
   with a successful fixed-index candidate and its completion generation.
-* `selectedReserveSpineRestartSource_card_ge_at_finite_endpoint` gives the source population's
-  lower cardinality bound there, and `selectedReserveSpineRestartSourceSlice_root` identifies
+* `selectedReserveSpineRestartBRWPopulation_card_ge_at_finite_endpoint` gives the reserve-spine BRW population's
+  lower cardinality bound there, and `selectedReserveSpineRestartBRWPopulationSlice_root` identifies
   its root.
 * `selectedReserveSpineRestartEndpointFreshRoots_depth` and
   `selectedReserveSpineRestartEndpointFreshRoots_injective` give the depth and distinctness
   properties needed for a fresh descendant field.
-* `selectedReserveSpineRestartEndpointFreshRoots_eq_target_of_card` identifies the fallback
-  family with the target when the target has at least `lower` particles;
-  `selectedReserveSpineRestartEndpointFreshRoots_eq_target_ae` gives that identity almost
+* `selectedReserveSpineRestartEndpointFreshRoots_eq_nSelectedBRW_of_card` identifies the fallback
+  family with the nSelectedBRWEndpointRankVector when the first-`N` endpoint rank vector has at least `lower` particles;
+  `selectedReserveSpineRestartEndpointFreshRoots_eq_nSelectedBRW_ae` gives that identity almost
   surely at a finite endpoint.
 
-At a finite endpoint, the source population and fresh roots satisfy
+At a finite endpoint, the reserve-spine BRW population and fresh roots satisfy
 \[
-  |\mathrm{source}|\ge N,\qquad
+  |\mathrm{reserve}|\ge N,\qquad
   \operatorname{depth}(r_i)=n,\qquad
   i\ne j\Longrightarrow r_i\ne r_j,
 \]
-and the fallback root family agrees with the target root family almost
+and the fallback root family agrees with the first-`N` endpoint rank-vector roots almost
 surely on that endpoint event.
 
 -/
@@ -86,9 +86,9 @@ lemma selectedReserveSpineRestartEndpoint_success_of_finite
   · exact WithTop.coe_injective hkn
   · simpa [declarations] using hsuccess
 
-/-- At any finite first-success endpoint, the all-candidate causal source
+/-- At any finite first-success endpoint, the all-candidate causal reserve-spine BRW population
 contains the requested number of particles, pathwise. -/
-lemma selectedReserveSpineRestartSource_card_ge_at_finite_endpoint
+lemma selectedReserveSpineRestartBRWPopulation_card_ge_at_finite_endpoint
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace Root] [MeasurableSingletonClass Root]
@@ -101,7 +101,7 @@ lemma selectedReserveSpineRestartSource_card_ge_at_finite_endpoint
     (field : RootIndexed.StepField (Root ⊕ Root) α ℝ) (n : ℕ)
     (htime : selectedReserveSpineRestartEndpointTime R growth hR hgrowth
       lower upper duration r field = (n : WithTop ℕ)) :
-    lower ≤ ((selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+    lower ≤ ((selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
       hgrowth upper duration r).toFinset n field).card := by
   classical
   letI : DecidableEq (RootIndexed.TreeNode Root α) := LinearOrder.toDecidableEq
@@ -110,23 +110,23 @@ lemma selectedReserveSpineRestartSource_card_ge_at_finite_endpoint
   have hsuccess' := hsuccess
   simp only [selectedReserveSpineCandidateSuccessEvent, Set.mem_ofPred_eq] at hsuccess'
   rcases hsuccess' with ⟨halive, hsplit, hgrowthSuccess⟩
-  have hcard := selectedReserveSpineRestartSource_card_ge_of_candidate_success
+  have hcard := selectedReserveSpineRestartBRWPopulation_card_ge_of_candidate_success
     R growth hR lower upper duration r k (RootIndexed.StepField.left field)
     halive hsplit hupper (by simpa using hgrowthSuccess)
-  have hsourceEq : (selectedReserveSpineRestartSourceOnLeft_finiteSlices
+  have hselectedBRWPopulationEq : (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices
       R growth hR hgrowth upper duration r).toFinset n field =
-      selectedReserveSpineRestartSourceSlice R growth hR upper duration r n
+      selectedReserveSpineRestartBRWPopulationSlice R growth hR upper duration r n
         (RootIndexed.StepField.left field) := by
     apply Finset.coe_injective
     rw [RootIndexed.CausalPopulation.FiniteSlices.coe_toFinset]
     rfl
-  rw [hsourceEq]
+  rw [hselectedBRWPopulationEq]
   simpa [hkn] using hcard
 
-/-- Every particle in the candidate-union source belongs to the fixed initial
+/-- Every particle in the candidate-union reserve-spine BRW population belongs to the fixed initial
 root `r`. This is useful when converting rooted particles to subtree
 addresses for the stopped branching factorization theorem. -/
-lemma selectedReserveSpineRestartSourceSlice_root
+lemma selectedReserveSpineRestartBRWPopulationSlice_root
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [DecidableEq (RootIndexed.TreeNode Root α)]
@@ -134,7 +134,7 @@ lemma selectedReserveSpineRestartSourceSlice_root
     (upper duration : ℕ) (r : Root) (n : ℕ)
     (field : RootIndexed.StepField Root α ℝ)
     (q : RootIndexed.TreeNode Root α)
-    (hq : q ∈ selectedReserveSpineRestartSourceSlice R growth hR upper duration r n field) :
+    (hq : q ∈ selectedReserveSpineRestartBRWPopulationSlice R growth hR upper duration r n field) :
     q.1 = r := by
   classical
   have hcapRoot {root q : RootIndexed.TreeNode Root α} {age : ℕ}
@@ -143,7 +143,7 @@ lemma selectedReserveSpineRestartSourceSlice_root
     rw [rootedCapStoppedPopulation, Finset.mem_map] at hq
     obtain ⟨u, _, hqeq⟩ := hq
     exact (congrArg Prod.fst hqeq).symm
-  rw [selectedReserveSpineRestartSourceSlice, Finset.mem_union] at hq
+  rw [selectedReserveSpineRestartBRWPopulationSlice, Finset.mem_union] at hq
   rcases hq with hspine | hcandidate
   · by_cases halive : selectedReserveSpineAlive R r n field
     · have hnode : q = (r, selectedReserveSpinePath R r n field) := by
@@ -161,8 +161,8 @@ lemma selectedReserveSpineRestartSourceSlice_root
     exact (hcapRoot hq).trans hroot
 
 /-- The mixed endpoint-root vector has the right absolute generation on every
-finite successful path. Target roots are used when available; source roots
-fill any missing target ranks on exceptional raw fields. -/
+finite successful path. Roots from the first-`N` BRW are used when available; roots from the reserve-spine BRW population
+fill any missing first-`N` endpoint ranks on exceptional raw fields. -/
 lemma selectedReserveSpineRestartEndpointFreshRoots_depth
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
@@ -184,87 +184,87 @@ lemma selectedReserveSpineRestartEndpointFreshRoots_depth
   letI : DecidableEq (RootIndexed.TreeNode Root α) := LinearOrder.toDecidableEq
   let τ := selectedReserveSpineRestartEndpointTime R growth hR hgrowth
     lower upper duration r
-  let hsource := selectedReserveSpineRestartSourceOnLeft_finiteSlices
+  let hselectedBRWPopulation := selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices
     R growth hR hgrowth upper duration r
-  let source := selectedReserveSpineRestartSourceOnLeft R growth hR hgrowth
+  let selectedReserveSpineRestartBRWPopulation := selectedReserveSpineRestartBRWPopulationOnLeft R growth hR hgrowth
     upper duration r
-  let sourceValue := fun k (field : RootIndexed.StepField (Root ⊕ Root) α ℝ)
+  let selectedBRWOrderKey := fun k (field : RootIndexed.StepField (Root ⊕ Root) α ℝ)
       (p : RootIndexed.TreeNode Root α) =>
     RootIndexed.observedPositionAtGeneration initialPosition id id k
       (RootIndexed.StepField.left field) p
-  let sourceSet := fun k field => hsource.toFinset k field
-  have hsourceCard := selectedReserveSpineRestartSource_card_ge_at_finite_endpoint
+  let selectedBRWPopulation := fun k field => hselectedBRWPopulation.toFinset k field
+  have hselectedBRWPopulationCard := selectedReserveSpineRestartBRWPopulation_card_ge_at_finite_endpoint
     R growth hR hgrowth lower upper duration hupper r field n htime
-  have hsourceMem :
-      selectedReserveSpineRestartSourceEndpointRankVector initialPosition
-        R growth hR hgrowth lower upper duration r field i ∈ sourceSet n field := by
-    change particleRankVectorAtStoppingTime τ sourceValue sourceSet lower (r, [])
-      field i ∈ sourceSet n field
-    exact particleRankVectorAtStoppingTime_mem τ sourceValue sourceSet lower (r, [])
-      field n htime hsourceCard i
-  have hsourceDepth :
-      (selectedReserveSpineRestartSourceEndpointRankVector initialPosition
+  have hselectedBRWPopulationMem :
+      selectedReserveSpineRestartBRWPopulationEndpointRankVector initialPosition
+        R growth hR hgrowth lower upper duration r field i ∈ selectedBRWPopulation n field := by
+    change particleRankVectorAtStoppingTime τ selectedBRWOrderKey selectedBRWPopulation lower (r, [])
+      field i ∈ selectedBRWPopulation n field
+    exact particleRankVectorAtStoppingTime_mem τ selectedBRWOrderKey selectedBRWPopulation lower (r, [])
+      field n htime hselectedBRWPopulationCard i
+  have hselectedBRWPopulationDepth :
+      (selectedReserveSpineRestartBRWPopulationEndpointRankVector initialPosition
         R growth hR hgrowth lower upper duration r field i).2.length = n := by
-    exact source.depth n field _
-      ((hsource.mem_toFinset n field _).mp (by simpa [sourceSet] using hsourceMem))
-  let targetValue := fun k (field : RootIndexed.StepField (Root ⊕ Root) α ℝ)
+    exact selectedReserveSpineRestartBRWPopulation.depth n field _
+      ((hselectedBRWPopulation.mem_toFinset n field _).mp (by simpa [selectedBRWPopulation] using hselectedBRWPopulationMem))
+  let nSelectedBRWOrderKey := fun k (field : RootIndexed.StepField (Root ⊕ Root) α ℝ)
       (p : RootIndexed.TreeNode Root α) =>
     RootIndexed.observedPositionAtGeneration initialPosition id id k
-      (RootIndexed.restartedRealPositionMatchedField N {r} initialPosition id
-        hsource.toFinset k field) p
-  let targetSet := fun k field => RootIndexed.restartedRealPositionMatchedPopulation
+      (RootIndexed.restartedRealPositionNSelectedBRWField N {r} initialPosition id
+        hselectedBRWPopulation.toFinset k field) p
+  let nSelectedBRWPopulation := fun k field => RootIndexed.restartedRealPositionNSelectedBRWPopulation
     N {r} initialPosition id
-    hsource.toFinset k field
-  let target := selectedReserveSpineRestartEndpointRankVector N initialPosition
+    hselectedBRWPopulation.toFinset k field
+  let nSelectedBRWEndpointRankVector := selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
     R growth hR hgrowth lower upper duration r field i
-  by_cases hdefault : target = (r, [])
+  by_cases hdefault : nSelectedBRWEndpointRankVector = (r, [])
   · have hnode :
         (selectedReserveSpineRestartEndpointFreshRoots N initialPosition
           R growth hR hgrowth lower upper duration r field i).2 =
-          (selectedReserveSpineRestartSourceEndpointRankVector initialPosition
+          (selectedReserveSpineRestartBRWPopulationEndpointRankVector initialPosition
             R growth hR hgrowth lower upper duration r field i).2 := by
-      simp [selectedReserveSpineRestartEndpointFreshRoots, target, hdefault]
+      simp [selectedReserveSpineRestartEndpointFreshRoots, nSelectedBRWEndpointRankVector, hdefault]
     rw [hnode]
-    exact hsourceDepth
-  · have hsome : particleAtRankByAtStoppingTime τ targetValue targetSet i.1 field ≠ none := by
+    exact hselectedBRWPopulationDepth
+  · have hsome : particleAtRankByAtStoppingTime τ nSelectedBRWOrderKey nSelectedBRWPopulation i.1 field ≠ none := by
       intro hnone
       apply hdefault
-      change (particleAtRankByAtStoppingTime τ targetValue targetSet i.1 field).getD
+      change (particleAtRankByAtStoppingTime τ nSelectedBRWOrderKey nSelectedBRWPopulation i.1 field).getD
           (r, []) = (r, [])
       simp [hnone]
     obtain ⟨p, hp⟩ := Option.ne_none_iff_exists.mp hsome
-    have hp' : particleAtRankBy (targetValue n field) (targetSet n field) i.1 = some p := by
-      have hstop : particleAtRankByAtStoppingTime τ targetValue targetSet i.1 field = some p := hp.symm
-      rw [particleAtRankByAtStoppingTime_eq_finite τ targetValue targetSet i.1 field n
+    have hp' : particleAtRankBy (nSelectedBRWOrderKey n field) (nSelectedBRWPopulation n field) i.1 = some p := by
+      have hstop : particleAtRankByAtStoppingTime τ nSelectedBRWOrderKey nSelectedBRWPopulation i.1 field = some p := hp.symm
+      rw [particleAtRankByAtStoppingTime_eq_finite τ nSelectedBRWOrderKey nSelectedBRWPopulation i.1 field n
         (by simpa [τ] using htime)] at hstop
       exact hstop
-    have htargetEq : target = p := by
-      change (particleAtRankByAtStoppingTime τ targetValue targetSet i.1 field).getD
+    have hnSelectedBRWPopulationEq : nSelectedBRWEndpointRankVector = p := by
+      change (particleAtRankByAtStoppingTime τ nSelectedBRWOrderKey nSelectedBRWPopulation i.1 field).getD
         (r, []) = p
       rw [hp.symm]
       rfl
-    have htargetStage : particleAtRankBy (targetValue n field)
-        (targetSet n field) i.1 = some p := hp'
-    have hmemTarget : p ∈ targetSet n field :=
-      (particleAtRankBy_eq_some_iff.mp htargetStage).1
+    have hnSelectedBRWPopulationStage : particleAtRankBy (nSelectedBRWOrderKey n field)
+        (nSelectedBRWPopulation n field) i.1 = some p := hp'
+    have hmemTarget : p ∈ nSelectedBRWPopulation n field :=
+      (particleAtRankBy_eq_some_iff.mp hnSelectedBRWPopulationStage).1
     have hdepthTarget := RootIndexed.selectedPopulationTotalized_depth
       N {r} initialPosition id id n
-      (RootIndexed.restartedRealPositionMatchedField N {r} initialPosition id
-        (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+      (RootIndexed.restartedRealPositionNSelectedBRWField N {r} initialPosition id
+        (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
           upper duration r).toFinset n field) p
-      (by simpa [targetSet, RootIndexed.restartedRealPositionMatchedPopulation]
+      (by simpa [nSelectedBRWPopulation, RootIndexed.restartedRealPositionNSelectedBRWPopulation]
         using hmemTarget)
     have hdepthTarget' : p.2.length = n := hdepthTarget
     have hnode :
         (selectedReserveSpineRestartEndpointFreshRoots N initialPosition
-          R growth hR hgrowth lower upper duration r field i).2 = target.2 := by
-      simp [selectedReserveSpineRestartEndpointFreshRoots, target, hdefault]
-    rw [hnode, htargetEq]
+          R growth hR hgrowth lower upper duration r field i).2 = nSelectedBRWEndpointRankVector.2 := by
+      simp [selectedReserveSpineRestartEndpointFreshRoots, nSelectedBRWEndpointRankVector, hdefault]
+    rw [hnode, hnSelectedBRWPopulationEq]
     exact hdepthTarget'
 
 /-- At a finite successful endpoint, the mixed root vector is injective.
 Ranks on either side are distinct, and the left/right root tags separate the
-fallback source particles from target particles. -/
+fallback reserve-spine BRW particles from first-`N` endpoint-rank particles. -/
 lemma selectedReserveSpineRestartEndpointFreshRoots_injective
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
@@ -286,80 +286,80 @@ lemma selectedReserveSpineRestartEndpointFreshRoots_injective
   letI : DecidableEq (RootIndexed.TreeNode Root α) := LinearOrder.toDecidableEq
   let τ := selectedReserveSpineRestartEndpointTime R growth hR hgrowth
     lower upper duration r
-  let hsource := selectedReserveSpineRestartSourceOnLeft_finiteSlices
+  let hselectedBRWPopulation := selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices
     R growth hR hgrowth upper duration r
-  let source := selectedReserveSpineRestartSourceOnLeft R growth hR hgrowth
+  let selectedReserveSpineRestartBRWPopulation := selectedReserveSpineRestartBRWPopulationOnLeft R growth hR hgrowth
     upper duration r
-  let sourceValue := fun k (field : RootIndexed.StepField (Root ⊕ Root) α ℝ)
+  let selectedBRWOrderKey := fun k (field : RootIndexed.StepField (Root ⊕ Root) α ℝ)
       (p : RootIndexed.TreeNode Root α) =>
     RootIndexed.observedPositionAtGeneration initialPosition id id k
       (RootIndexed.StepField.left field) p
-  let sourceSet := fun k field => hsource.toFinset k field
-  let targetValue := fun k (field : RootIndexed.StepField (Root ⊕ Root) α ℝ)
+  let selectedBRWPopulation := fun k field => hselectedBRWPopulation.toFinset k field
+  let nSelectedBRWOrderKey := fun k (field : RootIndexed.StepField (Root ⊕ Root) α ℝ)
       (p : RootIndexed.TreeNode Root α) =>
     RootIndexed.observedPositionAtGeneration initialPosition id id k
-      (RootIndexed.restartedRealPositionMatchedField N {r} initialPosition id
-        hsource.toFinset k field) p
-  let targetSet := fun k field => RootIndexed.restartedRealPositionMatchedPopulation
+      (RootIndexed.restartedRealPositionNSelectedBRWField N {r} initialPosition id
+        hselectedBRWPopulation.toFinset k field) p
+  let nSelectedBRWPopulation := fun k field => RootIndexed.restartedRealPositionNSelectedBRWPopulation
     N {r} initialPosition id
-    hsource.toFinset k field
-  have hsourceCard := selectedReserveSpineRestartSource_card_ge_at_finite_endpoint
+    hselectedBRWPopulation.toFinset k field
+  have hselectedBRWPopulationCard := selectedReserveSpineRestartBRWPopulation_card_ge_at_finite_endpoint
     R growth hR hgrowth lower upper duration hupper r field n htime
   have hroot (i : Fin lower) :
       selectedReserveSpineRestartEndpointFreshRoots N initialPosition
         R growth hR hgrowth lower upper duration r field i =
-        if selectedReserveSpineRestartEndpointRankVector N initialPosition
+        if selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
             R growth hR hgrowth lower upper duration r field i = (r, []) then
-          (Sum.inl r, (selectedReserveSpineRestartSourceEndpointRankVector
+          (Sum.inl r, (selectedReserveSpineRestartBRWPopulationEndpointRankVector
             initialPosition R growth hR hgrowth lower upper duration r field i).2)
-        else (Sum.inr r, (selectedReserveSpineRestartEndpointRankVector N initialPosition
+        else (Sum.inr r, (selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
           R growth hR hgrowth lower upper duration r field i).2) := by
     simp [selectedReserveSpineRestartEndpointFreshRoots]
-  have hsourceSliceEq : sourceSet n field =
-      selectedReserveSpineRestartSourceSlice R growth hR upper duration r n
+  have hselectedBRWPopulationSliceEq : selectedBRWPopulation n field =
+      selectedReserveSpineRestartBRWPopulationSlice R growth hR upper duration r n
         (RootIndexed.StepField.left field) := by
     apply Finset.coe_injective
     rw [RootIndexed.CausalPopulation.FiniteSlices.coe_toFinset]
     rfl
-  have hsourceRoot (i : Fin lower) :
-      (selectedReserveSpineRestartSourceEndpointRankVector initialPosition
+  have hselectedBRWPopulationRoot (i : Fin lower) :
+      (selectedReserveSpineRestartBRWPopulationEndpointRankVector initialPosition
         R growth hR hgrowth lower upper duration r field i).1 = r := by
-    apply selectedReserveSpineRestartSourceSlice_root R growth hR upper duration r n
+    apply selectedReserveSpineRestartBRWPopulationSlice_root R growth hR upper duration r n
       (RootIndexed.StepField.left field)
-    rw [← hsourceSliceEq]
-    change particleRankVectorAtStoppingTime τ sourceValue sourceSet lower (r, [])
-      field i ∈ sourceSet n field
-    exact particleRankVectorAtStoppingTime_mem τ sourceValue sourceSet lower (r, [])
-      field n htime hsourceCard i
-  have htargetRoot (i : Fin lower)
-      (hne : selectedReserveSpineRestartEndpointRankVector N initialPosition
+    rw [← hselectedBRWPopulationSliceEq]
+    change particleRankVectorAtStoppingTime τ selectedBRWOrderKey selectedBRWPopulation lower (r, [])
+      field i ∈ selectedBRWPopulation n field
+    exact particleRankVectorAtStoppingTime_mem τ selectedBRWOrderKey selectedBRWPopulation lower (r, [])
+      field n htime hselectedBRWPopulationCard i
+  have hnSelectedBRWPopulationRoot (i : Fin lower)
+      (hne : selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
         R growth hR hgrowth lower upper duration r field i ≠ (r, [])) :
-      (selectedReserveSpineRestartEndpointRankVector N initialPosition
+      (selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
         R growth hR hgrowth lower upper duration r field i).1 = r := by
-    let t := selectedReserveSpineRestartEndpointRankVector N initialPosition
+    let t := selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
       R growth hR hgrowth lower upper duration r field i
-    have hmem : t ∈ targetSet n field := by
-      change particleRankVectorAtStoppingTime τ targetValue targetSet lower (r, [])
-        field i ∈ targetSet n field
+    have hmem : t ∈ nSelectedBRWPopulation n field := by
+      change particleRankVectorAtStoppingTime τ nSelectedBRWOrderKey nSelectedBRWPopulation lower (r, [])
+        field i ∈ nSelectedBRWPopulation n field
       have hne' := hne
-      change particleRankVectorAtStoppingTime τ targetValue targetSet lower
+      change particleRankVectorAtStoppingTime τ nSelectedBRWOrderKey nSelectedBRWPopulation lower
         (r, []) field i ≠ (r, []) at hne'
-      exact particleRankVectorAtStoppingTime_mem_of_ne_default τ targetValue targetSet
+      exact particleRankVectorAtStoppingTime_mem_of_ne_default τ nSelectedBRWOrderKey nSelectedBRWPopulation
         lower (r, []) field n htime i hne'
     have hroot := RootIndexed.selectedPopulationTotalized_root_mem N {r}
       initialPosition id id n
-      (RootIndexed.restartedRealPositionMatchedField N {r} initialPosition id
-        hsource.toFinset n field) t
-      (by simpa [targetSet, RootIndexed.restartedRealPositionMatchedPopulation] using hmem)
+      (RootIndexed.restartedRealPositionNSelectedBRWField N {r} initialPosition id
+        hselectedBRWPopulation.toFinset n field) t
+      (by simpa [nSelectedBRWPopulation, RootIndexed.restartedRealPositionNSelectedBRWPopulation] using hmem)
     simpa [t] using hroot
   intro i j hij
-  let ti := selectedReserveSpineRestartEndpointRankVector N initialPosition
+  let ti := selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
     R growth hR hgrowth lower upper duration r field i
-  let tj := selectedReserveSpineRestartEndpointRankVector N initialPosition
+  let tj := selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
     R growth hR hgrowth lower upper duration r field j
-  let si := selectedReserveSpineRestartSourceEndpointRankVector initialPosition
+  let si := selectedReserveSpineRestartBRWPopulationEndpointRankVector initialPosition
     R growth hR hgrowth lower upper duration r field i
-  let sj := selectedReserveSpineRestartSourceEndpointRankVector initialPosition
+  let sj := selectedReserveSpineRestartBRWPopulationEndpointRankVector initialPosition
     R growth hR hgrowth lower upper duration r field j
   have hi : ti = (r, []) ∨ ti ≠ (r, []) := eq_or_ne ti (r, [])
   have hj : tj = (r, []) ∨ tj ≠ (r, []) := eq_or_ne tj (r, [])
@@ -368,13 +368,13 @@ lemma selectedReserveSpineRestartEndpointFreshRoots_injective
       have h := hij
       rw [hroot i, hroot j] at h
       simpa [ti, tj, si, sj, hi, hj] using congrArg Prod.snd h
-    have hnodes : si = sj := Prod.ext (hsourceRoot i |>.trans (hsourceRoot j).symm) hpath
-    have hri := particleRankVectorAtStoppingTime_rank τ sourceValue sourceSet
-      lower (r, []) field n htime hsourceCard i
-    have hrj := particleRankVectorAtStoppingTime_rank τ sourceValue sourceSet
-      lower (r, []) field n htime hsourceCard j
-    change rankBy (sourceValue n field) (sourceSet n field) si = i.1 at hri
-    change rankBy (sourceValue n field) (sourceSet n field) sj = j.1 at hrj
+    have hnodes : si = sj := Prod.ext (hselectedBRWPopulationRoot i |>.trans (hselectedBRWPopulationRoot j).symm) hpath
+    have hri := particleRankVectorAtStoppingTime_rank τ selectedBRWOrderKey selectedBRWPopulation
+      lower (r, []) field n htime hselectedBRWPopulationCard i
+    have hrj := particleRankVectorAtStoppingTime_rank τ selectedBRWOrderKey selectedBRWPopulation
+      lower (r, []) field n htime hselectedBRWPopulationCard j
+    change rankBy (selectedBRWOrderKey n field) (selectedBRWPopulation n field) si = i.1 at hri
+    change rankBy (selectedBRWOrderKey n field) (selectedBRWPopulation n field) sj = j.1 at hrj
     rw [hnodes] at hri
     apply Fin.ext
     omega
@@ -388,21 +388,21 @@ lemma selectedReserveSpineRestartEndpointFreshRoots_injective
       rw [hroot i, hroot j] at h
       have hpath : ti.2 = tj.2 := by
         simpa [ti, tj, si, sj, hi, hj] using congrArg Prod.snd h
-      exact Prod.ext (htargetRoot i hi |>.trans (htargetRoot j hj).symm) hpath
-    have hri := particleRankVectorAtStoppingTime_rank_of_ne_default τ targetValue
-      targetSet lower (r, []) field n htime i hi
-    have hrj := particleRankVectorAtStoppingTime_rank_of_ne_default τ targetValue
-      targetSet lower (r, []) field n htime j hj
-    change rankBy (targetValue n field) (targetSet n field) ti = i.1 at hri
-    change rankBy (targetValue n field) (targetSet n field) tj = j.1 at hrj
+      exact Prod.ext (hnSelectedBRWPopulationRoot i hi |>.trans (hnSelectedBRWPopulationRoot j hj).symm) hpath
+    have hri := particleRankVectorAtStoppingTime_rank_of_ne_default τ nSelectedBRWOrderKey
+      nSelectedBRWPopulation lower (r, []) field n htime i hi
+    have hrj := particleRankVectorAtStoppingTime_rank_of_ne_default τ nSelectedBRWOrderKey
+      nSelectedBRWPopulation lower (r, []) field n htime j hj
+    change rankBy (nSelectedBRWOrderKey n field) (nSelectedBRWPopulation n field) ti = i.1 at hri
+    change rankBy (nSelectedBRWOrderKey n field) (nSelectedBRWPopulation n field) tj = j.1 at hrj
     rw [hnodes] at hri
     apply Fin.ext
     omega
 
-/-- Whenever the rank-installed target has at least `lower` particles at the
-finite endpoint, the mixed root vector is entirely on the target/right side.
+/-- Whenever the rank-installed first-`N` endpoint rank vector has at least `lower` particles at the
+finite endpoint, the mixed root vector is entirely on the first-`N` side.
 The almost-sure coupling supplies this cardinality premise on first success. -/
-lemma selectedReserveSpineRestartEndpointFreshRoots_eq_target_of_card
+lemma selectedReserveSpineRestartEndpointFreshRoots_eq_nSelectedBRW_of_card
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace Root] [MeasurableSingletonClass Root]
@@ -417,13 +417,13 @@ lemma selectedReserveSpineRestartEndpointFreshRoots_eq_target_of_card
     (field : RootIndexed.StepField (Root ⊕ Root) α ℝ) (n : ℕ)
     (htime : selectedReserveSpineRestartEndpointTime R growth hR hgrowth
       lower upper duration r field = (n : WithTop ℕ))
-    (hcard : lower ≤ (RootIndexed.restartedRealPositionMatchedPopulation N {r}
+    (hcard : lower ≤ (RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
       initialPosition id
-      (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+      (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
         upper duration r).toFinset n field).card) (i : Fin lower) :
     selectedReserveSpineRestartEndpointFreshRoots N initialPosition
       R growth hR hgrowth lower upper duration r field i =
-      (Sum.inr r, (selectedReserveSpineRestartEndpointRankVector N initialPosition
+      (Sum.inr r, (selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
         R growth hR hgrowth lower upper duration r field i).2) := by
   classical
   letI : DecidableEq (RootIndexed.TreeNode Root α) := LinearOrder.toDecidableEq
@@ -431,25 +431,25 @@ lemma selectedReserveSpineRestartEndpointFreshRoots_eq_target_of_card
     (selectedReserveSpineRestartEndpointTime R growth hR hgrowth
       lower upper duration r)
     (fun n field p => RootIndexed.observedPositionAtGeneration initialPosition id id n
-      (RootIndexed.restartedRealPositionMatchedField N {r} initialPosition id
-        (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+      (RootIndexed.restartedRealPositionNSelectedBRWField N {r} initialPosition id
+        (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
           upper duration r).toFinset n field) p)
-    (fun n field => RootIndexed.restartedRealPositionMatchedPopulation N {r}
+    (fun n field => RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
       initialPosition id
-      (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+      (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
         upper duration r).toFinset n field)
     lower (r, []) field n htime hcard i
   have hdepth := RootIndexed.selectedPopulationTotalized_depth N {r}
     initialPosition id id n
-    (RootIndexed.restartedRealPositionMatchedField N {r} initialPosition id
-      (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+    (RootIndexed.restartedRealPositionNSelectedBRWField N {r} initialPosition id
+      (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
         upper duration r).toFinset n field)
-    (selectedReserveSpineRestartEndpointRankVector N initialPosition
+    (selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
       R growth hR hgrowth lower upper duration r field i)
-    (by simpa [RootIndexed.restartedRealPositionMatchedPopulation,
-      selectedReserveSpineRestartEndpointRankVector,
+    (by simpa [RootIndexed.restartedRealPositionNSelectedBRWPopulation,
+      selectedReserveSpineRestartNSelectedBRWEndpointRankVector,
       particleRankVectorAtStoppingTime] using hmem)
-  have hne : selectedReserveSpineRestartEndpointRankVector N initialPosition
+  have hne : selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
       R growth hR hgrowth lower upper duration r field i ≠ (r, []) := by
     intro hEq
     have hnpos : 0 < n := by
@@ -463,9 +463,9 @@ lemma selectedReserveSpineRestartEndpointFreshRoots_eq_target_of_card
 
 /-- Almost surely, on a finite first-success endpoint, the mixed root vector
 used for fresh-field factorization is exactly the endpoint vector selected
-from the rank-installed target population. The source-tagged branch only
-totalizes exceptional raw fields where the target rank is absent. -/
-lemma selectedReserveSpineRestartEndpointFreshRoots_eq_target_ae
+from the rank-installed first-`N` BRW population. The reserve-spine branch only
+totalizes exceptional raw fields where the first-`N` rank is absent. -/
+lemma selectedReserveSpineRestartEndpointFreshRoots_eq_nSelectedBRW_ae
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace Root] [MeasurableSingletonClass Root]
@@ -487,7 +487,7 @@ lemma selectedReserveSpineRestartEndpointFreshRoots_eq_target_ae
         selectedReserveSpineRestartEndpointFreshRoots N initialPosition
           R growth hR hgrowth lower upper duration r field i =
         (Sum.inr r,
-          (selectedReserveSpineRestartEndpointRankVector N initialPosition
+          (selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
             R growth hR hgrowth lower upper duration r field i).2) := by
   have hcomparison := selectedReserveSpineFirstSuccess_endpointComparison_ae
     μ hnorm N initialPosition R growth hR hgrowth lower upper duration hupper
@@ -501,7 +501,7 @@ lemma selectedReserveSpineRestartEndpointFreshRoots_eq_target_ae
   have htime' : selectedReserveSpineRestartEndpointTime R growth hR hgrowth
       lower upper duration r field = (n : WithTop ℕ) := by
     simpa [selectedReserveSpineRestartEndpointTime] using htime
-  exact selectedReserveSpineRestartEndpointFreshRoots_eq_target_of_card
+  exact selectedReserveSpineRestartEndpointFreshRoots_eq_nSelectedBRW_of_card
     N initialPosition R growth hR hgrowth lower upper duration hupper r field n
     htime' hcard i
 

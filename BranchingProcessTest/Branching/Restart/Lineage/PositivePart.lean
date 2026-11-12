@@ -18,7 +18,7 @@ law for the marks sampled at the adaptive spine vertices.
   ProbabilityTheory.BranchingRandomWalk.selectedReserveSpinePath_positivePart_le_cutoff_add_firstChildSum
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartSourceSlice_contains_live_spine
+  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartBRWPopulationSlice_contains_live_spine
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartSourceMinPosition_positivePart_le
+  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartBRWPopulationMinPosition_positivePart_le
