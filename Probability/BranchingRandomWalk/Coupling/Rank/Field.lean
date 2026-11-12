@@ -17,27 +17,27 @@ measurability under finite-support hypotheses.
 
 ## Public declarations
 
-Installing source steps by equal dynamic rank recovers the source step at
+Installing object steps by equal dynamic rank recovers the object step at
 each canonical match:
 
 \[
-p\in\operatorname{source}(\omega),\quad
-|\operatorname{source}(\omega)|\le|\operatorname{target}(\omega)|
+p\in\operatorname{objectsToMatch}(\omega),\quad
+|\operatorname{objectsToMatch}(\omega)|\le|\operatorname{availablePartners}(\omega)|
 \Longrightarrow
 \operatorname{rankInstalledStepField}(\omega)
   (\operatorname{matchByRankOrSelf}(p))
-=\operatorname{sourceStep}(\omega,p).
+=\operatorname{objectStep}(\omega,p).
 \]
 
-* `RootIndexed.rankInstalledStepField` installs each source step at the
-  target node of equal dynamic rank and leaves unmatched target steps at
+* `RootIndexed.rankInstalledStepField` installs each object step at the
+  partner node of equal dynamic rank and leaves unmatched partner steps at
   their fallback values.
 * `RootIndexed.rankInstalledStepField_matchByRankOrSelf` states that the
-  installed field recovers the source step at every canonical equal-rank
+  installed field recovers the object step at every canonical equal-rank
   match.
 * `RootIndexed.rankInstalledStepField_measurable` proves measurability of
   the installed field from measurable support fibres, rank comparisons, and
-  source/fallback steps.
+  object/fallback steps.
 * `RootIndexed.reindexedSteps_matchByRankOrSelf_measurable` proves
   measurability in the generation domain flow of the step family read through
   the canonical equal-rank matching.
@@ -54,160 +54,160 @@ open Combinatorics.UlamHarris
 
 variable {Ω Value : Type*} [MeasurableSpace Ω]
 
-/-- Install the step of each source particle at the target particle of the
-same dynamic rank.  Target particles outside the source rank range retain
+/-- Install the step of each object particle at the partner particle of the
+same dynamic rank. Partner particles outside the object rank range retain
 their fallback step. -/
 noncomputable def RootIndexed.rankInstalledStepField
     {Root α X Value : Type*}
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
-    (sourceValue targetValue : Ω → RootIndexed.TreeNode Root α → Value)
-    (source target : Ω → Finset (RootIndexed.TreeNode Root α))
-    (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
+    (objectOrderKey partnerOrderKey : Ω → RootIndexed.TreeNode Root α → Value)
+    (objectsToMatch availablePartners : Ω → Finset (RootIndexed.TreeNode Root α))
+    (objectStep fallback : Ω → RootIndexed.StepField Root α X)
     (ω : Ω) : RootIndexed.StepField Root α X :=
-  fun r u => valueAtMatchedRank sourceValue targetValue source target
-    (fun sample p => sourceStep sample p.1 p.2)
+  fun r u => valueAtMatchedRank objectOrderKey partnerOrderKey objectsToMatch availablePartners
+    (fun sample p => objectStep sample p.1 p.2)
     (fun sample q => fallback sample q.1 q.2) ω (r, u)
 
 omit [MeasurableSpace Ω] in
-/-- At every canonical equal-rank match, `rankInstalledStepField` contains exactly
-the corresponding source step. -/
+/-- At every canonical equal-rank match, `rankInstalledStepField` contains the
+corresponding object step. -/
 theorem RootIndexed.rankInstalledStepField_matchByRankOrSelf
     {Root α X Value : Type*}
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
-    (sourceValue targetValue : Ω → RootIndexed.TreeNode Root α → Value)
-    (source target : Ω → Finset (RootIndexed.TreeNode Root α))
-    (ω : Ω) (hcard : (source ω).card ≤ (target ω).card)
-    (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
-    {p : RootIndexed.TreeNode Root α} (hp : p ∈ source ω) :
-    RootIndexed.rankInstalledStepField sourceValue targetValue source target
-        sourceStep fallback ω
-        (matchByRankOrSelf (sourceValue ω) (targetValue ω)
-          (source ω) (target ω) hcard p).1
-        (matchByRankOrSelf (sourceValue ω) (targetValue ω)
-          (source ω) (target ω) hcard p).2 =
-      sourceStep ω p.1 p.2 := by
-  exact valueAtMatchedRank_matchByRankOrSelf sourceValue targetValue
-    source target ω hcard
-    (fun sample q => sourceStep sample q.1 q.2)
+    (objectOrderKey partnerOrderKey : Ω → RootIndexed.TreeNode Root α → Value)
+    (objectsToMatch availablePartners : Ω → Finset (RootIndexed.TreeNode Root α))
+    (ω : Ω) (hcard : (objectsToMatch ω).card ≤ (availablePartners ω).card)
+    (objectStep fallback : Ω → RootIndexed.StepField Root α X)
+    {p : RootIndexed.TreeNode Root α} (hp : p ∈ objectsToMatch ω) :
+    RootIndexed.rankInstalledStepField objectOrderKey partnerOrderKey objectsToMatch availablePartners
+        objectStep fallback ω
+        (matchByRankOrSelf (objectOrderKey ω) (partnerOrderKey ω)
+          (objectsToMatch ω) (availablePartners ω) hcard p).1
+        (matchByRankOrSelf (objectOrderKey ω) (partnerOrderKey ω)
+          (objectsToMatch ω) (availablePartners ω) hcard p).2 =
+      objectStep ω p.1 p.2 := by
+  exact valueAtMatchedRank_matchByRankOrSelf objectOrderKey partnerOrderKey
+    objectsToMatch availablePartners ω hcard
+    (fun sample q => objectStep sample q.1 q.2)
     (fun sample q => fallback sample q.1 q.2) hp
 
 omit [MeasurableSpace Ω] in
 private theorem RootIndexed.survive_rankInstalledStepField_matchByRankOrSelf
     {Root α X Value : Type*}
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
-    (sourceValue targetValue : Ω → RootIndexed.TreeNode Root α → Value)
-    (source target : Ω → Finset (RootIndexed.TreeNode Root α))
-    (ω : Ω) (hcard : (source ω).card ≤ (target ω).card)
-    (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
-    {p : RootIndexed.TreeNode Root α} (hp : p ∈ source ω)
+    (objectOrderKey partnerOrderKey : Ω → RootIndexed.TreeNode Root α → Value)
+    (objectsToMatch availablePartners : Ω → Finset (RootIndexed.TreeNode Root α))
+    (ω : Ω) (hcard : (objectsToMatch ω).card ≤ (availablePartners ω).card)
+    (objectStep fallback : Ω → RootIndexed.StepField Root α X)
+    {p : RootIndexed.TreeNode Root α} (hp : p ∈ objectsToMatch ω)
     (i : α) :
-    survive (RootIndexed.rankInstalledStepField sourceValue targetValue source target
-      sourceStep fallback ω
-      (matchByRankOrSelf (sourceValue ω) (targetValue ω)
-        (source ω) (target ω) hcard p).1
-      (matchByRankOrSelf (sourceValue ω) (targetValue ω)
-        (source ω) (target ω) hcard p).2) i =
-      survive (sourceStep ω p.1 p.2) i := by
-  rw [RootIndexed.rankInstalledStepField_matchByRankOrSelf sourceValue targetValue
-    source target ω hcard sourceStep fallback hp]
+    survive (RootIndexed.rankInstalledStepField objectOrderKey partnerOrderKey objectsToMatch availablePartners
+      objectStep fallback ω
+      (matchByRankOrSelf (objectOrderKey ω) (partnerOrderKey ω)
+        (objectsToMatch ω) (availablePartners ω) hcard p).1
+      (matchByRankOrSelf (objectOrderKey ω) (partnerOrderKey ω)
+        (objectsToMatch ω) (availablePartners ω) hcard p).2) i =
+      survive (objectStep ω p.1 p.2) i := by
+  rw [RootIndexed.rankInstalledStepField_matchByRankOrSelf objectOrderKey partnerOrderKey
+    objectsToMatch availablePartners ω hcard objectStep fallback hp]
 
 omit [MeasurableSpace Ω] in
 private theorem RootIndexed.value'_map_rankInstalledStepField_matchByRankOrSelf
     {Root α X Position Value : Type*}
     [Zero Position]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
-    (sourceValue targetValue : Ω → RootIndexed.TreeNode Root α → Value)
-    (source target : Ω → Finset (RootIndexed.TreeNode Root α))
-    (ω : Ω) (hcard : (source ω).card ≤ (target ω).card)
-    (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
+    (objectOrderKey partnerOrderKey : Ω → RootIndexed.TreeNode Root α → Value)
+    (objectsToMatch availablePartners : Ω → Finset (RootIndexed.TreeNode Root α))
+    (ω : Ω) (hcard : (objectsToMatch ω).card ≤ (availablePartners ω).card)
+    (objectStep fallback : Ω → RootIndexed.StepField Root α X)
     (d : X → Position)
-    {p : RootIndexed.TreeNode Root α} (hp : p ∈ source ω) (i : α) :
-    value' ((RootIndexed.rankInstalledStepField sourceValue targetValue source target
-      sourceStep fallback ω
-      (matchByRankOrSelf (sourceValue ω) (targetValue ω)
-        (source ω) (target ω) hcard p).1
-      (matchByRankOrSelf (sourceValue ω) (targetValue ω)
-        (source ω) (target ω) hcard p).2).map d) i =
-      value' ((sourceStep ω p.1 p.2).map d) i := by
-  rw [RootIndexed.rankInstalledStepField_matchByRankOrSelf sourceValue targetValue
-    source target ω hcard sourceStep fallback hp]
+    {p : RootIndexed.TreeNode Root α} (hp : p ∈ objectsToMatch ω) (i : α) :
+    value' ((RootIndexed.rankInstalledStepField objectOrderKey partnerOrderKey objectsToMatch availablePartners
+      objectStep fallback ω
+      (matchByRankOrSelf (objectOrderKey ω) (partnerOrderKey ω)
+        (objectsToMatch ω) (availablePartners ω) hcard p).1
+      (matchByRankOrSelf (objectOrderKey ω) (partnerOrderKey ω)
+        (objectsToMatch ω) (availablePartners ω) hcard p).2).map d) i =
+      value' ((objectStep ω p.1 p.2).map d) i := by
+  rw [RootIndexed.rankInstalledStepField_matchByRankOrSelf objectOrderKey partnerOrderKey
+    objectsToMatch availablePartners ω hcard objectStep fallback hp]
 
-/-- The field obtained by installing source steps at equal-rank target
-particles is measurable.  Countability is required only for the actual
+/-- The field obtained by installing object steps at equal-rank partner
+particles is measurable. Countability is required only for the actual
 random finite populations used to compute the ranks. -/
 theorem RootIndexed.rankInstalledStepField_measurable
     {Root α X Value : Type*} [MeasurableSpace X]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
-    (sourceValue targetValue : Ω → RootIndexed.TreeNode Root α → Value)
-    (source target : Ω → Finset (RootIndexed.TreeNode Root α))
-    (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
-    (hsourceFiber : ∀ s, MeasurableSet {ω | source ω = s})
-    (hsourceRange : (Set.range source).Countable)
-    (htargetFiber : ∀ s, MeasurableSet {ω | target ω = s})
-    (htargetRange : (Set.range target).Countable)
-    (hsourceKey : ∀ p q, Measurable fun ω =>
-      valueKey (sourceValue ω) q < valueKey (sourceValue ω) p)
-    (htargetKey : ∀ p q, Measurable fun ω =>
-      valueKey (targetValue ω) q < valueKey (targetValue ω) p)
-    (hsourceStep : ∀ p : RootIndexed.TreeNode Root α,
-      Measurable fun ω => sourceStep ω p.1 p.2)
+    (objectOrderKey partnerOrderKey : Ω → RootIndexed.TreeNode Root α → Value)
+    (objectsToMatch availablePartners : Ω → Finset (RootIndexed.TreeNode Root α))
+    (objectStep fallback : Ω → RootIndexed.StepField Root α X)
+    (hobjectsToMatchFiber : ∀ s, MeasurableSet {ω | objectsToMatch ω = s})
+    (hobjectsToMatchRange : (Set.range objectsToMatch).Countable)
+    (havailablePartnersFiber : ∀ s, MeasurableSet {ω | availablePartners ω = s})
+    (havailablePartnersRange : (Set.range availablePartners).Countable)
+    (hobjectOrderKeyMeasurable : ∀ p q, Measurable fun ω =>
+      valueKey (objectOrderKey ω) q < valueKey (objectOrderKey ω) p)
+    (hpartnerOrderKeyMeasurable : ∀ p q, Measurable fun ω =>
+      valueKey (partnerOrderKey ω) q < valueKey (partnerOrderKey ω) p)
+    (hobjectStep : ∀ p : RootIndexed.TreeNode Root α,
+      Measurable fun ω => objectStep ω p.1 p.2)
     (hfallback : ∀ q : RootIndexed.TreeNode Root α,
       Measurable fun ω => fallback ω q.1 q.2) :
-    Measurable fun ω => RootIndexed.rankInstalledStepField sourceValue targetValue
-      source target sourceStep fallback ω := by
-  have h := valueAtMatchedRank_measurable sourceValue targetValue source target
-    (fun sample p => sourceStep sample p.1 p.2)
+    Measurable fun ω => RootIndexed.rankInstalledStepField objectOrderKey partnerOrderKey
+      objectsToMatch availablePartners objectStep fallback ω := by
+  have h := valueAtMatchedRank_measurable objectOrderKey partnerOrderKey objectsToMatch availablePartners
+    (fun sample p => objectStep sample p.1 p.2)
     (fun sample q => fallback sample q.1 q.2)
-    hsourceFiber hsourceRange htargetFiber htargetRange
-    hsourceKey htargetKey hsourceStep hfallback
+    hobjectsToMatchFiber hobjectsToMatchRange havailablePartnersFiber havailablePartnersRange
+    hobjectOrderKeyMeasurable hpartnerOrderKeyMeasurable hobjectStep hfallback
   apply measurable_pi_iff.mpr
   intro r
   apply measurable_pi_iff.mpr
   intro u
   exact (measurable_pi_apply (r, u)).comp h
 
-/-- Every fibre of the total equal-rank match is measurable.  Outside the
-source population the total map fixes the particle label. -/
+/-- Every fibre of the total equal-rank match is measurable. Outside the
+object population the total map fixes the particle label. -/
 private theorem measurableSet_matchByRankOrSelf_eq
     {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
-    (sourceValue targetValue : Ω → Particle → Value)
-    (source target : Ω → Finset Particle)
-    (hcard : ∀ ω, (source ω).card ≤ (target ω).card)
-    (hsourceFiber : ∀ s, MeasurableSet {ω | source ω = s})
-    (hsourceRange : (Set.range source).Countable)
-    (htargetFiber : ∀ s, MeasurableSet {ω | target ω = s})
-    (htargetRange : (Set.range target).Countable)
-    (hsourceKey : ∀ p q : Particle, Measurable fun ω =>
-      valueKey (sourceValue ω) q < valueKey (sourceValue ω) p)
-    (htargetKey : ∀ p q : Particle, Measurable fun ω =>
-      valueKey (targetValue ω) q < valueKey (targetValue ω) p)
+    (objectOrderKey partnerOrderKey : Ω → Particle → Value)
+    (objectsToMatch availablePartners : Ω → Finset Particle)
+    (hcard : ∀ ω, (objectsToMatch ω).card ≤ (availablePartners ω).card)
+    (hobjectsToMatchFiber : ∀ s, MeasurableSet {ω | objectsToMatch ω = s})
+    (hobjectsToMatchRange : (Set.range objectsToMatch).Countable)
+    (havailablePartnersFiber : ∀ s, MeasurableSet {ω | availablePartners ω = s})
+    (havailablePartnersRange : (Set.range availablePartners).Countable)
+    (hobjectOrderKeyMeasurable : ∀ p q : Particle, Measurable fun ω =>
+      valueKey (objectOrderKey ω) q < valueKey (objectOrderKey ω) p)
+    (hpartnerOrderKeyMeasurable : ∀ p q : Particle, Measurable fun ω =>
+      valueKey (partnerOrderKey ω) q < valueKey (partnerOrderKey ω) p)
     (p q : Particle) :
     MeasurableSet {ω |
-      matchByRankOrSelf (sourceValue ω) (targetValue ω)
-        (source ω) (target ω) (hcard ω) p = q} := by
-  let sourceMem : Set Ω := {ω | p ∈ source ω}
+      matchByRankOrSelf (objectOrderKey ω) (partnerOrderKey ω)
+        (objectsToMatch ω) (availablePartners ω) (hcard ω) p = q} := by
+  let objectsToMatchMem : Set Ω := {ω | p ∈ objectsToMatch ω}
   let matched : Set Ω := {ω |
-    partnerAtObjectRankBy (sourceValue ω) (targetValue ω)
-      (source ω) (target ω) p = some q}
-  have hsourceMem : MeasurableSet sourceMem :=
-    measurableSet_mem_candidates source hsourceFiber hsourceRange p
+    partnerAtObjectRankBy (objectOrderKey ω) (partnerOrderKey ω)
+      (objectsToMatch ω) (availablePartners ω) p = some q}
+  have hobjectsToMatchMem : MeasurableSet objectsToMatchMem :=
+    measurableSet_mem_candidates objectsToMatch hobjectsToMatchFiber hobjectsToMatchRange p
   have hmatched : MeasurableSet matched :=
-    measurableSet_particleAtSourceRankBy_eq_some sourceValue targetValue
-      source target hsourceFiber hsourceRange htargetFiber htargetRange
-      hsourceKey htargetKey p q
+    measurableSet_partnerAtObjectRankBy_eq_some objectOrderKey partnerOrderKey
+      objectsToMatch availablePartners hobjectsToMatchFiber hobjectsToMatchRange havailablePartnersFiber havailablePartnersRange
+      hobjectOrderKeyMeasurable hpartnerOrderKeyMeasurable p q
   by_cases hpq : p = q
   · have hset : {ω |
-        matchByRankOrSelf (sourceValue ω) (targetValue ω)
-          (source ω) (target ω) (hcard ω) p = q} =
-        (sourceMem ∩ matched) ∪ sourceMemᶜ := by
+        matchByRankOrSelf (objectOrderKey ω) (partnerOrderKey ω)
+          (objectsToMatch ω) (availablePartners ω) (hcard ω) p = q} =
+        (objectsToMatchMem ∩ matched) ∪ objectsToMatchMemᶜ := by
       ext ω
       subst q
-      by_cases hp : p ∈ source ω
+      by_cases hp : p ∈ objectsToMatch ω
       · have hsome := partnerAtObjectRankBy_matchByRank
-          (sourceValue ω) (targetValue ω) (source ω) (target ω)
+          (objectOrderKey ω) (partnerOrderKey ω) (objectsToMatch ω) (availablePartners ω)
           (hcard ω) p hp
         simp only [Set.mem_union, Set.mem_inter_iff, Set.mem_compl_iff,
-          Set.mem_ofPred_eq, sourceMem, matched]
+          Set.mem_ofPred_eq, objectsToMatchMem, matched]
         rw [matchByRankOrSelf_of_mem _ _ _ _ _ hp]
         constructor
         · intro h
@@ -215,77 +215,77 @@ private theorem measurableSet_matchByRankOrSelf_eq
         · rintro (⟨_, h⟩ | hnot)
           · exact Option.some.inj (hsome.symm.trans h)
           · exact (hnot hp).elim
-      · simp [sourceMem, matched, hp]
+      · simp [objectsToMatchMem, matched, hp]
     rw [hset]
-    exact (hsourceMem.inter hmatched).union hsourceMem.compl
+    exact (hobjectsToMatchMem.inter hmatched).union hobjectsToMatchMem.compl
   · have hset : {ω |
-        matchByRankOrSelf (sourceValue ω) (targetValue ω)
-          (source ω) (target ω) (hcard ω) p = q} =
-        sourceMem ∩ matched := by
+        matchByRankOrSelf (objectOrderKey ω) (partnerOrderKey ω)
+          (objectsToMatch ω) (availablePartners ω) (hcard ω) p = q} =
+        objectsToMatchMem ∩ matched := by
       ext ω
-      by_cases hp : p ∈ source ω
+      by_cases hp : p ∈ objectsToMatch ω
       · have hsome := partnerAtObjectRankBy_matchByRank
-          (sourceValue ω) (targetValue ω) (source ω) (target ω)
+          (objectOrderKey ω) (partnerOrderKey ω) (objectsToMatch ω) (availablePartners ω)
           (hcard ω) p hp
-        simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, sourceMem, matched]
+        simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, objectsToMatchMem, matched]
         rw [matchByRankOrSelf_of_mem _ _ _ _ _ hp]
         constructor
         · intro h
           exact ⟨hp, hsome.trans (congrArg some h)⟩
         · rintro ⟨_, h⟩
           exact Option.some.inj (hsome.symm.trans h)
-      · simp [sourceMem, matched, hp, hpq]
+      · simp [objectsToMatchMem, matched, hp, hpq]
     rw [hset]
-    exact hsourceMem.inter hmatched
+    exact hobjectsToMatchMem.inter hmatched
 
-/-- The target-step family read through canonical equal-rank matching is
+/-- The partner-step family read through canonical equal-rank matching is
 measurable in the generation domain flow.  The root and child-slot types are
 unrestricted; all countability assumptions concern actual random ranges. -/
 theorem RootIndexed.reindexedSteps_matchByRankOrSelf_measurable
     {Root α X Value : Type*} [MeasurableSpace X]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value] {n : ℕ}
-    (sourceValue targetValue :
+    (objectOrderKey partnerOrderKey :
       BranchingRandomWalk.RootIndexed.StepField Root α X →
         RootIndexed.TreeNode Root α → Value)
-    (source target : BranchingRandomWalk.RootIndexed.StepField Root α X →
+    (objectsToMatch availablePartners : BranchingRandomWalk.RootIndexed.StepField Root α X →
       Finset (RootIndexed.TreeNode Root α))
-    (hcard : ∀ ω, (source ω).card ≤ (target ω).card)
-    (hsourceFiber : ∀ s,
+    (hcard : ∀ ω, (objectsToMatch ω).card ≤ (availablePartners ω).card)
+    (hobjectsToMatchFiber : ∀ s,
       MeasurableSet[BranchingRandomWalk.RootIndexed.stepFiltration
-        (Root := Root) (α := α) (X := X) n] {ω | source ω = s})
-    (hsourceRange : (Set.range source).Countable)
-    (htargetFiber : ∀ s,
+        (Root := Root) (α := α) (X := X) n] {ω | objectsToMatch ω = s})
+    (hobjectsToMatchRange : (Set.range objectsToMatch).Countable)
+    (havailablePartnersFiber : ∀ s,
       MeasurableSet[BranchingRandomWalk.RootIndexed.stepFiltration
-        (Root := Root) (α := α) (X := X) n] {ω | target ω = s})
-    (htargetRange : (Set.range target).Countable)
-    (hsourceKey : ∀ p q,
+        (Root := Root) (α := α) (X := X) n] {ω | availablePartners ω = s})
+    (havailablePartnersRange : (Set.range availablePartners).Countable)
+    (hobjectOrderKeyMeasurable : ∀ p q,
       Measurable[BranchingRandomWalk.RootIndexed.stepFiltration
         (Root := Root) (α := α) (X := X) n] fun ω =>
-        valueKey (sourceValue ω) q < valueKey (sourceValue ω) p)
-    (htargetKey : ∀ p q,
+        valueKey (objectOrderKey ω) q < valueKey (objectOrderKey ω) p)
+    (hpartnerOrderKeyMeasurable : ∀ p q,
       Measurable[BranchingRandomWalk.RootIndexed.stepFiltration
         (Root := Root) (α := α) (X := X) n] fun ω =>
-        valueKey (targetValue ω) q < valueKey (targetValue ω) p)
+        valueKey (partnerOrderKey ω) q < valueKey (partnerOrderKey ω) p)
     (hdepth : ∀ ω p,
-      (matchByRankOrSelf (sourceValue ω) (targetValue ω)
-        (source ω) (target ω) (hcard ω) p).2.length < n) :
+      (matchByRankOrSelf (objectOrderKey ω) (partnerOrderKey ω)
+        (objectsToMatch ω) (availablePartners ω) (hcard ω) p).2.length < n) :
     Measurable[BranchingRandomWalk.RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n]
       (Coupling.RootIndexed.reindexedSteps fun ω p =>
-        matchByRankOrSelf (sourceValue ω) (targetValue ω)
-          (source ω) (target ω) (hcard ω) p) := by
+        matchByRankOrSelf (objectOrderKey ω) (partnerOrderKey ω)
+          (objectsToMatch ω) (availablePartners ω) (hcard ω) p) := by
   let _ : MeasurableSpace
       (BranchingRandomWalk.RootIndexed.StepField Root α X) :=
     BranchingRandomWalk.RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n
   apply Coupling.RootIndexed.reindexedSteps_measurable
   · intro p
-    exact matchByRankOrSelf_range_countable sourceValue targetValue
-      source target hcard htargetRange p
+    exact matchByRankOrSelf_range_countable objectOrderKey partnerOrderKey
+      objectsToMatch availablePartners hcard havailablePartnersRange p
   · intro p q
-    exact measurableSet_matchByRankOrSelf_eq sourceValue targetValue
-      source target hcard hsourceFiber hsourceRange htargetFiber htargetRange
-      hsourceKey htargetKey p q
+    exact measurableSet_matchByRankOrSelf_eq objectOrderKey partnerOrderKey
+      objectsToMatch availablePartners hcard hobjectsToMatchFiber hobjectsToMatchRange havailablePartnersFiber havailablePartnersRange
+      hobjectOrderKeyMeasurable hpartnerOrderKeyMeasurable p q
   · exact hdepth
 
 end ProbabilityTheory.BranchingRandomWalk.Coupling

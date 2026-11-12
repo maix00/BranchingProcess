@@ -12,17 +12,17 @@ public import Probability.BranchingRandomWalk.Coupling.Field.Law
 /-!
 # Product law of a fixed rank matching
 
-For fixed source and target populations, install the source coordinate of
-each rank into the target coordinate of the same rank.  Source and fallback
-are the two summands of one product field.  The installed target is again a
-complete i.i.d. field.
+For fixed object and partner populations, install the object coordinate of
+each rank into the partner coordinate of the same rank. The object and
+fallback fields are the two summands of one product field. The installed
+partner field is again a complete i.i.d. field.
 
 This is a fixed-cell theorem.  Random, past-measurable populations are handled
 later by partitioning over their actual range.
 
 ## Public declarations
 
-For fixed finite source and target populations, equal-rank installation is a
+For fixed finite object and partner populations, equal-rank installation is a
 paste along the guarded rank preimage and preserves the product law:
 
 \[\begin{aligned}
@@ -35,7 +35,7 @@ paste along the guarded rank preimage and preserves the product law:
 
 - `ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.rankInstalledStepField_eq_paste`:
   identifies fixed equal-rank installation with
-  `StepField.paste (objectAtPartnerRankBy sourceValue targetValue source target)`.
+  `StepField.paste (objectAtPartnerRankBy objectOrderKey partnerOrderKey objectsToMatch availablePartners)`.
 - `ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.stepFieldLaw_rankInstalledStepField`:
   for independent product fields on two root copies, mapping the combined
   field through a fixed equal-rank installation gives the product law on one
@@ -57,21 +57,21 @@ with the guarded inverse matching. -/
 theorem RootIndexed.rankInstalledStepField_eq_paste
     {Root α X Value : Type*}
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
-    (sourceValue targetValue : RootIndexed.TreeNode Root α → Value)
-    (source target : Finset (RootIndexed.TreeNode Root α))
+    (objectOrderKey partnerOrderKey : RootIndexed.TreeNode Root α → Value)
+    (objectsToMatch availablePartners : Finset (RootIndexed.TreeNode Root α))
     (field : RootIndexed.StepField (Root ⊕ Root) α X) :
     RootIndexed.rankInstalledStepField
-        (fun _ => sourceValue) (fun _ => targetValue)
-        (fun _ => source) (fun _ => target)
+        (fun _ => objectOrderKey) (fun _ => partnerOrderKey)
+        (fun _ => objectsToMatch) (fun _ => availablePartners)
         (fun sample r u => sample (Sum.inl r) u)
         (fun sample r u => sample (Sum.inr r) u) field =
       RootIndexed.StepField.paste
-        (objectAtPartnerRankBy sourceValue targetValue source target) field := by
+        (objectAtPartnerRankBy objectOrderKey partnerOrderKey objectsToMatch availablePartners) field := by
   funext r u
   simp only [RootIndexed.rankInstalledStepField, valueAtMatchedRank,
-    Coupling.valueAtPreimage, RootIndexed.StepField.paste,
+    Coupling.valueAtObjectPreimage, RootIndexed.StepField.paste,
     RootIndexed.StepField.reindexCoordinates_apply]
-  cases h : objectAtPartnerRankBy sourceValue targetValue source target (r, u) <;>
+  cases h : objectAtPartnerRankBy objectOrderKey partnerOrderKey objectsToMatch availablePartners (r, u) <;>
     simp [RootIndexed.StepField.pasteCoordinate, h]
 
 /-- Installing a fixed equal-rank matching between two independent copies
@@ -81,29 +81,29 @@ theorem RootIndexed.stepFieldLaw_rankInstalledStepField
     {Root α X Value : Type*} [MeasurableSpace X]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
-    (sourceValue targetValue : RootIndexed.TreeNode Root α → Value)
-    (source target : Finset (RootIndexed.TreeNode Root α)) :
+    (objectOrderKey partnerOrderKey : RootIndexed.TreeNode Root α → Value)
+    (objectsToMatch availablePartners : Finset (RootIndexed.TreeNode Root α)) :
     (RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ).map
         (fun field => RootIndexed.rankInstalledStepField
-          (fun _ => sourceValue) (fun _ => targetValue)
-          (fun _ => source) (fun _ => target)
+          (fun _ => objectOrderKey) (fun _ => partnerOrderKey)
+          (fun _ => objectsToMatch) (fun _ => availablePartners)
           (fun sample r u => sample (Sum.inl r) u)
           (fun sample r u => sample (Sum.inr r) u) field) =
       RootIndexed.stepFieldLaw (Root := Root) μ := by
   rw [show (fun field => RootIndexed.rankInstalledStepField
-      (fun _ => sourceValue) (fun _ => targetValue)
-      (fun _ => source) (fun _ => target)
+      (fun _ => objectOrderKey) (fun _ => partnerOrderKey)
+      (fun _ => objectsToMatch) (fun _ => availablePartners)
       (fun sample r u => sample (Sum.inl r) u)
       (fun sample r u => sample (Sum.inr r) u) field) =
       RootIndexed.StepField.paste
-        (objectAtPartnerRankBy sourceValue targetValue source target) by
+        (objectAtPartnerRankBy objectOrderKey partnerOrderKey objectsToMatch availablePartners) by
     funext field
     exact RootIndexed.rankInstalledStepField_eq_paste
-      sourceValue targetValue source target field]
+      objectOrderKey partnerOrderKey objectsToMatch availablePartners field]
   exact RootIndexed.stepFieldLaw_paste μ
-    (objectAtPartnerRankBy sourceValue targetValue source target)
+    (objectAtPartnerRankBy objectOrderKey partnerOrderKey objectsToMatch availablePartners)
     (fun q₁ q₂ p => objectAtPartnerRankBy_leftUnique
-      sourceValue targetValue source target)
+      objectOrderKey partnerOrderKey objectsToMatch availablePartners)
 
 end ProbabilityTheory.BranchingRandomWalk.Coupling
 

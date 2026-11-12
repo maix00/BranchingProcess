@@ -10,7 +10,7 @@ public import Probability.BranchingRandomWalk.Genealogy.Lineage.PreSampled
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtration
 
 /-!
-# Reserve lineages in a root-indexed marked forest
+# Pre-sampled lineages in a root-indexed marked forest
 
 ## Public declarations
 
@@ -31,21 +31,21 @@ p_{r,i,n+1}(\omega)
 \sigma_{r,i}(\omega)=\tau_{r,i}(\omega)+1.
 \]
 
-- `RootIndexed.ReserveLineages` assigns to each root and trial a causal path
+- `RootIndexed.PreSampledLineages` assigns to each root and trial a causal path
   in the common root-indexed step field; `path_adapted` and
   `path_adapted_of_countable_range` give its generation measurability.
 - `RootIndexed.splitDeclaration` records that the mark read at the lineage's
   generation-`n` parent belongs to a specified set. `tau` is the raw candidate
   time and `sigma` is the declaration completion time; they satisfy
   `sigma = tau + 1`.
-- `RootIndexed.ReserveLineages.sigma_eq_tau_add_one` states the time shift
+- `RootIndexed.PreSampledLineages.sigma_eq_tau_add_one` states the time shift
   pointwise:
   `sigma splitMark r i = fun ω => tau splitMark r i ω + 1`.
 - `sigma_isStoppingTime`, `sigma_isStoppingTime_of_countable_range`, and
   `all_sigma_isStoppingTime` prove stopping-time measurability of declaration
   times. `tau` itself is the one-generation look-ahead candidate time.
 - `first_success_within_isStoppingTime` identifies the first successful
-  reserve trial as a stopping time; `successfulWithin_measurable` and
+  candidate trial as a stopping time; `successfulWithin_measurable` and
   `failureWithin_measurable` give the generation-measurable success/failure
   events.
 -/
@@ -58,7 +58,7 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
-structure RootIndexed.ReserveLineages
+structure RootIndexed.PreSampledLineages
     (Root Trial α X : Type*) [MeasurableSpace X] where
   path : Root → Trial → ℕ → RootIndexed.StepField Root α X → TreeNode α
   step : Root → Trial → TreeNode α × Step α X → TreeNode α
@@ -71,9 +71,9 @@ structure RootIndexed.ReserveLineages
     path r i (n + 1) ω =
       step r i (path r i n ω, ω r (path r i n ω))
 
-theorem RootIndexed.ReserveLineages.path_adapted_of_countable_range
+theorem RootIndexed.PreSampledLineages.path_adapted_of_countable_range
     {Root Trial α X : Type*} [MeasurableSpace X]
-    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
     (r : Root) (i : Trial)
     (hcount : ∀ n, (Set.range (lineages.path r i n)).Countable) :
     ∀ n, Measurable[RootIndexed.stepFiltration
@@ -128,9 +128,9 @@ theorem RootIndexed.ReserveLineages.path_adapted_of_countable_range
       funext ω
       exact lineages.recursion r i n ω
 
-theorem RootIndexed.ReserveLineages.path_adapted
+theorem RootIndexed.PreSampledLineages.path_adapted
     {Root Trial α X : Type*} [Countable α] [MeasurableSpace X]
-    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
     (r : Root) (i : Trial) :
     ∀ n, Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n] (lineages.path r i n) :=
@@ -145,12 +145,12 @@ def RootIndexed.splitDeclaration
   | n + 1 => {ω | ω r (path n ω) ∈ splitMark}
 
 /-- The raw candidate generation of the first split along a pre-sampled
-reserve lineage. At generation `n` this reads the outgoing step at the
+pre-sampled lineage. At generation `n` this reads the outgoing step at the
 generation-`n` parent, so it is a one-generation look-ahead under the domain
 flow and is not claimed to be a stopping time. -/
-noncomputable def RootIndexed.ReserveLineages.tau
+noncomputable def RootIndexed.PreSampledLineages.tau
     {Root Trial α X : Type*} [MeasurableSpace X]
-    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
     (splitMark : Set (Step α X)) (r : Root) (i : Trial) :
     RootIndexed.StepField Root α X → WithTop ℕ :=
   firstDeclaredSuccess (fun n =>
@@ -158,9 +158,9 @@ noncomputable def RootIndexed.ReserveLineages.tau
 
 /-- The observable completion generation: a split mark on a parent at
 generation `n` is declared at generation `n + 1`. -/
-noncomputable def RootIndexed.ReserveLineages.sigma
+noncomputable def RootIndexed.PreSampledLineages.sigma
     {Root Trial α X : Type*} [MeasurableSpace X]
-    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
     (splitMark : Set (Step α X)) (r : Root) (i : Trial) :
     RootIndexed.StepField Root α X → WithTop ℕ :=
   firstDeclaredSuccess
@@ -168,10 +168,10 @@ noncomputable def RootIndexed.ReserveLineages.sigma
 
 /-- The declared completion time is exactly one generation after the raw
 candidate time. Both are evaluated on the same pre-sampled field and the same
-reserve lineage, independent of the outcomes of earlier trials. -/
-theorem RootIndexed.ReserveLineages.sigma_eq_tau_add_one
+pre-sampled lineage, independent of the outcomes of earlier trials. -/
+theorem RootIndexed.PreSampledLineages.sigma_eq_tau_add_one
     {Root Trial α X : Type*} [MeasurableSpace X]
-    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
     (splitMark : Set (Step α X)) (r : Root) (i : Trial) :
     lineages.sigma splitMark r i = fun ω => lineages.tau splitMark r i ω + 1 := by
   funext ω
@@ -187,9 +187,9 @@ theorem RootIndexed.ReserveLineages.sigma_eq_tau_add_one
   rw [hdecl]
   exact firstDeclaredSuccess_shiftDeclarationByOne _ _
 
-theorem RootIndexed.ReserveLineages.sigma_isStoppingTime_of_countable_range
+theorem RootIndexed.PreSampledLineages.sigma_isStoppingTime_of_countable_range
     {Root Trial α X : Type*} [MeasurableSpace X]
-    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
     (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
     (r : Root) (i : Trial)
     (hcount : ∀ n, (Set.range (lineages.path r i n)).Countable) :
@@ -235,9 +235,9 @@ theorem RootIndexed.ReserveLineages.sigma_isStoppingTime_of_countable_range
           rintro p ⟨ω, rfl⟩
           exact ⟨lineages.path r i n ω, ⟨ω, rfl⟩, rfl⟩)) hsplit
 
-theorem RootIndexed.ReserveLineages.sigma_isStoppingTime
+theorem RootIndexed.PreSampledLineages.sigma_isStoppingTime
     {Root Trial α X : Type*} [Countable α] [MeasurableSpace X]
-    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
     (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
     (r : Root) (i : Trial) :
     IsStoppingTime (RootIndexed.stepFiltration
@@ -246,12 +246,12 @@ theorem RootIndexed.ReserveLineages.sigma_isStoppingTime
   lineages.sigma_isStoppingTime_of_countable_range splitMark hsplit r i
     (fun n => Set.to_countable (Set.range (lineages.path r i n)))
 
-/-- Every root/trial reserve lineage has a stopping-time completion.  The
+/-- Every root/trial pre-sampled lineage has a stopping-time completion.  The
 root and trial indices may range over arbitrary types; countability is needed
 only for the child-slot type used to prove path measurability. -/
-theorem RootIndexed.ReserveLineages.all_sigma_isStoppingTime
+theorem RootIndexed.PreSampledLineages.all_sigma_isStoppingTime
     {Root Trial α X : Type*} [Countable α] [MeasurableSpace X]
-    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
     (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark) :
     ∀ p : Root × Trial,
       IsStoppingTime (RootIndexed.stepFiltration
@@ -262,11 +262,11 @@ theorem RootIndexed.ReserveLineages.all_sigma_isStoppingTime
 
 /-- The first successful completion among a countable collection of
 root/trial candidates is a stopping time in the common domain filtration.
-Each reserve lineage is sampled in advance on the same marked forest, so the
+Each pre-sampled lineage is sampled in advance on the same marked forest, so the
 candidate family does not depend on earlier trial outcomes. -/
-theorem RootIndexed.ReserveLineages.first_success_within_isStoppingTime
+theorem RootIndexed.PreSampledLineages.first_success_within_isStoppingTime
     {Root Trial α X : Type*} [Countable α] [MeasurableSpace X]
-    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
     (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
     (test : Root → Trial → ℕ → Set (RootIndexed.StepField Root α X))
     (htest : ∀ r i n, MeasurableSet[RootIndexed.stepFiltration
@@ -289,10 +289,10 @@ theorem RootIndexed.ReserveLineages.first_success_within_isStoppingTime
     (fun p n => htest p.1 p.2 n) candidates hcandidates
 
 /-- Success by generation `T` among a countable family of root/trial
-reserve lineages is measurable at generation `T`. -/
-theorem RootIndexed.ReserveLineages.successfulWithin_measurable
+pre-sampled lineages is measurable at generation `T`. -/
+theorem RootIndexed.PreSampledLineages.successfulWithin_measurable
     {Root Trial α X : Type*} [Countable α] [MeasurableSpace X]
-    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
     (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
     (test : Root → Trial → ℕ → Set (RootIndexed.StepField Root α X))
     (htest : ∀ r i n, MeasurableSet[RootIndexed.stepFiltration
@@ -321,9 +321,9 @@ theorem RootIndexed.ReserveLineages.successfulWithin_measurable
 
 /-- Failure of every candidate by generation `T` is measurable at generation
 `T` as well. -/
-theorem RootIndexed.ReserveLineages.failureWithin_measurable
+theorem RootIndexed.PreSampledLineages.failureWithin_measurable
     {Root Trial α X : Type*} [Countable α] [MeasurableSpace X]
-    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
     (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
     (test : Root → Trial → ℕ → Set (RootIndexed.StepField Root α X))
     (htest : ∀ r i n, MeasurableSet[RootIndexed.stepFiltration
