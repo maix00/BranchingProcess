@@ -32,8 +32,8 @@ finite-slot offspring configurations at those addresses.
   proves that `ω ↦ Aₙ(ω)` is measurable with respect to the generation field
   `𝓕ₙ`.
 * `ProbabilityTheory.BranchingRandomWalk.finiteSlotLevelSteps` defines the
-  offspring row `Lₙ(ω)(u)` by reading the selected offspring at the source
-  vertex coded by `u`.
+  offspring row `Lₙ(ω)(u)` by reading the selected offspring at the decoded selected-BRW
+  vertex for `u`.
 * `ProbabilityTheory.BranchingRandomWalk.finiteSlotActiveLabels_card_succ_eq_sum`
   proves the population recursion
   `|Aₙ₊₁(ω)| = ∑_{u ∈ Aₙ(ω)} childCount(Lₙ(ω)(u))`.
@@ -84,8 +84,7 @@ noncomputable def finiteSlotActiveLabels
       Combinatorics.Branching.surviveAlong
         (finiteSlotCodedStepField S ω) [] (List.ofFn u)
 
-/-- The active finite-slot labels are in bijection with the source selected
-population at the same generation. -/
+/-- The active finite-slot labels are in bijection with the selected BRW population at the same generation. -/
 theorem finiteSlotActiveLabels_card_eq_population_card
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
@@ -192,9 +191,9 @@ private theorem population_card_succ_eq_sum_childCount
   have hdepth := StepSelection.population_depth S ω n u hu
   simp [frontierMarks, hdepth]
 
-/-- The coded active-parent set is observable from the source field through
+/-- The coded active-parent set is observable from the selected BRW field through
 generation `n`. Pathwise, its members are exactly the coded addresses of the
-source N-selected population. -/
+first-`N` selected BRW population. -/
 theorem finiteSlotActiveLabels_measurable
     {α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [MeasurableSpace X]
@@ -261,7 +260,7 @@ noncomputable def finiteSlotLevelSteps
   fun u => S.binaryOffspringStep (ω (finiteSlotLevelRoots S ω n u))
 
 /-- Summing the coded offspring counts over active labels gives exactly the
-sum of selected offspring counts over the source population. -/
+sum of selected offspring counts over the selected BRW population. -/
 private theorem finiteSlotActiveLabels_sum_childCount_eq_population_sum
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
@@ -324,7 +323,7 @@ private theorem finiteSlotActiveLabels_sum_childCount_eq_population_sum
       hcapacity (ω (finiteSlotLevelRoots S ω n u))]
 
 /-- Pathwise finite-generation transition for the coded reserve population.
-Each active source parent contributes its selected child count, and the
+Each active selected-BRW parent contributes its selected child count, and the
 active-label cardinality agrees with the actual selected population. -/
 theorem finiteSlotActiveLabels_card_succ_eq_sum
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
@@ -498,7 +497,7 @@ theorem finiteSlotLevelSteps_law
       exact congrArg (fun ν : Measure (Step (Fin 2) PUnit.{1}) => ν (A i)) hmap
 
 /-- The decoded offspring family at generation `n` is independent of the
-source marks revealed before that generation. -/
+selected-BRW marks revealed before that generation. -/
 private theorem finiteSlotLevelSteps_independent
     {α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [MeasurableSpace X]

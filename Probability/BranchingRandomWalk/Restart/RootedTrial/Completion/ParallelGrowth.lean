@@ -17,7 +17,7 @@ Each candidate grows forward from the generation where its split is
 observable.  With at most two selected children per particle, its age-`h`
 population is bounded by `2^h`, regardless of the cap used to stop the trial.
 Only the most recent `duration + 1` candidates can be active at once, giving a
-deterministic capacity bound for the causal reserve source.
+deterministic capacity bound for the selected reserve-spine BRW population.
 
 ## Public declarations
 
@@ -27,9 +27,9 @@ deterministic capacity bound for the causal reserve source.
 * `ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineAndCandidates_card_le_binary`
   bounds the union of the live reserve spine and active candidates by
   $1+(d+1)2^d$.
-* `ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartSource_card_le_binary`
+* `ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartBRWPopulation_card_le_binary`
   gives the same $1+(d+1)2^d$ capacity bound for each finite slice of the full
-  causal restart source.
+  restarted reserve-spine BRW population.
 
 The general $b^n$ growth bounds for cap-stopped populations belong to the
 modules defining those populations.
@@ -138,7 +138,7 @@ theorem selectedReserveSpineAndCandidates_card_le_binary
       by_cases h : selectedReserveSpineAlive R r n ω <;> simp [h]
 
 /-- The same capacity bound for the finite causal-population wrapper. -/
-theorem selectedReserveSpineRestartSource_card_le_binary
+theorem selectedReserveSpineRestartBRWPopulation_card_le_binary
     {Root α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace X] [MeasurableSpace Root]
@@ -150,12 +150,12 @@ theorem selectedReserveSpineRestartSource_card_le_binary
     (hgrowthMeas : Measurable growth.select) (duration : ℕ)
     (hgrowth : growth.IsBoundedBy 2) (r : Root)
     (hfinite :
-      (selectedReserveSpineRestartSource R growth hR hgrowthMeas
+      (selectedReserveSpineRestartBRWPopulation R growth hR hgrowthMeas
         (2 ^ duration) duration r).FiniteSlices)
     (n : ℕ) (ω : RootIndexed.StepField Root α X) :
     (hfinite.toFinset n ω).card ≤ 1 + (duration + 1) * 2 ^ duration := by
   have heq : hfinite.toFinset n ω =
-      selectedReserveSpineRestartSourceSlice R growth hR (2 ^ duration)
+      selectedReserveSpineRestartBRWPopulationSlice R growth hR (2 ^ duration)
         duration r n ω := by
     apply Finset.coe_injective
     rw [RootIndexed.CausalPopulation.FiniteSlices.coe_toFinset]

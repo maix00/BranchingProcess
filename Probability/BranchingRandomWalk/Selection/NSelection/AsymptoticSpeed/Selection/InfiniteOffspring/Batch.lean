@@ -156,9 +156,9 @@ theorem infiniteOffspringPosition_select_mono
       (selectedHigh.filter fun q => highValue q ≤ a).card ≤
         (selectedLow.filter fun q => lowValue q ≤ a).card := by
     intro a
-    let source := selectedHigh.filter fun q => highValue q ≤ a
-    let target := selectedLow.filter fun q => lowValue q ≤ a
-    let f : {q // q ∈ source} → {q // q ∈ target} := fun q =>
+    let selectedHighAtMostA := selectedHigh.filter fun q => highValue q ≤ a
+    let selectedLowAtMostA := selectedLow.filter fun q => lowValue q ≤ a
+    let f : {q // q ∈ selectedHighAtMostA} → {q // q ∈ selectedLowAtMostA} := fun q =>
       ⟨matchParticle q.1 (Finset.mem_filter.mp q.2 |>.1),
         Finset.mem_filter.mpr ⟨
           hmatchMem q.1 (Finset.mem_filter.mp q.2 |>.1),
@@ -170,7 +170,7 @@ theorem infiniteOffspringPosition_select_mono
       apply hmatchInj q.1 (Finset.mem_filter.mp q.2 |>.1)
         r.1 (Finset.mem_filter.mp r.2 |>.1)
       exact congrArg Subtype.val hqr
-    simpa [source, target] using Finset.card_le_card_of_injective hf
+    simpa [selectedHighAtMostA, selectedLowAtMostA] using Finset.card_le_card_of_injective hf
   intro i
   let q := selectedLabelAtRank highValue selectedHigh hHighCard i
   have hq : q ∈ selectedHigh := by
