@@ -13,7 +13,8 @@ public import Mathlib.Combinatorics.Hall.Basic
 
 ## Public declarations
 
-- `Combinatorics.Matching.exists_injective_le_of_filter_card_le`: for finite
+- `Combinatorics.Matching.exists_injective_le_of_thresholdCountDomination`:
+  for finite
   sets `objectsToMatch` and `availablePartners`, if
   \[
   \#\{x\in\texttt{objectsToMatch}:\texttt{objectOrderKey}(x)\leq a\}
@@ -39,11 +40,11 @@ variable {Object Partner OrderKey : Type*}
 `objectsToMatch` into `availablePartners`, with each partner's order key no
 larger than the corresponding object's order key. The proof applies Hall's
 theorem to the relation `partnerOrderKey q ≤ objectOrderKey p`. -/
-theorem exists_injective_le_of_filter_card_le
+theorem exists_injective_le_of_thresholdCountDomination
     [DecidableEq Object] [DecidableEq Partner] [LinearOrder OrderKey]
     (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
     (objectsToMatch : Finset Object) (availablePartners : Finset Partner)
-    (hthreshold : ∀ a : OrderKey,
+    (hthresholdCount : ∀ a : OrderKey,
       (objectsToMatch.filter fun p => objectOrderKey p ≤ a).card ≤
         (availablePartners.filter fun q => partnerOrderKey q ≤ a).card) :
     ∃ f : {p : Object // p ∈ objectsToMatch} → {q : Partner // q ∈ availablePartners},
@@ -70,7 +71,7 @@ theorem exists_injective_le_of_filter_card_le
             ⟨p.2, hmax p hp⟩
         · intro p _ q _ hpq
           exact Subtype.ext hpq
-      have htoAvailablePartners := hthreshold (objectOrderKey pmax.1)
+      have htoAvailablePartners := hthresholdCount (objectOrderKey pmax.1)
       have havailablePartnersToRelation :
           (availablePartners.filter fun q => partnerOrderKey q ≤ objectOrderKey pmax.1).card ≤
             (Finset.univ.filter fun q : {q : Partner // q ∈ availablePartners} =>

@@ -141,16 +141,16 @@ theorem infiniteOffspringPosition_select_mono
   classical
   let lowValue := infiniteOffspringPosition positionLow offspring
   let highValue := infiniteOffspringPosition positionHigh offspring
-  have hmatching := exists_injective_le_of_embedding_of_isFirstNBy
+  have hmatching := exists_injective_le_of_partnerAssignment_into_firstNBy
     N highValue lowValue selectedHigh (infiniteOffspringCandidates offspring)
     selectedLow hLow (by rw [hHighCard])
-    (fun q => q)
-    (by intro q hq; exact hHigh.subset hq)
-    (by intro q hq r hr hqr; exact hqr)
+    (fun q : {q // q ∈ selectedHigh} => q.1)
+    (by intro q; exact hHigh.subset q.2)
+    (by intro q r hqr; exact Subtype.ext hqr)
     (by
-      intro q hq
+      intro q
       dsimp [lowValue, highValue, infiniteOffspringPosition]
-      linarith [hposition (ofLex q).1])
+      linarith [hposition (ofLex q.1).1])
   obtain ⟨matchParticle, hmatchMem, hmatchLe, hmatchInj⟩ := hmatching
   have hthreshold : ∀ a : ℝ,
       (selectedHigh.filter fun q => highValue q ≤ a).card ≤

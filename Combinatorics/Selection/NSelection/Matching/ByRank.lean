@@ -73,7 +73,7 @@ theorem partnerOrderKey_le_of_rankBy_eq_of_filter_card_le
     [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
     (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
     (objectsToMatch : Finset Object) (availablePartners : Finset Partner)
-    (hthreshold : ∀ a : OrderKey,
+    (hthresholdCount : ∀ a : OrderKey,
       (objectsToMatch.filter fun p => objectOrderKey p ≤ a).card ≤
         (availablePartners.filter fun q => partnerOrderKey q ≤ a).card)
     {p : Object} (hp : p ∈ objectsToMatch) {q : Partner}
@@ -116,7 +116,7 @@ theorem partnerOrderKey_le_of_rankBy_eq_of_filter_card_le
         rankBy partnerOrderKey availablePartners q := by
     rw [rankBy_eq_card_filter]
     exact Finset.card_le_card havailablePartnersSubset
-  have hcount := hthreshold (objectOrderKey p)
+  have hcount := hthresholdCount (objectOrderKey p)
   omega
 
 /-- Return the available partner at an object's dynamic rank, when that rank
@@ -311,14 +311,14 @@ theorem matchByRank_partnerOrderKey_le
     (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
     (objectsToMatch : Finset Object) (availablePartners : Finset Partner)
     (hcard : objectsToMatch.card ≤ availablePartners.card)
-    (hthreshold : ∀ a : OrderKey,
+    (hthresholdCount : ∀ a : OrderKey,
       (objectsToMatch.filter fun p => objectOrderKey p ≤ a).card ≤
         (availablePartners.filter fun q => partnerOrderKey q ≤ a).card)
     (p : Object) (hp : p ∈ objectsToMatch) :
     partnerOrderKey (matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp) ≤
       objectOrderKey p := by
   apply partnerOrderKey_le_of_rankBy_eq_of_filter_card_le objectOrderKey partnerOrderKey
-    objectsToMatch availablePartners hthreshold hp
+    objectsToMatch availablePartners hthresholdCount hp
   exact rankBy_matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp
 
 /-- Extend equal-rank matching to the ambient type by fixing labels outside
@@ -428,7 +428,7 @@ theorem matchByRankOrSelf_partnerOrderKey_le
     {Element : Type*} [LinearOrder Element] [LinearOrder OrderKey]
     (objectOrderKey partnerOrderKey : Element → OrderKey)
     (objectsToMatch availablePartners : Finset Element) (hcard : objectsToMatch.card ≤ availablePartners.card)
-    (hthreshold : ∀ a : OrderKey,
+    (hthresholdCount : ∀ a : OrderKey,
       (objectsToMatch.filter fun p => objectOrderKey p ≤ a).card ≤
         (availablePartners.filter fun q => partnerOrderKey q ≤ a).card)
     {p : Element} (hp : p ∈ objectsToMatch) :
@@ -437,7 +437,7 @@ theorem matchByRankOrSelf_partnerOrderKey_le
       objectOrderKey p := by
   rw [matchByRankOrSelf_of_mem objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard hp]
   exact matchByRank_partnerOrderKey_le objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard
-    hthreshold p hp
+    hthresholdCount p hp
 
 /-- Two first-`N` selections have the same order-key threshold counts when
 their available-partner sets are in order-key-preserving bijection. This

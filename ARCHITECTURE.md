@@ -139,7 +139,7 @@ Selection modules are placed by the data they take as input:
   ([`Finset.filter`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Filter.html),
   [`Finset.sort`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Sort.html));
   the capacity-$N$ interface composes those operations for this project.
-- `Combinatorics/Matching/ThresholdCountMatching.lean` owns the generic
+- `Combinatorics/Matching/ThresholdCount.lean` owns the generic
   threshold-count matching theorem. If every order-key threshold count of
   `objectsToMatch` is bounded by the corresponding count in
   `availablePartners`, it constructs an injection whose partner order key is
