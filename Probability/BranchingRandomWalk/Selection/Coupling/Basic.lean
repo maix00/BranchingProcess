@@ -40,7 +40,7 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection
 
 open Combinatorics.Branching
 
-variable {Time Ω Root α Position Value : Type*}
+variable {Time Ω Root α Position OrderKey : Type*}
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
 
 namespace CausalFiniteMechanism
@@ -50,11 +50,11 @@ The target is re-sorted by its observed value at every slice.  Thus particle
 addresses are used only as labels and as deterministic tie breakers; no
 compatibility between address order and spatial order is assumed. -/
 theorem injectivelyDominatesBy_leftmostBy_of_card_le
-    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder OrderKey]
     {ℱ : Time → MeasurableSpace Ω}
     (R : CausalFiniteMechanism Time Ω
       (RootIndexed.TreeNode Root α) ℱ)
-    (φ : Position → Value) (N : ℕ)
+    (φ : Position → OrderKey) (N : ℕ)
     (C D : Ω → Cloud Time Root α Position)
     (candidates : Time → Ω → Finset (RootIndexed.TreeNode Root α))
     (hCfinite : ∀ ω t, ((C ω).particles t).Finite)
@@ -85,11 +85,11 @@ argument. -/
 theorem dominatesBy_leftmost_of_card_le
     [LinearOrder (RootIndexed.TreeNode Root α)]
     [Countable (RootIndexed.TreeNode Root α)]
-    [MeasurableSpace Value] [MeasurableSingletonClass Value] [Preorder Value]
+    [MeasurableSpace OrderKey] [MeasurableSingletonClass OrderKey] [Preorder OrderKey]
     {ℱ : Time → MeasurableSpace Ω}
     (R : CausalFiniteMechanism Time Ω
       (RootIndexed.TreeNode Root α) ℱ)
-    (φ : Position → Value) (N : ℕ)
+    (φ : Position → OrderKey) (N : ℕ)
     (C D : Ω → Cloud Time Root α Position)
     (candidates : Time → Ω → Finset (RootIndexed.TreeNode Root α))
     (hCfinite : ∀ ω t, ((C ω).particles t).Finite)
