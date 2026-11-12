@@ -21,20 +21,20 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviatio
 import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.Capacity.ProbabilityBound
 import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.ParameterBounds
 /-!
-# Positive-initial-mass killed-capacity failure bound
+# Positive-initial-mass selected-population capacity failure bound
 
 ## Public declarations
 
 The declarations in namespace
 `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation` are:
 
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveAKilledCapacityFailureProbability m ell ellN horizon
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveASelectedBRWCapacityFailureProbability m ell ellN horizon
   logN b v c κ μ` is the probability under the `m`-root step-field law that
   the restarted-window causal population fails to reach capacity by
   `horizon`, as used in Proposition 3.1, equation (4.15), of Elie Aïdékon
   and Yueyun Hu, *Average-weight percolation on the complete graph*,
   arXiv:2512.23266 (2025).
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.exists_positiveAKilledCapacityFailure_le_polynomial_of_endpointGap`
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.exists_positiveASelectedBRWCapacityFailure_le_polynomial_of_endpointGap`
   states that if $N_n\to\infty$, the tilted increment law is centered with
   variance $\sigma^2>0$, $0<a<1$, $t>0$, and
   $-a+\frac{\pi^2}{2}\sigma^2t<\zeta$, then there are admissible corridor
@@ -66,10 +66,10 @@ open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk
 
-/-- The failure probability for the two-stage killed population in the
+/-- The failure probability for the two-stage selected BRW population in the
 positive-initial-mass estimate of Aïdékon and Hu, Proposition 3.1, equation
 (4.15). -/
-noncomputable def positiveAKilledCapacityFailureProbability
+noncomputable def positiveASelectedBRWCapacityFailureProbability
     (m ell ellN horizon : ℕ) (logN b v c κ : ℝ)
     (μ : Measure (Step ℕ ℝ)) : ℝ≥0∞ := by
   let window := positiveARestartedWindow ell ellN logN b v c κ
@@ -92,7 +92,7 @@ noncomputable def positiveAKilledCapacityFailureProbability
 master's thesis, Fudan University (2026), Chapter 4, equation (4.15), has
 polynomial decay whenever its two exponent margins are positive. The uniform
 threshold is chosen once and then used for every `N`. -/
-private lemma eventually_positiveAKilledCapacityFailure_le_polynomial_of_logarithmicScales
+private lemma eventually_positiveASelectedBRWCapacityFailure_le_polynomial_of_logarithmicScales
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
@@ -110,7 +110,7 @@ private lemma eventually_positiveAKilledCapacityFailure_le_polynomial_of_logarit
     (hp : 0 < p) (hpHalf : p < 1 / 2)
     (hmargin : a + (-b + v + c * (t ^ (3⁻¹ : ℝ))) < 1) :
     ∃ epsilon : ℝ, 0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
-      positiveAKilledCapacityFailureProbability
+      positiveASelectedBRWCapacityFailureProbability
         (Nat.floor ((N n : ℝ) ^ a))
         (positiveAFirstStageCutoff N n)
         (logarithmicHorizon N t n) (N n)
@@ -125,7 +125,7 @@ private lemma eventually_positiveAKilledCapacityFailure_le_polynomial_of_logarit
     (-b + v) * L n + c * ((D n : ℝ) ^ (3⁻¹ : ℝ)) +
       κ * c ^ p * ((D n : ℝ) ^ (p / 3))
   let P : ℕ → ℝ≥0∞ := fun n =>
-    positiveAKilledCapacityFailureProbability
+    positiveASelectedBRWCapacityFailureProbability
       (m n) (ell n) (ellN n) (N n) (L n) b v c κ μ
   have hL : Tendsto L atTop atTop := by
     exact Real.tendsto_log_atTop.comp
@@ -210,11 +210,11 @@ private lemma eventually_positiveAKilledCapacityFailure_le_polynomial_of_logarit
           (N n + 1 : ℕ) := by
     filter_upwards [hscale, hellPos, hellN, htiltedLog] with n hscale hnell hnorder hnlog
     have hcap :=
-      measure_positiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput_of_uniformAH
+      measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput_of_uniformAH
         (m n) (ell n) (ellN n) (N n) (L n) b v c κ
         hnell hnorder hb hnlog hκ hvb hc hvc μ hboundary ν hν target p hκrate
         delta0 hAH hscale.1
-    simpa [P, positiveAKilledCapacityFailureProbability, m, ell,
+    simpa [P, positiveASelectedBRWCapacityFailureProbability, m, ell,
       ellN, D, E, L] using hcap
   exact eventually_probability_le_polynomial_of_canceledAH_capacity_bound
     (P := P) (m := m) (ell := ell) (ellN := ellN) (N := N) (E := E)
@@ -223,13 +223,13 @@ private lemma eventually_positiveAKilledCapacityFailure_le_polynomial_of_logarit
     (by simpa [L, logarithmOfSampleSize] using hERate) ha1 hmargin hm hraw
 
 /-- Choose the corridor parameters from the endpoint gap and apply
-the logarithmic-scale killed-capacity estimate. This is the endpoint-gap
+the logarithmic-scale selected-population capacity estimate. This is the endpoint-gap
 form of Chapter 4, equation (4.15), in Wang Yiyang, *Asymptotic Speed of the
 N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
 University, 2026), and Proposition 3.1, equation (4.15), in Elie Aïdékon and
 Yueyun Hu, *Average-weight percolation on the complete graph*,
 arXiv:2512.23266 (2025). -/
-theorem exists_positiveAKilledCapacityFailure_le_polynomial_of_endpointGap
+theorem exists_positiveASelectedBRWCapacityFailure_le_polynomial_of_endpointGap
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
@@ -246,7 +246,7 @@ theorem exists_positiveAKilledCapacityFailure_le_polynomial_of_endpointGap
       c * t ^ (3⁻¹ : ℝ) + (a - b) + v < 1 ∧
       0 < a - b - 2 * v ∧
       0 < epsilon ∧ ∀ᶠ n : ℕ in atTop,
-        positiveAKilledCapacityFailureProbability
+        positiveASelectedBRWCapacityFailureProbability
           (Nat.floor ((N n : ℝ) ^ a))
           (positiveAFirstStageCutoff N n)
           (logarithmicHorizon N t n) (N n)
@@ -288,7 +288,7 @@ theorem exists_positiveAKilledCapacityFailure_le_polynomial_of_endpointGap
   have hp : 0 < (1 / 4 : ℝ) := by norm_num
   have hpHalf : (1 / 4 : ℝ) < 1 / 2 := by norm_num
   obtain ⟨epsilon, hepsilon, hcapacity⟩ :=
-    eventually_positiveAKilledCapacityFailure_le_polynomial_of_logarithmicScales
+    eventually_positiveASelectedBRWCapacityFailure_le_polynomial_of_logarithmicScales
       hN μ hboundary ν hν hspine hsigma
       (a := a) (t := t) (b := b) (v := v) (c := c) (κ := κ)
       (target := target) (blockTarget := blockTarget) (p := 1 / 4)

@@ -35,8 +35,8 @@ modules outside this directory.
 ## Internal proof declarations
 
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveARestartedWindow_zero_mem` gives the zero-start condition required to identify the initial restarted-window event.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_positiveAKilled_capacityEvent_compl_le` bounds the capacity-failure probability by the weighted sum $\frac{m}{N+1}\sum_{k=0}^{\ell_N}e^{u_k}p_k$ of restarted-window probabilities.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_positiveAKilled_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds` and `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_positiveAKilled_capacityEvent_compl_le_twoPhaseOfDrawdownBounds` successively substitute generation-wise and drawdown path bounds into that estimate.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_positiveASelectedBRW_capacityEvent_compl_le` bounds the capacity-failure probability by the weighted sum $\frac{m}{N+1}\sum_{k=0}^{\ell_N}e^{u_k}p_k$ of restarted-window probabilities.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds` and `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfDrawdownBounds` successively substitute generation-wise and drawdown path bounds into that estimate.
 -/
 
 open Filter MeasureTheory
@@ -57,12 +57,12 @@ lemma positiveARestartedWindow_zero_mem
     0 ∈ positiveARestartedWindow ell ellN logN b v c κ 0 := by
   simp [positiveARestartedWindow, hell, mul_nonneg hb hlog]
 
-/-- Markov bound for the capacity event of the actual causal killed tree with
+/-- Markov bound for the capacity event of the actual causal selected BRW tree with
 the two stages of the positive-`a` construction. The right side is expressed
 in terms of tilted random-walk corridor probabilities, so the Mogulskii input
-can be supplied separately without assuming any killed-population expectation
+can be supplied separately without assuming any selected-BRW-population expectation
 bound. -/
-lemma measure_positiveAKilled_capacityEvent_compl_le
+lemma measure_positiveASelectedBRW_capacityEvent_compl_le
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -117,10 +117,10 @@ lemma measure_positiveAKilled_capacityEvent_compl_le
       hzero upper hupper Set.univ bound
       (fun _ _ => Set.mem_univ _) hbound N ellN
 
-/-- Generation-dependent bounds can be summed directly in the killed-capacity
+/-- Generation-dependent bounds can be summed directly in the selected-population capacity
 estimate. This retains the shorter-prefix drawdown probabilities instead of
 replacing all of them by the full-horizon probability. -/
-lemma measure_positiveAKilled_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds
+lemma measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -169,7 +169,7 @@ lemma measure_positiveAKilled_capacityEvent_compl_le_twoPhaseOfGenerationPathBou
     ENNReal.ofReal (Real.exp
       (if (k : ℕ) ≤ ell then upper (k : ℕ) else upper ell + upper (k : ℕ))) *
       RandomWalk.restartedWindowProbability ν ell window (k : ℕ) 0
-  have hbase := measure_positiveAKilled_capacityEvent_compl_le
+  have hbase := measure_positiveASelectedBRW_capacityEvent_compl_le
     m ell ellN N logN b v c κ hell hellN hb hlog μ hboundary
   have hsum :
       (∑ k : Fin (ellN + 1), term k) ≤
@@ -238,7 +238,7 @@ lemma measure_positiveAKilled_capacityEvent_compl_le_twoPhaseOfGenerationPathBou
 drawdown estimates directly. The endpoint threshold and the corridor width
 are kept at the full planned scale, while the drawdown horizon is the actual
 observed prefix length. -/
-lemma measure_positiveAKilled_capacityEvent_compl_le_twoPhaseOfDrawdownBounds
+lemma measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfDrawdownBounds
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -296,7 +296,7 @@ lemma measure_positiveAKilled_capacityEvent_compl_le_twoPhaseOfDrawdownBounds
     exact (iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown
       ν ell ellN (k : ℕ) logN b v c κ hk (by omega) hκ hc hvc)
       |>.trans (hdrawdown k hk)
-  exact measure_positiveAKilled_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds
+  exact measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds
     m ell ellN N logN b v c κ hell hellN hb hlog hvb μ hboundary
     pFirst pSecond hfirstPath hsecondPath
 

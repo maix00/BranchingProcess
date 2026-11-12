@@ -1,4 +1,4 @@
-import Probability.Process.RandomWalk.Path.Skorokhod.Oscillation
+import Probability.Process.RandomWalk.Path.Skorokhod.Oscillation.Partition
 
 #print axioms
   ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc_oscillationBoundedOnStepPartition
