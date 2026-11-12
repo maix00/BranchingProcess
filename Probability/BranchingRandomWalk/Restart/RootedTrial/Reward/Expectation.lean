@@ -13,12 +13,11 @@ import Combinatorics.BranchingWalk.Step.Selection.Potential
 /-!
 # First-moment estimate for a reserve spine
 
-The pathwise positive-part estimate for the causal reserve spine can be
-integrated using the fixed-generation marginal law of its predictably sampled
-steps.  The result only assumes a first moment for the one-step observable;
-it does not identify that observable with a distinguished raw offspring
-slot, or identify the causal reserve source with the retrospective restart
-process.
+The pathwise positive-part estimate for the selected reserve-spine BRW can
+be integrated using the fixed-generation marginal law of its predictably
+sampled steps. The only moment assumption is a first moment for the one-step
+selected-edge observable. The estimate concerns the causal reserve-spine BRW;
+the retrospective restart is treated as a separate process.
 
 ## Public declarations
 

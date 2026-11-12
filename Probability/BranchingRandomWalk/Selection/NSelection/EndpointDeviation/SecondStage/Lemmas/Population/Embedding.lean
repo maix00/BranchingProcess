@@ -21,18 +21,18 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
 import Probability.Process.Path.Restart.Basic
 
 /-!
-# Second-stage corridor paths in the restarted killed population
+# Second-stage corridor paths in the restarted selected BRW population
 
 ## Internal proof declarations
 
 * `mem_restartedPopulation_of_secondStageCorridor` proves that a retained
   particle at generation $\ell$ with a surviving continuation in the second
-  corridor remains in the restarted killed population at generation
+  corridor remains in the restarted selected BRW population at generation
   $\ell_N$.
-* `positiveAKilled_terminal_position_lt` proves that every particle in the
-  restarted killed population at generation $\ell_N$ has position below
+* `positiveASelectedBRW_terminal_position_lt` proves that every particle in the
+  restarted selected BRW population at generation $\ell_N$ has position below
   $(-b+v)\log N+(\kappa/c^2+v)(\ell_N-\ell)^{1/3}$.
-* `positiveAKilled_endpointHigh_implies_terminalEmpty_or_capacityFailure_ae`
+* `positiveASelectedBRW_endpointHigh_implies_terminalEmpty_or_capacityFailure_ae`
   proves the almost-sure implication
   \[
     \{M_{\ell_N}\ge x\}\subseteq
@@ -57,16 +57,16 @@ The proof-chain lemma used in `SecondStage/Lemmas/Population/Transfer.lean`,
   (r,u\mathbin{+\!+}w)\in\mathcal P_{\ell_N},
 \]
 under the stated finite-weight condition. Here $\mathcal P_j$ is the
-restarted killed population and $\mathcal C_j$ is the second-stage corridor.
+restarted selected BRW population and $\mathcal C_j$ is the second-stage corridor.
 
 The terminal-position lemma below bounds every retained endpoint by the
 cutoff upper boundary plus the terminal relative-position upper boundary.
-The endpoint coupling step uses this strict bound and the restarted-source
-capacity coupling to obtain
+The endpoint coupling step combines this strict bound with the capacity
+coupling for the restarted selected BRW population to obtain
 \[
  \{M_{\ell_N}\ge x\}\subseteq
  \{\mathcal P_{\ell_N}=\varnothing\}\cup
- \{\text{the killed source exceeds capacity before }\ell_N\}
+ \{\text{the selected BRW population exceeds capacity before }\ell_N\}
 \]
 up to a null set.
 -/
@@ -89,7 +89,7 @@ open ProbabilityTheory.Process.Path
 /-- If a retained particle at the restart generation has a surviving subtree
 path in the second-stage affine corridor, the concatenated path is retained
 at the terminal generation.  `hweight` is the finite-weight condition used
-by the totalized killed process; under the boundary normalization it
+by the totalized selected BRW process; under the boundary normalization it
 holds simultaneously at all addresses almost surely. -/
 lemma mem_restartedPopulation_of_secondStageCorridor
     (m ell ellN : ℕ) (logN b v c κ : ℝ)
@@ -306,7 +306,7 @@ lemma mem_restartedPopulation_of_secondStageCorridor
 
 /-- The first-stage cutoff position plus the terminal relative tube bound
 controls every particle retained at the terminal generation. -/
-lemma positiveAKilled_terminal_position_lt
+lemma positiveASelectedBRW_terminal_position_lt
     (m ell ellN : ℕ) (logN b v c κ threshold : ℝ)
     (hell : 0 < ell) (hellN : ell < ellN) (hκ : 0 ≤ κ)
     (hthreshold : (-b + v) * logN +
@@ -314,7 +314,7 @@ lemma positiveAKilled_terminal_position_lt
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : RootIndexed.StepField (Fin m) ℕ ℝ)
     (q : RootIndexed.TreeNode (Fin m) ℕ)
-    (hq : q ∈ positiveAKilledPopulation m ell ellN logN b v c κ ellN field) :
+    (hq : q ∈ positiveASelectedBRWPopulation m ell ellN logN b v c κ ellN field) :
     RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field q.1 q.2 < threshold := by
   let initial := RootIndexed.initialPopulation (α := ℕ)
     (Finset.univ : Finset (Fin m))
@@ -331,7 +331,7 @@ lemma positiveAKilled_terminal_position_lt
     upper (positiveARestartedWindow_subset_Iic_upper
       ell ellN logN b v c κ)
   have hq' : q ∈ population ellN field := by
-    simpa [population, positiveAKilledPopulation, initial, window, upper,
+    simpa [population, positiveASelectedBRWPopulation, initial, window, upper,
       hinitialDepth] using hq
   have hdepth : q.2.length = ellN := population.depth ellN field q hq'
   have htakeEndpoint : q.2.take ellN = q.2 :=
@@ -407,10 +407,11 @@ lemma positiveAKilled_terminal_position_lt
     _ < threshold := hthreshold
 
 /-- A large first-`N` endpoint minimum forces either extinction of the
-restarted killed population or failure of its finite-horizon capacity bound.
-The implication follows from the source-to-target slice domination on the
-capacity event and the strict terminal-position bound. -/
-lemma positiveAKilled_endpointHigh_implies_terminalEmpty_or_capacityFailure_ae
+restarted selected BRW population or failure of its finite-horizon capacity bound.
+The implication follows from slice domination of the selected selected BRW
+population by the rank-installed first-`N` BRW population on the capacity
+event and the strict terminal-position bound. -/
+lemma positiveASelectedBRW_endpointHigh_implies_terminalEmpty_or_capacityFailure_ae
     (m N ell ellN : ℕ) (logN b v c κ threshold : ℝ)
     (hell : 0 < ell) (hellN : ell < ellN) (hκ : 0 ≤ κ)
     (hthreshold : (-b + v) * logN +
@@ -424,9 +425,9 @@ lemma positiveAKilled_endpointHigh_implies_terminalEmpty_or_capacityFailure_ae
       threshold ≤ firstNSelectedEndpointMinimum m N ellN
         (letI : DecidableEq (RootIndexed.TreeNode (Fin m) ℕ) :=
           fun a b => LinearOrder.toDecidableEq a b;
-         RootIndexed.restartedRealPositionMatchedField N
+         RootIndexed.restartedRealPositionNSelectedBRWField N
           (Finset.univ : Finset (Fin m)) (fun _ => 0) id
-          (RootIndexed.restartedRealPositionSource_finiteSlices
+          (RootIndexed.restartedRealPositionSelectedBRWPopulation_finiteSlices
             (fun _ : Fin m => 0) id measurable_id
             (RootIndexed.initialPopulation (α := ℕ)
               (Finset.univ : Finset (Fin m)))
@@ -440,10 +441,10 @@ lemma positiveAKilled_endpointHigh_implies_terminalEmpty_or_capacityFailure_ae
             (positiveAWindowUpper ell ellN logN b v c κ)
             (positiveARestartedWindow_subset_Iic_upper
               ell ellN logN b v c κ)).toFinset ellN field) →
-      (¬ (positiveAKilledPopulation m ell ellN logN b v c κ ellN
+      (¬ (positiveASelectedBRWPopulation m ell ellN logN b v c κ ellN
           (RootIndexed.StepField.left field)).Nonempty ∨
         RootIndexed.StepField.left field ∈
-          ((positiveAKilledPopulation m ell ellN logN b v c κ).capacityEvent
+          ((positiveASelectedBRWPopulation m ell ellN logN b v c κ).capacityEvent
             N ellN)ᶜ) := by
   classical
   letI : DecidableEq (RootIndexed.TreeNode (Fin m) ℕ) :=
@@ -457,51 +458,56 @@ lemma positiveAKilled_endpointHigh_implies_terminalEmpty_or_capacityFailure_ae
     simp
   let window := positiveARestartedWindow ell ellN logN b v c κ
   let upper := positiveAWindowUpper ell ellN logN b v c κ
-  let source := RootIndexed.restartedRealPositionSource
+  let selectedBRWPopulation := RootIndexed.restartedRealPositionSelectedBRWPopulation
     (fun _ : Fin m => 0) id measurable_id initial hinitialDepth ell
     window (measurableSet_positiveARestartedWindow ell ellN logN b v c κ)
     upper (positiveARestartedWindow_subset_Iic_upper
       ell ellN logN b v c κ)
-  let sourceFinite := RootIndexed.restartedRealPositionSource_finiteSlices
+  let selectedBRWPopulationFiniteSlices := RootIndexed.restartedRealPositionSelectedBRWPopulation_finiteSlices
     (fun _ : Fin m => 0) id measurable_id initial hinitialDepth ell
     window (measurableSet_positiveARestartedWindow ell ellN logN b v c κ)
     upper (positiveARestartedWindow_subset_Iic_upper
       ell ellN logN b v c κ)
-  let sourceSlice := RootIndexed.restartedRealPositionSourceSlice
+  let selectedBRWPopulationSlice := RootIndexed.restartedRealPositionSelectedBRWPopulationSlice
     (fun _ : Fin m => 0) id measurable_id initial hinitialDepth ell
     window (measurableSet_positiveARestartedWindow ell ellN logN b v c κ)
     upper (positiveARestartedWindow_subset_Iic_upper
       ell ellN logN b v c κ)
-  let targetField := RootIndexed.restartedRealPositionMatchedField N roots
-    (fun _ : Fin m => 0) id sourceSlice ellN
-  let killed := positiveAKilledPopulation m ell ellN logN b v c κ
-  have hsourceSetEq (k : ℕ)
+  let nSelectedBRWField := RootIndexed.restartedRealPositionNSelectedBRWField N roots
+    (fun _ : Fin m => 0) id selectedBRWPopulationSlice ellN
+  let selectedBRWPopulationOnRestartedField :=
+    positiveASelectedBRWPopulation m ell ellN logN b v c κ
+  have hselectedBRWPopulationSetEq (k : ℕ)
       (field : RootIndexed.StepField (Fin m ⊕ Fin m) ℕ ℝ) :
-      source k field = killed k (RootIndexed.StepField.left field) := by
-    dsimp [source, killed, roots, initial, window, upper,
-      RootIndexed.restartedRealPositionSource,
+      selectedBRWPopulation k field = selectedBRWPopulationOnRestartedField k
+        (RootIndexed.StepField.left field) := by
+    dsimp [selectedBRWPopulation, selectedBRWPopulationOnRestartedField,
+      roots, initial, window, upper,
+      RootIndexed.restartedRealPositionSelectedBRWPopulation,
       RootIndexed.CausalPopulation.pullback_population,
-      positiveAKilledPopulation]
+        positiveASelectedBRWPopulation]
     congr 1
-  have hsourceSliceSetEq (field : RootIndexed.StepField (Fin m ⊕ Fin m) ℕ ℝ) :
-      (sourceSlice ellN field : Set (RootIndexed.TreeNode (Fin m) ℕ)) =
-        killed ellN (RootIndexed.StepField.left field) := by
-    change (sourceFinite.toFinset ellN field :
+  have hselectedBRWPopulationSliceSetEq (field : RootIndexed.StepField (Fin m ⊕ Fin m) ℕ ℝ) :
+      (selectedBRWPopulationSlice ellN field : Set (RootIndexed.TreeNode (Fin m) ℕ)) =
+        selectedBRWPopulationOnRestartedField ellN
+          (RootIndexed.StepField.left field) := by
+    change (selectedBRWPopulationFiniteSlices.toFinset ellN field :
       Set (RootIndexed.TreeNode (Fin m) ℕ)) = _
-    rw [sourceFinite.coe_toFinset, hsourceSetEq ellN field]
-  have hsourceCapacityEq
+    rw [selectedBRWPopulationFiniteSlices.coe_toFinset, hselectedBRWPopulationSetEq ellN field]
+  have hselectedBRWPopulationCapacityEq
       (field : RootIndexed.StepField (Fin m ⊕ Fin m) ℕ ℝ) :
-      field ∈ source.capacityEvent N ellN ↔
-        RootIndexed.StepField.left field ∈ killed.capacityEvent N ellN := by
+      field ∈ selectedBRWPopulation.capacityEvent N ellN ↔
+        RootIndexed.StepField.left field ∈
+          selectedBRWPopulationOnRestartedField.capacityEvent N ellN := by
     simp only [RootIndexed.CausalPopulation.capacityEvent, Set.mem_iInter,
       Set.mem_ofPred_eq]
     constructor
     · intro h k
       have hk := h k
-      simpa only [hsourceSetEq k.1 field] using hk
+      simpa only [hselectedBRWPopulationSetEq k.1 field] using hk
     · intro h k
       have hk := h k
-      simpa only [hsourceSetEq k.1 field] using hk
+      simpa only [hselectedBRWPopulationSetEq k.1 field] using hk
   have hcoupled := RootIndexed.restartedRealPositionCoupledInjectionOnRoots_ae
     μ hboundary N roots (fun _ => 0) ell window
     (measurableSet_positiveARestartedWindow ell ellN logN b v c κ)
@@ -509,115 +515,116 @@ lemma positiveAKilled_endpointHigh_implies_terminalEmpty_or_capacityFailure_ae
       ell ellN logN b v c κ) ellN
   have hcoupled' : ∀ᵐ field ∂RootIndexed.stepFieldLaw
       (Root := Fin m ⊕ Fin m) μ,
-      field ∈ source.capacityEvent N ellN →
+      field ∈ selectedBRWPopulation.capacityEvent N ellN →
         Nonempty (Cloud.SliceDominatingMap id
           (Combinatorics.Branching.Selection.Coupling.populationCloud id
             (RootIndexed.BranchingWalk.ofStepField (fun _ : Fin m => 0)
               (RootIndexed.StepField.left field))
-            (sourceSlice ellN field))
+            (selectedBRWPopulationSlice ellN field))
           (Combinatorics.Branching.Selection.Coupling.populationCloud id
             (RootIndexed.BranchingWalk.ofStepField (fun _ : Fin m => 0)
-              (RootIndexed.restartedRealPositionMatchedField N roots
-              (fun _ : Fin m => 0) id sourceSlice ellN field))
-            (RootIndexed.restartedRealPositionMatchedPopulation N roots
-              (fun _ : Fin m => 0) id sourceSlice ellN field)) ()) := by
-    simpa [source, sourceFinite, sourceSlice, roots, initial, hinitialDepth,
-      window, upper, RootIndexed.restartedRealPositionSource,
-      RootIndexed.restartedRealPositionSourceSlice] using hcoupled
+              (RootIndexed.restartedRealPositionNSelectedBRWField N roots
+              (fun _ : Fin m => 0) id selectedBRWPopulationSlice ellN field))
+            (RootIndexed.restartedRealPositionNSelectedBRWPopulation N roots
+              (fun _ : Fin m => 0) id selectedBRWPopulationSlice ellN field)) ()) := by
+    simpa [selectedBRWPopulation, selectedBRWPopulationFiniteSlices, selectedBRWPopulationSlice, roots, initial, hinitialDepth,
+      window, upper, RootIndexed.restartedRealPositionSelectedBRWPopulation,
+      RootIndexed.restartedRealPositionSelectedBRWPopulationSlice] using hcoupled
   filter_upwards [hcoupled'] with field hcoupled
   intro hhigh
-  by_cases hcapacity : field ∈ source.capacityEvent N ellN
-  · by_cases hsourceNonempty : (killed ellN
+  by_cases hcapacity : field ∈ selectedBRWPopulation.capacityEvent N ellN
+  · by_cases hselectedBRWPopulationNonempty : (selectedBRWPopulationOnRestartedField ellN
       (RootIndexed.StepField.left field)).Nonempty
-    · obtain ⟨p, hp⟩ := hsourceNonempty
-      have hpSetFin : p ∈ (sourceFinite.toFinset ellN field :
+    · obtain ⟨p, hp⟩ := hselectedBRWPopulationNonempty
+      have hpSetFin : p ∈ (selectedBRWPopulationFiniteSlices.toFinset ellN field :
           Set (RootIndexed.TreeNode (Fin m) ℕ)) := by
-        rw [sourceFinite.coe_toFinset]
-        rw [hsourceSetEq ellN field]
+        rw [selectedBRWPopulationFiniteSlices.coe_toFinset]
+        rw [hselectedBRWPopulationSetEq ellN field]
         exact hp
-      have hpFin : p ∈ sourceFinite.toFinset ellN field := by
+      have hpFin : p ∈ selectedBRWPopulationFiniteSlices.toFinset ellN field := by
         simpa using hpSetFin
-      have hsourceFinNonempty : (sourceFinite.toFinset ellN field).Nonempty :=
+      have hselectedBRWPopulationFinNonempty : (selectedBRWPopulationFiniteSlices.toFinset ellN field).Nonempty :=
         ⟨p, hpFin⟩
       obtain ⟨hmap⟩ := hcoupled hcapacity
-      let sourceWalk := RootIndexed.BranchingWalk.ofStepField
+      let selectedBRW := RootIndexed.BranchingWalk.ofStepField
         (fun _ : Fin m => (0 : ℝ)) (RootIndexed.StepField.left field)
-      let targetWalk := RootIndexed.BranchingWalk.ofStepField
-        (fun _ : Fin m => (0 : ℝ)) (targetField field)
-      let targetPopulation := RootIndexed.restartedRealPositionMatchedPopulation
-        N roots (fun _ : Fin m => 0) id sourceSlice ellN field
-      let targetParticle := hmap p
+      let nSelectedBRW := RootIndexed.BranchingWalk.ofStepField
+        (fun _ : Fin m => (0 : ℝ)) (nSelectedBRWField field)
+      let nSelectedBRWPopulation := RootIndexed.restartedRealPositionNSelectedBRWPopulation
+        N roots (fun _ : Fin m => 0) id selectedBRWPopulationSlice ellN field
+      let nSelectedBRWParticle := hmap p
       have hdecEqLinearProduct :
           (fun a b : RootIndexed.TreeNode (Fin m) ℕ =>
             LinearOrder.toDecidableEq a b) =
             (fun a b => instDecidableEqProd a b) := by
         apply Subsingleton.elim
-      have htargetPopulationEq : targetPopulation =
-          firstNSelectedPopulation m N ellN (targetField field) := by
-        simp only [targetPopulation,
-          RootIndexed.restartedRealPositionMatchedPopulation,
+      have hnSelectedBRWPopulationEq : nSelectedBRWPopulation =
+          firstNSelectedPopulation m N ellN (nSelectedBRWField field) := by
+        simp only [nSelectedBRWPopulation,
+          RootIndexed.restartedRealPositionNSelectedBRWPopulation,
           firstNSelectedPopulation]
         rw [← hdecEqLinearProduct]
       have hpCloud : p ∈
           (Combinatorics.Branching.Selection.Coupling.populationCloud id
-            sourceWalk (sourceSlice ellN field)).particles () := by
-        have hpSlice : p ∈ sourceSlice ellN field := by
-          have hpSet : p ∈ (sourceSlice ellN field :
+            selectedBRW (selectedBRWPopulationSlice ellN field)).particles () := by
+        have hpSlice : p ∈ selectedBRWPopulationSlice ellN field := by
+          have hpSet : p ∈ (selectedBRWPopulationSlice ellN field :
               Set (RootIndexed.TreeNode (Fin m) ℕ)) := by
-            rw [hsourceSliceSetEq field]
+            rw [hselectedBRWPopulationSliceSetEq field]
             exact hp
           simpa using hpSet
         simpa [Combinatorics.Branching.Selection.Coupling.populationCloud]
           using hpSlice
-      have htargetMember : targetParticle ∈ targetPopulation := by
+      have hnSelectedBRWMember : nSelectedBRWParticle ∈ nSelectedBRWPopulation := by
         have hmem := hmap.mapsTo hpCloud
-        simpa [targetPopulation,
+        simpa [nSelectedBRWPopulation,
           Combinatorics.Branching.Selection.Coupling.populationCloud] using hmem
-      have htargetMemberFirstN : targetParticle ∈
-          firstNSelectedPopulation m N ellN (targetField field) := by
-        rw [← htargetPopulationEq]
-        exact htargetMember
+      have hnSelectedBRWMemberFirstN : nSelectedBRWParticle ∈
+          firstNSelectedPopulation m N ellN (nSelectedBRWField field) := by
+        rw [← hnSelectedBRWPopulationEq]
+        exact hnSelectedBRWMember
       have hposition :
           RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id
-              (targetField field) targetParticle.1 targetParticle.2 ≤
+              (nSelectedBRWField field) nSelectedBRWParticle.1 nSelectedBRWParticle.2 ≤
             RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id
               (RootIndexed.StepField.left field) p.1 p.2 := by
         have hdom := hmap.dominates p hpCloud
         simpa [Combinatorics.Branching.Selection.Coupling.populationCloud,
           RootIndexed.BranchingWalk.ofStepField, RootIndexed.position,
-          RootIndexed.displace, sourceWalk, targetWalk] using hdom
-      have hsourcePointLt := positiveAKilled_terminal_position_lt
+          RootIndexed.displace, selectedBRW, nSelectedBRW] using hdom
+      have hselectedBRWPointLt := positiveASelectedBRW_terminal_position_lt
         m ell ellN logN b v c κ threshold hell hellN hκ hthreshold
         (RootIndexed.StepField.left field) p hp
-      have htargetPointLt := hposition.trans_lt hsourcePointLt
-      have htargetPopNonempty :
-          (firstNSelectedPopulation m N ellN (targetField field)).Nonempty := by
-        refine ⟨targetParticle, ?_⟩
-        simpa [firstNSelectedPopulation, targetPopulation,
-          RootIndexed.restartedRealPositionMatchedPopulation, targetField] using
-          htargetMemberFirstN
+      have hnSelectedBRWPointLt := hposition.trans_lt hselectedBRWPointLt
+      have hnSelectedBRWPopulationNonempty :
+          (firstNSelectedPopulation m N ellN (nSelectedBRWField field)).Nonempty := by
+        refine ⟨nSelectedBRWParticle, ?_⟩
+        simpa [firstNSelectedPopulation, nSelectedBRWPopulation,
+          RootIndexed.restartedRealPositionNSelectedBRWPopulation, nSelectedBRWField] using
+          hnSelectedBRWMemberFirstN
       have hminimumEq := firstNSelectedEndpointMinimum_eq_inf'_of_nonempty
-        m N ellN (targetField field) htargetPopNonempty
+        m N ellN (nSelectedBRWField field) hnSelectedBRWPopulationNonempty
       have hminimumLe : firstNSelectedEndpointMinimum m N ellN
-          (targetField field) ≤
+          (nSelectedBRWField field) ≤
             RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id
-              (targetField field) targetParticle.1 targetParticle.2 := by
+              (nSelectedBRWField field) nSelectedBRWParticle.1 nSelectedBRWParticle.2 := by
         rw [hminimumEq]
         exact Finset.inf'_le _ (by
-          simpa [firstNSelectedPopulation, targetPopulation,
-            RootIndexed.restartedRealPositionMatchedPopulation, targetField] using
-            htargetMemberFirstN)
+          simpa [firstNSelectedPopulation, nSelectedBRWPopulation,
+            RootIndexed.restartedRealPositionNSelectedBRWPopulation, nSelectedBRWField] using
+            hnSelectedBRWMemberFirstN)
       exact False.elim ((not_lt_of_ge hhigh)
-        (hminimumLe.trans_lt htargetPointLt))
-    · exact Or.inl hsourceNonempty
+        (hminimumLe.trans_lt hnSelectedBRWPointLt))
+    · exact Or.inl hselectedBRWPopulationNonempty
   · exact Or.inr (show
-      RootIndexed.StepField.left field ∉ killed.capacityEvent N ellN from
-        fun hrootCapacity => hcapacity ((hsourceCapacityEq field).2 hrootCapacity))
+      RootIndexed.StepField.left field ∉
+          selectedBRWPopulationOnRestartedField.capacityEvent N ellN from
+        fun hrootCapacity => hcapacity ((hselectedBRWPopulationCapacityEq field).2 hrootCapacity))
 
 /-- The pathwise endpoint transfer bounds the fixed-horizon endpoint event by
-terminal extinction of the restarted source and failure of its capacity
+terminal extinction of the restarted selected BRW population and failure of its capacity
 condition.  The rank-installed field has the original finite-root law, while
-the source field is its left marginal. -/
+the selected BRW population field is its left marginal. -/
 lemma measure_firstN_endpointHigh_le_terminalEmpty_add_capacityFailure
     (m N ell ellN : ℕ) (logN b v c κ threshold : ℝ)
     (hell : 0 < ell) (hellN : ell < ellN) (hκ : 0 ≤ κ)
@@ -631,10 +638,10 @@ lemma measure_firstN_endpointHigh_le_terminalEmpty_add_capacityFailure
     finiteRootStepFieldLaw μ m
         {field | threshold ≤ firstNSelectedEndpointMinimum m N ellN field} ≤
       finiteRootStepFieldLaw μ m
-          {field | ¬ (positiveAKilledPopulation m ell ellN logN b v c κ
+          {field | ¬ (positiveASelectedBRWPopulation m ell ellN logN b v c κ
             ellN field).Nonempty} +
         finiteRootStepFieldLaw μ m
-          ((positiveAKilledPopulation m ell ellN logN b v c κ).capacityEvent
+          ((positiveASelectedBRWPopulation m ell ellN logN b v c κ).capacityEvent
             N ellN)ᶜ := by
   classical
   letI : DecidableEq (RootIndexed.TreeNode (Fin m) ℕ) :=
@@ -648,87 +655,88 @@ lemma measure_firstN_endpointHigh_le_terminalEmpty_add_capacityFailure
     simp
   let window := positiveARestartedWindow ell ellN logN b v c κ
   let upper := positiveAWindowUpper ell ellN logN b v c κ
-  let source := RootIndexed.restartedRealPositionSource
+  let selectedBRWPopulation := RootIndexed.restartedRealPositionSelectedBRWPopulation
     (fun _ : Fin m => 0) id measurable_id initial hinitialDepth ell
     window (measurableSet_positiveARestartedWindow ell ellN logN b v c κ)
     upper (positiveARestartedWindow_subset_Iic_upper
       ell ellN logN b v c κ)
-  let sourceFinite := RootIndexed.restartedRealPositionSource_finiteSlices
+  let selectedBRWPopulationFiniteSlices := RootIndexed.restartedRealPositionSelectedBRWPopulation_finiteSlices
     (fun _ : Fin m => 0) id measurable_id initial hinitialDepth ell
     window (measurableSet_positiveARestartedWindow ell ellN logN b v c κ)
     upper (positiveARestartedWindow_subset_Iic_upper
       ell ellN logN b v c κ)
-  let sourceSlice := RootIndexed.restartedRealPositionSourceSlice
+  let selectedBRWPopulationSlice := RootIndexed.restartedRealPositionSelectedBRWPopulationSlice
     (fun _ : Fin m => 0) id measurable_id initial hinitialDepth ell
     window (measurableSet_positiveARestartedWindow ell ellN logN b v c κ)
     upper (positiveARestartedWindow_subset_Iic_upper
       ell ellN logN b v c κ)
-  let targetField := RootIndexed.restartedRealPositionMatchedField N roots
-    (fun _ : Fin m => 0) id sourceSlice ellN
-  let killed := positiveAKilledPopulation m ell ellN logN b v c κ
+  let nSelectedBRWField := RootIndexed.restartedRealPositionNSelectedBRWField N roots
+    (fun _ : Fin m => 0) id selectedBRWPopulationSlice ellN
+  let selectedBRWPopulationOnRestartedField :=
+    positiveASelectedBRWPopulation m ell ellN logN b v c κ
   let P := RootIndexed.stepFieldLaw (Root := Fin m ⊕ Fin m) μ
   let A : Set (FiniteRootStepField m ℕ ℝ) :=
     {field | threshold ≤ firstNSelectedEndpointMinimum m N ellN field}
   let B : Set (FiniteRootStepField m ℕ ℝ) :=
-    {field | ¬ (killed ellN field).Nonempty}
+    {field | ¬ (selectedBRWPopulationOnRestartedField ellN field).Nonempty}
   let C : Set (FiniteRootStepField m ℕ ℝ) :=
-    (killed.capacityEvent N ellN)ᶜ
+    (selectedBRWPopulationOnRestartedField.capacityEvent N ellN)ᶜ
   have hA : MeasurableSet A := by
     exact measurableSet_Ici.preimage
       (measurable_firstNSelectedEndpointMinimum m N ellN)
-  have hKilledFinite := positiveAKilledPopulation_finiteSlices
+  have hSelectedBRWFinite := positiveASelectedBRWPopulation_finiteSlices
     m ell ellN logN b v c κ
-  have hKilledSliceMeasurable :
-      Measurable (hKilledFinite.toFinset ellN) := by
-    exact (hKilledFinite.measurable_toFinset ellN).mono
+  have hSelectedBRWSliceMeasurable :
+      Measurable (hSelectedBRWFinite.toFinset ellN) := by
+    exact (hSelectedBRWFinite.measurable_toFinset ellN).mono
       ((RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)).le ellN)
       le_rfl
   have hB : MeasurableSet B := by
-    have hB_eq : B = (hKilledFinite.toFinset ellN) ⁻¹' {∅} := by
+    have hB_eq : B = (hSelectedBRWFinite.toFinset ellN) ⁻¹' {∅} := by
       ext field
-      change ¬ ((killed ellN field : Set _)).Nonempty ↔
-        hKilledFinite.toFinset ellN field = ∅
-      rw [← hKilledFinite.coe_toFinset ellN field]
-      change ¬ (hKilledFinite.toFinset ellN field).Nonempty ↔
-        hKilledFinite.toFinset ellN field = ∅
+      change ¬ ((selectedBRWPopulationOnRestartedField ellN field : Set _)).Nonempty ↔
+        hSelectedBRWFinite.toFinset ellN field = ∅
+      rw [← hSelectedBRWFinite.coe_toFinset ellN field]
+      change ¬ (hSelectedBRWFinite.toFinset ellN field).Nonempty ↔
+        hSelectedBRWFinite.toFinset ellN field = ∅
       exact Finset.not_nonempty_iff_eq_empty
     rw [hB_eq]
-    exact hKilledSliceMeasurable (measurableSet_singleton ∅)
+    exact hSelectedBRWSliceMeasurable (measurableSet_singleton ∅)
   have hC : MeasurableSet C := by
     exact (RootIndexed.CausalPopulation.measurableSet_capacityEvent
-      killed N ellN (fun n =>
+      selectedBRWPopulationOnRestartedField N ellN (fun n =>
         (RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)).le n)).compl
   have hranked := RootIndexed.rankInstalledField_causalPopulation_measurable_law
     μ N roots (fun _ : Fin m => (0 : ℝ)) (id : ℝ → ℝ) measurable_id
-    (id : ℝ → ℝ) measurable_id source sourceFinite
-  have hsourceSliceEq (n : ℕ)
+    (id : ℝ → ℝ) measurable_id selectedBRWPopulation selectedBRWPopulationFiniteSlices
+  have hselectedBRWPopulationSliceEq (n : ℕ)
       (field : RootIndexed.StepField (Fin m ⊕ Fin m) ℕ ℝ) :
-      sourceSlice n field = sourceFinite.toFinset n field := by
+      selectedBRWPopulationSlice n field = selectedBRWPopulationFiniteSlices.toFinset n field := by
     rfl
-  have hsourceSlicesEq : sourceSlice = sourceFinite.toFinset := by
+  have hselectedBRWPopulationSlicesEq : selectedBRWPopulationSlice = selectedBRWPopulationFiniteSlices.toFinset := by
     funext n field
-    exact hsourceSliceEq n field
-  have htargetRankEq : targetField =
+    exact hselectedBRWPopulationSliceEq n field
+  have hnSelectedBRWRankEq : nSelectedBRWField =
       RootIndexed.rankInstalledField
         (fun k field => RootIndexed.observedPositionAtGeneration
           (fun _ : Fin m => (0 : ℝ)) id id k
           (RootIndexed.StepField.reindex Sum.inl field))
         (fun k _ field => RootIndexed.observedPositionAtGeneration
           (fun _ : Fin m => (0 : ℝ)) id id k field)
-        sourceFinite.toFinset
+        selectedBRWPopulationFiniteSlices.toFinset
         (fun k _ field => RootIndexed.selectedPopulationTotalized N roots
           (fun _ : Fin m => (0 : ℝ)) id id k field)
         RootIndexed.StepField.left RootIndexed.StepField.right ellN := by
-    simp only [targetField, RootIndexed.restartedRealPositionMatchedField]
-    rw [hsourceSlicesEq]
+    simp only [nSelectedBRWField, RootIndexed.restartedRealPositionNSelectedBRWField]
+    rw [hselectedBRWPopulationSlicesEq]
     funext field r u
     rfl
-  have htargetMeas : Measurable targetField := by
-    rw [htargetRankEq]
+  have hnSelectedBRWMeas : Measurable nSelectedBRWField := by
+    rw [hnSelectedBRWRankEq]
     exact (hranked ellN).1
-  have htargetLaw : P.map targetField =
+  have hnSelectedBRWLaw : P.map nSelectedBRWField =
       finiteRootStepFieldLaw μ m := by
-    rw [htargetRankEq]
+    rw [hnSelectedBRWRankEq]
     simpa [P, finiteRootStepFieldLaw] using (hranked ellN).2
   have hleftMeas : Measurable (RootIndexed.StepField.left :
       RootIndexed.StepField (Fin m ⊕ Fin m) ℕ ℝ →
@@ -744,25 +752,25 @@ lemma measure_firstN_endpointHigh_le_terminalEmpty_add_capacityFailure
     change P.map (RootIndexed.StepField.reindex Sum.inl) = _
     simpa [P, finiteRootStepFieldLaw] using
       (RootIndexed.stepFieldLaw_reindex μ Sum.inl Sum.inl_injective)
-  have hAE := positiveAKilled_endpointHigh_implies_terminalEmpty_or_capacityFailure_ae
+  have hAE := positiveASelectedBRW_endpointHigh_implies_terminalEmpty_or_capacityFailure_ae
     m N ell ellN logN b v c κ threshold hell hellN hκ hthreshold μ hboundary
   have hsetAE :
       {field | threshold ≤
-          firstNSelectedEndpointMinimum m N ellN (targetField field)} ≤ᵐ[P]
+          firstNSelectedEndpointMinimum m N ellN (nSelectedBRWField field)} ≤ᵐ[P]
         (RootIndexed.StepField.left ⁻¹' B) ∪
           (RootIndexed.StepField.left ⁻¹' C) := by
     filter_upwards [hAE] with field hfield
     intro hhigh
     have hhigh' : threshold ≤
-        firstNSelectedEndpointMinimum m N ellN (targetField field) := by
+        firstNSelectedEndpointMinimum m N ellN (nSelectedBRWField field) := by
       change threshold ≤ firstNSelectedEndpointMinimum m N ellN
-        (targetField field) at hhigh
+        (nSelectedBRWField field) at hhigh
       exact hhigh
     rcases hfield hhigh' with hempty | hcapacity
     · exact Or.inl hempty
     · exact Or.inr hcapacity
-  have hAmap : P.map targetField A =
-      P (targetField ⁻¹' A) := Measure.map_apply htargetMeas hA
+  have hAmap : P.map nSelectedBRWField A =
+      P (nSelectedBRWField ⁻¹' A) := Measure.map_apply hnSelectedBRWMeas hA
   have hBmap : P.map RootIndexed.StepField.left B =
       P (RootIndexed.StepField.left ⁻¹' B) :=
     Measure.map_apply hleftMeas hB
@@ -770,9 +778,9 @@ lemma measure_firstN_endpointHigh_le_terminalEmpty_add_capacityFailure
       P (RootIndexed.StepField.left ⁻¹' C) :=
     Measure.map_apply hleftMeas hC
   calc
-    finiteRootStepFieldLaw μ m A = P.map targetField A := by
-      rw [htargetLaw]
-    _ = P (targetField ⁻¹' A) := hAmap
+    finiteRootStepFieldLaw μ m A = P.map nSelectedBRWField A := by
+      rw [hnSelectedBRWLaw]
+    _ = P (nSelectedBRWField ⁻¹' A) := hAmap
     _ ≤ P ((RootIndexed.StepField.left ⁻¹' B) ∪
         (RootIndexed.StepField.left ⁻¹' C)) := measure_mono_ae hsetAE
     _ ≤ P (RootIndexed.StepField.left ⁻¹' B) +

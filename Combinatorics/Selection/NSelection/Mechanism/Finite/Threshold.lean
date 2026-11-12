@@ -9,120 +9,93 @@ module
 public import Combinatorics.Selection.NSelection.Mechanism.Finite.Leftmost
 
 /-!
-# Lower-tail comparison for first-N selection
+# Threshold-count bounds for first-N selection
 
-## Public declarations
+For finite sets of objects and available partners, let `objectsToMatch` be a
+subset of `objectPopulation` with at most \(N\) elements. If every threshold
+count of `objectPopulation` is bounded by the corresponding count in
+`availablePartners`, and the partner order key is monotone in the label order,
+then the first-\(N\) selected partners dominate every threshold count of
+`objectsToMatch`. When \(N>0\), each object in `objectPopulation` also has a
+selected partner whose order key is no larger than the object's key.
 
-If \(R\subseteq S\), \(|R|\le N\), source threshold counts are bounded by
-candidate threshold counts, and the candidate order refines its position
-order, then the selected candidates retain those lower-tail bounds. For
-\(N>0\), each source particle also has a selected candidate weakly to its
-left:
-
-\[
-\forall a,\quad
-\bigl|\{p\in R:f(p)\le a\}\bigr|
-\le
-\bigl|\{q\in\operatorname{selectFirstN}(N,Q):g(q)\le a\}\bigr|,
-\qquad
-p\in S\Longrightarrow
-\exists q\in\operatorname{selectFirstN}(N,Q),\ g(q)\le f(p).
-\]
-
-The source and candidate populations may use different label types.  The
-source positions are compared by value thresholds, while the candidate labels
-are selected by their own linear order.  A monotonicity hypothesis connects
-that order to the candidate positions.  The resulting count comparison is a
-finite selector theorem and does not depend on a branching-walk or cloud
-representation.
-
-The public API is:
-
-- `filter_card_le_filter_selectFirstN` proves that if `retained ⊆ source`,
-  `retained.card ≤ N`,
-  `(source.filter (fun p => position p ≤ a)).card ≤
-  (rightCandidates.filter (fun q => candidatePosition q ≤ a)).card` for every
-  `a`, and
-  `q ≤ p → candidatePosition q ≤ candidatePosition p` on `rightCandidates`,
-  then
-  `(retained.filter (fun p => position p ≤ a)).card ≤
-  ((selectFirstN N rightCandidates).filter
-  (fun q => candidatePosition q ≤ a)).card` for every `a`.
-- `exists_selectFirstN_le_of_mem` gives a one particle consequence: for
-  `N > 0` and `p ∈ source`, there exists `q ∈ selectFirstN N rightCandidates`
-  with `candidatePosition q ≤ position p` under the same threshold and
-  monotonicity hypotheses.
+The public declarations are `filter_card_le_filter_selectFirstN` for the
+threshold-count inequality and `exists_selectFirstN_le_of_mem` for the
+one-object consequence. The two sets may use different label types; the keys
+provide the comparison between them.
 -/
 
 @[expose] public section
 
 namespace Combinatorics.Selection.NSelection
 
-/-- If a retained population is a subpopulation of `source`, has size at most
-`N`, and the source threshold counts are bounded by those of `candidates`,
-then it is also bounded by the leftmost `N` candidates.  The candidate identity
-order only has to refine the position order. -/
+/-- If `objectsToMatch` is a subpopulation of `objectPopulation`, has size at
+most `N`, and every threshold count of `objectPopulation` is bounded by the
+corresponding count in `availablePartners`, then its threshold counts are
+bounded by those of the first-`N` selected partners. The partner label order
+need only refine `partnerOrderKey`. -/
 theorem filter_card_le_filter_selectFirstN
     {ι κ X : Type*} [DecidableEq ι] [LinearOrder κ] [Preorder X]
     [DecidableLE X]
-    (N : ℕ) (position : ι → X) (candidatePosition : κ → X)
-    (retained source : Finset ι) (rightCandidates : Finset κ)
-    (hretained : retained ⊆ source)
-    (hcard : retained.card ≤ N)
-    (hthreshold : ∀ a : X,
-      (source.filter fun p => position p ≤ a).card ≤
-        (rightCandidates.filter fun q => candidatePosition q ≤ a).card)
-    (hmono : ∀ ⦃p q : κ⦄, p ∈ rightCandidates → q ∈ rightCandidates →
-      q ≤ p → candidatePosition q ≤ candidatePosition p) :
+    (N : ℕ) (objectOrderKey : ι → X) (partnerOrderKey : κ → X)
+    (objectsToMatch objectPopulation : Finset ι) (availablePartners : Finset κ)
+    (hobjectsToMatch_subset_objectPopulation : objectsToMatch ⊆ objectPopulation)
+    (hobjectsToMatch_card_le_N : objectsToMatch.card ≤ N)
+    (hobjectPopulation_thresholdCount_le_availablePartner_thresholdCount : ∀ a : X,
+      (objectPopulation.filter fun p => objectOrderKey p ≤ a).card ≤
+        (availablePartners.filter fun q => partnerOrderKey q ≤ a).card)
+    (hpartnerOrderKey_mono : ∀ ⦃p q : κ⦄, p ∈ availablePartners → q ∈ availablePartners →
+      q ≤ p → partnerOrderKey q ≤ partnerOrderKey p) :
     ∀ a : X,
-      (retained.filter fun p => position p ≤ a).card ≤
-        ((selectFirstN N rightCandidates).filter fun q => candidatePosition q ≤ a).card := by
+      (objectsToMatch.filter fun p => objectOrderKey p ≤ a).card ≤
+        ((selectFirstN N availablePartners).filter fun q => partnerOrderKey q ≤ a).card := by
   classical
   intro a
-  have hleft : (retained.filter fun p => position p ≤ a).card ≤
-      (source.filter fun p => position p ≤ a).card :=
-    Finset.card_le_card (Finset.filter_subset_filter _ hretained)
-  have htoCandidates := hleft.trans (hthreshold a)
-  have hretainedThreshold :
-      (retained.filter fun p => position p ≤ a).card ≤ N :=
-    (Finset.card_filter_le _ _).trans hcard
-  rw [card_filter_selectFirstN_of_downwardClosed N rightCandidates
-    (fun q => candidatePosition q ≤ a) (by
+  have hleft : (objectsToMatch.filter fun p => objectOrderKey p ≤ a).card ≤
+      (objectPopulation.filter fun p => objectOrderKey p ≤ a).card :=
+    Finset.card_le_card (Finset.filter_subset_filter _ hobjectsToMatch_subset_objectPopulation)
+  have htoCandidates := hleft.trans
+    (hobjectPopulation_thresholdCount_le_availablePartner_thresholdCount a)
+  have hobjectsToMatch_thresholdCount_le_N :
+      (objectsToMatch.filter fun p => objectOrderKey p ≤ a).card ≤ N :=
+    (Finset.card_filter_le _ _).trans hobjectsToMatch_card_le_N
+  rw [card_filter_selectFirstN_of_downwardClosed N availablePartners
+    (fun q => partnerOrderKey q ≤ a) (by
       intro p q hp hq hqp hpP
-      exact (hmono hp hq hqp).trans hpP)]
-  exact le_min hretainedThreshold htoCandidates
+      exact (hpartnerOrderKey_mono hp hq hqp).trans hpP)]
+  exact le_min hobjectsToMatch_thresholdCount_le_N htoCandidates
 
-/-- Even when the retained population itself has more than `N` particles, any
-one retained particle has a leftmost-selected counterpart weakly to its left,
-provided `N` is positive. This is the one-point statement used at the overflow
-generation, where full population domination is no longer available. -/
+/-- For positive `N`, every object in `objectPopulation` has a partner among
+the first-`N` selected partners whose order key is no larger. -/
 theorem exists_selectFirstN_le_of_mem
     {ι κ X : Type*} [DecidableEq ι] [LinearOrder κ] [Preorder X]
     [DecidableLE X]
     (N : ℕ) (hN : 0 < N)
-    (position : ι → X) (candidatePosition : κ → X)
-    (source : Finset ι) (rightCandidates : Finset κ)
-    (hthreshold : ∀ a : X,
-      (source.filter fun p => position p ≤ a).card ≤
-        (rightCandidates.filter fun q => candidatePosition q ≤ a).card)
-    (hmono : ∀ ⦃p q : κ⦄, p ∈ rightCandidates → q ∈ rightCandidates →
-      q ≤ p → candidatePosition q ≤ candidatePosition p)
-    {p : ι} (hp : p ∈ source) :
-    ∃ q ∈ selectFirstN N rightCandidates,
-      candidatePosition q ≤ position p := by
+    (objectOrderKey : ι → X) (partnerOrderKey : κ → X)
+    (objectPopulation : Finset ι) (availablePartners : Finset κ)
+    (hobjectPopulation_thresholdCount_le_availablePartner_thresholdCount : ∀ a : X,
+      (objectPopulation.filter fun p => objectOrderKey p ≤ a).card ≤
+        (availablePartners.filter fun q => partnerOrderKey q ≤ a).card)
+    (hpartnerOrderKey_mono : ∀ ⦃p q : κ⦄, p ∈ availablePartners → q ∈ availablePartners →
+      q ≤ p → partnerOrderKey q ≤ partnerOrderKey p)
+    {p : ι} (hp : p ∈ objectPopulation) :
+    ∃ q ∈ selectFirstN N availablePartners,
+      partnerOrderKey q ≤ objectOrderKey p := by
   classical
-  have hsingleton : ({p} : Finset ι) ⊆ source := by simpa
+  have hsingleton : ({p} : Finset ι) ⊆ objectPopulation := by simpa
   have hone : ({p} : Finset ι).card ≤ N := by
     simpa using (Nat.succ_le_iff.mpr hN)
-  have hcount := filter_card_le_filter_selectFirstN N position candidatePosition
-    {p} source rightCandidates hsingleton hone hthreshold hmono (position p)
-  have hleft : (({p} : Finset ι).filter fun r => position r ≤ position p).card = 1 := by
+  have hcount := filter_card_le_filter_selectFirstN N objectOrderKey
+    partnerOrderKey {p} objectPopulation availablePartners hsingleton hone
+    hobjectPopulation_thresholdCount_le_availablePartner_thresholdCount
+    hpartnerOrderKey_mono (objectOrderKey p)
+  have hleft : (({p} : Finset ι).filter fun r => objectOrderKey r ≤ objectOrderKey p).card = 1 := by
     rw [Finset.filter_singleton]
     simp only [le_refl, ite_true, Finset.card_singleton]
   rw [hleft] at hcount
   have hnonempty :
-      ((selectFirstN N rightCandidates).filter fun q =>
-        candidatePosition q ≤ position p).Nonempty :=
+      ((selectFirstN N availablePartners).filter fun q =>
+        partnerOrderKey q ≤ objectOrderKey p).Nonempty :=
     Finset.card_pos.mp (lt_of_lt_of_le Nat.zero_lt_one hcount)
   obtain ⟨q, hq⟩ := hnonempty
   exact ⟨q, (Finset.mem_filter.mp hq).1, (Finset.mem_filter.mp hq).2⟩

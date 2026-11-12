@@ -13,14 +13,14 @@ import Probability.Process.Stopping.Selection.Ranked
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.FixedFamily
 
 /-!
-# Axiom audit for the causal reserve-source comparison
+# Axiom audit for the causal reserve-spine BRW population comparison
 -/
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartSource_finiteSlices
+  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartBRWPopulation_finiteSlices
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartSource_card_le
+  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartBRWPopulation_card_le
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineCandidate_root_at_split
@@ -35,7 +35,7 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Selecte
   ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartCoupledPopulation_card_ge_of_candidateSuccessEvent_ae
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineCandidate_subset_restartSource_at_endpoint
+  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineCandidate_subset_restartBRWPopulation_at_endpoint
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineCandidateSuccessEvent_measurable
@@ -59,7 +59,7 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Selecte
   ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartEndpointTime_isStoppingTime
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartEndpointRankVector_measurable
+  ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartNSelectedBRWEndpointRankVector_measurable
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.Completion.Lemmas.EndpointHorizon.selectedReserveSpineRestartEndpointFreshRoots_measurable
@@ -71,13 +71,13 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Selecte
   ProbabilityTheory.BranchingRandomWalk.Completion.Lemmas.EndpointHorizon.selectedReserveSpineRestartEndpointFreshRoots_injective
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Completion.Lemmas.EndpointHorizon.selectedReserveSpineRestartEndpointFreshRoots_eq_target_ae
+  ProbabilityTheory.BranchingRandomWalk.Completion.Lemmas.EndpointHorizon.selectedReserveSpineRestartEndpointFreshRoots_eq_nSelectedBRW_ae
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.Completion.Lemmas.EndpointHorizon.selectedReserveSpineRestartEndpointFreshField_factorization_on_finite
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Completion.Lemmas.EndpointHorizon.selectedReserveSpineRestartEndpointTargetFreshField_factorization_on_finite
+  ProbabilityTheory.BranchingRandomWalk.Completion.Lemmas.EndpointHorizon.selectedReserveSpineRestartNSelectedBRWFreshField_factorization_on_finite
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.selectedReserveSpineRestartEndpointPositionFreshField_jointLaw_on_finite

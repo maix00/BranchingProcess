@@ -67,7 +67,7 @@ noncomputable def RootIndexed.rankPreimage
       Finset (RootIndexed.TreeNode Root α))
     (field : RootIndexed.StepField (Root ⊕ Root) α X) :
     RootIndexed.TreeNode Root α → Option (RootIndexed.TreeNode Root α) :=
-  preimageByRank (sourceValue field) (targetValue field)
+  objectAtPartnerRankBy (sourceValue field) (targetValue field)
     (source field) (target field)
 
 /-- Countability of the complete random inverse match follows solely from
@@ -160,12 +160,12 @@ theorem RootIndexed.rankChoice_depth
     (RootIndexed.rankChoice n sourceValue targetValue source target field q).2.length = n := by
   unfold RootIndexed.rankChoice
     RootIndexed.rankPreimage RootIndexed.StepField.pasteCoordinate
-  cases hpre : preimageByRank (sourceValue field) (targetValue field)
+  cases hpre : objectAtPartnerRankBy (sourceValue field) (targetValue field)
       (source field) (target field) q.1 with
   | none => exact q.2
   | some p =>
       exact hsourceDepth field p
-        (preimageByRank_eq_some_iff.mp hpre).2.1
+        (objectAtPartnerRankBy_eq_some_iff.mp hpre).2.1
 
 /-- The chosen family is injective for every sample. -/
 theorem RootIndexed.rankChoice_injective
@@ -183,9 +183,9 @@ theorem RootIndexed.rankChoice_injective
   intro q₁ q₂ hq
   apply Subtype.ext
   apply RootIndexed.StepField.pasteCoordinate_injective
-    (preimageByRank (sourceValue field) (targetValue field)
+    (objectAtPartnerRankBy (sourceValue field) (targetValue field)
       (source field) (target field))
-    (fun r₁ r₂ p => preimageByRank_leftUnique
+    (fun r₁ r₂ p => objectAtPartnerRankBy_leftUnique
       (sourceValue field) (targetValue field)
       (source field) (target field))
   exact hq
