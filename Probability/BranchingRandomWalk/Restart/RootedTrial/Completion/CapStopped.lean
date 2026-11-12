@@ -83,14 +83,14 @@ open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
-/-- The next state of a selected candidate, killed if its current population
-has already crossed `cap`.  The crossing generation is retained, with its
-size controlled by the one-step offspring bound. -/
+/-- The next state of a selected candidate is empty once its current population
+has crossed `cap`. The crossing generation is retained, with its size
+controlled by the one-step offspring bound. -/
 noncomputable def capStoppedStep {α X : Type*} (R : Step.FiniteSelection α X)
     (cap : ℕ) : Finset (TreeNode α) × Mark α (Step α X) → Finset (TreeNode α) :=
   fun p => if cap < p.1.card then ∅ else StepSelection.grow R p.1 p.2
 
-/-- A selected population run from one candidate root and killed after the
+/-- A selected population run from one candidate root and stopped after the
 first generation whose size exceeds `cap`. -/
 noncomputable def capStoppedPopulation {α X : Type*}
     (R : Step.FiniteSelection α X) (cap : ℕ) :
@@ -362,8 +362,8 @@ theorem rootedCapStoppedPopulation_card_le_pow
   exact capStoppedPopulation_card_le_pow R cap b hR
     (fun u => ω root.1 (root.2 ++ u)) age
 
-/-- The rooted stopped population is a genuine source: every retained address
-in the next generation is a selected child of a retained current address.
+/-- The rooted stopped population satisfies the selected-population successor
+condition: every next-generation address is a selected child of a current one.
 Empty offspring are permitted, including after a cap crossing. -/
 theorem rootedCapStoppedPopulation_succ_subset {Root α X : Type*}
     [DecidableEq (RootIndexed.TreeNode Root α)] [MeasurableSpace X]

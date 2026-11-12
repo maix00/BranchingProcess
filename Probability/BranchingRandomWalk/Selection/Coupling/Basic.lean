@@ -22,13 +22,13 @@ every sample point.
 
 - `ProbabilityTheory.BranchingRandomWalk.Selection.CausalFiniteMechanism.injectivelyDominatesBy_leftmostBy_of_card_le`:
   if $R_t(\omega)\subseteq C_t(\omega)$ has at most $N$ particles and
-  $C(\omega)$ injectively dominates $D(\omega)$, then the retained cloud
+  $C(\omega)$ injectively dominates $D(\omega)$, then the selected cloud
   injectively dominates the $N$ leftmost particles of $D(\omega)$ at every
   time.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.CausalFiniteMechanism.dominatesBy_leftmost_of_card_le`:
   under the same subset and size bounds, rankwise domination transfers to
-  the retained source and the target's first $N$ particles when both clouds'
-  values are monotone in address order.
+  the selected population and the first-$N$ particles of the comparison cloud when both
+  clouds' values are monotone in address order.
 -/
 
 open MeasureTheory Combinatorics.UlamHarris
@@ -40,21 +40,21 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection
 
 open Combinatorics.Branching
 
-variable {Time Ω Root α Position Value : Type*}
+variable {Time Ω Root α Position OrderKey : Type*}
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
 
 namespace CausalFiniteMechanism
 
-/-- Address-order-free pathwise coupling for a causal retained population.
-The target is re-sorted by its observed value at every slice.  Thus particle
-addresses are used only as labels and as deterministic tie breakers; no
-compatibility between address order and spatial order is assumed. -/
+/-- Address-order-free pathwise coupling for a causally selected population.
+The comparison cloud is re-sorted by its observed value at every slice.
+Particle addresses serve as labels and deterministic tie breakers, while the
+spatial order is determined by the observed value. -/
 theorem injectivelyDominatesBy_leftmostBy_of_card_le
-    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder OrderKey]
     {ℱ : Time → MeasurableSpace Ω}
     (R : CausalFiniteMechanism Time Ω
       (RootIndexed.TreeNode Root α) ℱ)
-    (φ : Position → Value) (N : ℕ)
+    (φ : Position → OrderKey) (N : ℕ)
     (C D : Ω → Cloud Time Root α Position)
     (candidates : Time → Ω → Finset (RootIndexed.TreeNode Root α))
     (hCfinite : ∀ ω t, ((C ω).particles t).Finite)
@@ -78,18 +78,18 @@ theorem injectivelyDominatesBy_leftmostBy_of_card_le
   · exact hcard ω t
   · exact hdom ω t
 
-/-- Pathwise cloud domination for a causal killed population before its size
-exceeds `N`. The retained population may depend on the available information;
+/-- Pathwise cloud domination for a causally selected population before its size
+exceeds `N`. The selected population may depend on the available information;
 only subset selection and the stated pathwise size bound are used in the order
 argument. -/
 theorem dominatesBy_leftmost_of_card_le
     [LinearOrder (RootIndexed.TreeNode Root α)]
     [Countable (RootIndexed.TreeNode Root α)]
-    [MeasurableSpace Value] [MeasurableSingletonClass Value] [Preorder Value]
+    [MeasurableSpace OrderKey] [MeasurableSingletonClass OrderKey] [Preorder OrderKey]
     {ℱ : Time → MeasurableSpace Ω}
     (R : CausalFiniteMechanism Time Ω
       (RootIndexed.TreeNode Root α) ℱ)
-    (φ : Position → Value) (N : ℕ)
+    (φ : Position → OrderKey) (N : ℕ)
     (C D : Ω → Cloud Time Root α Position)
     (candidates : Time → Ω → Finset (RootIndexed.TreeNode Root α))
     (hCfinite : ∀ ω t, ((C ω).particles t).Finite)

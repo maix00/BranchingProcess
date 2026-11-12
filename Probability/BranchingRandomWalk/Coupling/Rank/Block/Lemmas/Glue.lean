@@ -85,7 +85,7 @@ lemma RootIndexed.glue_rankBlockChoice_eq_updateGeneration
         RootIndexed.rankPreimage RootIndexed.StepField.pasteCoordinate
       unfold RootIndexed.rankInstalledStepField valueAtMatchedRank
         Coupling.valueAtPreimage
-      cases hpre : preimageByRank (sourceValue base) (targetValue base)
+      cases hpre : objectAtPartnerRankBy (sourceValue base) (targetValue base)
           (source base) (target base) (r, u) with
       | some p => simp [hpre]
       | none => simp [hpre, hprior r u hle]

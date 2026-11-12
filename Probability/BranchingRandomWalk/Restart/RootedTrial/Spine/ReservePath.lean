@@ -114,8 +114,9 @@ theorem selectedReserveSpinePath_succ_eq_second_of_split
   rw [selectedReserveSpinePath, reserveSpineSlot_eq_second_of_split R _ hsplit]
 
 /-- At a spine split, the next reserve vertex and the first-child trial root
-are distinct selected children of the current singleton reserve source. This
-is the one-generation frontier inclusion needed by a causal source coupling. -/
+are distinct selected children of the current one-particle reserve-spine BRW
+population. This is the one-generation frontier inclusion used in the
+selected reserve-spine coupling. -/
 theorem selectedReserveSpineSplit_has_candidate_and_reserve_child
     {Root α X : Type*} [LinearOrder α] [OrderBot α]
     (R : Step.FiniteSelection α X) (r : Root) (n : ℕ)
@@ -258,7 +259,7 @@ theorem selectedReserveSpinePath_adapted
 
 /-- Whether the totalized reserve path is still a genuine lineage at
 generation `n`. Once an empty offspring step occurs, this predicate stays
-false, so the bottom-slot totalization never creates a phantom source. -/
+false, so the bottom-slot totalization never creates a phantom lineage. -/
 def selectedReserveSpineAlive {Root α X : Type*} [LinearOrder α]
     [OrderBot α] (R : Step.FiniteSelection α X) (r : Root) :
     ℕ → RootIndexed.StepField Root α X → Prop

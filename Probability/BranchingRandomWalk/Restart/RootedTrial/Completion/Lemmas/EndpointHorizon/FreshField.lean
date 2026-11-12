@@ -22,8 +22,8 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Stoppin
 
 * `selectedReserveSpineRestartEndpointFreshField_factorization_on_finite` factors the fresh
   descendant field below mixed endpoint roots from the stopped domain information.
-* `selectedReserveSpineRestartEndpointTargetFreshField_factorization_on_finite` gives the
-  same factorization with the actual rank-installed target roots on the finite-endpoint event.
+* `selectedReserveSpineRestartNSelectedBRWFreshField_factorization_on_finite` gives the
+  same factorization with the actual rank-installed first-`N` BRW roots on the finite-endpoint event.
 
 For every stopped-domain measurable event $A$ and measurable set $B$ of
 descendant-field vectors, the finite-endpoint restriction factors as
@@ -52,7 +52,7 @@ namespace ProbabilityTheory.BranchingRandomWalk.Completion.Lemmas.EndpointHorizo
 
 /-- Fresh descendant fields below the mixed endpoint roots factor from the
 domain filtration on every finite first-success event. The root family is
-pre-sampled and stopped-measurable; source-side fallback makes depth and
+pre-sampled and stopped-measurable; reserve-spine BRW fallback makes depth and
 distinctness pointwise even on exceptional raw fields. -/
 lemma selectedReserveSpineRestartEndpointFreshField_factorization_on_finite
     {Root α : Type*} [Countable α] [MeasurableSpace α]
@@ -100,12 +100,12 @@ lemma selectedReserveSpineRestartEndpointFreshField_factorization_on_finite
   have hdecode (field : RootIndexed.StepField (Root ⊕ Root) α ℝ) :
       roots field = decode (encode field) := by
     funext i
-    let target := selectedReserveSpineRestartEndpointRankVector N initialPosition
+    let nSelectedBRWEndpointRankVector := selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
       R growth hR hgrowth lower upper duration r field i
-    by_cases htarget : target = (r, [])
-    · simp [roots, decode, encode, target, htarget,
+    by_cases hnSelectedBRWEndpointRankVector : nSelectedBRWEndpointRankVector = (r, [])
+    · simp [roots, decode, encode, nSelectedBRWEndpointRankVector, hnSelectedBRWEndpointRankVector,
         selectedReserveSpineRestartEndpointFreshRoots]
-    · simp [roots, decode, encode, target, htarget,
+    · simp [roots, decode, encode, nSelectedBRWEndpointRankVector, hnSelectedBRWEndpointRankVector,
         selectedReserveSpineRestartEndpointFreshRoots]
   have hcount : (Set.range roots).Countable := by
     have hdecodeCountable : (Set.range decode).Countable := Set.countable_range decode
@@ -178,9 +178,9 @@ lemma selectedReserveSpineRestartEndpointFreshField_factorization_on_finite
 /-- On a finite first-success event, the actual rank-installed endpoint roots
 have fresh descendant fields with product law, independently of the stopped
 domain past. This is the mixed-root factorization for populations started from
-multiple roots: the totalized source fallback is removed using the a.e. endpoint
+multiple roots: the reserve-spine BRW fallback roots is removed using the a.e. endpoint
 population comparison. -/
-lemma selectedReserveSpineRestartEndpointTargetFreshField_factorization_on_finite
+lemma selectedReserveSpineRestartNSelectedBRWFreshField_factorization_on_finite
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace Root] [MeasurableSingletonClass Root]
@@ -206,7 +206,7 @@ lemma selectedReserveSpineRestartEndpointTargetFreshField_factorization_on_finit
           lower upper duration r field ≠ ⊤} ∩
           RootIndexed.selectedSubtreeStepFieldVector
             (fun field i => (Sum.inr r,
-              (selectedReserveSpineRestartEndpointRankVector N initialPosition
+              (selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
                 R growth hR hgrowth lower upper duration r field i).2)) ⁻¹' B) =
       RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
         (A ∩ {field | selectedReserveSpineRestartEndpointTime R growth hR hgrowth
@@ -217,28 +217,28 @@ lemma selectedReserveSpineRestartEndpointTargetFreshField_factorization_on_finit
     lower upper duration r
   let roots := selectedReserveSpineRestartEndpointFreshRoots N initialPosition
     R growth hR hgrowth lower upper duration r
-  let targetRoots : RootIndexed.StepField (Root ⊕ Root) α ℝ → Fin lower →
+  let nSelectedBRWEndpointRoots : RootIndexed.StepField (Root ⊕ Root) α ℝ → Fin lower →
       (Root ⊕ Root) × Combinatorics.UlamHarris.TreeNode α := fun field i =>
     ((Sum.inr r : Root ⊕ Root),
-      (selectedReserveSpineRestartEndpointRankVector N initialPosition
+      (selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
         R growth hR hgrowth lower upper duration r field i).2)
-  have hroot := selectedReserveSpineRestartEndpointFreshRoots_eq_target_ae
+  have hroot := selectedReserveSpineRestartEndpointFreshRoots_eq_nSelectedBRW_ae
     μ hnorm N initialPosition R growth hR hgrowth lower upper duration hupper
     hbounded hcapacity r
   have hset :
       (A ∩ {field | τ field ≠ ⊤} ∩
-        RootIndexed.selectedSubtreeStepFieldVector targetRoots ⁻¹' B) =ᵐ[
+        RootIndexed.selectedSubtreeStepFieldVector nSelectedBRWEndpointRoots ⁻¹' B) =ᵐ[
         RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ]
       (A ∩ {field | τ field ≠ ⊤} ∩
         RootIndexed.selectedSubtreeStepFieldVector roots ⁻¹' B) := by
     filter_upwards [hroot] with field hroot
     by_cases hfinite : τ field ≠ ⊤
-    · have hroots : roots field = targetRoots field := by
+    · have hroots : roots field = nSelectedBRWEndpointRoots field := by
         funext i
         exact hroot hfinite i
-      have hvec : RootIndexed.selectedSubtreeStepFieldVector targetRoots field =
+      have hvec : RootIndexed.selectedSubtreeStepFieldVector nSelectedBRWEndpointRoots field =
           RootIndexed.selectedSubtreeStepFieldVector roots field := by
-        change RootIndexed.subtreeStepFieldVector (targetRoots field) field =
+        change RootIndexed.subtreeStepFieldVector (nSelectedBRWEndpointRoots field) field =
           RootIndexed.subtreeStepFieldVector (roots field) field
         exact congrArg (fun v => RootIndexed.subtreeStepFieldVector v field) hroots.symm
       simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_preimage]

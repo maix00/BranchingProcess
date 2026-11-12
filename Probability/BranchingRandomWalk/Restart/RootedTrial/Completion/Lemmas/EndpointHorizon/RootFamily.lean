@@ -16,23 +16,23 @@ import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Basic
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.StoppingSubtrees.Vector.Factorization
 
 /-!
-# Source-side endpoint roots: proof support
+# Reserve-spine endpoint roots: proof support
 
 ## Internal proof declarations
 
-* `selectedReserveSpineRestartSourceEndpointRankVector` ranks the causal source at the first
-  successful completion time and provides a pointwise fallback when the target population is
+* `selectedReserveSpineRestartBRWPopulationEndpointRankVector` ranks particles in the reserve-spine BRW population at the first
+  successful completion time and provides a pointwise fallback when the first-`N` BRW population is
   too small.
-* `selectedReserveSpineRestartSourceEndpointRankVector_measurable` proves its stopped
+* `selectedReserveSpineRestartBRWPopulationEndpointRankVector_measurable` proves its stopped
   filtration measurability.
-* `selectedReserveSpineRestartEndpointFreshRoots` uses target roots when present and source
+* `selectedReserveSpineRestartEndpointFreshRoots` uses first-`N` BRW roots when present and reserve-spine BRW roots
   roots as a fallback, tagged in disjoint root summands.
 * `selectedReserveSpineRestartEndpointFreshRoots_measurable` proves measurability of this
   finite random root family.
 
-For $i\in\mathrm{Fin}(\mathrm{lower})$, let $T_i$ be the target rank node and
-$S_i$ the source rank node. The mixed root $R_i$ uses the target rank unless
-$T_i$ is the default node $(r,\varnothing)$, in which case it uses the source
+For $i\in\mathrm{Fin}(\mathrm{lower})$, let $T_i$ be the first-`N` rank node and
+$S_i$ the reserve-spine rank node. The mixed root $R_i$ uses the first-`N` rank unless
+$T_i$ is the default node $(r,\varnothing)$, in which case it uses the selectedBRWEndpointRankVector
 rank. The resulting vector is measurable with respect to the stopped domain
 flow:
 \[
@@ -42,8 +42,8 @@ flow:
  \end{cases}
 \]
 Here $T_i$ and $S_i$ are the $i$th values of
-`selectedReserveSpineRestartEndpointRankVector` and
-`selectedReserveSpineRestartSourceEndpointRankVector`, respectively.
+`selectedReserveSpineRestartNSelectedBRWEndpointRankVector` and
+`selectedReserveSpineRestartBRWPopulationEndpointRankVector`, respectively.
 -/
 
 section
@@ -57,11 +57,11 @@ open _root_.Combinatorics.Selection.NSelection
 
 namespace ProbabilityTheory.BranchingRandomWalk.Completion.Lemmas.EndpointHorizon
 
-/-- Rank the causal source population itself at the first successful
+/-- Rank the causal selectedBRWEndpointRankVector population itself at the first successful
 completion time. This supplies a pointwise fallback for raw fields where the
-rank-installed target happens to have too few particles; on every finite
-successful completion the source has at least `lower` particles. -/
-noncomputable def selectedReserveSpineRestartSourceEndpointRankVector
+rank-installed first-`N` BRW happens to have too few particles; on every finite
+successful completion the selectedBRWEndpointRankVector has at least `lower` particles. -/
+noncomputable def selectedReserveSpineRestartBRWPopulationEndpointRankVector
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace Root] [MeasurableSingletonClass Root]
@@ -75,19 +75,19 @@ noncomputable def selectedReserveSpineRestartSourceEndpointRankVector
     (field : RootIndexed.StepField (Root ⊕ Root) α ℝ) : Fin lower →
       RootIndexed.TreeNode Root α := by
   classical
-  let hsource := selectedReserveSpineRestartSourceOnLeft_finiteSlices
+  let hselectedBRWPopulation := selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices
     R growth hR hgrowth upper duration r
   exact particleRankVectorAtStoppingTime
     (selectedReserveSpineRestartEndpointTime R growth hR hgrowth
       lower upper duration r)
     (fun n field p => RootIndexed.observedPositionAtGeneration initialPosition id id n
       (RootIndexed.StepField.left field) p)
-    (fun n field => hsource.toFinset n field)
+    (fun n field => hselectedBRWPopulation.toFinset n field)
     lower (r, []) field
 
-/-- The stopped source-rank vector is measurable in the first-success
+/-- The stopped selectedBRWEndpointRankVector-rank vector is measurable in the first-success
 completion filtration. -/
-lemma selectedReserveSpineRestartSourceEndpointRankVector_measurable
+lemma selectedReserveSpineRestartBRWPopulationEndpointRankVector_measurable
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace Root] [MeasurableSingletonClass Root]
@@ -100,31 +100,31 @@ lemma selectedReserveSpineRestartSourceEndpointRankVector_measurable
     (hgrowth : Measurable growth.select) (lower upper duration : ℕ) (r : Root) :
     Measurable[(selectedReserveSpineRestartEndpointTime_isStoppingTime
       R growth hR hgrowth lower upper duration r).measurableSpace]
-      (selectedReserveSpineRestartSourceEndpointRankVector initialPosition
+      (selectedReserveSpineRestartBRWPopulationEndpointRankVector initialPosition
         R growth hR hgrowth lower upper duration r) := by
   classical
   let F := RootIndexed.stepFiltration (Root := Root ⊕ Root) (α := α) (X := ℝ)
   let τ := selectedReserveSpineRestartEndpointTime R growth hR hgrowth
     lower upper duration r
-  let hsource := selectedReserveSpineRestartSourceOnLeft_finiteSlices
+  let hselectedBRWPopulation := selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices
     R growth hR hgrowth upper duration r
-  let source := selectedReserveSpineRestartSourceOnLeft R growth hR hgrowth
+  let selectedBRWEndpointRankVector := selectedReserveSpineRestartBRWPopulationOnLeft R growth hR hgrowth
     upper duration r
   let value := fun n (field : RootIndexed.StepField (Root ⊕ Root) α ℝ)
       (p : RootIndexed.TreeNode Root α) =>
     RootIndexed.observedPositionAtGeneration initialPosition id id n
       (RootIndexed.StepField.left field) p
-  let candidates := fun n field => hsource.toFinset n field
+  let candidates := fun n field => hselectedBRWPopulation.toFinset n field
   have hτ : IsStoppingTime F τ := by
     simpa [τ, selectedReserveSpineRestartEndpointTime] using
       selectedReserveSpineRestartEndpointTime_isStoppingTime
         R growth hR hgrowth lower upper duration r
   have hdepth : ∀ n field p, p ∈ candidates n field → p.2.length = n := by
     intro n field p hp
-    exact source.depth n field p ((hsource.mem_toFinset n field p).mp hp)
+    exact selectedBRWEndpointRankVector.depth n field p ((hselectedBRWPopulation.mem_toFinset n field p).mp hp)
   have hfiber (n : ℕ) (s : Finset (RootIndexed.TreeNode Root α)) :
       MeasurableSet[F n] {field | candidates n field = s} := by
-    exact hsource.measurable_toFinset n (measurableSet_singleton s)
+    exact hselectedBRWPopulation.measurable_toFinset n (measurableSet_singleton s)
   have hrange (n : ℕ) : (Set.range (candidates n)).Countable := Set.to_countable _
   have hkey (n : ℕ) (p q : RootIndexed.TreeNode Root α) : Measurable[F n]
       fun field => valueKey (value n field) q < valueKey (value n field) p := by
@@ -143,9 +143,9 @@ lemma selectedReserveSpineRestartSourceEndpointRankVector_measurable
   exact hmeas
 
 /-- Endpoint roots for a fresh-field factorization. At a rank present in the
-rank-installed target population, use the right-copy target particle. If a
-raw exceptional field has too few target particles, use the matching rank
-from the causal source on the left copy instead. The sum tag keeps the two
+rank-installed first-`N` BRW population, use the right-copy first-`N` BRW particle. If a
+raw exceptional field has too few first-`N` BRW particles, use the matching rank
+from the causal selectedBRWEndpointRankVector on the left copy instead. The sum tag keeps the two
 fallback populations disjoint. -/
 noncomputable def selectedReserveSpineRestartEndpointFreshRoots
     {Root α : Type*} [Countable α] [MeasurableSpace α]
@@ -161,16 +161,16 @@ noncomputable def selectedReserveSpineRestartEndpointFreshRoots
     (field : RootIndexed.StepField (Root ⊕ Root) α ℝ) :
     Fin lower → (Root ⊕ Root) × Combinatorics.UlamHarris.TreeNode α :=
   fun i =>
-    let target := selectedReserveSpineRestartEndpointRankVector N initialPosition
+    let nSelectedBRWEndpointRankVector := selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
       R growth hR hgrowth lower upper duration r field i
-    if target = (r, []) then
-      (Sum.inl r, (selectedReserveSpineRestartSourceEndpointRankVector initialPosition
+    if nSelectedBRWEndpointRankVector = (r, []) then
+      (Sum.inl r, (selectedReserveSpineRestartBRWPopulationEndpointRankVector initialPosition
         R growth hR hgrowth lower upper duration r field i).2)
     else
-      (Sum.inr r, target.2)
+      (Sum.inr r, nSelectedBRWEndpointRankVector.2)
 
 /-- The mixed endpoint-root vector is measurable in the stopping-time
-filtration. The branch test is measurable because the target rank vector is
+filtration. The branch test is measurable because the first-`N` BRW rank vector is
 measurable and its default node is a measurable singleton. -/
 lemma selectedReserveSpineRestartEndpointFreshRoots_measurable
     {Root α : Type*} [Countable α] [MeasurableSpace α]
@@ -191,19 +191,19 @@ lemma selectedReserveSpineRestartEndpointFreshRoots_measurable
   classical
   let F := (selectedReserveSpineRestartEndpointTime_isStoppingTime
     R growth hR hgrowth lower upper duration r).measurableSpace
-  let target := selectedReserveSpineRestartEndpointRankVector N initialPosition
+  let nSelectedBRWEndpointRankVector := selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
     R growth hR hgrowth lower upper duration r
-  let source := selectedReserveSpineRestartSourceEndpointRankVector initialPosition
+  let selectedBRWEndpointRankVector := selectedReserveSpineRestartBRWPopulationEndpointRankVector initialPosition
     R growth hR hgrowth lower upper duration r
   let roots := selectedReserveSpineRestartEndpointFreshRoots N initialPosition
     R growth hR hgrowth lower upper duration r
-  have htarget : Measurable[F] target := by
-    simpa [F, target] using
-      selectedReserveSpineRestartEndpointRankVector_measurable N initialPosition
+  have hnSelectedBRW : Measurable[F] nSelectedBRWEndpointRankVector := by
+    simpa [F, nSelectedBRWEndpointRankVector] using
+      selectedReserveSpineRestartNSelectedBRWEndpointRankVector_measurable N initialPosition
         R growth hR hgrowth lower upper duration r
-  have hsource : Measurable[F] source := by
-    simpa [F, source] using
-      selectedReserveSpineRestartSourceEndpointRankVector_measurable initialPosition
+  have hselectedBRWPopulation : Measurable[F] selectedBRWEndpointRankVector := by
+    simpa [F, selectedBRWEndpointRankVector] using
+      selectedReserveSpineRestartBRWPopulationEndpointRankVector_measurable initialPosition
         R growth hR hgrowth lower upper duration r
   have hcoord : ∀ i : Fin lower,
       Measurable[F] (fun field =>
@@ -211,14 +211,14 @@ lemma selectedReserveSpineRestartEndpointFreshRoots_measurable
           R growth hR hgrowth lower upper duration r field i) := by
     intro i
     change Measurable[F] (fun field => roots field i)
-    let t := fun field => target field i
-    let s := fun field => source field i
+    let t := fun field => nSelectedBRWEndpointRankVector field i
+    let s := fun field => selectedBRWEndpointRankVector field i
     have ht : Measurable[F] t := by
-      change Measurable[F] ((fun v : Fin lower → RootIndexed.TreeNode Root α => v i) ∘ target)
-      exact (measurable_pi_apply i).comp htarget
+      change Measurable[F] ((fun v : Fin lower → RootIndexed.TreeNode Root α => v i) ∘ nSelectedBRWEndpointRankVector)
+      exact (measurable_pi_apply i).comp hnSelectedBRW
     have hs : Measurable[F] s := by
-      change Measurable[F] ((fun v : Fin lower → RootIndexed.TreeNode Root α => v i) ∘ source)
-      exact (measurable_pi_apply i).comp hsource
+      change Measurable[F] ((fun v : Fin lower → RootIndexed.TreeNode Root α => v i) ∘ selectedBRWEndpointRankVector)
+      exact (measurable_pi_apply i).comp hselectedBRWPopulation
     have hdefault : MeasurableSet[F] {field | t field = (r, [])} :=
       ht (measurableSet_singleton (r, []))
     have htag : Measurable[F] (fun field =>
@@ -229,11 +229,11 @@ lemma selectedReserveSpineRestartEndpointFreshRoots_measurable
       Measurable.ite hdefault (hnodePath.comp hs) (hnodePath.comp ht)
     have hpair := htag.prodMk hnode
     have hrootEq : (fun field => roots field i) = fun field =>
-        (if target field i = (r, []) then Sum.inl r else Sum.inr r,
-          if target field i = (r, []) then (source field i).2 else (target field i).2) := by
+        (if nSelectedBRWEndpointRankVector field i = (r, []) then Sum.inl r else Sum.inr r,
+          if nSelectedBRWEndpointRankVector field i = (r, []) then (selectedBRWEndpointRankVector field i).2 else (nSelectedBRWEndpointRankVector field i).2) := by
       funext field
-      by_cases h : target field i = (r, []) <;>
-        simp [roots, selectedReserveSpineRestartEndpointFreshRoots, target, source, h]
+      by_cases h : nSelectedBRWEndpointRankVector field i = (r, []) <;>
+        simp [roots, selectedReserveSpineRestartEndpointFreshRoots, nSelectedBRWEndpointRankVector, selectedBRWEndpointRankVector, h]
     rw [hrootEq]
     exact hpair
   letI : MeasurableSpace (RootIndexed.StepField (Root ⊕ Root) α ℝ) := F
