@@ -307,7 +307,7 @@ theorem exists_nat_cutoff_positive_boundedSelectedSplit_sorted
 
 /-- Positive mass of a split by the reserve selector. Its base rule
 keeps the first two surviving slots in the ordered realization, and the
-reserve rule keeps the first child plus the second whenever the second
+reserve rule keeps the first selected child plus the second whenever the second
 potential is below the finite cutoff. -/
 theorem exists_nat_cutoff_positive_reserveSplit
     {ι α X : Type*} [MeasurableSpace X] [Countable ι]

@@ -12,7 +12,7 @@ public import Combinatorics.BranchingWalk.Selection.Contain
 # Selection transforms on branching walks
 
 A `WalkTransform` is a map `BranchingWalk → BranchingWalk` that always
-selects a sub-walk: the image is contained in the source in the `SelectContain`
+selects a sub-walk: the image is contained in its input in the `SelectContain`
 order. Parent closure follows from the prefix definition of survival and is not
 an additional property of the selection mechanism. Containment does not provide
 an ordered-step structure after selection; reindexing and ordering are handled

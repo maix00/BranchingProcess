@@ -17,6 +17,17 @@ than the application that first needs it.
 | `Probability` | Laws, filtrations, independence, random processes, and almost-everywhere statements | IID sequences, random walks, Lévy and stable processes |
 | `Probability/BranchingRandomWalk` | Random branching models and their bridges to general process and measure interfaces | offspring fields, spines, selection and coupling |
 
+Within the branching-random-walk layer, the path-based restart construction is
+owned by `Probability/BranchingRandomWalk/Restart/SelectedPath/`. Its public
+root is `Restart.selectedPath`: at a split, the first selected child starts a
+growth trial and the second selected child continues the path. The
+`SelectedPath.GrowthTrial`, `SelectedPath.Population`,
+`SelectedPath.Completion`, and `SelectedPath.Coupling` namespaces distinguish
+the trial family, the selected-BRW population, the first-`N` endpoint, and the
+coupling between the two BRW processes. Root-indexed first-split trial
+interfaces remain under `Restart/Trial/`; actual reserve-field and reserve
+selection results remain under `Restart/Reserve/`.
+
 `Probability/Process/Path/Representation/Continuous.lean` owns both the
 bundling and measurability interfaces for continuous sample paths and the
 generic extraction of a measurable continuous-path-valued version from
@@ -163,7 +174,7 @@ Selection modules are placed by the data they take as input:
   measurability theorem belongs to
   `MeasureTheory/BranchingWalk/Step/Selection/FiniteSlot.lean`, and the
   pushforward offspring law and supercriticality criterion belong to
-  `Probability/BranchingRandomWalk/Restart/RootedTrial/FiniteSlot/Offspring.lean`.
+  `Probability/BranchingRandomWalk/Restart/SelectedPath/GrowthTrial/FiniteSlot/Offspring.lean`.
 - `MeasureTheory/Selection/` owns measurable selector realizations and their
   measurability results. Measurability results whose input is a branching step
   belong to `MeasureTheory/BranchingWalk/Step/Selection/`. The generation
