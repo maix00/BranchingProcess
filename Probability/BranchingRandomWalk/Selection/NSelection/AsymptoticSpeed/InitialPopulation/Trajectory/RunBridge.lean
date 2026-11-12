@@ -391,7 +391,7 @@ private lemma rankedPosition_succ_eq_transition
       (selectedLeft.filter fun p => valueLeft p ≤ a).card =
         (selectedRight.filter fun q => valueRight q ≤ a).card := by
     intro a
-    exact firstNBy_value_thresholdCounts_eq_of_bijectiveCandidates
+    exact firstNBy_orderKey_thresholdCounts_eq_of_bijectivePartnerSets
       valueLeft valueRight candidatesLeft candidatesRight selectedLeft selectedRight
       hselectedLeft hselectedRight hcardLeft hcardRight
       (rankedChildAddress N n initial field) backward

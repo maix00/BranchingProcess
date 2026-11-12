@@ -1203,9 +1203,10 @@ BranchingWalk module paths or namespaces.
 
 The generic finite order-statistic comparison by lower-tail counts belongs to
 `Combinatorics/Selection/NSelection/Mechanism/Finite/AtRank.lean`.
-The value-preserving candidate-bijection theorem belongs to
-`Matching/ByRank.lean`, and lower-tail Hall matching belongs to
-`Matching/Hall.lean`.
+The order-key-preserving partner-bijection theorem belongs to
+`Matching/ByRank.lean`, generic threshold-count matching belongs to
+`Matching/ThresholdCountMatching.lean`, and the first-`N` population matching
+specialization belongs to `Matching/SelectedPopulation.lean`.
 
 The ranked offspring-batch law is part of
 `AsymptoticSpeed/Selection/PopulationBatch.lean`, beside the ranked-root

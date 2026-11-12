@@ -11,577 +11,561 @@ public import Combinatorics.Selection.NSelection.Mechanism.Finite.AtRank
 /-!
 # Equal-rank matching
 
-Assume linear orders on the source labels, target labels, and values. The
+This file matches a finite set `objectsToMatch` into a finite set
+`availablePartners` by equal dynamic rank. The two sets may have different
+label types, and each has an order-key map.
+
 ## Public declarations
 
-- `Combinatorics.Selection.NSelection.value_le_of_rankBy_eq_of_filter_card_le`:
-  if every lower-tail count of the source is at most the corresponding target
-  count, then equal dynamic ranks imply
-  $\operatorname{targetValue}(q)\leq\operatorname{sourceValue}(p)$.
-- `Combinatorics.Selection.NSelection.particleAtSourceRankBy`
-  defines the optional target with the source particle's dynamic rank;
-  `Combinatorics.Selection.NSelection.particleAtSourceRankBy_eq_some_iff`
-  characterizes its value by target membership and rank equality.
-  `Combinatorics.Selection.NSelection.preimageByRank` defines the
-  membership-guarded optional inverse, and
-  `Combinatorics.Selection.NSelection.preimageByRank_eq_some_iff`
-  characterizes that inverse by membership and rank equality.
-  `Combinatorics.Selection.NSelection.preimageByRank_leftUnique`
-  proves that one source label has at most one target preimage.
-- `Combinatorics.Selection.NSelection.particleAtSourceRankBy_ne_none`
-  shows that each source member has a target at the same rank when
-  $|\mathrm{source}|\leq|\mathrm{target}|$.
-  `Combinatorics.Selection.NSelection.matchByRank` defines the
-  resulting total match on source members;
-  `Combinatorics.Selection.NSelection.particleAtSourceRankBy_matchByRank`
-  identifies it with the optional construction,
-  `Combinatorics.Selection.NSelection.matchByRank_mem` places its
-  value in the target, and
-  `Combinatorics.Selection.NSelection.rankBy_matchByRank` states
-  equality of dynamic ranks.
-  `Combinatorics.Selection.NSelection.particleAtSourceRankBy_matchByRank_target`
-  states that looking up a source particle at the rank of its matched target
-  recovers that source particle.
-  `Combinatorics.Selection.NSelection.matchByRank_injective`
-  proves injectivity, while
-  `Combinatorics.Selection.NSelection.matchByRank_value_le` gives
-  the value inequality under lower-tail count domination.
+- `Combinatorics.Selection.NSelection.partnerOrderKey_le_of_rankBy_eq_of_filter_card_le`:
+  if every threshold count of `objectsToMatch` is at most the corresponding
+  count for `availablePartners`, equal dynamic ranks give
+  $\operatorname{partnerOrderKey}(y)\leq\operatorname{objectOrderKey}(x)$.
+- `Combinatorics.Selection.NSelection.partnerAtObjectRankBy` defines the
+  optional partner at an object's dynamic rank. Its `_eq_some_iff` theorem
+  characterizes the result by membership in `availablePartners` and rank
+  equality. `objectAtPartnerRankBy` defines the membership-guarded inverse;
+  its `_eq_some_iff` theorem characterizes that inverse, and
+  `objectAtPartnerRankBy_leftUnique` proves uniqueness of an object matched
+  to a given partner.
+- `Combinatorics.Selection.NSelection.partnerAtObjectRankBy_ne_none` shows
+  that every object in `objectsToMatch` has a same-rank partner when
+  $|\mathrm{objectsToMatch}|\leq|\mathrm{availablePartners}|$.
+  `Combinatorics.Selection.NSelection.matchByRank` defines the resulting
+  total match on `objectsToMatch`; `partnerAtObjectRankBy_matchByRank`
+  identifies it with the optional construction, `matchByRank_mem` places each
+  result in `availablePartners`, and `rankBy_matchByRank` states equality of
+  dynamic ranks. `partnerAtObjectRankBy_matchByRank_partner` states that the
+  inverse lookup at the matched partner recovers the original object.
+  `matchByRank_injective` proves injectivity, while
+  `matchByRank_partnerOrderKey_le` gives the order-key inequality under
+  threshold-count domination.
 - `Combinatorics.Selection.NSelection.rankBy_congr_of_eqOn` states
-  $\operatorname{rankBy}(f,S,p)=\operatorname{rankBy}(f',S,p)$ when
-  $p\in S$ and $f=f'$ on $S$.
-  `Combinatorics.Selection.NSelection.matchByRankOrSelf`
-  defines the ambient extension that fixes labels outside the source;
-  `Combinatorics.Selection.NSelection.matchByRankOrSelf_of_mem`
-  and
-  `Combinatorics.Selection.NSelection.matchByRankOrSelf_of_not_mem`
-  give its two defining cases.
-  `Combinatorics.Selection.NSelection.matchByRankOrSelf_congr_of_eqOn`
-  proves invariance under value-function changes off the two populations,
-  `Combinatorics.Selection.NSelection.matchByRankOrSelf_mem` maps
-  source members into the target, and
-  `Combinatorics.Selection.NSelection.particleAtSourceRankBy_matchByRankOrSelf`
-  gives the inverse identity on the source.
-  `Combinatorics.Selection.NSelection.matchByRankOrSelf_injOn`
-  proves injectivity on the source, and
-  `Combinatorics.Selection.NSelection.matchByRankOrSelf_value_le`
-  gives the lower-tail value bound there.
-
-- `Combinatorics.Selection.NSelection.firstNBy_value_thresholdCounts_eq_of_bijectiveCandidates`:
-  a value-preserving bijection between candidate populations identifies the
-  lower-tail counts of their first-$N$ selections.
+  $\operatorname{rankBy}(f,S,x)=\operatorname{rankBy}(f',S,x)$ when
+  $x\in S$ and $f=f'$ on $S$.
+  `Combinatorics.Selection.NSelection.matchByRankOrSelf` defines the ambient
+  extension that fixes labels outside `objectsToMatch`;
+  `matchByRankOrSelf_of_mem` and `matchByRankOrSelf_of_not_mem` give its two
+  defining cases. `matchByRankOrSelf_congr_of_eqOn` proves invariance under
+  order-key changes off the two sets; `matchByRankOrSelf_mem` maps objects of
+  `objectsToMatch` into `availablePartners`, and
+  `partnerAtObjectRankBy_matchByRankOrSelf` gives the inverse identity on
+  `objectsToMatch`. `matchByRankOrSelf_injOn` proves injectivity there, and
+  `matchByRankOrSelf_partnerOrderKey_le` gives the threshold-count order-key bound.
+- `Combinatorics.Selection.NSelection.firstNBy_orderKey_thresholdCounts_eq_of_bijectivePartnerSets`:
+  an order-key-preserving bijection between two available-partner sets identifies the
+  threshold counts of their first-$N$ selections.
 
 The existence results from finite Hall matching are in
-`NSelection/Matching/Hall.lean`.
+`NSelection/Matching/SelectedPopulation.lean`.
 -/
 
 @[expose] public section
 
 namespace Combinatorics.Selection.NSelection
 
-variable {Source Target Value : Type*}
+variable {Object Partner OrderKey : Type*}
 
-/-- Lower-tail count domination implies the spatial inequality for particles
-of equal dynamic rank.  This is the deterministic core of the canonical
-rank matching. -/
-theorem value_le_of_rankBy_eq_of_filter_card_le
-    {Source Target : Type*}
-    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
-    (sourceValue : Source → Value) (targetValue : Target → Value)
-    (source : Finset Source) (target : Finset Target)
-    (hthreshold : ∀ a : Value,
-      (source.filter fun p => sourceValue p ≤ a).card ≤
-        (target.filter fun q => targetValue q ≤ a).card)
-    {p : Source} (hp : p ∈ source) {q : Target}
-    (hrank : rankBy targetValue target q =
-      rankBy sourceValue source p) :
-    targetValue q ≤ sourceValue p := by
+/-- Threshold-count domination gives the partner order-key bound at equal
+dynamic rank. This is the deterministic core of the canonical rank matching. -/
+theorem partnerOrderKey_le_of_rankBy_eq_of_filter_card_le
+    {Object Partner : Type*}
+    [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
+    (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
+    (objectsToMatch : Finset Object) (availablePartners : Finset Partner)
+    (hthreshold : ∀ a : OrderKey,
+      (objectsToMatch.filter fun p => objectOrderKey p ≤ a).card ≤
+        (availablePartners.filter fun q => partnerOrderKey q ≤ a).card)
+    {p : Object} (hp : p ∈ objectsToMatch) {q : Partner}
+    (hrank : rankBy partnerOrderKey availablePartners q =
+      rankBy objectOrderKey objectsToMatch p) :
+    partnerOrderKey q ≤ objectOrderKey p := by
   by_contra hle
-  have hlt : sourceValue p < targetValue q := lt_of_not_ge hle
-  let sourceBelow := source.filter fun r =>
-    valueKey sourceValue r < valueKey sourceValue p
-  let targetBelow := target.filter fun r =>
-    valueKey targetValue r < valueKey targetValue q
-  have hpNotBelow : p ∉ sourceBelow := by
-    simp [sourceBelow]
-  have hsourceSubset : insert p sourceBelow ⊆
-      source.filter fun r => sourceValue r ≤ sourceValue p := by
+  have hlt : objectOrderKey p < partnerOrderKey q := lt_of_not_ge hle
+  let objectsToMatchBelow := objectsToMatch.filter fun r =>
+    valueKey objectOrderKey r < valueKey objectOrderKey p
+  let availablePartnersBelow := availablePartners.filter fun r =>
+    valueKey partnerOrderKey r < valueKey partnerOrderKey q
+  have hpNotBelow : p ∉ objectsToMatchBelow := by
+    simp [objectsToMatchBelow]
+  have hobjectsToMatchSubset : insert p objectsToMatchBelow ⊆
+      objectsToMatch.filter fun r => objectOrderKey r ≤ objectOrderKey p := by
     intro r hr
     rcases Finset.mem_insert.mp hr with rfl | hr
     · exact Finset.mem_filter.mpr ⟨hp, le_rfl⟩
     · obtain ⟨hrs, hrkey⟩ := Finset.mem_filter.mp hr
-      have hrvalue : sourceValue r ≤ sourceValue p := by
+      have hrOrderKey : objectOrderKey r ≤ objectOrderKey p := by
         rcases Prod.Lex.lt_iff.mp hrkey with h | h
         · exact le_of_lt h
         · exact le_of_eq h.1
-      exact Finset.mem_filter.mpr ⟨hrs, hrvalue⟩
-  have htargetSubset :
-      target.filter (fun r => targetValue r ≤ sourceValue p) ⊆ targetBelow := by
+      exact Finset.mem_filter.mpr ⟨hrs, hrOrderKey⟩
+  have havailablePartnersSubset :
+      availablePartners.filter (fun r => partnerOrderKey r ≤ objectOrderKey p) ⊆ availablePartnersBelow := by
     intro r hr
-    obtain ⟨hrt, hrvalue⟩ := Finset.mem_filter.mp hr
+    obtain ⟨hrt, hrOrderKey⟩ := Finset.mem_filter.mp hr
     exact Finset.mem_filter.mpr
-      ⟨hrt, valueKey_lt_of_value_lt targetValue (hrvalue.trans_lt hlt)⟩
-  have hsourceCard : rankBy sourceValue source p + 1 ≤
-      (source.filter fun r => sourceValue r ≤ sourceValue p).card := by
+      ⟨hrt, valueKey_lt_of_value_lt partnerOrderKey (hrOrderKey.trans_lt hlt)⟩
+  have hobjectsToMatchCard : rankBy objectOrderKey objectsToMatch p + 1 ≤
+      (objectsToMatch.filter fun r => objectOrderKey r ≤ objectOrderKey p).card := by
     rw [rankBy_eq_card_filter]
-    change sourceBelow.card + 1 ≤ _
+    change objectsToMatchBelow.card + 1 ≤ _
     rw [← Finset.card_insert_of_notMem hpNotBelow]
-    exact Finset.card_le_card hsourceSubset
-  have htargetCard :
-      (target.filter fun r => targetValue r ≤ sourceValue p).card ≤
-        rankBy targetValue target q := by
+    exact Finset.card_le_card hobjectsToMatchSubset
+  have havailablePartnersCard :
+      (availablePartners.filter fun r => partnerOrderKey r ≤ objectOrderKey p).card ≤
+        rankBy partnerOrderKey availablePartners q := by
     rw [rankBy_eq_card_filter]
-    exact Finset.card_le_card htargetSubset
-  have hcount := hthreshold (sourceValue p)
+    exact Finset.card_le_card havailablePartnersSubset
+  have hcount := hthreshold (objectOrderKey p)
   omega
 
-/-- Match a source particle to the target particle having the same dynamic
-rank.  The result is optional because the target may be too small. -/
-noncomputable def particleAtSourceRankBy
-    {Source Target : Type*}
-    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
-    (sourceValue : Source → Value) (targetValue : Target → Value)
-    (source : Finset Source) (target : Finset Target) (p : Source) :
-    Option Target :=
-  particleAtRankBy targetValue target (rankBy sourceValue source p)
+/-- Return the available partner at an object's dynamic rank, when that rank
+is attained in `availablePartners`. -/
+noncomputable def partnerAtObjectRankBy
+    {Object Partner : Type*}
+    [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
+    (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
+    (objectsToMatch : Finset Object) (availablePartners : Finset Partner) (p : Object) :
+    Option Partner :=
+  particleAtRankBy partnerOrderKey availablePartners (rankBy objectOrderKey objectsToMatch p)
 
-@[simp] theorem particleAtSourceRankBy_eq_some_iff
-    {Source Target : Type*}
-    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
-    {sourceValue : Source → Value} {targetValue : Target → Value}
-    {source : Finset Source} {target : Finset Target}
-    {p : Source} {q : Target} :
-    particleAtSourceRankBy sourceValue targetValue source target p = some q ↔
-      q ∈ target ∧ rankBy targetValue target q =
-        rankBy sourceValue source p := by
+@[simp] theorem partnerAtObjectRankBy_eq_some_iff
+    {Object Partner : Type*}
+    [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
+    {objectOrderKey : Object → OrderKey} {partnerOrderKey : Partner → OrderKey}
+    {objectsToMatch : Finset Object} {availablePartners : Finset Partner}
+    {p : Object} {q : Partner} :
+    partnerAtObjectRankBy objectOrderKey partnerOrderKey objectsToMatch availablePartners p = some q ↔
+      q ∈ availablePartners ∧ rankBy partnerOrderKey availablePartners q =
+        rankBy objectOrderKey objectsToMatch p := by
   exact particleAtRankBy_eq_some_iff
 
-/-- The inverse equal-rank match is defined only on the target population.
-The membership guard is essential: the rank of a label outside `target` may
-coincide with an occupied rank and must not duplicate a source coordinate. -/
-noncomputable def preimageByRank
-    {Source Target : Type*}
-    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
-    (sourceValue : Source → Value) (targetValue : Target → Value)
-    (source : Finset Source) (target : Finset Target) (q : Target) :
-    Option Source :=
-  if q ∈ target then
-    particleAtSourceRankBy targetValue sourceValue target source q
+/-- Return the object at a partner's dynamic rank, when the partner belongs to
+`availablePartners`. The membership guard ensures that an outside label with
+the same rank does not duplicate an object. -/
+noncomputable def objectAtPartnerRankBy
+    {Object Partner : Type*}
+    [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
+    (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
+    (objectsToMatch : Finset Object) (availablePartners : Finset Partner) (q : Partner) :
+    Option Object :=
+  if q ∈ availablePartners then
+    partnerAtObjectRankBy partnerOrderKey objectOrderKey availablePartners objectsToMatch q
   else none
 
-@[simp] theorem preimageByRank_eq_some_iff
-    {Source Target : Type*}
-    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
-    {sourceValue : Source → Value} {targetValue : Target → Value}
-    {source : Finset Source} {target : Finset Target}
-    {q : Target} {p : Source} :
-    preimageByRank sourceValue targetValue source target q = some p ↔
-      q ∈ target ∧ p ∈ source ∧
-        rankBy sourceValue source p = rankBy targetValue target q := by
-  by_cases hq : q ∈ target
-  · simp only [preimageByRank, hq, ↓reduceIte,
-      particleAtSourceRankBy_eq_some_iff]
+@[simp] theorem objectAtPartnerRankBy_eq_some_iff
+    {Object Partner : Type*}
+    [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
+    {objectOrderKey : Object → OrderKey} {partnerOrderKey : Partner → OrderKey}
+    {objectsToMatch : Finset Object} {availablePartners : Finset Partner}
+    {q : Partner} {p : Object} :
+    objectAtPartnerRankBy objectOrderKey partnerOrderKey objectsToMatch availablePartners q = some p ↔
+      q ∈ availablePartners ∧ p ∈ objectsToMatch ∧
+        rankBy objectOrderKey objectsToMatch p = rankBy partnerOrderKey availablePartners q := by
+  by_cases hq : q ∈ availablePartners
+  · simp only [objectAtPartnerRankBy, hq, ↓reduceIte,
+      partnerAtObjectRankBy_eq_some_iff]
     tauto
-  · simp [preimageByRank, hq]
+  · simp [objectAtPartnerRankBy, hq]
 
-/-- The inverse equal-rank match uses a source label at most once. -/
-theorem preimageByRank_leftUnique
-    {Source Target : Type*}
-    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
-    (sourceValue : Source → Value) (targetValue : Target → Value)
-    (source : Finset Source) (target : Finset Target)
-    {q₁ q₂ : Target} {p : Source}
-    (h₁ : preimageByRank sourceValue targetValue source target q₁ = some p)
-    (h₂ : preimageByRank sourceValue targetValue source target q₂ = some p) :
+/-- The inverse equal-rank match uses each object at most once. -/
+theorem objectAtPartnerRankBy_leftUnique
+    {Object Partner : Type*}
+    [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
+    (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
+    (objectsToMatch : Finset Object) (availablePartners : Finset Partner)
+    {q₁ q₂ : Partner} {p : Object}
+    (h₁ : objectAtPartnerRankBy objectOrderKey partnerOrderKey objectsToMatch availablePartners q₁ = some p)
+    (h₂ : objectAtPartnerRankBy objectOrderKey partnerOrderKey objectsToMatch availablePartners q₂ = some p) :
     q₁ = q₂ := by
-  obtain ⟨hq₁, _, hr₁⟩ := preimageByRank_eq_some_iff.mp h₁
-  obtain ⟨hq₂, _, hr₂⟩ := preimageByRank_eq_some_iff.mp h₂
-  apply rankBy_injOn targetValue target hq₁ hq₂
+  obtain ⟨hq₁, _, hr₁⟩ := objectAtPartnerRankBy_eq_some_iff.mp h₁
+  obtain ⟨hq₂, _, hr₂⟩ := objectAtPartnerRankBy_eq_some_iff.mp h₂
+  apply rankBy_injOn partnerOrderKey availablePartners hq₁ hq₂
   exact hr₁.symm.trans hr₂
 
-/-- A source member has a same-rank target whenever the target has at least
-as many particles. -/
-theorem particleAtSourceRankBy_ne_none
-    {Source Target : Type*}
-    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
-    (sourceValue : Source → Value) (targetValue : Target → Value)
-    {source : Finset Source} {target : Finset Target}
-    {p : Source} (hp : p ∈ source) (hcard : source.card ≤ target.card) :
-    particleAtSourceRankBy sourceValue targetValue source target p ≠ none := by
+/-- Every object in `objectsToMatch` has a same-rank partner when
+`availablePartners` has at least as many elements. -/
+theorem partnerAtObjectRankBy_ne_none
+    {Object Partner : Type*}
+    [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
+    (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
+    {objectsToMatch : Finset Object} {availablePartners : Finset Partner}
+    {p : Object} (hp : p ∈ objectsToMatch) (hcard : objectsToMatch.card ≤ availablePartners.card) :
+    partnerAtObjectRankBy objectOrderKey partnerOrderKey objectsToMatch availablePartners p ≠ none := by
   intro hnone
-  have hle : target.card ≤ rankBy sourceValue source p :=
+  have hle : availablePartners.card ≤ rankBy objectOrderKey objectsToMatch p :=
     particleAtRankBy_eq_none_iff.mp hnone
-  exact (not_le_of_gt ((rankBy_lt_card_of_mem sourceValue hp).trans_le hcard)) hle
+  exact (not_le_of_gt ((rankBy_lt_card_of_mem objectOrderKey hp).trans_le hcard)) hle
 
-/-- The target particle having the same dynamic rank as a source member.
+/-- The partner having the same dynamic rank as an object in `objectsToMatch`.
 
 The membership proof is an argument because existence only follows on the
-source set.  This avoids adding an arbitrary default particle to either
+objectsToMatch set.  This avoids adding an arbitrary default element to either
 ambient type. -/
 noncomputable def matchByRank
-    {Source Target : Type*}
-    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
-    (sourceValue : Source → Value) (targetValue : Target → Value)
-    (source : Finset Source) (target : Finset Target)
-    (hcard : source.card ≤ target.card)
-    (p : Source) (hp : p ∈ source) : Target :=
+    {Object Partner : Type*}
+    [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
+    (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
+    (objectsToMatch : Finset Object) (availablePartners : Finset Partner)
+    (hcard : objectsToMatch.card ≤ availablePartners.card)
+    (p : Object) (hp : p ∈ objectsToMatch) : Partner :=
   Option.get
-    (particleAtSourceRankBy sourceValue targetValue source target p)
+    (partnerAtObjectRankBy objectOrderKey partnerOrderKey objectsToMatch availablePartners p)
     (Option.isSome_iff_ne_none.mpr
-      (particleAtSourceRankBy_ne_none sourceValue targetValue hp hcard))
+      (partnerAtObjectRankBy_ne_none objectOrderKey partnerOrderKey hp hcard))
 
-theorem particleAtSourceRankBy_matchByRank
-    {Source Target : Type*}
-    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
-    (sourceValue : Source → Value) (targetValue : Target → Value)
-    (source : Finset Source) (target : Finset Target)
-    (hcard : source.card ≤ target.card)
-    (p : Source) (hp : p ∈ source) :
-    particleAtSourceRankBy sourceValue targetValue source target p =
-      some (matchByRank sourceValue targetValue source target hcard p hp) := by
+theorem partnerAtObjectRankBy_matchByRank
+    {Object Partner : Type*}
+    [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
+    (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
+    (objectsToMatch : Finset Object) (availablePartners : Finset Partner)
+    (hcard : objectsToMatch.card ≤ availablePartners.card)
+    (p : Object) (hp : p ∈ objectsToMatch) :
+    partnerAtObjectRankBy objectOrderKey partnerOrderKey objectsToMatch availablePartners p =
+      some (matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp) := by
   unfold matchByRank
   exact (Option.some_get _).symm
 
 theorem matchByRank_mem
-    {Source Target : Type*}
-    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
-    (sourceValue : Source → Value) (targetValue : Target → Value)
-    (source : Finset Source) (target : Finset Target)
-    (hcard : source.card ≤ target.card)
-    (p : Source) (hp : p ∈ source) :
-    matchByRank sourceValue targetValue source target hcard p hp ∈ target := by
-  exact (particleAtSourceRankBy_eq_some_iff.mp
-    (particleAtSourceRankBy_matchByRank sourceValue targetValue source target
+    {Object Partner : Type*}
+    [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
+    (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
+    (objectsToMatch : Finset Object) (availablePartners : Finset Partner)
+    (hcard : objectsToMatch.card ≤ availablePartners.card)
+    (p : Object) (hp : p ∈ objectsToMatch) :
+    matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp ∈ availablePartners := by
+  exact (partnerAtObjectRankBy_eq_some_iff.mp
+    (partnerAtObjectRankBy_matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners
       hcard p hp)).1
 
-/-- The dynamic rank of a population member depends only on values on that
+/-- The dynamic rank of an element depends only on its order key on the
 population. -/
 theorem rankBy_congr_of_eqOn
-    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
-    {value value' : Particle → Value} (population : Finset Particle)
-    {p : Particle} (hp : p ∈ population)
-    (hvalue : ∀ q ∈ population, value q = value' q) :
-    rankBy value population p = rankBy value' population p := by
+    {Element : Type*} [LinearOrder Element] [LinearOrder OrderKey]
+    {orderKey orderKey' : Element → OrderKey} (population : Finset Element)
+    {p : Element} (hp : p ∈ population)
+    (horderKey : ∀ q ∈ population, orderKey q = orderKey' q) :
+    rankBy orderKey population p = rankBy orderKey' population p := by
   rw [rankBy_eq_card_filter, rankBy_eq_card_filter]
   congr 1
   apply Finset.filter_congr
   intro q hq
-  change (valueKey value q < valueKey value p) ↔
-    (valueKey value' q < valueKey value' p)
+  change (valueKey orderKey q < valueKey orderKey p) ↔
+    (valueKey orderKey' q < valueKey orderKey' p)
   unfold valueKey
-  rw [hvalue q hq, hvalue p hp]
+  rw [horderKey q hq, horderKey p hp]
 
 theorem rankBy_matchByRank
-    {Source Target : Type*}
-    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
-    (sourceValue : Source → Value) (targetValue : Target → Value)
-    (source : Finset Source) (target : Finset Target)
-    (hcard : source.card ≤ target.card)
-    (p : Source) (hp : p ∈ source) :
-    rankBy targetValue target
-        (matchByRank sourceValue targetValue source target hcard p hp) =
-      rankBy sourceValue source p := by
-  exact (particleAtSourceRankBy_eq_some_iff.mp
-    (particleAtSourceRankBy_matchByRank sourceValue targetValue source target
+    {Object Partner : Type*}
+    [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
+    (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
+    (objectsToMatch : Finset Object) (availablePartners : Finset Partner)
+    (hcard : objectsToMatch.card ≤ availablePartners.card)
+    (p : Object) (hp : p ∈ objectsToMatch) :
+    rankBy partnerOrderKey availablePartners
+        (matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp) =
+      rankBy objectOrderKey objectsToMatch p := by
+  exact (partnerAtObjectRankBy_eq_some_iff.mp
+    (partnerAtObjectRankBy_matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners
       hcard p hp)).2
 
-/-- Looking up a source particle at the dynamic rank of its matched target
-recovers that source particle.  This is the inverse interface used when
-source steps are installed at matched target labels. -/
-theorem particleAtSourceRankBy_matchByRank_target
-    {Source Target : Type*}
-    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
-    (sourceValue : Source → Value) (targetValue : Target → Value)
-    (source : Finset Source) (target : Finset Target)
-    (hcard : source.card ≤ target.card)
-    (p : Source) (hp : p ∈ source) :
-    particleAtSourceRankBy targetValue sourceValue target source
-        (matchByRank sourceValue targetValue source target hcard p hp) =
+/-- Looking up an object at the dynamic rank of its matched partner recovers
+that object. -/
+theorem partnerAtObjectRankBy_matchByRank_partner
+    {Object Partner : Type*}
+    [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
+    (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
+    (objectsToMatch : Finset Object) (availablePartners : Finset Partner)
+    (hcard : objectsToMatch.card ≤ availablePartners.card)
+    (p : Object) (hp : p ∈ objectsToMatch) :
+    partnerAtObjectRankBy partnerOrderKey objectOrderKey availablePartners objectsToMatch
+        (matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp) =
       some p := by
-  apply particleAtSourceRankBy_eq_some_iff.mpr
+  apply partnerAtObjectRankBy_eq_some_iff.mpr
   exact ⟨hp,
-    (rankBy_matchByRank sourceValue targetValue source target hcard p hp).symm⟩
+    (rankBy_matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp).symm⟩
 
-/-- Equal-rank matching is injective on the source subtype. -/
+/-- Equal-rank matching is injective on the objectsToMatch subtype. -/
 theorem matchByRank_injective
-    {Source Target : Type*}
-    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
-    (sourceValue : Source → Value) (targetValue : Target → Value)
-    (source : Finset Source) (target : Finset Target)
-    (hcard : source.card ≤ target.card) :
-    Function.Injective fun p : {p // p ∈ source} =>
-      matchByRank sourceValue targetValue source target hcard p.1 p.2 := by
+    {Object Partner : Type*}
+    [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
+    (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
+    (objectsToMatch : Finset Object) (availablePartners : Finset Partner)
+    (hcard : objectsToMatch.card ≤ availablePartners.card) :
+    Function.Injective fun p : {p // p ∈ objectsToMatch} =>
+      matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p.1 p.2 := by
   intro p q heq
   apply Subtype.ext
-  apply rankBy_injOn sourceValue source p.2 q.2
-  change matchByRank sourceValue targetValue source target hcard p.1 p.2 =
-    matchByRank sourceValue targetValue source target hcard q.1 q.2 at heq
-  rw [← rankBy_matchByRank sourceValue targetValue source target hcard p.1 p.2,
-    ← rankBy_matchByRank sourceValue targetValue source target hcard q.1 q.2]
-  exact congrArg (rankBy targetValue target) heq
+  apply rankBy_injOn objectOrderKey objectsToMatch p.2 q.2
+  change matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p.1 p.2 =
+    matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard q.1 q.2 at heq
+  rw [← rankBy_matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p.1 p.2,
+    ← rankBy_matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard q.1 q.2]
+  exact congrArg (rankBy partnerOrderKey availablePartners) heq
 
-/-- Lower-tail count domination makes equal-rank matching spatially
-dominating. -/
-theorem matchByRank_value_le
-    {Source Target : Type*}
-    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
-    (sourceValue : Source → Value) (targetValue : Target → Value)
-    (source : Finset Source) (target : Finset Target)
-    (hcard : source.card ≤ target.card)
-    (hthreshold : ∀ a : Value,
-      (source.filter fun p => sourceValue p ≤ a).card ≤
-        (target.filter fun q => targetValue q ≤ a).card)
-    (p : Source) (hp : p ∈ source) :
-    targetValue (matchByRank sourceValue targetValue source target hcard p hp) ≤
-      sourceValue p := by
-  apply value_le_of_rankBy_eq_of_filter_card_le sourceValue targetValue
-    source target hthreshold hp
-  exact rankBy_matchByRank sourceValue targetValue source target hcard p hp
+/-- Threshold-count domination makes equal-rank matching nonincreasing in
+the order key. -/
+theorem matchByRank_partnerOrderKey_le
+    {Object Partner : Type*}
+    [LinearOrder Object] [LinearOrder Partner] [LinearOrder OrderKey]
+    (objectOrderKey : Object → OrderKey) (partnerOrderKey : Partner → OrderKey)
+    (objectsToMatch : Finset Object) (availablePartners : Finset Partner)
+    (hcard : objectsToMatch.card ≤ availablePartners.card)
+    (hthreshold : ∀ a : OrderKey,
+      (objectsToMatch.filter fun p => objectOrderKey p ≤ a).card ≤
+        (availablePartners.filter fun q => partnerOrderKey q ≤ a).card)
+    (p : Object) (hp : p ∈ objectsToMatch) :
+    partnerOrderKey (matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp) ≤
+      objectOrderKey p := by
+  apply partnerOrderKey_le_of_rankBy_eq_of_filter_card_le objectOrderKey partnerOrderKey
+    objectsToMatch availablePartners hthreshold hp
+  exact rankBy_matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp
 
-/-- Extend equal-rank matching to the ambient particle type by fixing labels
-outside the source population.  The fallback is never used by the coupling
-invariant, but makes the match directly usable as a cloud map. -/
+/-- Extend equal-rank matching to the ambient type by fixing labels outside
+`objectsToMatch`. -/
 noncomputable def matchByRankOrSelf
-    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
-    (sourceValue targetValue : Particle → Value)
-    (source target : Finset Particle) (hcard : source.card ≤ target.card)
-    (p : Particle) : Particle :=
-  if hp : p ∈ source then
-    matchByRank sourceValue targetValue source target hcard p hp
+    {Element : Type*} [LinearOrder Element] [LinearOrder OrderKey]
+    (objectOrderKey partnerOrderKey : Element → OrderKey)
+    (objectsToMatch availablePartners : Finset Element) (hcard : objectsToMatch.card ≤ availablePartners.card)
+    (p : Element) : Element :=
+  if hp : p ∈ objectsToMatch then
+    matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp
   else p
 
 @[simp] theorem matchByRankOrSelf_of_mem
-    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
-    (sourceValue targetValue : Particle → Value)
-    (source target : Finset Particle) (hcard : source.card ≤ target.card)
-    {p : Particle} (hp : p ∈ source) :
-    matchByRankOrSelf sourceValue targetValue source target hcard p =
-      matchByRank sourceValue targetValue source target hcard p hp := by
+    {Element : Type*} [LinearOrder Element] [LinearOrder OrderKey]
+    (objectOrderKey partnerOrderKey : Element → OrderKey)
+    (objectsToMatch availablePartners : Finset Element) (hcard : objectsToMatch.card ≤ availablePartners.card)
+    {p : Element} (hp : p ∈ objectsToMatch) :
+    matchByRankOrSelf objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p =
+      matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp := by
   simp [matchByRankOrSelf, hp]
 
-/-- Equal-rank matching depends only on the values observed on the two finite
-populations. -/
+/-- Equal-rank matching depends only on the order keys on the two finite
+sets. -/
 theorem matchByRankOrSelf_congr_of_eqOn
-    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
-    {sourceValue sourceValue' targetValue targetValue' : Particle → Value}
-    (source target : Finset Particle) (hcard : source.card ≤ target.card)
-    {p : Particle} (hp : p ∈ source)
-    (hsource : ∀ q ∈ source, sourceValue q = sourceValue' q)
-    (htarget : ∀ q ∈ target, targetValue q = targetValue' q) :
-    matchByRankOrSelf sourceValue targetValue source target hcard p =
-      matchByRankOrSelf sourceValue' targetValue' source target hcard p := by
-  rw [matchByRankOrSelf_of_mem sourceValue targetValue source target hcard hp,
-    matchByRankOrSelf_of_mem sourceValue' targetValue' source target hcard hp]
-  apply rankBy_injOn targetValue' target
-    (matchByRank_mem sourceValue targetValue source target hcard p hp)
-    (matchByRank_mem sourceValue' targetValue' source target hcard p hp)
-  have hleftMem := matchByRank_mem sourceValue targetValue source target
+    {Element : Type*} [LinearOrder Element] [LinearOrder OrderKey]
+    {objectOrderKey objectOrderKey' partnerOrderKey partnerOrderKey' : Element → OrderKey}
+    (objectsToMatch availablePartners : Finset Element) (hcard : objectsToMatch.card ≤ availablePartners.card)
+    {p : Element} (hp : p ∈ objectsToMatch)
+    (hobjectOrderKeyEq : ∀ q ∈ objectsToMatch, objectOrderKey q = objectOrderKey' q)
+    (hpartnerOrderKeyEq : ∀ q ∈ availablePartners, partnerOrderKey q = partnerOrderKey' q) :
+    matchByRankOrSelf objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p =
+      matchByRankOrSelf objectOrderKey' partnerOrderKey' objectsToMatch availablePartners hcard p := by
+  rw [matchByRankOrSelf_of_mem objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard hp,
+    matchByRankOrSelf_of_mem objectOrderKey' partnerOrderKey' objectsToMatch availablePartners hcard hp]
+  apply rankBy_injOn partnerOrderKey' availablePartners
+    (matchByRank_mem objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp)
+    (matchByRank_mem objectOrderKey' partnerOrderKey' objectsToMatch availablePartners hcard p hp)
+  have hleftMem := matchByRank_mem objectOrderKey partnerOrderKey objectsToMatch availablePartners
     hcard p hp
-  have hrightMem := matchByRank_mem sourceValue' targetValue' source target
+  have hrightMem := matchByRank_mem objectOrderKey' partnerOrderKey' objectsToMatch availablePartners
     hcard p hp
   calc
-    rankBy targetValue' target
-        (matchByRank sourceValue targetValue source target hcard p hp) =
-      rankBy targetValue target
-        (matchByRank sourceValue targetValue source target hcard p hp) :=
-          (rankBy_congr_of_eqOn (value := targetValue)
-            (value' := targetValue') target hleftMem htarget).symm
-    _ = rankBy sourceValue source p :=
-      rankBy_matchByRank sourceValue targetValue source target hcard p hp
-    _ = rankBy sourceValue' source p :=
-      rankBy_congr_of_eqOn (value := sourceValue)
-        (value' := sourceValue') source hp hsource
-    _ = rankBy targetValue' target
-        (matchByRank sourceValue' targetValue' source target hcard p hp) :=
-      (rankBy_matchByRank sourceValue' targetValue' source target hcard p hp).symm
+    rankBy partnerOrderKey' availablePartners
+        (matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp) =
+      rankBy partnerOrderKey availablePartners
+        (matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp) :=
+          (rankBy_congr_of_eqOn (orderKey := partnerOrderKey)
+            (orderKey' := partnerOrderKey') availablePartners hleftMem hpartnerOrderKeyEq).symm
+    _ = rankBy objectOrderKey objectsToMatch p :=
+      rankBy_matchByRank objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp
+    _ = rankBy objectOrderKey' objectsToMatch p :=
+      rankBy_congr_of_eqOn (orderKey := objectOrderKey)
+        (orderKey' := objectOrderKey') objectsToMatch hp hobjectOrderKeyEq
+    _ = rankBy partnerOrderKey' availablePartners
+        (matchByRank objectOrderKey' partnerOrderKey' objectsToMatch availablePartners hcard p hp) :=
+      (rankBy_matchByRank objectOrderKey' partnerOrderKey' objectsToMatch availablePartners hcard p hp).symm
 
 @[simp] theorem matchByRankOrSelf_of_not_mem
-    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
-    (sourceValue targetValue : Particle → Value)
-    (source target : Finset Particle) (hcard : source.card ≤ target.card)
-    {p : Particle} (hp : p ∉ source) :
-    matchByRankOrSelf sourceValue targetValue source target hcard p = p := by
+    {Element : Type*} [LinearOrder Element] [LinearOrder OrderKey]
+    (objectOrderKey partnerOrderKey : Element → OrderKey)
+    (objectsToMatch availablePartners : Finset Element) (hcard : objectsToMatch.card ≤ availablePartners.card)
+    {p : Element} (hp : p ∉ objectsToMatch) :
+    matchByRankOrSelf objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p = p := by
   simp [matchByRankOrSelf, hp]
 
 theorem matchByRankOrSelf_mem
-    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
-    (sourceValue targetValue : Particle → Value)
-    (source target : Finset Particle) (hcard : source.card ≤ target.card)
-    {p : Particle} (hp : p ∈ source) :
-    matchByRankOrSelf sourceValue targetValue source target hcard p ∈ target := by
-  rw [matchByRankOrSelf_of_mem sourceValue targetValue source target hcard hp]
-  exact matchByRank_mem sourceValue targetValue source target hcard p hp
+    {Element : Type*} [LinearOrder Element] [LinearOrder OrderKey]
+    (objectOrderKey partnerOrderKey : Element → OrderKey)
+    (objectsToMatch availablePartners : Finset Element) (hcard : objectsToMatch.card ≤ availablePartners.card)
+    {p : Element} (hp : p ∈ objectsToMatch) :
+    matchByRankOrSelf objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p ∈ availablePartners := by
+  rw [matchByRankOrSelf_of_mem objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard hp]
+  exact matchByRank_mem objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p hp
 
-/-- On the source population, the optional inverse also recovers the total
-ambient equal-rank match. -/
-theorem particleAtSourceRankBy_matchByRankOrSelf
-    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
-    (sourceValue targetValue : Particle → Value)
-    (source target : Finset Particle) (hcard : source.card ≤ target.card)
-    {p : Particle} (hp : p ∈ source) :
-    particleAtSourceRankBy targetValue sourceValue target source
-        (matchByRankOrSelf sourceValue targetValue source target hcard p) =
+/-- On `objectsToMatch`, the optional inverse recovers the ambient equal-rank
+match. -/
+theorem partnerAtObjectRankBy_matchByRankOrSelf
+    {Element : Type*} [LinearOrder Element] [LinearOrder OrderKey]
+    (objectOrderKey partnerOrderKey : Element → OrderKey)
+    (objectsToMatch availablePartners : Finset Element) (hcard : objectsToMatch.card ≤ availablePartners.card)
+    {p : Element} (hp : p ∈ objectsToMatch) :
+    partnerAtObjectRankBy partnerOrderKey objectOrderKey availablePartners objectsToMatch
+        (matchByRankOrSelf objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p) =
       some p := by
-  rw [matchByRankOrSelf_of_mem sourceValue targetValue source target hcard hp]
-  exact particleAtSourceRankBy_matchByRank_target sourceValue targetValue
-    source target hcard p hp
+  rw [matchByRankOrSelf_of_mem objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard hp]
+  exact partnerAtObjectRankBy_matchByRank_partner objectOrderKey partnerOrderKey
+    objectsToMatch availablePartners hcard p hp
 
 theorem matchByRankOrSelf_injOn
-    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
-    (sourceValue targetValue : Particle → Value)
-    (source target : Finset Particle) (hcard : source.card ≤ target.card) :
-    Set.InjOn (matchByRankOrSelf sourceValue targetValue source target hcard)
-      ↑source := by
+    {Element : Type*} [LinearOrder Element] [LinearOrder OrderKey]
+    (objectOrderKey partnerOrderKey : Element → OrderKey)
+    (objectsToMatch availablePartners : Finset Element) (hcard : objectsToMatch.card ≤ availablePartners.card) :
+    Set.InjOn (matchByRankOrSelf objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard)
+      ↑objectsToMatch := by
   intro p hp q hq heq
-  have hp' : p ∈ source := hp
-  have hq' : q ∈ source := hq
-  have hsub : (⟨p, hp⟩ : {p // p ∈ source}) = ⟨q, hq⟩ := by
-    apply matchByRank_injective sourceValue targetValue source target hcard
-    rw [matchByRankOrSelf_of_mem sourceValue targetValue source target hcard hp',
-      matchByRankOrSelf_of_mem sourceValue targetValue source target hcard hq'] at heq
+  have hp' : p ∈ objectsToMatch := hp
+  have hq' : q ∈ objectsToMatch := hq
+  have hsub : (⟨p, hp⟩ : {p // p ∈ objectsToMatch}) = ⟨q, hq⟩ := by
+    apply matchByRank_injective objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard
+    rw [matchByRankOrSelf_of_mem objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard hp',
+      matchByRankOrSelf_of_mem objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard hq'] at heq
     exact heq
   exact congrArg Subtype.val hsub
 
-theorem matchByRankOrSelf_value_le
-    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
-    (sourceValue targetValue : Particle → Value)
-    (source target : Finset Particle) (hcard : source.card ≤ target.card)
-    (hthreshold : ∀ a : Value,
-      (source.filter fun p => sourceValue p ≤ a).card ≤
-        (target.filter fun q => targetValue q ≤ a).card)
-    {p : Particle} (hp : p ∈ source) :
-    targetValue
-        (matchByRankOrSelf sourceValue targetValue source target hcard p) ≤
-      sourceValue p := by
-  rw [matchByRankOrSelf_of_mem sourceValue targetValue source target hcard hp]
-  exact matchByRank_value_le sourceValue targetValue source target hcard
+theorem matchByRankOrSelf_partnerOrderKey_le
+    {Element : Type*} [LinearOrder Element] [LinearOrder OrderKey]
+    (objectOrderKey partnerOrderKey : Element → OrderKey)
+    (objectsToMatch availablePartners : Finset Element) (hcard : objectsToMatch.card ≤ availablePartners.card)
+    (hthreshold : ∀ a : OrderKey,
+      (objectsToMatch.filter fun p => objectOrderKey p ≤ a).card ≤
+        (availablePartners.filter fun q => partnerOrderKey q ≤ a).card)
+    {p : Element} (hp : p ∈ objectsToMatch) :
+    partnerOrderKey
+        (matchByRankOrSelf objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard p) ≤
+      objectOrderKey p := by
+  rw [matchByRankOrSelf_of_mem objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard hp]
+  exact matchByRank_partnerOrderKey_le objectOrderKey partnerOrderKey objectsToMatch availablePartners hcard
     hthreshold p hp
 
-/-- Two first-`N` selections have the same value-threshold counts when their
-candidate sets are in value-preserving bijection. This converts an address
-relabeling into the hypothesis of `valueAtRankBy_eq_of_thresholdCounts`.
+/-- Two first-`N` selections have the same order-key threshold counts when
+their available-partner sets are in order-key-preserving bijection. This
+converts an address relabeling into the hypothesis of
+`valueAtRankBy_eq_of_thresholdCounts`.
 -/
-theorem firstNBy_value_thresholdCounts_eq_of_bijectiveCandidates
-    {ι κ Value : Type*} [LinearOrder ι] [LinearOrder κ] [LinearOrder Value]
-    {N : ℕ} (valueLeft : ι → Value) (valueRight : κ → Value)
-    (candidatesLeft : Set ι) (candidatesRight : Set κ)
-    (selectedLeft : Finset ι) (selectedRight : Finset κ)
+theorem firstNBy_orderKey_thresholdCounts_eq_of_bijectivePartnerSets
+    {ι κ OrderKey : Type*} [LinearOrder ι] [LinearOrder κ] [LinearOrder OrderKey]
+    {N : ℕ} (partnerOrderKeyLeft : ι → OrderKey) (partnerOrderKeyRight : κ → OrderKey)
+    (availablePartnersLeft : Set ι) (availablePartnersRight : Set κ)
+    (selectedPartnersLeft : Finset ι) (selectedPartnersRight : Finset κ)
     (hselectedLeft : Combinatorics.Selection.NSelection.IsFirstNBy
-      N valueLeft candidatesLeft selectedLeft)
+      N partnerOrderKeyLeft availablePartnersLeft selectedPartnersLeft)
     (hselectedRight : Combinatorics.Selection.NSelection.IsFirstNBy
-      N valueRight candidatesRight selectedRight)
-    (hcardLeft : selectedLeft.card = N) (hcardRight : selectedRight.card = N)
+      N partnerOrderKeyRight availablePartnersRight selectedPartnersRight)
+    (hcardLeft : selectedPartnersLeft.card = N) (hcardRight : selectedPartnersRight.card = N)
     (forward : κ → ι) (backward : ι → κ)
-    (hforward : ∀ q ∈ candidatesRight, forward q ∈ candidatesLeft)
-    (hbackward : ∀ p ∈ candidatesLeft, backward p ∈ candidatesRight)
-    (hbackwardForward : ∀ p ∈ candidatesLeft, forward (backward p) = p)
-    (hforwardBackward : ∀ q ∈ candidatesRight, backward (forward q) = q)
-    (hvalue : ∀ q ∈ candidatesRight, valueLeft (forward q) = valueRight q)
-    (a : Value) :
-    (selectedLeft.filter fun p => valueLeft p ≤ a).card =
-      (selectedRight.filter fun q => valueRight q ≤ a).card := by
-  let mappedRight := selectedRight.image forward
-  have hforwardInjective : Set.InjOn forward (↑selectedRight : Set κ) := by
+    (hforward : ∀ q ∈ availablePartnersRight, forward q ∈ availablePartnersLeft)
+    (hbackward : ∀ p ∈ availablePartnersLeft, backward p ∈ availablePartnersRight)
+    (hbackwardForward : ∀ p ∈ availablePartnersLeft, forward (backward p) = p)
+    (hforwardBackward : ∀ q ∈ availablePartnersRight, backward (forward q) = q)
+    (horderKey : ∀ q ∈ availablePartnersRight, partnerOrderKeyLeft (forward q) = partnerOrderKeyRight q)
+    (a : OrderKey) :
+    (selectedPartnersLeft.filter fun p => partnerOrderKeyLeft p ≤ a).card =
+      (selectedPartnersRight.filter fun q => partnerOrderKeyRight q ≤ a).card := by
+  let mappedRight := selectedPartnersRight.image forward
+  have hforwardInjective : Set.InjOn forward (↑selectedPartnersRight : Set κ) := by
     intro q hq r hr hqr
     calc
       q = backward (forward q) := (hforwardBackward q (hselectedRight.subset hq)).symm
       _ = backward (forward r) := congrArg backward hqr
       _ = r := hforwardBackward r (hselectedRight.subset hr)
-  have hmappedRightSubset : (↑mappedRight : Set ι) ⊆ candidatesLeft := by
+  have hmappedRightSubset : (↑mappedRight : Set ι) ⊆ availablePartnersLeft := by
     intro p hp
     obtain ⟨q, hq, rfl⟩ := Finset.mem_image.mp hp
     exact hforward q (hselectedRight.subset hq)
   have hmappedRightCard : mappedRight.card = N := by
     rw [Finset.card_image_iff.mpr hforwardInjective, hcardRight]
   have hrightFilterImage :
-      (mappedRight.filter fun p => valueLeft p ≤ a) =
-        (selectedRight.filter fun q => valueRight q ≤ a).image forward := by
+      (mappedRight.filter fun p => partnerOrderKeyLeft p ≤ a) =
+        (selectedPartnersRight.filter fun q => partnerOrderKeyRight q ≤ a).image forward := by
     ext p
     constructor
     · intro hp
-      rcases Finset.mem_filter.mp hp with ⟨hpimage, hpvalue⟩
+      rcases Finset.mem_filter.mp hp with ⟨hpimage, hpOrderKey⟩
       rcases Finset.mem_image.mp hpimage with ⟨q, hq, rfl⟩
       apply Finset.mem_image.mpr
       refine ⟨q, Finset.mem_filter.mpr ⟨hq, ?_⟩, rfl⟩
-      simpa [hvalue q (hselectedRight.subset hq)] using hpvalue
+      simpa [horderKey q (hselectedRight.subset hq)] using hpOrderKey
     · intro hp
       rcases Finset.mem_image.mp hp with ⟨q, hqfilter, rfl⟩
-      rcases Finset.mem_filter.mp hqfilter with ⟨hq, hqvalue⟩
+      rcases Finset.mem_filter.mp hqfilter with ⟨hq, hqOrderKey⟩
       apply Finset.mem_filter.mpr
       refine ⟨Finset.mem_image.mpr ⟨q, hq, rfl⟩, ?_⟩
-      simpa [hvalue q (hselectedRight.subset hq)] using hqvalue
+      simpa [horderKey q (hselectedRight.subset hq)] using hqOrderKey
   have hrightFilterCard :
-      (mappedRight.filter fun p => valueLeft p ≤ a).card =
-        (selectedRight.filter fun q => valueRight q ≤ a).card := by
+      (mappedRight.filter fun p => partnerOrderKeyLeft p ≤ a).card =
+        (selectedPartnersRight.filter fun q => partnerOrderKeyRight q ≤ a).card := by
     have hinj : Set.InjOn forward
-        (↑(selectedRight.filter fun q => valueRight q ≤ a) : Set κ) := by
+        (↑(selectedPartnersRight.filter fun q => partnerOrderKeyRight q ≤ a) : Set κ) := by
       intro q hq r hr hqr
       exact hforwardInjective (Finset.mem_filter.mp hq).1
         (Finset.mem_filter.mp hr).1 hqr
     rw [hrightFilterImage, Finset.card_image_iff.mpr hinj]
   have hrightLe :
-      (selectedRight.filter fun q => valueRight q ≤ a).card ≤
-        (selectedLeft.filter fun p => valueLeft p ≤ a).card := by
+      (selectedPartnersRight.filter fun q => partnerOrderKeyRight q ≤ a).card ≤
+        (selectedPartnersLeft.filter fun p => partnerOrderKeyLeft p ≤ a).card := by
     calc
-      _ = (mappedRight.filter fun p => valueLeft p ≤ a).card := hrightFilterCard.symm
-      _ ≤ (selectedLeft.filter fun p => valueLeft p ≤ a).card := by
+      _ = (mappedRight.filter fun p => partnerOrderKeyLeft p ≤ a).card := hrightFilterCard.symm
+      _ ≤ (selectedPartnersLeft.filter fun p => partnerOrderKeyLeft p ≤ a).card := by
         exact Combinatorics.Selection.NSelection.filter_card_le_filter_of_isFirstNBy
-          N valueLeft candidatesLeft selectedLeft mappedRight hselectedLeft
+          N partnerOrderKeyLeft availablePartnersLeft selectedPartnersLeft mappedRight hselectedLeft
           hmappedRightSubset (by simpa only [hmappedRightCard] using Nat.le_refl N) a
-  have hvalueBackward : ∀ p ∈ candidatesLeft,
-      valueRight (backward p) = valueLeft p := by
+  have hpartnerOrderKeyBackward : ∀ p ∈ availablePartnersLeft,
+      partnerOrderKeyRight (backward p) = partnerOrderKeyLeft p := by
     intro p hp
     have hback := hbackward p hp
     calc
-      valueRight (backward p) = valueLeft (forward (backward p)) :=
-        (hvalue (backward p) hback).symm
-      _ = valueLeft p := congrArg valueLeft (hbackwardForward p hp)
-  let mappedLeft := selectedLeft.image backward
-  have hbackwardInjective : Set.InjOn backward (↑selectedLeft : Set ι) := by
+      partnerOrderKeyRight (backward p) = partnerOrderKeyLeft (forward (backward p)) :=
+        (horderKey (backward p) hback).symm
+      _ = partnerOrderKeyLeft p := congrArg partnerOrderKeyLeft (hbackwardForward p hp)
+  let mappedLeft := selectedPartnersLeft.image backward
+  have hbackwardInjective : Set.InjOn backward (↑selectedPartnersLeft : Set ι) := by
     intro p hp q hq hpq
     calc
       p = forward (backward p) := (hbackwardForward p (hselectedLeft.subset hp)).symm
       _ = forward (backward q) := congrArg forward hpq
       _ = q := hbackwardForward q (hselectedLeft.subset hq)
-  have hmappedLeftSubset : (↑mappedLeft : Set κ) ⊆ candidatesRight := by
+  have hmappedLeftSubset : (↑mappedLeft : Set κ) ⊆ availablePartnersRight := by
     intro q hq
     obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hq
     exact hbackward p (hselectedLeft.subset hp)
   have hmappedLeftCard : mappedLeft.card = N := by
     rw [Finset.card_image_iff.mpr hbackwardInjective, hcardLeft]
   have hleftFilterImage :
-      (mappedLeft.filter fun q => valueRight q ≤ a) =
-        (selectedLeft.filter fun p => valueLeft p ≤ a).image backward := by
+      (mappedLeft.filter fun q => partnerOrderKeyRight q ≤ a) =
+        (selectedPartnersLeft.filter fun p => partnerOrderKeyLeft p ≤ a).image backward := by
     ext q
     constructor
     · intro hq
-      rcases Finset.mem_filter.mp hq with ⟨hqimage, hqvalue⟩
+      rcases Finset.mem_filter.mp hq with ⟨hqimage, hqOrderKey⟩
       rcases Finset.mem_image.mp hqimage with ⟨p, hp, rfl⟩
       apply Finset.mem_image.mpr
       refine ⟨p, Finset.mem_filter.mpr ⟨hp, ?_⟩, rfl⟩
-      simpa [hvalueBackward p (hselectedLeft.subset hp)] using hqvalue
+      simpa [hpartnerOrderKeyBackward p (hselectedLeft.subset hp)] using hqOrderKey
     · intro hq
       rcases Finset.mem_image.mp hq with ⟨p, hpfilter, rfl⟩
-      rcases Finset.mem_filter.mp hpfilter with ⟨hp, hpvalue⟩
+      rcases Finset.mem_filter.mp hpfilter with ⟨hp, hpOrderKey⟩
       apply Finset.mem_filter.mpr
       refine ⟨Finset.mem_image.mpr ⟨p, hp, rfl⟩, ?_⟩
-      simpa [hvalueBackward p (hselectedLeft.subset hp)] using hpvalue
+      simpa [hpartnerOrderKeyBackward p (hselectedLeft.subset hp)] using hpOrderKey
   have hleftFilterCard :
-      (mappedLeft.filter fun q => valueRight q ≤ a).card =
-        (selectedLeft.filter fun p => valueLeft p ≤ a).card := by
+      (mappedLeft.filter fun q => partnerOrderKeyRight q ≤ a).card =
+        (selectedPartnersLeft.filter fun p => partnerOrderKeyLeft p ≤ a).card := by
     have hinj : Set.InjOn backward
-        (↑(selectedLeft.filter fun p => valueLeft p ≤ a) : Set ι) := by
+        (↑(selectedPartnersLeft.filter fun p => partnerOrderKeyLeft p ≤ a) : Set ι) := by
       intro p hp q hq hpq
       exact hbackwardInjective (Finset.mem_filter.mp hp).1
         (Finset.mem_filter.mp hq).1 hpq
     rw [hleftFilterImage, Finset.card_image_iff.mpr hinj]
   have hleftLe :
-      (selectedLeft.filter fun p => valueLeft p ≤ a).card ≤
-        (selectedRight.filter fun q => valueRight q ≤ a).card := by
+      (selectedPartnersLeft.filter fun p => partnerOrderKeyLeft p ≤ a).card ≤
+        (selectedPartnersRight.filter fun q => partnerOrderKeyRight q ≤ a).card := by
     calc
-      _ = (mappedLeft.filter fun q => valueRight q ≤ a).card := hleftFilterCard.symm
-      _ ≤ (selectedRight.filter fun q => valueRight q ≤ a).card := by
+      _ = (mappedLeft.filter fun q => partnerOrderKeyRight q ≤ a).card := hleftFilterCard.symm
+      _ ≤ (selectedPartnersRight.filter fun q => partnerOrderKeyRight q ≤ a).card := by
         exact Combinatorics.Selection.NSelection.filter_card_le_filter_of_isFirstNBy
-          N valueRight candidatesRight selectedRight mappedLeft hselectedRight
+          N partnerOrderKeyRight availablePartnersRight selectedPartnersRight mappedLeft hselectedRight
           hmappedLeftSubset (by simpa only [hmappedLeftCard] using Nat.le_refl N) a
   exact Nat.le_antisymm hleftLe hrightLe
 

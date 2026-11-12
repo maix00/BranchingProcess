@@ -29079,3 +29079,20 @@ pass. A fresh structural scan found no overfull direct-module directories,
 same-level file/directory stem collisions, parent-prefixed file stems,
 duplicate `Lemmas` entries, `Proof/` or `Source/` directories, or public
 imports from `Lemmas/` modules.
+
+## Threshold-count matching module names (2026-11-12)
+
+Renamed `Combinatorics/Matching/LowerTail.lean` to
+`Combinatorics/Matching/ThresholdCountMatching.lean`. Its finite theorem
+matches `objectsToMatch` into `availablePartners` when, for every order key
+threshold, the number of objects below that threshold is bounded by the
+number of available partners below it. The theorem and its assumptions are
+unchanged; the module name now describes this threshold-count interface.
+
+Renamed `Combinatorics/Selection/NSelection/Matching/Hall.lean` to
+`Combinatorics/Selection/NSelection/Matching/SelectedPopulation.lean`. This
+module specializes the generic matching result to the population chosen by
+the first-`N` rule. `ByRank.lean` remains the equal-rank matching interface.
+Updated the active imports, module headers, ownership map, and audit ledger;
+the former paths are retained only in this chronological audit history, with
+no compatibility aliases.

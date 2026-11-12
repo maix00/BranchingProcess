@@ -295,7 +295,7 @@ theorem RootIndexed.rankBlockChoice_injective
           unfold RootIndexed.rankBlockChoice at h
           unfold RootIndexed.rankChoice
             RootIndexed.rankPreimage RootIndexed.StepField.pasteCoordinate at h
-          cases hp : preimageByRank (sourceValue field) (targetValue field)
+          cases hp : objectAtPartnerRankBy (sourceValue field) (targetValue field)
               (source field) (target field) q₁.1 with
           | some p => simp [hp] at h
           | none =>
@@ -308,7 +308,7 @@ theorem RootIndexed.rankBlockChoice_injective
           unfold RootIndexed.rankBlockChoice at h
           unfold RootIndexed.rankChoice
             RootIndexed.rankPreimage RootIndexed.StepField.pasteCoordinate at h
-          cases hp : preimageByRank (sourceValue field) (targetValue field)
+          cases hp : objectAtPartnerRankBy (sourceValue field) (targetValue field)
               (source field) (target field) q₂.1 with
           | some p => simp [hp] at h
           | none =>
