@@ -139,12 +139,15 @@ Selection modules are placed by the data they take as input:
   ([`Finset.filter`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Filter.html),
   [`Finset.sort`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Sort.html));
   the capacity-$N$ interface composes those operations for this project.
-- `Combinatorics/Matching/LowerTail.lean` owns the finite ordered-value
-  matching theorem: lower-tail count inequalities yield an injective map whose
-  target value is at most the source value. It is independent of `NSelection`;
-  `Combinatorics/Selection/NSelection/Matching/Hall.lean` specializes it to
-  capacity-constrained selections. Mathlib provides the underlying general
-  finite Hall theorem in `Mathlib/Combinatorics/Hall/Basic.lean`.
+- `Combinatorics/Matching/ThresholdCount.lean` owns the generic
+  threshold-count matching theorem. If every order-key threshold count of
+  `objectsToMatch` is bounded by the corresponding count in
+  `availablePartners`, it constructs an injection whose partner order key is
+  at most the matched object's order key. The theorem is independent of
+  `NSelection`; `Combinatorics/Selection/NSelection/Matching/SelectedPopulation.lean`
+  applies it to the population selected by the first-`N` rule. Mathlib provides
+  the underlying relation-based finite Hall theorem in
+  `Mathlib/Combinatorics/Hall/Basic.lean`.
 - `Combinatorics/BranchingWalk/Step/Selection/` owns selectors whose input is
   an offspring step. `Combinatorics/BranchingWalk/Selection/NSelection/Walk/`
   owns the generation recursion

@@ -25,8 +25,8 @@ selectedReserveSpineAndCandidates_card_le. The enabled indices are
     \operatorname{split}(k),\; n\le k+1+\mathrm{duration}\}.
 \]
 The population unions the corresponding root-indexed cap-stopped populations,
-each started at time k+1. The cardinality results bound the source by the
-number of active split generations and by the cap on each candidate.
+each started at time k+1. The cardinality results bound the total candidate population by the number
+of active split generations and the cap on each candidate.
 -/
 
 open MeasureTheory ProbabilityTheory

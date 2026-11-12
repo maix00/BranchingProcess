@@ -34,7 +34,7 @@ modules outside this directory.
 
 ## Internal proof declarations
 
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_positiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput_of_uniformAH` gives a polynomial capacity-failure bound from the uniform Aïdékon--Hu input.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput_of_uniformAH` gives a polynomial capacity-failure bound from the uniform Aïdékon--Hu input.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_probability_le_polynomial_of_canceledAH_capacity_bound` converts the canceled estimate into the eventual bound $\mathbb P(\text{capacity failure})\leq N^{-p}$.
 -/
 
@@ -49,10 +49,10 @@ open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk
 
-/-- The polynomial killed-capacity estimate with an externally supplied
+/-- The polynomial selected-population capacity estimate with an externally supplied
 uniform Aïdékon--Hu threshold.  Keeping the threshold explicit lets the
 logarithmic-scale argument use one value for every sample size. -/
-lemma measure_positiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput_of_uniformAH
+lemma measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput_of_uniformAH
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -141,7 +141,7 @@ lemma measure_positiveAKilled_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput
           _ = 1 := measure_univ
       simpa [pSecond, width, hlong] using hprob
   have hcapacity :=
-    measure_positiveAKilled_capacityEvent_compl_le_twoPhaseOfDrawdownBounds
+    measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfDrawdownBounds
       m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb hc hvc μ hboundary
       ν hν (fun _ : ℕ => 1) pSecond hfirstPath hdrawdown
   have hsum :

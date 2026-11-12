@@ -187,7 +187,7 @@ private theorem measurableSet_matchByRankOrSelf_eq
         (source ω) (target ω) (hcard ω) p = q} := by
   let sourceMem : Set Ω := {ω | p ∈ source ω}
   let matched : Set Ω := {ω |
-    particleAtSourceRankBy (sourceValue ω) (targetValue ω)
+    partnerAtObjectRankBy (sourceValue ω) (targetValue ω)
       (source ω) (target ω) p = some q}
   have hsourceMem : MeasurableSet sourceMem :=
     measurableSet_mem_candidates source hsourceFiber hsourceRange p
@@ -203,7 +203,7 @@ private theorem measurableSet_matchByRankOrSelf_eq
       ext ω
       subst q
       by_cases hp : p ∈ source ω
-      · have hsome := particleAtSourceRankBy_matchByRank
+      · have hsome := partnerAtObjectRankBy_matchByRank
           (sourceValue ω) (targetValue ω) (source ω) (target ω)
           (hcard ω) p hp
         simp only [Set.mem_union, Set.mem_inter_iff, Set.mem_compl_iff,
@@ -224,7 +224,7 @@ private theorem measurableSet_matchByRankOrSelf_eq
         sourceMem ∩ matched := by
       ext ω
       by_cases hp : p ∈ source ω
-      · have hsome := particleAtSourceRankBy_matchByRank
+      · have hsome := partnerAtObjectRankBy_matchByRank
           (sourceValue ω) (targetValue ω) (source ω) (target ω)
           (hcard ω) p hp
         simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, sourceMem, matched]

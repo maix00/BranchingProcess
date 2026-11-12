@@ -48,7 +48,7 @@ open ProbabilityTheory.BranchingRandomWalk.Completion.Lemmas.EndpointHorizon
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 /-- The successful endpoint time, endpoint positions, and their actual
-rank-installed target descendant field have the joint law obtained by
+rank-installed first-`N` BRW descendant field have the joint law obtained by
 attaching a fresh product field to the stopped endpoint data.  The first
 coordinate is the `WithTop` completion time, which equals `σᵢ + duration` for
 the successful candidate; the split's raw look-ahead generation is not used
@@ -87,11 +87,11 @@ theorem selectedReserveSpineRestartEndpointTimePositionFreshField_jointLaw_on_fi
     let P := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
     let Q := RootIndexed.stepFieldLaw (Root := Fin lower) μ
     let endpointData := fun field => (τ field, positions field)
-    let targetRoots := fun field i =>
-      (Sum.inr r, (selectedReserveSpineRestartEndpointRankVector N
+    let nSelectedBRWEndpointRoots := fun field i =>
+      (Sum.inr r, (selectedReserveSpineRestartNSelectedBRWEndpointRankVector N
         initialPosition R growth hR hgrowth lower upper duration r field i).2)
     let fresh := fun field =>
-      RootIndexed.selectedSubtreeStepFieldVector targetRoots field
+      RootIndexed.selectedSubtreeStepFieldVector nSelectedBRWEndpointRoots field
     Measurable (fun field => (endpointData field, fresh field)) ∧
     (P.restrict {field | τ field ≠ ⊤}).map
       (fun field => (endpointData field, fresh field)) =
@@ -107,13 +107,13 @@ theorem selectedReserveSpineRestartEndpointTimePositionFreshField_jointLaw_on_fi
     {field | τ field ≠ ⊤}
   let endpointData : RootIndexed.StepField (Root ⊕ Root) α ℝ →
       WithTop ℕ × (Fin lower → ℝ) := fun field => (τ field, positions field)
-  let target := selectedReserveSpineRestartEndpointRankVector N initialPosition
+  let nSelectedBRWEndpointRankVector := selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
     R growth hR hgrowth lower upper duration r
-  let targetRoots : RootIndexed.StepField (Root ⊕ Root) α ℝ → Fin lower →
+  let nSelectedBRWEndpointRoots : RootIndexed.StepField (Root ⊕ Root) α ℝ → Fin lower →
       (Root ⊕ Root) × Combinatorics.UlamHarris.TreeNode α := fun field i =>
-    (Sum.inr r, (target field i).2)
+    (Sum.inr r, (nSelectedBRWEndpointRankVector field i).2)
   let fresh := fun field =>
-    RootIndexed.selectedSubtreeStepFieldVector targetRoots field
+    RootIndexed.selectedSubtreeStepFieldVector nSelectedBRWEndpointRoots field
   let data := fun field => endpointData field
   have hτmeas : IsStoppingTime
       (RootIndexed.stepFiltration (Root := Root ⊕ Root) (α := α) (X := ℝ)) τ := by
@@ -130,33 +130,33 @@ theorem selectedReserveSpineRestartEndpointTimePositionFreshField_jointLaw_on_fi
       (RootIndexed.stepFiltration (Root := Root ⊕ Root)
         (α := α) (X := ℝ)).le n)
   have hdata : Measurable data := hdataStop.mono hle le_rfl
-  have htarget : Measurable[hτmeas.measurableSpace] target := by
-    simpa [target, hτmeas] using
-      selectedReserveSpineRestartEndpointRankVector_measurable N initialPosition
+  have hnSelectedBRWEndpointRankVector : Measurable[hτmeas.measurableSpace] nSelectedBRWEndpointRankVector := by
+    simpa [nSelectedBRWEndpointRankVector, hτmeas] using
+      selectedReserveSpineRestartNSelectedBRWEndpointRankVector_measurable N initialPosition
         R growth hR hgrowth lower upper duration r
-  have hrootsStop : Measurable[hτmeas.measurableSpace] targetRoots := by
+  have hnSelectedBRWRootsStopped : Measurable[hτmeas.measurableSpace] nSelectedBRWEndpointRoots := by
     letI : MeasurableSpace (RootIndexed.StepField (Root ⊕ Root) α ℝ) :=
       hτmeas.measurableSpace
     apply measurable_pi_iff.mpr
     intro i
     have hi : Measurable[hτmeas.measurableSpace]
-        (fun field => target field i) :=
-      (measurable_pi_apply i).comp htarget
+        (fun field => nSelectedBRWEndpointRankVector field i) :=
+      (measurable_pi_apply i).comp hnSelectedBRWEndpointRankVector
     exact measurable_const.prodMk (hnodePath.comp hi)
-  have hroots : Measurable targetRoots := hrootsStop.mono hle le_rfl
-  have hcount : (Set.range targetRoots).Countable := by
+  have hnSelectedBRWRootsMeasurable : Measurable nSelectedBRWEndpointRoots := hnSelectedBRWRootsStopped.mono hle le_rfl
+  have hcount : (Set.range nSelectedBRWEndpointRoots).Countable := by
     let encode : (Fin lower → RootIndexed.TreeNode Root α) →
         Fin lower → (Root ⊕ Root) × Combinatorics.UlamHarris.TreeNode α :=
       fun v i => (Sum.inr r, (v i).2)
-    have hsubset : Set.range targetRoots ⊆ Set.range encode := by
+    have hsubset : Set.range nSelectedBRWEndpointRoots ⊆ Set.range encode := by
       rintro q ⟨field, rfl⟩
-      exact ⟨target field, rfl⟩
+      exact ⟨nSelectedBRWEndpointRankVector field, rfl⟩
     exact (Set.countable_range encode).mono hsubset
   have hfresh : Measurable fresh := by
     change Measurable (fun field =>
-      RootIndexed.subtreeStepFieldVector (targetRoots field) field)
+      RootIndexed.subtreeStepFieldVector (nSelectedBRWEndpointRoots field) field)
     exact RootIndexed.subtreeStepFieldVector_measurable_of_measurable_roots
-      targetRoots hroots hcount
+      nSelectedBRWEndpointRoots hnSelectedBRWRootsMeasurable hcount
   have hpair : Measurable (fun field => (data field, fresh field)) :=
     hdata.prodMk hfresh
   have hrect : ∀ {S : Set (WithTop ℕ × (Fin lower → ℝ))}
@@ -169,7 +169,7 @@ theorem selectedReserveSpineRestartEndpointTimePositionFreshField_jointLaw_on_fi
     rw [Measure.map_apply hpair (hS.prod hT)]
     have hA : MeasurableSet[hτmeas.measurableSpace] (data ⁻¹' S) :=
       hdataStop hS
-    have hfactor := selectedReserveSpineRestartEndpointTargetFreshField_factorization_on_finite
+    have hfactor := selectedReserveSpineRestartNSelectedBRWFreshField_factorization_on_finite
       hnodePath μ hnorm N initialPosition R growth hR hgrowth lower upper duration
       hupper hbounded hcapacity r (data ⁻¹' S) T hA hT
     rw [show (data ⁻¹' S ∩ E) ∩ fresh ⁻¹' T =
@@ -189,7 +189,7 @@ theorem selectedReserveSpineRestartEndpointTimePositionFreshField_jointLaw_on_fi
         ((P.restrict E).map data).prod Q :=
     Measure.ext_prod hrect
   refine ⟨hpair, ?_⟩
-  simpa [τ, P, Q, E, endpointData, data, target, targetRoots, fresh] using hjoint
+  simpa [τ, P, Q, E, endpointData, data, nSelectedBRWEndpointRankVector, nSelectedBRWEndpointRoots, fresh] using hjoint
 
 /-- Transfer any measurable continuation observable whose remaining horizon
 is read from the successful endpoint time.  For a deterministic terminal
@@ -238,7 +238,7 @@ theorem selectedReserveSpineRestartEndpointRandomHorizonObservable_law_on_finite
       (fun field => future ((τ field, positions field),
         RootIndexed.selectedSubtreeStepFieldVector
           (fun field i => (Sum.inr r,
-            (selectedReserveSpineRestartEndpointRankVector N initialPosition
+            (selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
               R growth hR hgrowth lower upper duration r field i).2)) field)) =
     ((((P.restrict {field | τ field ≠ ⊤}).map
       (fun field => (τ field, positions field))).prod Q).map future) := by
@@ -250,7 +250,7 @@ theorem selectedReserveSpineRestartEndpointRandomHorizonObservable_law_on_finite
   let fresh := fun field =>
     RootIndexed.selectedSubtreeStepFieldVector
       (fun field i => (Sum.inr r,
-        (selectedReserveSpineRestartEndpointRankVector N initialPosition
+        (selectedReserveSpineRestartNSelectedBRWEndpointRankVector N initialPosition
           R growth hR hgrowth lower upper duration r field i).2)) field
   have ⟨hpair, hjoint⟩ := selectedReserveSpineRestartEndpointTimePositionFreshField_jointLaw_on_finite
     lower hnodePath μ hnorm N initialPosition R growth hR hgrowth upper duration

@@ -32,22 +32,24 @@ successful cap-stopped candidate at a weakly smaller position:
   \forall q\in C_k,\ \exists p\in P_n^{\mathrm{rank}},\;
     x(p)\le x(q).\]
 
-* `selectedReserveSpineRestartSourceOnLeft` pulls the causal reserve source back along the
+* `selectedReserveSpineRestartBRWPopulationOnLeft` pulls the causal reserve-spine BRW population back along the
   left coordinate of a two-root pre-sampled field.
-* `selectedReserveSpineRestartSourceOnLeft_finiteSlices` and
-  `selectedReserveSpineRestartSourceOnLeft_toFinset` state that every finite slice exists and
-  equals the original source slice on the left coordinate.
-* `selectedReserveSpineRestartSourceOnLeft_card_le` gives the deterministic bound
-  `|sourceSlice n| ≤ 1 + (duration + 1) * (2 * cap)`.
-* `selectedReserveSpineRestartSourceOnLeft_initialInjection` gives the initial cloud injection
-  from the singleton-root population into the rank-installed population.
+* `selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices` and
+  `selectedReserveSpineRestartBRWPopulationOnLeft_toFinset` state that every finite slice exists and
+  equals the original population slice on the left coordinate.
+* `selectedReserveSpineRestartBRWPopulationOnLeft_card_le` gives the deterministic bound
+  `|P_n| ≤ 1 + (duration + 1) * (2 * cap)`.
+* `selectedReserveSpineRestartBRWPopulationOnLeft_initialInjection` gives the
+  initial cloud injection from the singleton-root selected BRW population into
+  the rank-installed first-`N` BRW population.
 * `selectedReserveSpineRestartCoupledInjection_ae` gives, almost surely, a cloud injection
-  from the reserve-source population to the first-`N` rank-installed population.
+  from the reserve-spine BRW population to the rank-installed first-`N` BRW
+  population.
 * `selectedReserveSpineRestartCoupledPopulation_card_ge_of_candidate_success_ae` and
   `selectedReserveSpineRestartCoupledPopulation_card_ge_of_candidateSuccessEvent_ae` transfer
   a successful candidate's lower cardinality to the rank-installed population.
-* `selectedReserveSpineRestartCoupled_position_witness_ae` matches every reserve-source
-  particle with a particle at a weakly smaller position;
+* `selectedReserveSpineRestartCoupled_position_witness_ae` matches every
+  reserve-spine BRW particle with one at a weakly smaller position;
   `selectedReserveSpineRestartCoupledCandidate_position_witness_ae` gives the same comparison
   for every particle in a successful cap-stopped candidate.
 * `selectedReserveSpineFirstSuccess_endpointComparison_ae` states that finite first success
@@ -70,9 +72,10 @@ open _root_.Combinatorics.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Coupling
 
-/-- Pull the one-root causal reserve source back to the left half of the
+/-- Pull the one-root causal reserve-spine BRW population back to the left
+half of the
 common pre-sampled field used by the N-selection rank-installation coupling. -/
-noncomputable def selectedReserveSpineRestartSourceOnLeft
+noncomputable def selectedReserveSpineRestartBRWPopulationOnLeft
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace Root] [MeasurableSingletonClass Root]
@@ -85,7 +88,7 @@ noncomputable def selectedReserveSpineRestartSourceOnLeft
       (RootIndexed.StepField (Root ⊕ Root) α ℝ) Root α ℝ
       (RootIndexed.stepFiltration (Root := Root ⊕ Root) (α := α) (X := ℝ))
       RootIndexed.StepField.left := by
-  let P := selectedReserveSpineRestartSource R growth hR hgrowth cap duration r
+  let P := selectedReserveSpineRestartBRWPopulation R growth hR hgrowth cap duration r
   have hleft : ∀ k, @Measurable
       (RootIndexed.StepField (Root ⊕ Root) α ℝ)
       (RootIndexed.StepField Root α ℝ)
@@ -101,8 +104,8 @@ noncomputable def selectedReserveSpineRestartSourceOnLeft
   exact P.pullback RootIndexed.StepField.left hleft rfl
 
 /-- The left-field version inherits layerwise finiteness from the finite
-union representation of the reserve source. -/
-theorem selectedReserveSpineRestartSourceOnLeft_finiteSlices
+union representation of the reserve-spine BRW population. -/
+theorem selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace Root] [MeasurableSingletonClass Root]
@@ -111,10 +114,10 @@ theorem selectedReserveSpineRestartSourceOnLeft_finiteSlices
     [LinearOrder (RootIndexed.TreeNode Root α)]
     (R growth : Step.FiniteSelection α ℝ) (hR : Measurable R.select)
     (hgrowth : Measurable growth.select) (cap duration : ℕ) (r : Root) :
-    (selectedReserveSpineRestartSourceOnLeft R growth hR hgrowth
+    (selectedReserveSpineRestartBRWPopulationOnLeft R growth hR hgrowth
       cap duration r).FiniteSlices := by
-  let P := selectedReserveSpineRestartSource R growth hR hgrowth cap duration r
-  have hP := selectedReserveSpineRestartSource_finiteSlices R growth hR hgrowth
+  let P := selectedReserveSpineRestartBRWPopulation R growth hR hgrowth cap duration r
+  have hP := selectedReserveSpineRestartBRWPopulation_finiteSlices R growth hR hgrowth
     cap duration r
   have hleft : ∀ k, @Measurable
       (RootIndexed.StepField (Root ⊕ Root) α ℝ)
@@ -130,9 +133,9 @@ theorem selectedReserveSpineRestartSourceOnLeft_finiteSlices
     exact RootIndexed.StepField.reindex_filtration_measurable Sum.inl k
   exact hP.pullback RootIndexed.StepField.left hleft rfl
 
-/-- The finite source slice on the left copy is the original reserve-source
-slice evaluated on that copy. -/
-theorem selectedReserveSpineRestartSourceOnLeft_toFinset
+/-- The finite population slice on the left copy is the original
+reserve-spine BRW population slice evaluated on that copy. -/
+theorem selectedReserveSpineRestartBRWPopulationOnLeft_toFinset
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace Root] [MeasurableSingletonClass Root]
@@ -142,19 +145,19 @@ theorem selectedReserveSpineRestartSourceOnLeft_toFinset
     (R growth : Step.FiniteSelection α ℝ) (hR : Measurable R.select)
     (hgrowth : Measurable growth.select) (cap duration : ℕ) (r : Root)
     (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α ℝ) :
-    let hleft := selectedReserveSpineRestartSourceOnLeft_finiteSlices
+    let hleft := selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices
       R growth hR hgrowth cap duration r
-    let hsource := selectedReserveSpineRestartSource_finiteSlices
+    let hselectedReserveSpineRestartBRWPopulation := selectedReserveSpineRestartBRWPopulation_finiteSlices
       R growth hR hgrowth cap duration r
-    hleft.toFinset n field = hsource.toFinset n (RootIndexed.StepField.left field) := by
+    hleft.toFinset n field = hselectedReserveSpineRestartBRWPopulation.toFinset n (RootIndexed.StepField.left field) := by
   apply Finset.coe_injective
-  simp [selectedReserveSpineRestartSourceOnLeft,
+  simp [selectedReserveSpineRestartBRWPopulationOnLeft,
     RootIndexed.CausalPopulation.FiniteSlices.coe_toFinset,
     RootIndexed.CausalPopulation.pullback_population]
 
-/-- The source-plus-window population has the explicit pathwise capacity
+/-- The reserve-spine-plus-window BRW population has the explicit pathwise capacity
 `1 + (duration + 1) * (2 * cap)`. -/
-theorem selectedReserveSpineRestartSourceOnLeft_card_le
+theorem selectedReserveSpineRestartBRWPopulationOnLeft_card_le
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace Root] [MeasurableSingletonClass Root]
@@ -165,15 +168,16 @@ theorem selectedReserveSpineRestartSourceOnLeft_card_le
     (hgrowth : Measurable growth.select) (cap duration : ℕ)
     (hbounded : growth.IsBoundedBy 2) (hcap : 1 ≤ cap) (r : Root)
     (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α ℝ) :
-    ((selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+    ((selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
       cap duration r).toFinset n field).card ≤ 1 + (duration + 1) * (2 * cap) := by
-  rw [selectedReserveSpineRestartSourceOnLeft_toFinset]
-  exact selectedReserveSpineRestartSource_card_le R growth hR hgrowth cap duration
-    hbounded hcap r (selectedReserveSpineRestartSource_finiteSlices
+  rw [selectedReserveSpineRestartBRWPopulationOnLeft_toFinset]
+  exact selectedReserveSpineRestartBRWPopulation_card_le R growth hR hgrowth cap duration
+    hbounded hcap r (selectedReserveSpineRestartBRWPopulation_finiteSlices
       R growth hR hgrowth cap duration r) n (RootIndexed.StepField.left field)
 
-/-- Initial source injection for the singleton-root reserve source. -/
-noncomputable def selectedReserveSpineRestartSourceOnLeft_initialInjection
+/-- Initial cloud injection for the singleton-root reserve-spine BRW
+population. -/
+noncomputable def selectedReserveSpineRestartBRWPopulationOnLeft_initialInjection
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace Root] [MeasurableSingletonClass Root]
@@ -189,25 +193,25 @@ noncomputable def selectedReserveSpineRestartSourceOnLeft_initialInjection
       (Combinatorics.Branching.Selection.Coupling.populationCloud id
         (RootIndexed.BranchingWalk.ofStepField initialPosition
           (RootIndexed.StepField.left field))
-        ((selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+        ((selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
           hgrowth cap duration r).toFinset 0 field))
       (Combinatorics.Branching.Selection.Coupling.populationCloud id
         (RootIndexed.BranchingWalk.ofStepField initialPosition
           (RootIndexed.StepField.right field))
         (RootIndexed.selectedPopulationTotalized N {r} initialPosition id id 0
           (RootIndexed.StepField.right field))) () := by
-  let hleft := selectedReserveSpineRestartSourceOnLeft_finiteSlices
+  let hleft := selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices
     R growth hR hgrowth cap duration r
   have hzero : hleft.toFinset 0 field = RootIndexed.initialPopulation (α := α) {r} := by
     apply Finset.coe_injective
     rw [RootIndexed.CausalPopulation.FiniteSlices.coe_toFinset]
-    rw [selectedReserveSpineRestartSourceOnLeft, RootIndexed.CausalPopulation.pullback_population]
+    rw [selectedReserveSpineRestartBRWPopulationOnLeft, RootIndexed.CausalPopulation.pullback_population]
     ext q
-    change q ∈ selectedReserveSpineRestartSourceSlice R growth hR cap duration r 0
+    change q ∈ selectedReserveSpineRestartBRWPopulationSlice R growth hR cap duration r 0
         (RootIndexed.StepField.left field) ↔
       q ∈ RootIndexed.initialPopulation (α := α) {r}
     rw [RootIndexed.mem_initialPopulation_iff]
-    simp [selectedReserveSpineRestartSourceSlice,
+    simp [selectedReserveSpineRestartBRWPopulationSlice,
       selectedReserveSpineCandidatePopulation, selectedReserveSpineCandidateEnabled,
       ProbabilityTheory.Process.Stopping.Concurrent.Finite.population, ProbabilityTheory.Process.Stopping.Concurrent.Finite.component,
       selectedReserveSpineAlive, selectedReserveSpinePath]
@@ -220,7 +224,7 @@ noncomputable def selectedReserveSpineRestartSourceOnLeft_initialInjection
 /-- Concrete almost-sure rank-installation coupling for the reserve spine
 and all fixed-window candidate trials. Its only pathwise capacity premise is
 the deterministic finite-window bound; candidate success is not used to
-define the source. -/
+define the reserve-spine BRW population. -/
 theorem selectedReserveSpineRestartCoupledInjection_ae
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
@@ -242,51 +246,51 @@ theorem selectedReserveSpineRestartCoupledInjection_ae
         (Combinatorics.Branching.Selection.Coupling.populationCloud id
           (RootIndexed.BranchingWalk.ofStepField initialPosition
             (RootIndexed.StepField.left field))
-          ((selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+          ((selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
             hgrowth cap duration r).toFinset n field))
         (Combinatorics.Branching.Selection.Coupling.populationCloud id
           (RootIndexed.BranchingWalk.ofStepField initialPosition
-          (RootIndexed.restartedRealPositionMatchedField N {r} initialPosition id
-              (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+          (RootIndexed.restartedRealPositionNSelectedBRWField N {r} initialPosition id
+              (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
                 hgrowth cap duration r).toFinset n field))
-          (RootIndexed.restartedRealPositionMatchedPopulation N {r} initialPosition id
-            (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+          (RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r} initialPosition id
+            (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
               hgrowth cap duration r).toFinset n field)) ()) := by
-  let source := selectedReserveSpineRestartSourceOnLeft R growth hR hgrowth cap duration r
-  have hsource : source.FiniteSlices := by
-    dsimp [source]
-    exact selectedReserveSpineRestartSourceOnLeft_finiteSlices
+  let selectedReserveSpineRestartBRWPopulation := selectedReserveSpineRestartBRWPopulationOnLeft R growth hR hgrowth cap duration r
+  have hselectedReserveSpineRestartBRWPopulation : selectedReserveSpineRestartBRWPopulation.FiniteSlices := by
+    dsimp [selectedReserveSpineRestartBRWPopulation]
+    exact selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices
       R growth hR hgrowth cap duration r
   have hinitial : ∀ field, Cloud.SliceDominatingMap id
       (Combinatorics.Branching.Selection.Coupling.populationCloud id
         (RootIndexed.BranchingWalk.ofStepField initialPosition
           (RootIndexed.StepField.left field))
-        (hsource.toFinset 0 field))
+        (hselectedReserveSpineRestartBRWPopulation.toFinset 0 field))
       (Combinatorics.Branching.Selection.Coupling.populationCloud id
         (RootIndexed.BranchingWalk.ofStepField initialPosition
           (RootIndexed.StepField.right field))
-        (RootIndexed.restartedRealPositionMatchedPopulation N {r} initialPosition id
-          hsource.toFinset 0 field)) () := by
+        (RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r} initialPosition id
+          hselectedReserveSpineRestartBRWPopulation.toFinset 0 field)) () := by
     intro field
-    simpa [RootIndexed.restartedRealPositionMatchedPopulation,
-      RootIndexed.restartedRealPositionMatchedField,
+    simpa [RootIndexed.restartedRealPositionNSelectedBRWPopulation,
+      RootIndexed.restartedRealPositionNSelectedBRWField,
       RootIndexed.selectedPopulationTotalized] using
-      selectedReserveSpineRestartSourceOnLeft_initialInjection R growth hR hgrowth
+      selectedReserveSpineRestartBRWPopulationOnLeft_initialInjection R growth hR hgrowth
         cap duration r N initialPosition field
   have hgeneric := RootIndexed.restartedRealPositionCoupledInjection_ae
-    μ hnorm N {r} initialPosition source hsource hinitial n
+    μ hnorm N {r} initialPosition selectedReserveSpineRestartBRWPopulation hselectedReserveSpineRestartBRWPopulation hinitial n
   filter_upwards [hgeneric] with field hgood
-  have hcapacity' : ∀ k < n, (hsource.toFinset (k + 1) field).card ≤ N := by
+  have hcapacity' : ∀ k < n, (hselectedReserveSpineRestartBRWPopulation.toFinset (k + 1) field).card ≤ N := by
     intro k hk
-    have hcard := selectedReserveSpineRestartSourceOnLeft_card_le R growth hR hgrowth
+    have hcard := selectedReserveSpineRestartBRWPopulationOnLeft_card_le R growth hR hgrowth
       cap duration hbounded hcap r (k + 1) field
     omega
-  simpa [source] using hgood hcapacity'
+  simpa [selectedReserveSpineRestartBRWPopulation] using hgood hcapacity'
 
 /-- At any fixed reserve-spine split, a successful cap-stopped growth trial
 forces the rank-installed first-`N` population to contain at least the trial's
 endpoint count, almost surely. This is the concrete success-event consequence
-of the finite-window causal-source coupling. -/
+of the finite-window causal coupling for the reserve-spine BRW population. -/
 theorem selectedReserveSpineRestartCoupledPopulation_card_ge_of_candidate_success_ae
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
@@ -313,16 +317,16 @@ theorem selectedReserveSpineRestartCoupledPopulation_card_ge_of_candidate_succes
           let q := (selectedReserveSpineLineages (Root := Root) R hR).firstChildRootAt
             R r PUnit.unit (k + 1) (RootIndexed.StepField.left field)
           RootIndexed.StepField.left field q.1 (q.2 ++ v)) →
-      lower ≤ (RootIndexed.restartedRealPositionMatchedPopulation N {r}
+      lower ≤ (RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
         initialPosition id
-        (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+        (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
           upper duration r).toFinset (k + 1 + duration) field).card := by
   have hcoupling := selectedReserveSpineRestartCoupledInjection_ae
     μ hnorm N initialPosition R growth hR hgrowth upper duration hbounded hupper
     hcapacity (r := r) (n := k + 1 + duration)
   filter_upwards [hcoupling] with field hdom
   intro halive hsplit hsuccess
-  have hsourceCard := selectedReserveSpineRestartSource_card_ge_of_candidate_success
+  have hselectedReserveSpineRestartBRWPopulationCard := selectedReserveSpineRestartBRWPopulation_card_ge_of_candidate_success
     R growth hR lower upper duration r k (RootIndexed.StepField.left field)
     halive hsplit hupper hsuccess
   rcases hdom with ⟨dom⟩
@@ -331,35 +335,35 @@ theorem selectedReserveSpineRestartCoupledPopulation_card_ge_of_candidate_succes
     (RootIndexed.BranchingWalk.ofStepField initialPosition
       (RootIndexed.StepField.left field))
     (RootIndexed.BranchingWalk.ofStepField initialPosition
-      (RootIndexed.restartedRealPositionMatchedField N {r} initialPosition id
-        (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+      (RootIndexed.restartedRealPositionNSelectedBRWField N {r} initialPosition id
+        (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
           upper duration r).toFinset (k + 1 + duration) field))
-    ((selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+    ((selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
       upper duration r).toFinset (k + 1 + duration) field)
-    (RootIndexed.restartedRealPositionMatchedPopulation N {r} initialPosition id
-      (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+    (RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r} initialPosition id
+      (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
         upper duration r).toFinset (k + 1 + duration) field)
     dom
-  have hsourceEq :
-      (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+  have hselectedReserveSpineRestartBRWPopulationEq :
+      (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
         upper duration r).toFinset (k + 1 + duration) field =
-      selectedReserveSpineRestartSourceSlice R growth hR upper duration r
+      selectedReserveSpineRestartBRWPopulationSlice R growth hR upper duration r
         (k + 1 + duration) (RootIndexed.StepField.left field) := by
     apply Finset.coe_injective
     rw [RootIndexed.CausalPopulation.FiniteSlices.coe_toFinset]
     rfl
   have hcardSource :
-      (selectedReserveSpineRestartSourceSlice R growth hR upper duration r
+      (selectedReserveSpineRestartBRWPopulationSlice R growth hR upper duration r
         (k + 1 + duration) (RootIndexed.StepField.left field)).card ≤
-      (RootIndexed.restartedRealPositionMatchedPopulation N {r} initialPosition id
-        (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+      (RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r} initialPosition id
+        (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
           upper duration r).toFinset (k + 1 + duration) field).card := by
     calc
-      _ = ((selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+      _ = ((selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
           upper duration r).toFinset (k + 1 + duration) field).card :=
-        (congrArg Finset.card hsourceEq).symm
+        (congrArg Finset.card hselectedReserveSpineRestartBRWPopulationEq).symm
       _ ≤ _ := hcard
-  exact hsourceCard.trans hcardSource
+  exact hselectedReserveSpineRestartBRWPopulationCard.trans hcardSource
 
 /-- On the first-success event already indexed on the full pre-sampled
 reserve tree, the rank-installed population at that candidate endpoint has
@@ -385,9 +389,9 @@ theorem selectedReserveSpineRestartCoupledPopulation_card_ge_of_candidateSuccess
       RootIndexed.StepField.left field ∈
           selectedReserveSpineCandidateSuccessEvent R growth hR
             lower upper duration r k →
-      lower ≤ (RootIndexed.restartedRealPositionMatchedPopulation N {r}
+      lower ≤ (RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
         initialPosition id
-        (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+        (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
           upper duration r).toFinset (k + 1 + duration) field).card := by
   have h := selectedReserveSpineRestartCoupledPopulation_card_ge_of_candidate_success_ae
     μ hnorm N initialPosition R growth hR hgrowth lower upper duration hupper
@@ -398,7 +402,7 @@ theorem selectedReserveSpineRestartCoupledPopulation_card_ge_of_candidateSuccess
   rcases hsuccess with ⟨halive, hsplit, hgrowthSuccess⟩
   exact hfield halive hsplit hgrowthSuccess
 
-/-- Every particle in the causal reserve source has a matched particle in the
+/-- Every particle in the causal reserve-spine BRW population has a matched particle in the
 rank-installed `N` population whose position is no larger.  This is the
 position-sensitive comparison needed for right-tail bounds on the minimum;
 the candidate-union population need not equal the retrospective restart. -/
@@ -419,15 +423,15 @@ theorem selectedReserveSpineRestartCoupled_position_witness_ae
     (hcapacity : 1 + (duration + 1) * (2 * cap) ≤ N)
     (r : Root) (n : ℕ) :
     ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ,
-      ∀ q ∈ selectedReserveSpineRestartSourceSlice R growth hR cap duration r n
+      ∀ q ∈ selectedReserveSpineRestartBRWPopulationSlice R growth hR cap duration r n
           (RootIndexed.StepField.left field),
-        ∃ p ∈ RootIndexed.restartedRealPositionMatchedPopulation N {r}
+        ∃ p ∈ RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
             initialPosition id
-            (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+            (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
               hgrowth cap duration r).toFinset n field,
           (RootIndexed.BranchingWalk.ofStepField initialPosition
-            (RootIndexed.restartedRealPositionMatchedField N {r} initialPosition id
-              (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+            (RootIndexed.restartedRealPositionNSelectedBRWField N {r} initialPosition id
+              (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
                 hgrowth cap duration r).toFinset n field)).position id p.1 p.2 ≤
           (RootIndexed.BranchingWalk.ofStepField initialPosition
             (RootIndexed.StepField.left field)).position id q.1 q.2 := by
@@ -437,18 +441,18 @@ theorem selectedReserveSpineRestartCoupled_position_witness_ae
   filter_upwards [hcoupling] with field hdom
   intro q hq
   rcases hdom with ⟨dom⟩
-  let hleft := selectedReserveSpineRestartSourceOnLeft_finiteSlices
+  let hleft := selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices
     R growth hR hgrowth cap duration r
-  have hsourceEq : hleft.toFinset n field =
-      selectedReserveSpineRestartSourceSlice R growth hR cap duration r n
+  have hselectedReserveSpineRestartBRWPopulationEq : hleft.toFinset n field =
+      selectedReserveSpineRestartBRWPopulationSlice R growth hR cap duration r n
         (RootIndexed.StepField.left field) := by
     apply Finset.coe_injective
     rw [RootIndexed.CausalPopulation.FiniteSlices.coe_toFinset]
-    simp [selectedReserveSpineRestartSourceOnLeft,
+    simp [selectedReserveSpineRestartBRWPopulationOnLeft,
       RootIndexed.CausalPopulation.pullback_population,
-      selectedReserveSpineRestartSource]
+      selectedReserveSpineRestartBRWPopulation]
   have hqSource : q ∈ hleft.toFinset n field := by
-    rw [hsourceEq]
+    rw [hselectedReserveSpineRestartBRWPopulationEq]
     exact hq
   have hqCloud : q ∈
       (Combinatorics.Branching.Selection.Coupling.populationCloud id
@@ -489,13 +493,13 @@ theorem selectedReserveSpineRestartCoupledCandidate_position_witness_ae
       ∀ q ∈ rootedCapStoppedPopulation growth cap (RootIndexed.StepField.left field)
           ((selectedReserveSpineLineages (Root := Root) R hR).firstChildRootAt
             R r PUnit.unit (k + 1) (RootIndexed.StepField.left field)) duration,
-        ∃ p ∈ RootIndexed.restartedRealPositionMatchedPopulation N {r}
+        ∃ p ∈ RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
             initialPosition id
-            (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+            (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
               hgrowth cap duration r).toFinset (k + 1 + duration) field,
           (RootIndexed.BranchingWalk.ofStepField initialPosition
-            (RootIndexed.restartedRealPositionMatchedField N {r} initialPosition id
-              (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+            (RootIndexed.restartedRealPositionNSelectedBRWField N {r} initialPosition id
+              (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
                 hgrowth cap duration r).toFinset (k + 1 + duration) field)).position id
               p.1 p.2 ≤
           (RootIndexed.BranchingWalk.ofStepField initialPosition
@@ -505,9 +509,9 @@ theorem selectedReserveSpineRestartCoupledCandidate_position_witness_ae
     hcapacity r (k + 1 + duration)
   filter_upwards [hwitness] with field hfield
   intro halive hsplit q hq
-  have hsource := selectedReserveSpineCandidate_subset_restartSource_at_endpoint
+  have hselectedReserveSpineRestartBRWPopulation := selectedReserveSpineCandidate_subset_restartBRWPopulation_at_endpoint
     R growth hR cap duration r k (RootIndexed.StepField.left field) halive hsplit hq
-  exact hfield q hsource
+  exact hfield q hselectedReserveSpineRestartBRWPopulation
 
 /-- At the random first successful candidate completion, the rank-installed
 `N` population contains at least the candidate's lower population bound, and
@@ -543,21 +547,21 @@ theorem selectedReserveSpineFirstSuccess_endpointComparison_ae
         RootIndexed.StepField.left field ∈
           selectedReserveSpineCandidateSuccessEvent R growth hR
             lower upper duration r k ∧
-        lower ≤ (RootIndexed.restartedRealPositionMatchedPopulation N {r}
+        lower ≤ (RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
           initialPosition id
-          (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+          (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
             upper duration r).toFinset n field).card ∧
         ∀ q ∈ rootedCapStoppedPopulation growth upper
             (RootIndexed.StepField.left field)
             ((selectedReserveSpineLineages (Root := Root) R hR).firstChildRootAt
               R r PUnit.unit (k + 1) (RootIndexed.StepField.left field)) duration,
-          ∃ p ∈ RootIndexed.restartedRealPositionMatchedPopulation N {r}
+          ∃ p ∈ RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
               initialPosition id
-              (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+              (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
                 hgrowth upper duration r).toFinset n field,
             (RootIndexed.BranchingWalk.ofStepField initialPosition
-              (RootIndexed.restartedRealPositionMatchedField N {r} initialPosition id
-                (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+              (RootIndexed.restartedRealPositionNSelectedBRWField N {r} initialPosition id
+                (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
                   hgrowth upper duration r).toFinset n field)).position id p.1 p.2 ≤
             (RootIndexed.BranchingWalk.ofStepField initialPosition
               (RootIndexed.StepField.left field)).position id q.1 q.2 := by
@@ -565,9 +569,9 @@ theorem selectedReserveSpineFirstSuccess_endpointComparison_ae
       ∀ k, RootIndexed.StepField.left field ∈
           selectedReserveSpineCandidateSuccessEvent R growth hR
             lower upper duration r k →
-        lower ≤ (RootIndexed.restartedRealPositionMatchedPopulation N {r}
+        lower ≤ (RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
           initialPosition id
-          (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+          (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
             upper duration r).toFinset (k + 1 + duration) field).card := by
     apply ae_all_iff.2
     intro k
@@ -582,13 +586,13 @@ theorem selectedReserveSpineFirstSuccess_endpointComparison_ae
             (RootIndexed.StepField.left field)
             ((selectedReserveSpineLineages (Root := Root) R hR).firstChildRootAt
               R r PUnit.unit (k + 1) (RootIndexed.StepField.left field)) duration,
-          ∃ p ∈ RootIndexed.restartedRealPositionMatchedPopulation N {r}
+          ∃ p ∈ RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
               initialPosition id
-              (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+              (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
                 hgrowth upper duration r).toFinset (k + 1 + duration) field,
             (RootIndexed.BranchingWalk.ofStepField initialPosition
-              (RootIndexed.restartedRealPositionMatchedField N {r} initialPosition id
-                (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+              (RootIndexed.restartedRealPositionNSelectedBRWField N {r} initialPosition id
+                (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
                   hgrowth upper duration r).toFinset (k + 1 + duration) field)).position id
                 p.1 p.2 ≤
             (RootIndexed.BranchingWalk.ofStepField initialPosition
@@ -631,9 +635,9 @@ theorem selectedReserveSpineFirstSuccess_endpointComparison_ae
         lower upper duration r k := by
     simpa [declarations] using hsuccess
   have hcard' := hcard k hsuccess'
-  have hcardN : lower ≤ (RootIndexed.restartedRealPositionMatchedPopulation N {r}
+  have hcardN : lower ≤ (RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
       initialPosition id
-      (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR hgrowth
+      (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR hgrowth
         upper duration r).toFinset n field).card := by
     simpa [htimeNat] using hcard'
   have hsuccessMem := hsuccess'
@@ -644,13 +648,13 @@ theorem selectedReserveSpineFirstSuccess_endpointComparison_ae
       (RootIndexed.StepField.left field)
       ((selectedReserveSpineLineages (Root := Root) R hR).firstChildRootAt
         R r PUnit.unit (k + 1) (RootIndexed.StepField.left field)) duration,
-      ∃ p ∈ RootIndexed.restartedRealPositionMatchedPopulation N {r}
+      ∃ p ∈ RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
           initialPosition id
-          (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+          (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
             hgrowth upper duration r).toFinset n field,
         (RootIndexed.BranchingWalk.ofStepField initialPosition
-          (RootIndexed.restartedRealPositionMatchedField N {r} initialPosition id
-            (selectedReserveSpineRestartSourceOnLeft_finiteSlices R growth hR
+          (RootIndexed.restartedRealPositionNSelectedBRWField N {r} initialPosition id
+            (selectedReserveSpineRestartBRWPopulationOnLeft_finiteSlices R growth hR
               hgrowth upper duration r).toFinset n field)).position id p.1 p.2 ≤
         (RootIndexed.BranchingWalk.ofStepField initialPosition
           (RootIndexed.StepField.left field)).position id q.1 q.2 := by

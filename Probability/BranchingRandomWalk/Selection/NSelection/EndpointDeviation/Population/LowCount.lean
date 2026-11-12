@@ -16,7 +16,7 @@ public import Probability.Process.RandomWalk.Path.Corridor.Affine
 public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
 public import Probability.BranchingRandomWalk.Assumptions.CrossWeight
 /-!
-# First-stage lower count in the killed population
+# First-stage lower count in the selected BRW population
 
 This is the population-transfer estimate used in Chapter 3, Lemma 3.5 of
 WANG Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
@@ -76,7 +76,7 @@ open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk
 
 /-- The affine-corridor PZ estimate bounds the probability that the actual
-restarted killed population has no more than the independent-root PZ
+restarted selected BRW population has no more than the independent-root PZ
 threshold. The embedding into the actual population holds almost surely by
 boundary normalization. -/
 theorem measure_positiveA_population_le_pzThreshold_le_exp_of_affineCorridorDrawdown
@@ -169,7 +169,7 @@ theorem measure_positiveA_population_le_pzThreshold_le_exp_of_affineCorridorDraw
     m ell hm 0 (-b * logN) 0 (b * logN) ((-b + v) * logN)
     (by norm_num) μ hboundary hcross q hqTop
     (by intro n; simpa using hdrawdown n) hspinePositive
-  have hsuccessEmbedding := ae_positiveA_successfulRoots_card_le_killedPopulation
+  have hsuccessEmbedding := ae_positiveA_successfulRoots_card_le_selectedBRWPopulation
     m ell ellN logN b v c κ μ hboundary
   let rootsLow : Set (RootIndexed.StepField (Fin m) ℕ ℝ) :=
     {field | (∑ r : Fin m,

@@ -36,7 +36,7 @@ The parent `FiniteSlot/Coupling.lean` uses the following internal interfaces:
 - `finiteSlotDecode_mem_population_of_surviveAlong` and
   `finiteSlotDecode_existsUnique_of_mem_population` relate active coded
   addresses to the selected population at generation $n$; the latter gives a
-  unique length-$n$ coded address for each selected source path, while
+  unique length-$n$ coded address for each selected BRW path, while
   `finiteSlotDecode_injective_level` proves levelwise injectivity. Explicitly,
   an active $u$ with $|u|=n$ decodes to a member of
   $\operatorname{population}(S,n,\omega)$, and every such member $p$ has a
@@ -49,8 +49,8 @@ The parent `FiniteSlot/Coupling.lean` uses the following internal interfaces:
   `finiteSlotLevelRoots_range_countable`,
   `finiteSlotLevelRoots_fiber_measurable`, `finiteSlotLevelRoots_depth`, and
   `finiteSlotLevelRoots_injective`, respectively.
-- `finiteSlotLevelSubtreeVector_law` identifies the joint law of the source
-  subtrees rooted at all binary addresses of length $n$ with the product law
+- `finiteSlotLevelSubtreeVector_law` identifies the joint law of the BRW
+  subtrees rooted at the decoded addresses of length $n$ with the product law
   `Measure.infinitePi (fun _ : (Fin n → Fin 2) => offspringFieldLaw μ)`.
 
 The address choices and encode/decode calculations used only to prove these
@@ -481,7 +481,7 @@ lemma finiteSlotDecode_mem_population_of_surviveAlong
     S ω hcapacity u).mp hactive⟩
   rw [finiteSlotDecode_length, hlen]
 
-/-- Every source path in the N-selected population has an active binary
+/-- Every selected BRW path in the first-`N` population has an active binary
 address in the coded finite-slot tree. -/
 private lemma finiteSlotDecode_exists_of_mem_population
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
@@ -622,7 +622,7 @@ lemma finiteSlotDecode_existsUnique_of_mem_population
   apply finiteSlotDecode_injective_level S ω (by rw [hv.1, hlen])
   exact hv.2.2.trans hdecode.symm
 
-/-- The source roots associated with every binary address at generation `n`.
+/-- The decoded BRW roots associated with every binary address at generation `n`.
 There are finitely many such addresses, so the random family has countable
 range even though its values depend on the already revealed field. -/
 noncomputable def finiteSlotLevelRoots

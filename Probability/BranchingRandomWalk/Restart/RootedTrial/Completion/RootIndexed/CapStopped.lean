@@ -31,7 +31,7 @@ RootIndexed.capStoppedPopulationAt_selectedRoot_measurable,
 RootIndexed.ReserveLineages.capStoppedCandidate_adapted,
 RootIndexed.ReserveLineages.capStoppedCandidates_adapted,
 RootIndexed.ReserveLineages.capStoppedCandidates_card_le, and
-RootIndexed.ReserveLineages.serialCapStoppedSource_card_le. Put
+RootIndexed.ReserveLineages.serialCapStoppedReserveAndCandidatePopulation_card_le. Put
 \(q_i(k,\omega)=\operatorname{firstChildRootAt}(i,k,\omega)\) and let
 \(C_{i,k,a}(\omega)\) be the age-\(a\) cap-stopped descendant population
 rooted at \(q_i(k,\omega)\). Then
@@ -45,8 +45,7 @@ If the growth selector is bounded by two and \(1\le c\), then
 The map \(\omega\mapsto C_{i,k,a}(\omega)\) is measurable in the
 generation-\((k+a)\) domain. For an enabled finite index set \(E_n(\omega)\),
 the concurrent union has size at most \(\#E_n(\omega)\,2c\); if
-\(\#E_n(\omega)\le1\) and the reserve has size at most one, the combined
-source has size at most \(1+2c\).
+\(\#E_n(\omega)\le1\) and the reserve has size at most one, the combined reserve-spine and candidate population has size at most \(1+2c\).
 For any generation-measurable selected root $q(\omega)=(r(\omega),u(\omega))$
 with $|u(\omega)|=s$, the public selected-root measurability theorem gives
 measurability of the rooted cap-stopped population at generation $s+a$.
@@ -292,10 +291,10 @@ theorem RootIndexed.ReserveLineages.capStoppedCandidates_card_le
     growthSelection cap hR hcap r i k age ω
 
 /-- A serial restart schedule enables at most one capped candidate at a time.
-Combining this with a one-particle reserve spine gives the source-capacity
+Combining this with a one-particle reserve spine gives the reserve-and-candidate capacity
 bound `1 + 2 * cap`; the theorem isolates the exact combinatorial input from
 the schedule and branching arguments. -/
-theorem RootIndexed.ReserveLineages.serialCapStoppedSource_card_le
+theorem RootIndexed.ReserveLineages.serialCapStoppedReserveAndCandidatePopulation_card_le
     {Root Trial α X : Type*} [LinearOrder α] [OrderBot α]
     [MeasurableSpace X] [DecidableEq Trial]
     [DecidableEq (RootIndexed.TreeNode Root α)]

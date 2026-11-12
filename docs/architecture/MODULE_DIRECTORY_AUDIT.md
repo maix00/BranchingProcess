@@ -29079,3 +29079,48 @@ pass. A fresh structural scan found no overfull direct-module directories,
 same-level file/directory stem collisions, parent-prefixed file stems,
 duplicate `Lemmas` entries, `Proof/` or `Source/` directories, or public
 imports from `Lemmas/` modules.
+
+## Threshold-count matching module names (2026-11-12)
+
+Renamed `Combinatorics/Matching/LowerTail.lean` to
+`Combinatorics/Matching/ThresholdCountMatching.lean`. Its finite theorem
+matches `objectsToMatch` into `availablePartners` when, for every order key
+threshold, the number of objects below that threshold is bounded by the
+number of available partners below it. The theorem and its assumptions are
+unchanged; the module name now describes this threshold-count interface.
+
+Renamed `Combinatorics/Selection/NSelection/Matching/Hall.lean` to
+`Combinatorics/Selection/NSelection/Matching/SelectedPopulation.lean`. This
+module specializes the generic matching result to the population chosen by
+the first-`N` rule. `ByRank.lean` remains the equal-rank matching interface.
+Updated the active imports, module headers, ownership map, and audit ledger;
+the former paths are retained only in this chronological audit history, with
+no compatibility aliases.
+
+## Threshold-count matching interface refinement (2026-11-12)
+
+Shortened the generic matching module path to
+`Combinatorics/Matching/ThresholdCount.lean` and renamed its public theorem to
+`exists_injective_le_of_thresholdCountDomination`; the statement remains the
+finite threshold-count condition
+\[
+\#\{x\in\texttt{objectsToMatch}:\texttt{objectOrderKey}(x)\le a\}
+\le
+\#\{y\in\texttt{availablePartners}:\texttt{partnerOrderKey}(y)\le a\}
+\quad\Longrightarrow\quad
+\exists f\text{ injective},\;
+\texttt{partnerOrderKey}(f(x))\le\texttt{objectOrderKey}(x).
+\]
+Renamed the hypothesis to `hthresholdCount` and updated all direct uses.
+
+In `Selection/NSelection/Matching/SelectedPopulation.lean`, the two public
+partner-assignment forms are now one theorem,
+`exists_injective_le_of_partnerAssignment_into_firstNBy`. Its assignment is
+defined on `{p : Object // p ∈ objectsToMatch}`, which makes the domain and
+the injectivity condition explicit. Updated the branching coupling and
+infinite-offspring rank comparison callers; the former dependent and
+nondependent theorem names have no compatibility aliases. Coupling
+hypotheses now name the child inclusion, capacity, first-`N` certificate,
+parent-matched slot inclusion, shared increments, and order-key translation
+properties they express. Concrete coupling documentation names
+`selectedBranchingWalk` and `nSelectedBranchingWalk` directly.

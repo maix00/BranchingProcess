@@ -195,15 +195,15 @@ lemma eventually_positiveA_spineCorridor_lowerBound_of_centeredSecondMoment
     with n hnIndex hnLower hnUpper
   have hquant := hcorridor (ell n) hnIndex
   let d := logarithmicSmallDeviationScale (ell n)
-  let source : Set (ℕ → ℝ) :=
+  let narrowCorridorEvent : Set (ℕ → ℝ) :=
     {increment | RandomWalk.history (ell n) 0 increment ∈
       affineCorridorThrough (ell n) (-ratio * scale (ell n)) 0
         (ratio * scale (ell n)) ((-ratio + 1) * scale (ell n))}
-  let target : Set (ℕ → ℝ) :=
+  let wideCorridorEvent : Set (ℕ → ℝ) :=
     {increment | RandomWalk.history (ell n) 0 increment ∈
       affineCorridorThrough (ell n) (-b * L n) 0 (b * L n)
         ((-b + v) * L n)}
-  have hsourceSubset : source ⊆ target := by
+  have hnarrowCorridorEvent_subset_wideCorridorEvent : narrowCorridorEvent ⊆ wideCorridorEvent := by
     intro increment hinc
     change RandomWalk.history (ell n) 0 increment ∈
       affineCorridorThrough (ell n) (-ratio * scale (ell n)) 0
@@ -213,11 +213,11 @@ lemma eventually_positiveA_spineCorridor_lowerBound_of_centeredSecondMoment
         ((-b + v) * L n)
     simp only [affineCorridorThrough, Set.mem_ofPred_eq,
       zero_mul, add_zero] at hinc ⊢
-    have hsourceWidth : -ratio * scale (ell n) +
+    have hnarrowCorridorWidth : -ratio * scale (ell n) +
         ratio * scale (ell n) = 0 := by ring
-    have htargetWidth : -b * L n + b * L n = 0 := by ring
-    rw [hsourceWidth] at hinc
-    rw [htargetWidth]
+    have hwideCorridorWidth : -b * L n + b * L n = 0 := by ring
+    rw [hnarrowCorridorWidth] at hinc
+    rw [hwideCorridorWidth]
     have hbottom : -ratio * scale (ell n) = -b₀ * d := by
       dsimp [ratio, scale, v₀, b₀, d]
       unfold logarithmicSmallDeviationScale
@@ -233,10 +233,10 @@ lemma eventually_positiveA_spineCorridor_lowerBound_of_centeredSecondMoment
       exact ⟨hnLower.trans hlo, hhi⟩
     · exact hinc.2.trans hnUpper
   have htargetBound : positiveASpineCorridorLowerBound ν b v C
-      amplitude q (ell n) ≤ (tiltedIncrementFieldLaw realPotential μ) target := by
-    simpa [positiveASpineCorridorLowerBound, source, target,
-      scale, ratio, v₀, b₀] using hquant.trans (measure_mono hsourceSubset)
-  simpa only [target, L, ell] using htargetBound
+      amplitude q (ell n) ≤ (tiltedIncrementFieldLaw realPotential μ) wideCorridorEvent := by
+    simpa [positiveASpineCorridorLowerBound, narrowCorridorEvent, wideCorridorEvent,
+      scale, ratio, v₀, b₀] using hquant.trans (measure_mono hnarrowCorridorEvent_subset_wideCorridorEvent)
+  simpa only [wideCorridorEvent, L, ell] using htargetBound
 
 private lemma positiveASpineCorridorLowerBound_pos
     (ν : Measure ℝ) (b v C amplitude : ℝ) (q : ℝ≥0∞)
