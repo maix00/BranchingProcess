@@ -20,10 +20,10 @@ single-lineage walk:
 * position in the associated generation cloud;
 * the iterated increment kernel.
 
-The equalities are stated for an abstract additive position space.  Killing
-is handled separately by `RandomWalk.process`; the cloud formula below reads
-the position attached to the unique address of an everywhere-present
-increment realization.
+The equalities are stated for an abstract additive position space. Lineage
+presence is recorded separately by `RandomWalk.process`; the cloud formula
+below reads the position attached to the unique address of an everywhere-
+present increment realization.
 
 ## Public declarations
 

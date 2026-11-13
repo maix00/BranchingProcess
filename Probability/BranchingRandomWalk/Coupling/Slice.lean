@@ -17,14 +17,14 @@ order-dominating map between cloud slices.
 
 ## Public declarations
 
-* `Coupling.SliceDominates κ φ source target t` means that for
+* `Coupling.SliceDominates κ φ objectsToMatchCloud availablePartnersCloud t` means that for
   `κ`-almost every paired sample `(x,y)`, there is a
-  `Cloud.SliceDominatingMap φ (source x) (target y) t`.
+  `Cloud.SliceDominatingMap φ (objectsToMatchCloud x) (availablePartnersCloud y) t`.
   Precisely,
   \[
   \kappa\text{-a.e. }(x,y),\qquad
   \operatorname{Nonempty}\bigl(\operatorname{SliceDominatingMap}
-  (\varphi,\operatorname{source}(x),\operatorname{target}(y),t)\bigr).
+  (\varphi,\operatorname{objectsToMatchCloud}(x),\operatorname{availablePartnersCloud}(y),t)\bigr).
   \]
 -/
 
@@ -44,10 +44,10 @@ order-dominating map between the indicated cloud slices. -/
 def Coupling.SliceDominates {μ : Measure X} {ν : Measure Y}
     (κ : ProbabilityTheory.Coupling μ ν)
     (φ : Position → Value)
-    (source : X → Cloud Time Root α Position)
-    (target : Y → Cloud Time Root α Position)
+    (objectsToMatchCloud : X → Cloud Time Root α Position)
+    (availablePartnersCloud : Y → Cloud Time Root α Position)
     (t : Time) : Prop :=
   κ.AESatisfies fun x y =>
-    Nonempty (Cloud.SliceDominatingMap φ (source x) (target y) t)
+    Nonempty (Cloud.SliceDominatingMap φ (objectsToMatchCloud x) (availablePartnersCloud y) t)
 
 end ProbabilityTheory.BranchingRandomWalk

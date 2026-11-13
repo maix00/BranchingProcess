@@ -19,11 +19,11 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviatio
 
 In the namespace
 `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation`,
-`eventually_measure_positiveAKilledTerminalEmpty_le` combines the
+`eventually_measure_positiveASelectedBRWTerminalEmpty_le` combines the
 terminal-failure decomposition with the second-stage all-avoid estimate. Under
 the hypotheses in the theorem, eventually
 \[
-\mathbb P(\text{terminal killed population empty})
+\mathbb P(\text{terminal selected BRW population empty})
 \le \mathbb P(A_n^c)+\mathbb P(A_n)
    \exp\!\left(-\frac{K_n}{4}\,
    \operatorname{toReal}(\operatorname{PZMean}(D_n,\kappa,c,v))\right),
@@ -55,8 +55,8 @@ open ProbabilityTheory.BranchingRandomWalk.Spine
 /-- For the varying first and second stage horizons, terminal
 extinction is bounded by the low-root probability plus the explicit
 second-stage all-failure exponential. The remaining work is to bound the
-first term and combine this killed-process estimate with the capacity event. -/
-theorem eventually_measure_positiveAKilledTerminalEmpty_le
+first term and combine this selected-process estimate with the capacity event. -/
+theorem eventually_measure_positiveASelectedBRWTerminalEmpty_le
     (m : ℕ) (K : ℕ → ℕ) (hKm : ∀ n, K n ≤ m)
     (ell ellN : ℕ → ℕ) (logN : ℕ → ℝ) (b v c κ : ℝ)
     (hEll : ∀ n, 0 < ell n) (hEllN : ∀ n, ell n ≤ ellN n)
@@ -78,9 +78,9 @@ theorem eventually_measure_positiveAKilledTerminalEmpty_le
     (hentranceWidth : (5 * (κ / c ^ 2) + v) / 2 ≤ c)
     (hK : ∀ᶠ n : ℕ in atTop, 0 < K n) :
     let P : ℕ → RestartedPopulation m := fun n =>
-      positiveAKilledPopulation m (ell n) (ellN n) (logN n) b v c κ
+      positiveASelectedBRWPopulation m (ell n) (ellN n) (logN n) b v c κ
     let hP : ∀ n, (P n).FiniteSlices := fun n =>
-      positiveAKilledPopulation_finiteSlices
+      positiveASelectedBRWPopulation_finiteSlices
         m (ell n) (ellN n) (logN n) b v c κ
     let A : ℕ → Set (RestartedField m) :=
       fun n => secondStageEnoughRoots (K := K n) P hP ell n
@@ -96,9 +96,9 @@ theorem eventually_measure_positiveAKilledTerminalEmpty_le
   classical
   dsimp
   let P : ℕ → RestartedPopulation m := fun n =>
-    positiveAKilledPopulation m (ell n) (ellN n) (logN n) b v c κ
+    positiveASelectedBRWPopulation m (ell n) (ellN n) (logN n) b v c κ
   let hP : ∀ n, (P n).FiniteSlices := fun n =>
-    positiveAKilledPopulation_finiteSlices
+    positiveASelectedBRWPopulation_finiteSlices
       m (ell n) (ellN n) (logN n) b v c κ
   let D : ℕ → ℕ := fun n => ellN n - ell n
   let A : ℕ → Set (RestartedField m) :=
@@ -118,7 +118,7 @@ theorem eventually_measure_positiveAKilledTerminalEmpty_le
       _hamplitude, havoid⟩ := havoid
   filter_upwards [havoid] with n havoidN
   have hdecomp :=
-    measure_positiveAKilledTerminalEmpty_le
+    measure_positiveASelectedBRWTerminalEmpty_le
       m (K n) (ell n) (ellN n) (hKm n) (logN n) b v c κ
       (hEll n) (hEllN n) (hstart n) μ hboundary
   have havoid' :
@@ -146,7 +146,7 @@ theorem eventually_measure_positiveAKilledTerminalEmpty_le
           (RootIndexed.stepFieldLaw (Root := Fin m) μ)
             (A n ∩ RootIndexed.selectedSubtreeStepFieldVector (chosen n) ⁻¹'
               positiveASecondStageFailureEvent (K n) (D n) κ c v) := by
-          simpa [P, hP, A, chosen, D, positiveAKilledPopulation,
+          simpa [P, hP, A, chosen, D, positiveASelectedBRWPopulation,
             secondStageEnoughRoots, secondStageRoots] using hdecomp
     _ ≤ (RootIndexed.stepFieldLaw (Root := Fin m) μ) (A n)ᶜ +
           (RootIndexed.stepFieldLaw (Root := Fin m) μ) (A n) *

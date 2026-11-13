@@ -24,7 +24,7 @@ import all Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Event
 
 This one-use population-transfer result is the proof step joining the root
 selection and second-stage path event to the final terminal-population bound.
-For the killed population \(P\), its conclusion is
+For the selected BRW population \(P\), its conclusion is
 \[
   K\le |P_\ell|\ \land\ \exists i<K:\text{the selected descendant follows }
   \mathcal C_{\ell_N-\ell}
@@ -47,9 +47,9 @@ open ProbabilityTheory.BranchingRandomWalk.RootIndexed
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-/-- If the killed slice at the first cutoff has at least `K` particles and
+/-- If the selected BRW slice at the first cutoff has at least `K` particles and
 one of their chosen descendant fields has a path in the second-stage
-corridor, the terminal killed slice is nonempty. The only pointwise
+corridor, the terminal selected BRW slice is nonempty. The only pointwise
 regularity input is finiteness of the offspring weights along the selected
 root; boundary normalization supplies this simultaneously for all addresses
 almost surely. -/
@@ -62,26 +62,26 @@ lemma positiveASecondStage_success_of_enoughRoots
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : RestartedField m)
     (hcard : K ≤
-      ((positiveAKilledPopulation_finiteSlices
+      ((positiveASelectedBRWPopulation_finiteSlices
         m ell ellN logN b v c κ).toFinset ell field).card)
     (hsuccess : ∃ i : Fin K,
       RootIndexed.selectedSubtreeStepFieldVector
         (secondStageRoots hKm
-          (fun _ : ℕ => positiveAKilledPopulation
+          (fun _ : ℕ => positiveASelectedBRWPopulation
             m ell ellN logN b v c κ)
-          (fun _ : ℕ => positiveAKilledPopulation_finiteSlices
+          (fun _ : ℕ => positiveASelectedBRWPopulation_finiteSlices
             m ell ellN logN b v c κ)
           (fun _ : ℕ => ell) 0) field i ∈
         hasPathHistoryIn (ι := ℕ) realPotential (ellN - ell) 0
           (positiveASecondStageCorridor (ellN - ell) κ c v))
     (hweight : ∀ r : Fin m, ∀ z : List ℕ,
       totalPotentialWeight realPotential (-1) (field r z) ≠ ∞) :
-    (positiveAKilledPopulation m ell ellN logN b v c κ)
+    (positiveASelectedBRWPopulation m ell ellN logN b v c κ)
       ellN field |>.Nonempty := by
   classical
-  let P := positiveAKilledPopulation m ell ellN logN b v c κ
+  let P := positiveASelectedBRWPopulation m ell ellN logN b v c κ
   let hP : P.FiniteSlices :=
-    positiveAKilledPopulation_finiteSlices m ell ellN logN b v c κ
+    positiveASelectedBRWPopulation_finiteSlices m ell ellN logN b v c κ
   let chosen : RestartedField m → Fin K → RootIndexed.TreeNode (Fin m) ℕ :=
     fun ω i => secondStageRankRoot hKm P hP ell ω i
   have hcard' : K ≤ (hP.toFinset ell field).card := by
@@ -92,9 +92,9 @@ lemma positiveASecondStage_success_of_enoughRoots
   let u : List ℕ := root.2
   have hrootEq :
       secondStageRoots hKm
-        (fun _ : ℕ => positiveAKilledPopulation
+        (fun _ : ℕ => positiveASelectedBRWPopulation
           m ell ellN logN b v c κ)
-        (fun _ : ℕ => positiveAKilledPopulation_finiteSlices
+        (fun _ : ℕ => positiveASelectedBRWPopulation_finiteSlices
           m ell ellN logN b v c κ)
         (fun _ : ℕ => ell) 0 field i = root := by
     dsimp [secondStageRoots, chosen, P, hP, root]
@@ -108,9 +108,9 @@ lemma positiveASecondStage_success_of_enoughRoots
     have hfieldEq :
         RootIndexed.subtreeStepFieldVector
           (secondStageRoots hKm
-            (fun _ : ℕ => positiveAKilledPopulation
+            (fun _ : ℕ => positiveASelectedBRWPopulation
               m ell ellN logN b v c κ)
-            (fun _ : ℕ => positiveAKilledPopulation_finiteSlices
+            (fun _ : ℕ => positiveASelectedBRWPopulation_finiteSlices
               m ell ellN logN b v c κ)
             (fun _ : ℕ => ell) 0 field) field i =
           RootIndexed.subtreeStepFieldVector
@@ -119,9 +119,9 @@ lemma positiveASecondStage_success_of_enoughRoots
       simp [RootIndexed.subtreeStepFieldVector, hrootEq, root, r, u]
     change RootIndexed.subtreeStepFieldVector
         (secondStageRoots hKm
-          (fun _ : ℕ => positiveAKilledPopulation
+          (fun _ : ℕ => positiveASelectedBRWPopulation
             m ell ellN logN b v c κ)
-          (fun _ : ℕ => positiveAKilledPopulation_finiteSlices
+          (fun _ : ℕ => positiveASelectedBRWPopulation_finiteSlices
             m ell ellN logN b v c κ)
           (fun _ : ℕ => ell) 0 field) field i ∈ _ at hi
     rw [hfieldEq] at hi
@@ -146,12 +146,12 @@ lemma positiveASecondStage_success_of_enoughRoots
         (positiveAWindowUpper ell ellN logN b v c κ)
         (positiveARestartedWindow_subset_Iic_upper
           ell ellN logN b v c κ) ell field := by
-    simpa [P, positiveAKilledPopulation] using hrootMem'
+    simpa [P, positiveASelectedBRWPopulation] using hrootMem'
   have hterminal := mem_restartedPopulation_of_secondStageCorridor
     m ell ellN logN b v c κ hell hellN hstart field r u w hu hw
     hrootMemExplicit hsurvive hcorridor (fun z hz => hweight r z)
   exact ⟨(r, u ++ w), by
-    simpa [P, positiveAKilledPopulation]
+    simpa [P, positiveASelectedBRWPopulation]
       using hterminal⟩
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

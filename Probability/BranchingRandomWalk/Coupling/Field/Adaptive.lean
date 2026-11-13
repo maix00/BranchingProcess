@@ -241,8 +241,9 @@ theorem RootIndexed.stepFieldLaw_glueSelected
       exact RootIndexed.stepFieldLaw_reindex μ Sum.inr Sum.inr_injective
 
 /-- Coordinate-level version of `stepFieldLaw_glueSelected`.  Each output
-descendant field may mix arbitrary fresh source coordinates, provided the
-complete random coordinate map is injective and chosen from the past. -/
+descendant field may read arbitrary fresh coordinates from the two-copy field,
+provided the complete random coordinate map is injective and chosen from the
+past. -/
 theorem RootIndexed.stepFieldLaw_glueCoordinates
     {Root α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]

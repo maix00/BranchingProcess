@@ -33,8 +33,8 @@ public import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed.
   specializes the construction to generation-dependent measurable position
   sets \(W_n\), retaining a child exactly when its position belongs to \(W_n\).
 
-This file constructs a killed branching population by retaining precisely the
-genuine children that satisfy a generation-dependent observable predicate.
+This file constructs a selected branching population by retaining precisely
+the genuine children that satisfy a generation-dependent observable predicate.
 The predicate may inspect the entire generation domain, so it can express
 absolute barriers, ancestral tube conditions, and scheduled terminal cuts.
 -/
@@ -143,7 +143,7 @@ theorem selectedBy_adapted
         (RootIndexed.childrenAtGeneration_measurable n
           (selectedBy initial keep hfinite n) ih)).and (hkeep (n + 1) q)
 
-/-- Observable predicate killing produces a causal branching population. -/
+/-- Observable predicate selection produces a causal branching population. -/
 noncomputable def ofPredicate
     {Root α X : Type*} [MeasurableSpace X]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
@@ -213,8 +213,8 @@ theorem ofPredicate_finiteSlices
       Set (RootIndexed.TreeNode Root α)).Finite
     exact (selectedBy initial keep hfinite n field).finite_toSet
 
-/-- Kill every child whose absolute position is outside the prescribed
-measurable set for its generation.  The position space and the windows remain
+/-- Select the children whose absolute positions belong to the prescribed
+measurable set for their generation.  The position space and the windows remain
 abstract; real intervals are an application. -/
 noncomputable def ofPositionSets
     {Root α Mark Position : Type*}

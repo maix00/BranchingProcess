@@ -70,10 +70,10 @@ and remaining-work statement is in the final section of this file.
 | `MeasureTheory/Selection` | Measurable environment-dependent and domain-flow-adapted selection | `Random.lean` defines general set-valued and capacity-$N$ mechanisms; `Finite/{Basic,Causal,ByValue}.lean` gives finite-input, domain-flow, and measurable value-ranked forms; `NSelection/` proves measurability of generic ranked capacity-$N$ selectors; `Causal.lean` handles arbitrary candidate sets; `Process.lean` forms measurable selected populations. These types use measurable candidate spaces and information domains without branching data. Root-indexed and cloud-coupling applications remain under `Probability/BranchingRandomWalk/Selection/`; the generic causal finite-selection overflow stopping time belongs under `Probability/Process/Stopping/Selection/Overflow.lean`. |
 | `MeasureTheory/BranchingWalk/Step/Selection` | Measurability of operations on finite offspring selections | `FirstN.lean`, `Potential.lean`, and `Slot.lean` give measurable versions of the corresponding deterministic step-selection operations; `FiniteSlot.lean` proves measurability of the binary-slot offspring encoding. |
 | `Probability/BranchingRandomWalk/Spine` | Spine random walks, many-to-one identities, and tube moments | `ManyToOne/`, `RandomWalk/`, `PointMeasure/`, and `Tilted/` group the corresponding public constructions. `Path/` groups lineage-generation observables, many-to-one identities, and second-moment results by subject; `Path/SecondMoment/Basic.lean` owns pathwise diagonal/off-diagonal and MRCA decompositions, while `Path/SecondMoment/SubtreeLaws.lean` owns distinct-child subtree laws and integrated second-moment identities. The IID finite-history integral recursions belong to the general random-walk path interface at `Probability/Process/RandomWalk/Path/Measure.lean`; Spine modules import them for their proof chains. `Tube/` groups corridor and tube-specific second-moment estimates; within `Tube/MRCA/`, `Expansion.lean` handles path-level corridor splitting, `Prefix.lean` factors weighted ancestral-prefix observables, and `PositiveDepth.lean` defines and bounds the affine-tube contribution at every MRCA depth, including the root split at depth zero. `MRCA/Lemmas/ChildPairBound.lean` contains the technical shifted-corridor stages for the root-split term. `ActualContribution.lean` connects the path-level decomposition to the depth-indexed contribution. The declaration namespaces remain rooted at `ProbabilityTheory.BranchingRandomWalk.Spine`. |
-| `Probability/BranchingRandomWalk/Restart/RootedTrial/FiniteSlot` | Finite-slot coupling and growth estimates for selected branching populations | `Offspring.lean` owns the pushforward offspring law and ENNReal supercriticality; `Coupling.lean` identifies the selected population with a binary-address process and proves its iid row law; `Moments.lean` gives the first- and second-moment recursions and identifies the real encoded mean with the offspring law's extended expected count; `Growth.lean` converts the existing supercriticality criterion to the real moment hypothesis and proves finite-horizon growth bounds. `Lemmas/Coding.lean` contains only the one-use address-coding and subtree-vector proof support. The deterministic encoding itself is owned by `Combinatorics/BranchingWalk/Step/Selection/FiniteSlot.lean`, and its measurability by `MeasureTheory/BranchingWalk/Step/Selection/FiniteSlot.lean`. |
+| `Probability/BranchingRandomWalk/Restart/SelectedPath/GrowthTrial/FiniteSlot` | Finite-slot coupling and growth estimates for selected branching random walks | `Offspring.lean` owns the pushforward offspring law and ENNReal supercriticality; `Coupling.lean` identifies the selected-BRW growth-trial population with a binary-address process and proves its iid row law; `Moments.lean` gives the first- and second-moment recursions and identifies the real encoded mean with the offspring law’s extended expected count; `Growth.lean` converts the supercriticality criterion to the real moment hypothesis and proves finite-horizon growth bounds. `Lemmas/Coding.lean` contains only address-coding and subtree-vector proof support. The deterministic encoding itself is owned by `Combinatorics/BranchingWalk/Step/Selection/FiniteSlot.lean`, and its measurability by `MeasureTheory/BranchingWalk/Step/Selection/FiniteSlot.lean`. |
 | `Probability/RandomMeasure` | General transformations of laws on measure-valued spaces | `ExponentialTilt.lean` is the exponential weighted-image law for an arbitrary random measure; it does not require a counting measure or a point-process finiteness condition. Poisson random measures remain grouped in `Poisson/`. |
 | `Probability/RandomMeasure/Poisson` | Poisson random measures and their public probability interfaces | `RandomMeasure/Basic.lean`, `Evaluation.lean`, and `Independence.lean` expose the realized measure, evaluation laws, and disjoint-set independence; their shared proof support is in `RandomMeasure/Lemmas.lean`. `Integration/`, `Intensity/`, `JumpPath/`, and `Realization/` group integration identities, support and time-mark facts, path bounds, and finite-jump configurations. `PointFamily/` separates the partition and canonical construction, block independence, piece sums, and thinning. The declarations retain the `ProbabilityTheory` namespace. |
-| `Probability/Process/Brownian` | Brownian-process construction, continuous path laws, and support | `Construction/Existence.lean` constructs the Gaussian pre-Brownian process from the random-walk path limit; `PreBrownianModification.lean` owns the project-level continuous-version interface; its one-use fourth-moment Kolmogorov bound is under `Construction/Lemmas/KolmogorovMoment.lean`. `PathLaw/` groups continuous versions and path-space laws; `Scaling/`, `Marginal/`, and `Support/` own the corresponding interfaces. `Reflection/` is divided into `Path/`, `FirstPassage/`, and `Descending/` families. `FirstPassage/Grid.lean` uses Mathlib's generic `hittingBtwn` for finite observations; `GridLaw.lean` contains the Brownian-law theorem for the separate path first-passage grid approximation.
+| `Probability/Process/Brownian` | Brownian-process construction, continuous path laws, and support | `Construction/Existence.lean` constructs the Gaussian pre-Brownian process from the random-walk path limit and uses BrownianMotion's general continuous-modification construction; `PathLaw/ContinuousModification.lean` provides the measurable continuous-path-valued representative used by path-law arguments. The former local fourth-moment modification modules were removed as subsumed by BrownianMotion. `PathLaw/` groups continuous versions and path-space laws; `Scaling/`, `Marginal/`, and `Support/` own the corresponding interfaces. `Reflection/` is divided into `Path/`, `FirstPassage/`, and `Descending/` families. `FirstPassage/Grid.lean` uses Mathlib's generic `hittingBtwn` for finite observations; `GridLaw.lean` contains the Brownian-law theorem for the separate path first-passage grid approximation.
 | `Probability/Process/Stable/PathLaw` | Càdlàg path laws for stable clock processes and stable Lévy processes | `Basic.lean` states the general stable-clock path-law interface; `UnitInterval.lean` constructs its canonical finite-horizon law. `Concatenation.lean` builds a full-time process from i.i.d. unit blocks, and `FullProcess.lean` proves independent increments and stable increment laws. `MonotoneGrid.lean` extends strict finite-grid laws to grids with repeated times; `LinearTube.lean` proves positive mass of Gaussian stable path balls around linear paths. These are complete reusable path-law constructions and theorems; their module-local grid and bridge computations remain private. |
 | `Probability/Process/Stable/SmallDeviation/EscapeRate` | Stable-process range, corridor, endpoint, and path-law escape rates | `Basic.lean` proves the rational-time range escape rate; `Corridor.lean` transfers its constant to centered and shifted corridors; `Endpoint.lean` treats the left-open, right-closed terminal window. `Law.lean` proves uniqueness of the rate constant from the increment law. `PathLaw/Basic.lean` defines the finite-horizon tube and rate predicate, while `PathLaw/Transfer.lean` transfers the process-level result to a stable-clock path law. The comparison and positivity calculations remain private within their theorem modules. |
 | `Probability/Process/Stable/SmallDeviation` | Stable-process small-deviation event interfaces and probability comparisons | The subject root owns the rational range tube, block endpoint-bin lower bound, corridor/range logarithmic comparison, shifted-corridor entrance comparison, and endpoint-constrained comparison. `Blocks/` owns stable time-space rescaling and adjacent-block entrance factorization; these complete stable-process event interfaces are distinct from the theorem-specific construction modules under `Blocks/Lower/` and `Blocks/Upper/`. `EscapeRate/` owns the process-level limits and finite-horizon path-law transfer. |
@@ -99,7 +99,7 @@ and remaining-work statement is in the final section of this file.
 | `Stable/SmallDeviation/Blocks/Lower` | Lower block estimates | `Assembly/`, `Bounds/`, `Entrance/`, `Feedback/`, and `Return/` group the distinct construction steps. `Return/TwoBins.lean` gives the concrete two-bin return-core construction and stable range-tube lower bounds. `Entrance/PoissonModel.lean` owns the stable `α < 1` positive entrance theorem; it hides the chosen Lévy--Khintchine triple and exposes only the stable-process and CDF assumptions. The first-block specialization of stable return scaling used by these proofs now lives one level above at `Blocks/ReturnScale.lean`. `Feedback/` contains the stable short-block scaling and entrance consequences; the adaptive finite-block probability and path-tube implications now live with generic uniform-block path results. Stable-law adapters are limited to block laws and estimates whose statements actually use stability. |
 | `Stable/SmallDeviation/Blocks/Upper` | Stable-process finite-block tube upper bounds | `Basic.lean` derives the product/power bound from independent, identically distributed uniform blocks; `Scale.lean` rescales the tube; `ArbitraryHorizon.lean` gives the floor-inverse exponent; `Strict.lean` derives an exponential bound from positive tail mass; `Shrinking.lean` proves vanishing for a corridor whose width tends to zero. The shrinking-corridor proof uses the more general exact-width inclusion from `Probability/Process/Corridor/Range.lean`; its duplicate extra-width helper was removed. |
 | `Stable/SmallDeviation/Blocks/ShiftComparison` | Entrance probabilities and logarithmic ratios for translated stable corridors | `Core.lean` proves the finite-scale comparison assuming a positive entrance probability; `Feedback.lean` derives that input in the index-above-one and index-one regimes; `Support.lean` gives a path-support criterion; `AllIndices.lean` proves entrance positivity for every strictly stable index from the two-sided CDF condition. The complete entrance and ratio theorems remain public; their individual construction arguments stay in the lower-bound modules. |
-| `BranchingRandomWalk/Restart/RootedTrial` | Root-indexed restart trials, reserve-spine growth, and first-`N` coupling | `Basic.lean` transfers a fixed-root split-completion time to the global domain filtration. `Spine/` defines the selected reserve path, split completion, selected roots, and sibling-trial factorization. `Reserve/` owns concurrent candidates, causal reserve sources, finite-slot Galton--Watson growth, stopped sibling lineages, and the recursive failure identity. `FiniteSlot/` defines the binary-slot offspring law, its coupling and moment recurrences, and the growth bound; its address-coding support is under `FiniteSlot/Lemmas/`. `Completion/` contains the cap-stopped trial, endpoint stopping and fresh-field laws, horizon estimates, and parallel growth bound; one-use completion proofs are under `Completion/Lemmas/`. `Coupling/` lifts the reserve source to the two-root field and proves the sampled-mark law and independence. `Reward/` owns the reserve-spine expectation identities. The generic finite-concurrent-population capacity estimate remains in `Process/Stopping/Concurrent/Finite`.
+| `BranchingRandomWalk/Restart/SelectedPath` | A selected-BRW path, concurrent growth trials, population, completion, and coupling | `Path.lean` defines `Restart.selectedPath`; at every split its first selected child starts a growth trial and its second selected child continues the path. `Splits.lean` gives the continuation-subtree identities and selected roots. `GrowthTrial/` owns enabled indices, candidate populations, success events and first successful completion; `GrowthTrial/FiniteSlot/` owns the binary-slot growth model and moment estimates, with one-use coding proofs in `Lemmas/`. The `SelectedPath.Population` namespace defines the selected-BRW population slice and causal family. `Completion/` defines endpoint time and rank-indexed n-selected-BRW nodes, with one-use factorization steps in `Lemmas/`; `Coupling/` proves the selected-BRW to n-selected-BRW injection and law transfer. Root-indexed first-split interfaces are under `Restart/Trial/`, and actual reserve-field or reserve-selection results remain under `Restart/Reserve/`. |
 | `Combinatorics/BranchingWalk/MarkedTree` | Marked-tree conversions, order compatibility, and recursive sibling-order transport | `Equivalence.lean` connects sibling-closed step fields to marked Ulam-Harris trees and proves the round trips; `OfBranchingWalk.lean` builds arbitrary node-marked and positioned trees from branching walks; `SiblingMonotonicity.lean` identifies local step monotonicity with sibling-monotone marks; `SiblingOrderTransport.lean` recursively relabels complete descendant subtrees and proves preservation of realized nodes, marks, and offspring point measures. These are complete mathematical interfaces, not proof-only steps. `orderingTransport` returns a Ulam-Harris marked tree but stays in this layer because its construction requires `StepField.IsOrderable` and the branching-walk path transport. Mathlib `BinaryTree` is a fixed binary-node datatype, while `UlamHarris.Tree` is an arbitrary-slot, prefix-closed set of finite addresses; Mathlib has no matching replacement ([pinned Mathlib source](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Data/Tree/Basic.lean)). |
 | `Combinatorics/BranchingWalk/Step` | Deterministic branching-step operations | The root keeps `Basic`, `Map`, `Measurability`, `Relation`, and the mark-level real-valued `Potential` interface. Ordering properties, ranks, and ordering induced by potentials are under `Ordering/`; slot selection and sibling closure are under `Selection/`; point-measure operations are under `Measure/`; generation-local updates are under `Generation/`. |
 | `Probability/BranchingRandomWalk/Step` | Random step presentations, fields, and laws | Coordinate presentations and their constructors/maps are under `Presentation/`; field operations under `Field/`; probability laws under `Law/`; measurable ordering under `Ordering/`; point-measure observations under `PointMeasure/`. Root-indexed position measurability remains under `Position/`. |
@@ -222,7 +222,7 @@ by mathematical subject:
 | Family | Public module organization |
 | --- | --- |
 | `MeasureTheory/Measure` | `Finite/`, `Algebra/`, `Limits/`, `Tails/`, `Windows/`, and `Levy/`; `Domination.lean` remains at the subject root. |
-| `BranchingRandomWalk/Restart/RootedTrial` | `Completion/`, `Coupling/`, `Reward/`, and `Spine/`. |
+| `BranchingRandomWalk/Restart/SelectedPath` | A selected-BRW path, concurrent growth trials, population, completion, and coupling | `Path.lean` defines `Restart.selectedPath`; at every split its first selected child starts a growth trial and its second selected child continues the path. `Splits.lean` gives the continuation-subtree identities and selected roots. `GrowthTrial/` owns enabled indices, candidate populations, success events and first successful completion; `GrowthTrial/FiniteSlot/` owns the binary-slot growth model and moment estimates, with one-use coding proofs in `Lemmas/`. The `SelectedPath.Population` namespace defines the selected-BRW population slice and causal family. `Completion/` defines endpoint time and rank-indexed n-selected-BRW nodes, with one-use factorization steps in `Lemmas/`; `Coupling/` proves the selected-BRW to n-selected-BRW injection and law transfer. Root-indexed first-split interfaces are under `Restart/Trial/`, and actual reserve-field or reserve-selection results remain under `Restart/Reserve/`. |
 | `BranchingRandomWalk/Population/Processes/StepSelection/SplitSchedule` | `Definition/`, `Field/`, and `Trials/`. |
 | `Stable/SmallDeviation/PathClass/StepCorridor/Partition` | `Core/`, `Lower/`, and `Upper/`. The deterministic endpoint-core plus finite inner-cell geometry now lives at its semantic owner, `Topology/Cadlag/Skorokhod/PathClass/StepCorridor/Partition/LowerGeometry.lean`; the stable `Lower/Geometry.lean` is reserved for cell events and their pathwise concatenation. The one-use radius-contraction step is under `Lower/Lemmas/CoreShrink.lean`. |
 | `Stable/SmallDeviation/Blocks/Lower` | `Assembly/`, `Bounds/`, `Entrance/`, `Feedback/`, and `Return/`; `Return/TwoBins.lean` owns the concrete two-bin lower-bound construction. |
@@ -240,8 +240,8 @@ by mathematical subject:
 | `Distributions/Stable/LevyMeasure` | `Cutoff/` and `Tail/`; scaling and jump-sign results remain at the subject root. |
 | `Distributions/Stable` | `Domain/`, `Exponent/`, `Gaussian/`, `Levy/`, and `Operations/`; `Basic.lean` remains at the root. |
 | `BranchingRandomWalk/Timing` | `Candidates/`, `Schedule/`, and `Splits/`; generic first-success laws and IID reward identities live under `Probability/Process/HittingTime/` and `Probability/Sequence/IID/`. |
-| `BranchingRandomWalk/Restart` | `Failure/`, `Reserve/`, `Success/`, and `Trial/`; the `RootedTrial.lean` entry module and its component directory remain substantive. |
-| `BranchingRandomWalk/Genealogy/RootIndexed` | `Field/`, `Law/`, and `Lineage.lean`. `Lineage.lean` defines reserve paths and their declaration times on the root-indexed generation-coordinate field. The separate `Genealogy/Lineage/PreSampled.lean` interface treats one marked Ulam--Harris field. Root-indexed exploration domains and fresh-descendant independence are grouped under `Genealogy/Exploration/RootIndexed/AddressFiltration/`; `Exploration.lean` gives the arbitrary-root and arbitrary-slot interface. |
+| `BranchingRandomWalk/Restart` | `Failure/`, `Reserve/`, `SelectedPath/`, `Success/`, and `Trial/`; the selected-path BRW restart construction is grouped under `SelectedPath/`, while root-indexed first-split trials and genuinely reserve-specific estimates remain in their own subfamilies. |
+| `BranchingRandomWalk/Genealogy/RootIndexed` | `Field/`, `Law/`, and `Lineage.lean`. `Lineage.lean` defines `RootIndexed.PreSampledLineages`, the general root/trial-indexed recursive paths and their declaration times on the root-indexed generation-coordinate field. `Genealogy/Lineage/PreSampled.lean` defines the corresponding general lineage structure on one marked Ulam–Harris field. Root-indexed exploration domains and fresh-descendant independence are grouped under `Genealogy/Exploration/RootIndexed/AddressFiltration/`; `Exploration.lean` gives the arbitrary-root and arbitrary-slot interface. |
 | `Combinatorics/UlamHarris/Tree` | `Finite/` owns finite-carrier trees, `Truncation/` owns finite-depth truncations and their agreement height, `Graph/` owns projections to Mathlib graph interfaces, and `Topology/` owns topological and measurable structures; `Defs.lean` and `Singleton.lean` remain at the subject root. |
 | `Selection/NSelection/EndpointDeviation/Endpoint` | `Minimum/`, `PositiveMoment/`, and `Sequence/`. |
 | `Distributions/Stable/Attraction/Norming` | `Basic.lean`, `Inverse.lean`, `Compatibility.lean`, `Centering.lean`, `Mogulskii.lean`, `Tail.lean`, and `UniformTail.lean` remain at the subject root; Gaussian and index-two specializations are under `SpecialCases/`. `Mogulskii.lean` contains the theorem-specific passage to Mogul'skii's source time normalization and its index-one centering transfer; its rounded index sequence and asymptotic lemmas are private. The general normalization-change theorem is in `Distributions/DomainOfAttraction/Normalization.lean`. |
@@ -29079,3 +29079,107 @@ pass. A fresh structural scan found no overfull direct-module directories,
 same-level file/directory stem collisions, parent-prefixed file stems,
 duplicate `Lemmas` entries, `Proof/` or `Source/` directories, or public
 imports from `Lemmas/` modules.
+
+## Threshold-count matching module names (2026-11-12)
+
+Renamed `Combinatorics/Matching/LowerTail.lean` to
+`Combinatorics/Matching/ThresholdCountMatching.lean`. Its finite theorem
+matches `objectsToMatch` into `availablePartners` when, for every order key
+threshold, the number of objects below that threshold is bounded by the
+number of available partners below it. The theorem and its assumptions are
+unchanged; the module name now describes this threshold-count interface.
+
+Renamed `Combinatorics/Selection/NSelection/Matching/Hall.lean` to
+`Combinatorics/Selection/NSelection/Matching/SelectedPopulation.lean`. This
+module specializes the generic matching result to the population chosen by
+the first-`N` rule. `ByRank.lean` remains the equal-rank matching interface.
+Updated the active imports, module headers, ownership map, and audit ledger;
+the former paths are retained only in this chronological audit history, with
+no compatibility aliases.
+
+## Threshold-count matching interface refinement (2026-11-12)
+
+Shortened the generic matching module path to
+`Combinatorics/Matching/ThresholdCount.lean` and renamed its public theorem to
+`exists_injective_le_of_thresholdCountDomination`; the statement remains the
+finite threshold-count condition
+\[
+\#\{x\in\texttt{objectsToMatch}:\texttt{objectOrderKey}(x)\le a\}
+\le
+\#\{y\in\texttt{availablePartners}:\texttt{partnerOrderKey}(y)\le a\}
+\quad\Longrightarrow\quad
+\exists f\text{ injective},\;
+\texttt{partnerOrderKey}(f(x))\le\texttt{objectOrderKey}(x).
+\]
+Renamed the hypothesis to `hthresholdCount` and updated all direct uses.
+
+In `Selection/NSelection/Matching/SelectedPopulation.lean`, the two public
+partner-assignment forms are now one theorem,
+`exists_injective_le_of_partnerAssignment_into_firstNBy`. Its assignment is
+defined on `{p : Object // p ∈ objectsToMatch}`, which makes the domain and
+the injectivity condition explicit. Updated the branching coupling and
+infinite-offspring rank comparison callers; the former dependent and
+nondependent theorem names have no compatibility aliases. Coupling
+hypotheses now name the child inclusion, capacity, first-`N` certificate,
+parent-matched slot inclusion, shared increments, and order-key translation
+properties they express. Concrete coupling documentation names
+`selectedBranchingWalk` and `nSelectedBranchingWalk` directly.
+
+The shared order-domination structure now consistently names its generic roles
+`objectsToMatch` and `availablePartners`, with the separate comparison maps
+`objectOrderKey` and `partnerOrderKey`. The branching coupling layer uses the
+corresponding `object`/`partner` terminology. Its public and private matching
+interfaces contain no `source`/`target` roles; remaining occurrences of those
+words elsewhere describe different mathematical objects.
+
+
+## Reuse of BrownianMotion's Choquet API (2026-11-13)
+
+The project-local `MeasureTheory/Analytic/Paving/` and
+`MeasureTheory/Analytic/Capacity/` trees duplicated the generic paving,
+capacity, capacitability, and measurable-projection API already provided by
+the BrownianMotion dependency in `BrownianMotion.Choquet.AnalyticSet` and
+`BrownianMotion.Choquet.Capacity`. Their only client outside those trees was
+`MeasureTheory/MeasurableSpace/CadlagPath/PathClass/StepCorridor/NullMeasurable`.
+That client now imports the BrownianMotion capacity module and applies
+`MeasureTheory.MeasurableSet.nullMeasurableSet_snd` directly. The local duplicate
+modules and their current-ledger entries were removed without adding aliases.
+
+The generic `Set.dissipate_congr` result in `Order/SetDissipate.lean` remains:
+the current Mathlib upstream defines `Set.dissipate` and its basic order
+properties, but has no congruence theorem for agreement on all indices below
+the endpoint. The fixed-density theorem
+`MeasureTheory.Measure.measurable_withDensity_fixed` also remains: Mathlib's
+`measurable_withDensity` varies the density over a fixed base measure, whereas
+this project theorem varies the base measure for a fixed density. These are
+different parameter directions.
+
+## BrownianMotion and Mathlib version alignment (2026-11-13)
+
+The project now pins BrownianMotion fork revision
+[`baaa246`](https://github.com/maix00/brownian-motion/tree/baaa2468da869e15e1654cbe416e55a5dc9d08b5), based on
+upstream's latest source revision
+[`8fd8dc5`](https://github.com/RemyDegenne/brownian-motion/tree/8fd8dc52830cdd07cf9cc8eadd533e284425fa6f),
+with Lean `v4.36.0-rc2`. Its standalone Lake manifest is aligned to Mathlib
+revision
+[`2657306`](https://github.com/leanprover-community/mathlib4/tree/26573066084e6e2aa8526ea358bc43b66d96f970),
+which is also the project submodule revision. The BrownianMotion Gaussian
+construction, its Kolmogorov--Chentsov dependency, and the changed project
+clients compile against this Mathlib version.
+
+Where Mathlib already owns the interface, local wrappers now use it directly:
+the Bochner tightness adapter was removed in favor of
+`MeasureTheory.isTightMeasureSet_of_tendsto_charFun`, and the local analytic
+paving/capacity duplicates now use BrownianMotion's generic Choquet API. The
+project's fourth-moment Brownian modification modules were also removed;
+`Probability.Process.Brownian.Construction.Existence` now uses
+`IsPreBrownianReal.mk`, `measurable_mk`, `continuous_mk`, and
+`isBrownianReal_mk` from BrownianMotion. The path-valued representative in
+`PathLaw/ContinuousModification.lean` remains a separate adapter used by the
+Brownian path-law and reflection interfaces.
+
+The older Brownian modification reviews dated 2026-10-22 and 2026-10-29 below
+record the dependency state at those dates. Their description of the local
+fourth-moment route and the unbuildable BrownianMotion Gaussian module is
+superseded by this version-alignment review. The deleted local source files
+are not retained as compatibility modules.

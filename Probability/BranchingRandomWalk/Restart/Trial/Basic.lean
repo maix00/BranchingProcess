@@ -42,7 +42,7 @@ open MeasureTheory ProbabilityTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.Restart.Trial
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
 
@@ -152,4 +152,4 @@ theorem growthTrialSuccess_of_population_ge_lower
   exact ⟨Finset.card_pos.mpr (hpop (k.val + 1)), hsmall⟩
 
 
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory.BranchingRandomWalk.Restart.Trial

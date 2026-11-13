@@ -20,7 +20,7 @@ frontier subtrees remain independent of that filtration.
 
 ## Public declarations
 
-For a reserve subtree selected from pre-sampled lineages, the continuation
+For a continuation subtree selected from pre-sampled lineages, the continuation
 moment factors over failure of all observable candidate tests:
 
 \[\int |g(F(\omega))|\,\mathbf 1_{\{\text{all candidates fail by }T\}}
@@ -28,10 +28,10 @@ moment factors over failure of all observable candidate tests:
   =\left(\int |g(F(\omega))|\,d\nu(\omega)\right)
     \mathbb P(\text{all candidates fail by }T).\]
 
-- `RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFailure`
+- `RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidateFailure`
   and
-  `RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFailure_le`:
-  factor the first absolute moment of a lineage-selected reserve subtree by
+  `RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidateFailure_le`:
+  factor the first absolute moment of a lineage-selected continuation subtree by
   the candidate-failure probability and give the resulting bound.
 -/
 
@@ -39,16 +39,17 @@ open MeasureTheory ProbabilityTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.Restart.Reserve
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Failure
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
 
 /-- The continuation's absolute first moment factors exactly over failure of
 all successful candidates, when candidate tests are evaluated at the
 observable `sigma` completions of a pre-sampled root/trial lineage family. -/
-theorem RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFailure
+theorem RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidateFailure
     {Root Trial κ α X : Type*} [Countable α] [MeasurableSpace X]
-    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
     (test : Root → Trial → ℕ → Set (RootIndexed.StepField Root α X))
@@ -96,9 +97,9 @@ theorem RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFai
 /-- A bound on the continuation's first moment and a bound on the probability
 of candidate failure give the usual product estimate, with no second-moment
 assumption. -/
-theorem RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFailure_le
+theorem RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidateFailure_le
     {Root Trial κ α X : Type*} [Countable α] [MeasurableSpace X]
-    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
     (test : Root → Trial → ℕ → Set (RootIndexed.StepField Root α X))
@@ -132,12 +133,12 @@ theorem RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFai
             (fun n => test p.1 p.2 n)) candidates T)ᶜ.indicator
           (fun _ => (1 : ℝ)) ω
       ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤ B * p := by
-  rw [lineages.integral_selectedSubtree_abs_on_candidateFailure
-    μ splitMark hsplit test htest candidates hcandidates T chosen
+  rw [RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidateFailure
+    lineages μ splitMark hsplit test htest candidates hcandidates T chosen
     hchosenRangeCountable hchosenFiberMeasurable hchosenDepth
     hchosenInjective g hg hint]
   exact mul_le_mul hmoment hprob (by positivity) hB
 
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory.BranchingRandomWalk.Restart.Reserve
 
 end

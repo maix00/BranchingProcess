@@ -46,33 +46,33 @@ by the product-law theorem. -/
 lemma RootIndexed.rankInstalledField_succ_eq_glue
     {Root α X Value : Type*}
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
-    (sourceValue : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
+    (selectedBRWPopulationOrderKey : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
       RootIndexed.TreeNode Root α → Value)
-    (targetValue : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
+    (nSelectedBRWPopulationOrderKey : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
       RootIndexed.StepField Root α X →
         RootIndexed.TreeNode Root α → Value)
-    (source : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
+    (selectedBRWPopulation : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
       Finset (RootIndexed.TreeNode Root α))
-    (target : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
+    (nSelectedBRWPopulation : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
       RootIndexed.StepField Root α X →
         Finset (RootIndexed.TreeNode Root α))
     (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α X) :
-    RootIndexed.rankInstalledField sourceValue targetValue source target
+    RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
         RootIndexed.StepField.left RootIndexed.StepField.right (n + 1) field =
-      let prior := RootIndexed.rankInstalledField sourceValue targetValue source target
+      let prior := RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
         RootIndexed.StepField.left RootIndexed.StepField.right n field
       RootIndexed.StepField.glue n (prior.past n)
         (RootIndexed.selectedCoordinateField
-          (RootIndexed.rankInstalledBlockChoice sourceValue targetValue source target n)
+          (RootIndexed.rankInstalledBlockChoice selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation n)
           field) := by
-  let prior := RootIndexed.rankInstalledField sourceValue targetValue source target
+  let prior := RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey selectedBRWPopulation nSelectedBRWPopulation
     RootIndexed.StepField.left RootIndexed.StepField.right n field
   rw [RootIndexed.rankInstalledField_succ]
   symm
   apply RootIndexed.glue_rankBlockChoice_eq_updateGeneration
   intro r u hu
-  exact RootIndexed.rankInstalledField_apply_of_le_length sourceValue targetValue
-    source target RootIndexed.StepField.left RootIndexed.StepField.right
+  exact RootIndexed.rankInstalledField_apply_of_le_length selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey
+    selectedBRWPopulation nSelectedBRWPopulation RootIndexed.StepField.left RootIndexed.StepField.right
     n field r u hu
 
 

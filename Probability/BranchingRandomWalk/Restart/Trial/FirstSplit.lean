@@ -64,7 +64,7 @@ open MeasureTheory ProbabilityTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.Restart.Trial
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
 open Combinatorics.Branching.Step.FiniteSelection
@@ -603,6 +603,6 @@ theorem selectedPopulationFirstSplitRoots_injective_of_finite
       · exact (hne hij.symm).elim
       · rfl
 
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory.BranchingRandomWalk.Restart.Trial
 
 end

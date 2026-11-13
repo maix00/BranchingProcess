@@ -12,7 +12,7 @@ public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.AddressFiltration.RootSubset
 
 /-!
-# First-moment estimates from a fresh reserve subtree
+# First-moment estimates from a fresh continuation subtree
 
 This file connects the coordinate-domain exploration interface to the
 first-moment exceptional-event estimate.  Once a reserve root is chosen from
@@ -23,7 +23,7 @@ gains the probability of the failure event exactly.
 
 ## Public declarations
 
-For a reserve subtree selected from an exploration domain and an event
+For a continuation subtree selected from an exploration domain and an event
 \(E\) measurable in that domain, the absolute first moment factors as
 
 \[\int |g(F(\omega))|\,\mathbf 1_E(\omega)\,d\nu(\omega)
@@ -46,13 +46,13 @@ open MeasureTheory ProbabilityTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.Restart.Reserve
 
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
-/-- A measurable observable of a fresh, measurably selected reserve subtree is
+/-- A measurable observable of a fresh, measurably selected continuation subtree is
 independent of the information used to select that subtree. -/
 theorem BranchingExplorationDomains.selected_fresh_subtree_observable_independent
     {α X : Type*} [MeasurableSpace X]
@@ -102,8 +102,8 @@ theorem BranchingExplorationDomains.integral_reserve_abs_on_event
   exact integral_abs_mul_indicator_eq_of_indep
     (offspringFieldLaw μ) (H.domain j)
     (fun ω => g (selectedSubtreeStepField chosen ω)) E hint hE hEfull
-    (H.selected_fresh_subtree_observable_independent μ j chosen
-      hchosen hcount hfresh g hg)
+    (Restart.Reserve.BranchingExplorationDomains.selected_fresh_subtree_observable_independent
+      μ H j chosen hchosen hcount hfresh g hg)
 
 /-- An observable of any measurably selected family of fresh subtrees in an
 arbitrary root-indexed field is independent of the generation domain flow.
@@ -211,6 +211,6 @@ theorem RootIndexed.integral_reserveRoot_abs_on_event
     hg.comp (Measurable.of_comap_le le_rfl)
   exact hm.comap_le
 
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory.BranchingRandomWalk.Restart.Reserve
 
 end

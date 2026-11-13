@@ -69,7 +69,9 @@ open scoped ENNReal
 
 section
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.Restart.Success
+
+open ProbabilityTheory.BranchingRandomWalk.Restart.Trial
 
 open Combinatorics.Branching
 open Combinatorics.Branching.Step.FiniteSelection
@@ -307,7 +309,7 @@ theorem exists_nat_cutoff_positive_boundedSelectedSplit_sorted
 
 /-- Positive mass of a split by the reserve selector. Its base rule
 keeps the first two surviving slots in the ordered realization, and the
-reserve rule keeps the first child plus the second whenever the second
+reserve rule keeps the first selected child plus the second whenever the second
 potential is below the finite cutoff. -/
 theorem exists_nat_cutoff_positive_reserveSplit
     {ι α X : Type*} [MeasurableSpace X] [Countable ι]
@@ -382,6 +384,6 @@ theorem reserveSelectionBelowPotential_nonempty_ae
     (Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2)
     L.potential M ξ hRne
 
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory.BranchingRandomWalk.Restart.Success
 
 end

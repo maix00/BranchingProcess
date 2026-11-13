@@ -10,7 +10,7 @@ public import Mathlib.Topology.UnitInterval
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Probability.Process.Path.Scaling.UnitInterval
 public import Probability.Process.Path.Representation.Skorokhod
-public import Probability.Process.Brownian.Construction.PreBrownianModification
+public import BrownianMotion.Gaussian.BrownianMotion
 public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
 
 import Probability.Process.Brownian.SmallDeviation.Corridor.Bounds
@@ -45,8 +45,8 @@ theorem IsBrownianReal.measure_openCorridor_endsIn_lowerBound
     (hendpointUpper : (1 / 2 : ℝ) < endpointUpper) :
     ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2)) ≤
       P.map (Skorokhod.ofContinuousMap ∘
-        continuousunitIntervalPath (hB.toIsPreBrownianReal.continuousModification)
-          (hB.toIsPreBrownianReal.continuous_continuousModification))
+        continuousunitIntervalPath (hB.toIsPreBrownianReal.mk B)
+          (hB.toIsPreBrownianReal.continuous_mk))
         (Skorokhod.rangeInOpenIntervalEndsIn
           (-(width / 2)) (width / 2) endpointLower endpointUpper) := by
   refine (IsBrownianReal.measure_closedUnitCorridor_lowerBound

@@ -16,29 +16,29 @@ public import Probability.BranchingRandomWalk.Population.Processes.Selected.Gene
 import Probability.BranchingRandomWalk.Coupling.Field.Position
 
 /-!
-# Restarted real-position source and matched target
+# Restarted real-position selected population and its first-\(N\) coupling
 
 ## Public declarations
 
-- `RootIndexed.restartedRealPositionSource` is the causal population on the left
-  coordinate of a two-copy step field, killed by the restarted real-position
-  windows.
-- `RootIndexed.restartedRealPositionSource_finiteSlices` proves every slice is
-  finite, and `restartedRealPositionSourceSlice` represents its slice by a
+- `RootIndexed.restartedRealPositionSelectedBRWPopulation` is the causal BRW population selected on the left coordinate of a two-copy
+  step field by the restarted real-position windows.
+- `RootIndexed.restartedRealPositionSelectedBRWPopulation_finiteSlices` proves every slice is
+  finite, and `restartedRealPositionSelectedBRWPopulationSlice` represents its slice by a
   `Finset`.
-- `RootIndexed.restartedRealPositionMatchedField` recursively installs source
-  steps at equal-rank particles of the totalized first-`N` target; its value at
+- `RootIndexed.restartedRealPositionNSelectedBRWField` recursively installs the
+  selected population's steps at equal-rank particles of the totalized
+  first-`N` population; its value at
   stage `n` is a step field on the original root set.
-- `RootIndexed.restartedRealPositionMatchedPopulation` evaluates the
+- `RootIndexed.restartedRealPositionNSelectedBRWPopulation` evaluates the
   totalized first-`N` population on that matched field at generation `n`.
 
-Writing \(S_n(\omega)\) for the finite restarted-source slice,
-\(V_n(\omega)\) for the matched field at stage \(n\), and \(T_n(\omega)\)
-for the selected target population, the definitions give
+Write \(P_n(\omega)\) for the finite restarted selected-population slice,
+\(V_n(\omega)\) for the matched field at stage \(n\), and
+\(P_n^{(N)}(\omega)\) for the first-\(N\) population.  The definitions give
 
 \[
-  S_n(\omega) = \operatorname{FiniteSlices.toFinset}(n,\omega), \qquad
-  T_n(\omega) = \operatorname{SelectedPopulationTotalized}(N,V_n(\omega)).
+  P_n(\omega) = \operatorname{FiniteSlices.toFinset}(n,\omega), \qquad
+  P_n^{(N)}(\omega) = \operatorname{SelectedPopulationTotalized}(N,V_n(\omega)).
 \]
 -/
 
@@ -52,9 +52,9 @@ open Combinatorics.UlamHarris Combinatorics.Branching
 open _root_.Combinatorics.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Coupling
 
-/-- The restarted killed population, realized on the left half of the common
-two-copy pre-sampled field used by rank installation. -/
-noncomputable def RootIndexed.restartedRealPositionSource
+/-- The restarted selected BRW population, realized on the left half of the
+common two-copy pre-sampled field used by rank installation. -/
+noncomputable def RootIndexed.restartedRealPositionSelectedBRWPopulation
     {Root α Mark : Type*}
     [Countable α] [MeasurableSpace Mark]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
@@ -69,7 +69,7 @@ noncomputable def RootIndexed.restartedRealPositionSource
       (RootIndexed.stepFiltration
         (Root := Root ⊕ Root) (α := α) (X := Mark))
       RootIndexed.StepField.left := by
-  let killed := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+  let selectedBRWPopulation := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
     initialPosition d hd initial hinitialDepth cutoff window hwindow upper hupper
   have hleft : ∀ k, @Measurable
       (RootIndexed.StepField (Root ⊕ Root) α Mark)
@@ -86,11 +86,11 @@ noncomputable def RootIndexed.restartedRealPositionSource
           RootIndexed.StepField Root α Mark) by rfl]
     exact RootIndexed.StepField.reindex_filtration_measurable
       (X := Mark) Sum.inl k
-  exact killed.pullback RootIndexed.StepField.left
+  exact selectedBRWPopulation.pullback RootIndexed.StepField.left
     hleft
     (by rfl)
 
-theorem RootIndexed.restartedRealPositionSource_finiteSlices
+theorem RootIndexed.restartedRealPositionSelectedBRWPopulation_finiteSlices
     {Root α Mark : Type*}
     [Countable α] [MeasurableSpace Mark]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
@@ -100,19 +100,19 @@ theorem RootIndexed.restartedRealPositionSource_finiteSlices
     (cutoff : ℕ)
     (window : ℕ → Set ℝ) (hwindow : ∀ k, MeasurableSet (window k))
     (upper : ℕ → ℝ) (hupper : ∀ k, window k ⊆ Set.Iic (upper k)) :
-    (RootIndexed.restartedRealPositionSource initialPosition d hd initial
+    (RootIndexed.restartedRealPositionSelectedBRWPopulation initialPosition d hd initial
       hinitialDepth cutoff window hwindow upper hupper).FiniteSlices := by
   intro n field
-  unfold RootIndexed.restartedRealPositionSource
+  unfold RootIndexed.restartedRealPositionSelectedBRWPopulation
   rw [RootIndexed.CausalPopulation.pullback_population]
   exact RootIndexed.CausalPopulation.ofRestartedRealPositionSets_finiteSlices
     initialPosition d hd initial hinitialDepth cutoff window hwindow upper hupper
     n (RootIndexed.StepField.left field)
 
-/-- The finite presentation of one killed source slice used by the concrete
-first-`N` coupling algorithm.  Finiteness remains a theorem about the
-set-valued source rather than part of the population type. -/
-noncomputable def RootIndexed.restartedRealPositionSourceSlice
+/-- The finite presentation of one restarted selected BRW slice used by the
+concrete first-`N` coupling algorithm. Finiteness remains a theorem about the
+set-valued BRW population rather than part of the population type. -/
+noncomputable def RootIndexed.restartedRealPositionSelectedBRWPopulationSlice
     {Root α Mark : Type*}
     [Countable α] [MeasurableSpace Mark]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
@@ -124,19 +124,19 @@ noncomputable def RootIndexed.restartedRealPositionSourceSlice
     (upper : ℕ → ℝ) (hupper : ∀ k, window k ⊆ Set.Iic (upper k))
     (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α Mark) :
     Finset (RootIndexed.TreeNode Root α) :=
-  (RootIndexed.restartedRealPositionSource_finiteSlices initialPosition d hd
+  (RootIndexed.restartedRealPositionSelectedBRWPopulation_finiteSlices initialPosition d hd
     initial hinitialDepth cutoff window hwindow upper hupper).toFinset n field
 
-/-- The finite rank-installed target field for a restarted source. The target
-population uses the totalized selector, so this construction is defined even
+/-- The finite rank-installed field for a restarted selected population.  The
+first-`N` population uses the totalized selector, so this construction is defined even
 on raw fields where a first-`N` segment does not exist. -/
-noncomputable def RootIndexed.restartedRealPositionMatchedField
+noncomputable def RootIndexed.restartedRealPositionNSelectedBRWField
     {Root α Mark : Type*}
     [DecidableEq (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]
     (N : ℕ) (roots : Finset Root) (initialPosition : Root → ℝ)
     (d : Mark → ℝ)
-    (source : ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
+    (selectedBRWPopulation : ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
       Finset (RootIndexed.TreeNode Root α)) :
     ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
       RootIndexed.StepField Root α Mark :=
@@ -145,26 +145,25 @@ noncomputable def RootIndexed.restartedRealPositionMatchedField
       (RootIndexed.StepField.left field) p)
     (fun k _ field p => RootIndexed.observedPositionAtGeneration initialPosition d id k
       field p)
-    source
+    selectedBRWPopulation
     (fun k _ field => RootIndexed.selectedPopulationTotalized N roots
       initialPosition d id k field)
     RootIndexed.StepField.left RootIndexed.StepField.right
 
-/-- The first-`N` target population evaluated on its finite rank-installed
-field. -/
-noncomputable def RootIndexed.restartedRealPositionMatchedPopulation
+/-- The first-`N` population evaluated on its finite rank-installed field. -/
+noncomputable def RootIndexed.restartedRealPositionNSelectedBRWPopulation
     {Root α Mark : Type*}
     [DecidableEq (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]
     (N : ℕ) (roots : Finset Root) (initialPosition : Root → ℝ)
     (d : Mark → ℝ)
-    (source : ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
+    (selectedBRWPopulation : ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
       Finset (RootIndexed.TreeNode Root α))
     (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α Mark) :
     Finset (RootIndexed.TreeNode Root α) :=
   RootIndexed.selectedPopulationTotalized N roots initialPosition d id n
-    (RootIndexed.restartedRealPositionMatchedField N roots initialPosition d
-      source n field)
+    (RootIndexed.restartedRealPositionNSelectedBRWField N roots initialPosition d
+      selectedBRWPopulation n field)
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
