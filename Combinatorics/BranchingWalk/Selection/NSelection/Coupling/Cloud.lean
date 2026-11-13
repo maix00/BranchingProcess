@@ -97,15 +97,15 @@ noncomputable def canonicalInjection
     simpa [selectedBranchingWalkOrderKey, nSelectedBranchingWalkOrderKey, populationCloud] using
       prior.card_filter_le selectedBranchingWalkPopulation.finite_toSet
         nSelectedBranchingWalkPopulation.finite_toSet a
-  let matchedNSelectedBranchingWalkNodeOrSelf : RootIndexed.TreeNode Root α →
+  let partnerOrSelf : RootIndexed.TreeNode Root α →
       RootIndexed.TreeNode Root α :=
     matchByRankOrSelf selectedBranchingWalkOrderKey nSelectedBranchingWalkOrderKey
       selectedBranchingWalkPopulation nSelectedBranchingWalkPopulation hcard
-  refine ⟨matchedNSelectedBranchingWalkNodeOrSelf, ?_, ?_, ?_⟩
+  refine ⟨partnerOrSelf, ?_, ?_, ?_⟩
   · intro p hp
     have hpr : p ∈ selectedBranchingWalkPopulation := by
       simpa [populationCloud] using hp
-    change matchedNSelectedBranchingWalkNodeOrSelf p ∈ nSelectedBranchingWalkPopulation
+    change partnerOrSelf p ∈ nSelectedBranchingWalkPopulation
     exact matchByRankOrSelf_mem selectedBranchingWalkOrderKey
       nSelectedBranchingWalkOrderKey selectedBranchingWalkPopulation
       nSelectedBranchingWalkPopulation hcard hpr
