@@ -151,7 +151,7 @@ theorem infiniteOffspringPosition_select_mono
       intro q
       dsimp [lowValue, highValue, infiniteOffspringPosition]
       linarith [hposition (ofLex q.1).1])
-  obtain ⟨matchParticle, hmatchMem, hmatchLe, hmatchInj⟩ := hmatching
+  obtain ⟨partnerOfObject, hmatchMem, hmatchLe, hmatchInj⟩ := hmatching
   have hthreshold : ∀ a : ℝ,
       (selectedHigh.filter fun q => highValue q ≤ a).card ≤
         (selectedLow.filter fun q => lowValue q ≤ a).card := by
@@ -159,7 +159,7 @@ theorem infiniteOffspringPosition_select_mono
     let selectedHighAtMostA := selectedHigh.filter fun q => highValue q ≤ a
     let selectedLowAtMostA := selectedLow.filter fun q => lowValue q ≤ a
     let f : {q // q ∈ selectedHighAtMostA} → {q // q ∈ selectedLowAtMostA} := fun q =>
-      ⟨matchParticle q.1 (Finset.mem_filter.mp q.2 |>.1),
+      ⟨partnerOfObject q.1 (Finset.mem_filter.mp q.2 |>.1),
         Finset.mem_filter.mpr ⟨
           hmatchMem q.1 (Finset.mem_filter.mp q.2 |>.1),
           (hmatchLe q.1 (Finset.mem_filter.mp q.2 |>.1)).trans

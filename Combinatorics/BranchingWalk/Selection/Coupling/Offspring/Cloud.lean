@@ -117,20 +117,20 @@ theorem offspringPairs_filter_card_le_of_injectivelyDominatesBy
         (qi : RootIndexed.TreeNode Root α × α) =>
         partnerChildOrderKey qi.1 qi.2 ≤ a).card := by
   classical
-  obtain ⟨matchParticle, hmem, hinj, hleft⟩ := hdom
+  obtain ⟨partnerOfObject, hmem, hinj, hleft⟩ := hdom
   apply offspringPairs_filter_card_le hobjectsToMatchFinite.toFinset havailablePartnersFinite.toFinset
-    objectSlots partnerSlots matchParticle
+    objectSlots partnerSlots partnerOfObject
   · intro p hp
     apply havailablePartnersFinite.mem_toFinset.mpr
     exact hmem (hobjectsToMatchFinite.mem_toFinset.mp hp)
   · intro p hp q hq hpq
     apply hinj (hobjectsToMatchFinite.mem_toFinset.mp hp) (hobjectsToMatchFinite.mem_toFinset.mp hq) hpq
   · intro p hp i hi
-    exact (hshared p (hobjectsToMatchFinite.mem_toFinset.mp hp) (matchParticle p)
+    exact (hshared p (hobjectsToMatchFinite.mem_toFinset.mp hp) (partnerOfObject p)
       (hmem (hobjectsToMatchFinite.mem_toFinset.mp hp))
       (hleft p (hobjectsToMatchFinite.mem_toFinset.mp hp)) i hi).1
   · intro p hp i hi
-    exact (hshared p (hobjectsToMatchFinite.mem_toFinset.mp hp) (matchParticle p)
+    exact (hshared p (hobjectsToMatchFinite.mem_toFinset.mp hp) (partnerOfObject p)
       (hmem (hobjectsToMatchFinite.mem_toFinset.mp hp))
       (hleft p (hobjectsToMatchFinite.mem_toFinset.mp hp)) i hi).2
 
@@ -166,23 +166,23 @@ theorem offspringPairs_filter_card_le_of_rankwiseDominatesBy
         (qi : RootIndexed.TreeNode Root α × α) =>
         partnerChildOrderKey qi.1 qi.2 ≤ a).card := by
   classical
-  obtain ⟨matchParticle, hmem, hinj, hrank, hleft⟩ :=
+  obtain ⟨partnerOfObject, hmem, hinj, hrank, hleft⟩ :=
     Cloud.exists_injective_match_of_rankwiseDominatesBy_of_finite
       φ t hobjectsToMatchFinite hdom
   apply offspringPairs_filter_card_le hobjectsToMatchFinite.toFinset havailablePartnersFinite.toFinset
-    objectSlots partnerSlots matchParticle
+    objectSlots partnerSlots partnerOfObject
   · intro p hp
     apply havailablePartnersFinite.mem_toFinset.mpr
     exact hmem (hobjectsToMatchFinite.mem_toFinset.mp hp)
   · intro p hp q hq hpq
     apply hinj (hobjectsToMatchFinite.mem_toFinset.mp hp) (hobjectsToMatchFinite.mem_toFinset.mp hq) hpq
   · intro p hp i hi
-    exact (hshared p (hobjectsToMatchFinite.mem_toFinset.mp hp) (matchParticle p)
+    exact (hshared p (hobjectsToMatchFinite.mem_toFinset.mp hp) (partnerOfObject p)
       (hmem (hobjectsToMatchFinite.mem_toFinset.mp hp))
       (hrank p (hobjectsToMatchFinite.mem_toFinset.mp hp))
       (hleft p (hobjectsToMatchFinite.mem_toFinset.mp hp)) i hi).1
   · intro p hp i hi
-    exact (hshared p (hobjectsToMatchFinite.mem_toFinset.mp hp) (matchParticle p)
+    exact (hshared p (hobjectsToMatchFinite.mem_toFinset.mp hp) (partnerOfObject p)
       (hmem (hobjectsToMatchFinite.mem_toFinset.mp hp))
       (hrank p (hobjectsToMatchFinite.mem_toFinset.mp hp))
       (hleft p (hobjectsToMatchFinite.mem_toFinset.mp hp)) i hi).2

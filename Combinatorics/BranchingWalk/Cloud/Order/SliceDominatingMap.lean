@@ -104,11 +104,11 @@ on particle addresses and therefore applies to random spatial configurations
 without pretending that their addresses are already position-sorted. -/
 def Cloud.InjectivelyDominatesBy [Preorder Value]
     (φ : Position → Value) (objectsToMatchCloud availablePartnersCloud : Cloud Time Root α Position) (t : Time) : Prop :=
-  ∃ matchParticle : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α,
-    Set.MapsTo matchParticle (objectsToMatchCloud.particles t) (availablePartnersCloud.particles t) ∧
-    Set.InjOn matchParticle (objectsToMatchCloud.particles t) ∧
+  ∃ partnerOfObject : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α,
+    Set.MapsTo partnerOfObject (objectsToMatchCloud.particles t) (availablePartnersCloud.particles t) ∧
+    Set.InjOn partnerOfObject (objectsToMatchCloud.particles t) ∧
     ∀ p ∈ objectsToMatchCloud.particles t,
-      φ (availablePartnersCloud.position (matchParticle p).1 (matchParticle p).2) ≤
+      φ (availablePartnersCloud.position (partnerOfObject p).1 (partnerOfObject p).2) ≤
         φ (objectsToMatchCloud.position p.1 p.2)
 
 /-- Forget the concrete coupling state and retain only its existence. -/
@@ -173,12 +173,12 @@ two cloud arguments are not exchanged. -/
 theorem Cloud.injectivelyDominatesBy_toDual_iff [Preorder Value]
     (φ : Position → Value) (objectsToMatchCloud availablePartnersCloud : Cloud Time Root α Position) (t : Time) :
     objectsToMatchCloud.InjectivelyDominatesBy (fun x => OrderDual.toDual (φ x)) availablePartnersCloud t ↔
-      ∃ matchParticle : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α,
-        Set.MapsTo matchParticle (objectsToMatchCloud.particles t) (availablePartnersCloud.particles t) ∧
-        Set.InjOn matchParticle (objectsToMatchCloud.particles t) ∧
+      ∃ partnerOfObject : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α,
+        Set.MapsTo partnerOfObject (objectsToMatchCloud.particles t) (availablePartnersCloud.particles t) ∧
+        Set.InjOn partnerOfObject (objectsToMatchCloud.particles t) ∧
         ∀ p ∈ objectsToMatchCloud.particles t,
           φ (objectsToMatchCloud.position p.1 p.2) ≤
-            φ (availablePartnersCloud.position (matchParticle p).1 (matchParticle p).2) := by
+            φ (availablePartnersCloud.position (partnerOfObject p).1 (partnerOfObject p).2) := by
   rfl
 
 /-- Same duality when the cloud's position type itself is replaced by its
@@ -186,12 +186,12 @@ order dual. -/
 theorem Cloud.injectivelyDominates_mapOrderDual_iff [Preorder Position]
     (objectsToMatchCloud availablePartnersCloud : Cloud Time Root α Position) (t : Time) :
     (objectsToMatchCloud.mapOrderDual).InjectivelyDominatesBy id (availablePartnersCloud.mapOrderDual) t ↔
-      ∃ matchParticle : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α,
-        Set.MapsTo matchParticle (objectsToMatchCloud.particles t) (availablePartnersCloud.particles t) ∧
-        Set.InjOn matchParticle (objectsToMatchCloud.particles t) ∧
+      ∃ partnerOfObject : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α,
+        Set.MapsTo partnerOfObject (objectsToMatchCloud.particles t) (availablePartnersCloud.particles t) ∧
+        Set.InjOn partnerOfObject (objectsToMatchCloud.particles t) ∧
         ∀ p ∈ objectsToMatchCloud.particles t,
           objectsToMatchCloud.position p.1 p.2 ≤
-            availablePartnersCloud.position (matchParticle p).1 (matchParticle p).2 := by
+            availablePartnersCloud.position (partnerOfObject p).1 (partnerOfObject p).2 := by
   rfl
 
 /-- A coherent injective matching of the object slice into the partner slice,
@@ -206,47 +206,47 @@ theorem Cloud.exists_injective_match_of_rankwiseDominatesBy
     (φ : Position → Value) {objectsToMatchCloud availablePartnersCloud : Cloud Time Root α Position} (t : Time)
     (hrank : Set.InjOn ((objectsToMatchCloud.mapPosition φ).sliceRank t) (objectsToMatchCloud.particles t))
     (hdom : objectsToMatchCloud.RankwiseDominatesBy φ availablePartnersCloud t) :
-    ∃ matchParticle : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α,
-      Set.MapsTo matchParticle (objectsToMatchCloud.particles t) (availablePartnersCloud.particles t) ∧
-      Set.InjOn matchParticle (objectsToMatchCloud.particles t) ∧
+    ∃ partnerOfObject : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α,
+      Set.MapsTo partnerOfObject (objectsToMatchCloud.particles t) (availablePartnersCloud.particles t) ∧
+      Set.InjOn partnerOfObject (objectsToMatchCloud.particles t) ∧
       (∀ p ∈ objectsToMatchCloud.particles t,
-        (availablePartnersCloud.mapPosition φ).sliceRank t (matchParticle p) =
+        (availablePartnersCloud.mapPosition φ).sliceRank t (partnerOfObject p) =
           (objectsToMatchCloud.mapPosition φ).sliceRank t p) ∧
       ∀ p ∈ objectsToMatchCloud.particles t,
-        φ (availablePartnersCloud.position (matchParticle p).1 (matchParticle p).2) ≤
+        φ (availablePartnersCloud.position (partnerOfObject p).1 (partnerOfObject p).2) ≤
           φ (objectsToMatchCloud.position p.1 p.2) := by
   classical
-  let matchParticle : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α :=
+  let partnerOfObject : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α :=
     fun p => if hp : p ∈ objectsToMatchCloud.particles t then
       Classical.choose (hdom ((objectsToMatchCloud.mapPosition φ).sliceRank t p) p hp rfl)
     else p
   have hmem : ∀ p (hp : p ∈ objectsToMatchCloud.particles t),
-      matchParticle p ∈ availablePartnersCloud.particles t := by
+      partnerOfObject p ∈ availablePartnersCloud.particles t := by
     intro p hp
-    simp only [matchParticle, dite_eq_left hp]
+    simp only [partnerOfObject, dite_eq_left hp]
     exact (Classical.choose_spec
       (hdom ((objectsToMatchCloud.mapPosition φ).sliceRank t p) p hp rfl)).1
   have hrank_eq : ∀ p (hp : p ∈ objectsToMatchCloud.particles t),
-      (availablePartnersCloud.mapPosition φ).sliceRank t (matchParticle p) =
+      (availablePartnersCloud.mapPosition φ).sliceRank t (partnerOfObject p) =
         (objectsToMatchCloud.mapPosition φ).sliceRank t p := by
     intro p hp
-    simp only [matchParticle, dite_eq_left hp]
+    simp only [partnerOfObject, dite_eq_left hp]
     exact (Classical.choose_spec
       (hdom ((objectsToMatchCloud.mapPosition φ).sliceRank t p) p hp rfl)).2.1
   have hle : ∀ p (hp : p ∈ objectsToMatchCloud.particles t),
-      φ (availablePartnersCloud.position (matchParticle p).1 (matchParticle p).2) ≤
+      φ (availablePartnersCloud.position (partnerOfObject p).1 (partnerOfObject p).2) ≤
       φ (objectsToMatchCloud.position p.1 p.2) := by
     intro p hp
-    simp only [matchParticle, dite_eq_left hp]
+    simp only [partnerOfObject, dite_eq_left hp]
     exact (Classical.choose_spec
       (hdom ((objectsToMatchCloud.mapPosition φ).sliceRank t p) p hp rfl)).2.2
-  refine ⟨matchParticle, fun p hp => hmem p hp, ?_, hrank_eq, hle⟩
+  refine ⟨partnerOfObject, fun p hp => hmem p hp, ?_, hrank_eq, hle⟩
   intro p hp q hq heq
   apply hrank hp hq
   calc
     (objectsToMatchCloud.mapPosition φ).sliceRank t p =
-        (availablePartnersCloud.mapPosition φ).sliceRank t (matchParticle p) := (hrank_eq p hp).symm
-    _ = (availablePartnersCloud.mapPosition φ).sliceRank t (matchParticle q) := by rw [heq]
+        (availablePartnersCloud.mapPosition φ).sliceRank t (partnerOfObject p) := (hrank_eq p hp).symm
+    _ = (availablePartnersCloud.mapPosition φ).sliceRank t (partnerOfObject q) := by rw [heq]
     _ = (objectsToMatchCloud.mapPosition φ).sliceRank t q := hrank_eq q hq
 
 /-- Finite multi-root slices automatically admit the injective rank matching.
@@ -257,14 +257,14 @@ theorem Cloud.exists_injective_match_of_rankwiseDominatesBy_of_finite
     (φ : Position → Value) {objectsToMatchCloud availablePartnersCloud : Cloud Time Root α Position} (t : Time)
     (hfinite : (objectsToMatchCloud.particles t).Finite)
     (hdom : objectsToMatchCloud.RankwiseDominatesBy φ availablePartnersCloud t) :
-    ∃ matchParticle : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α,
-      Set.MapsTo matchParticle (objectsToMatchCloud.particles t) (availablePartnersCloud.particles t) ∧
-      Set.InjOn matchParticle (objectsToMatchCloud.particles t) ∧
+    ∃ partnerOfObject : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α,
+      Set.MapsTo partnerOfObject (objectsToMatchCloud.particles t) (availablePartnersCloud.particles t) ∧
+      Set.InjOn partnerOfObject (objectsToMatchCloud.particles t) ∧
       (∀ p ∈ objectsToMatchCloud.particles t,
-        (availablePartnersCloud.mapPosition φ).sliceRank t (matchParticle p) =
+        (availablePartnersCloud.mapPosition φ).sliceRank t (partnerOfObject p) =
           (objectsToMatchCloud.mapPosition φ).sliceRank t p) ∧
       ∀ p ∈ objectsToMatchCloud.particles t,
-        φ (availablePartnersCloud.position (matchParticle p).1 (matchParticle p).2) ≤
+        φ (availablePartnersCloud.position (partnerOfObject p).1 (partnerOfObject p).2) ≤
           φ (objectsToMatchCloud.position p.1 p.2) := by
   letI : Fintype ((objectsToMatchCloud.mapPosition φ).particles t) :=
     (show ((objectsToMatchCloud.mapPosition φ).particles t).Finite by simpa using hfinite).fintype
