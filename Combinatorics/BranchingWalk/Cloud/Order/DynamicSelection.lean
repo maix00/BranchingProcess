@@ -88,21 +88,21 @@ theorem Cloud.injectivelyDominatesBy_selectFirstNBy_of_subset
       (fun q => φ (availablePartnersCloud.position q.1 q.2))
       retained hobjectsToMatchFinite.toFinset havailablePartnersFinite.toFinset
       hretainedFinset hcard hthresholdCount
-  let matchParticle : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α :=
+  let partnerOfObject : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α :=
     fun p => if hp : p ∈ retained then f p hp else p
-  refine ⟨matchParticle, ?_, ?_, ?_⟩
+  refine ⟨partnerOfObject, ?_, ?_, ?_⟩
   · intro p hp
     have hpr : p ∈ retained := by simpa using hp
-    change matchParticle p ∈ selected
-    simpa [matchParticle, selected, hpr] using hfmem p hpr
+    change partnerOfObject p ∈ selected
+    simpa [partnerOfObject, selected, hpr] using hfmem p hpr
   · intro p hp q hq heq
     have hpr : p ∈ retained := by simpa using hp
     have hqr : q ∈ retained := by simpa using hq
     apply hfinj p hpr q hqr
-    simpa only [matchParticle, dite_eq_left hpr, dite_eq_left hqr] using heq
+    simpa only [partnerOfObject, dite_eq_left hpr, dite_eq_left hqr] using heq
   · intro p hp
     have hpr : p ∈ retained := by simpa using hp
-    simpa only [Cloud.withFinsetParticles_position, matchParticle,
+    simpa only [Cloud.withFinsetParticles_position, partnerOfObject,
       dite_eq_left hpr] using hfle p hpr
 
 end Combinatorics.Branching
