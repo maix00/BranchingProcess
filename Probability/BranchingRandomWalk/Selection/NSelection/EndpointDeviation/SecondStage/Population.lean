@@ -11,11 +11,11 @@ public import Probability.BranchingRandomWalk.Population.Processes.Selected.Root
 public import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition.Real
 public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.RestartedWindow
 /-!
-# Restarted killed population for the second stage
+# Restarted selected BRW population for the second stage
 
 ## Public declarations
 
-Write \(P\) for the restarted killed population. Every generation slice is
+Write \(P\) for the restarted selected BRW population. Every generation slice is
 finite for each restarted field:
 
 \[
@@ -23,11 +23,11 @@ finite for each restarted field:
 P_n(\omega)\text{ is finite}.
 \]
 
-`positiveAKilledPopulation m ell ellN logN b v c kappa` is the causal
+`positiveASelectedBRWPopulation m ell ellN logN b v c kappa` is the causal
 population on `RestartedField m` with initial roots `Fin m`, cutoff `ell`,
 and the restarted corridor window determined by `ellN`, `logN`, `b`, `v`,
 `c`, and `kappa`. Its generation-`n` slice is finite for every field, as
-stated by `positiveAKilledPopulation_finiteSlices`. This is the population
+stated by `positiveASelectedBRWPopulation_finiteSlices`. This is the population
 input to the second-stage root selection in Chapter 3, Lemma 3.5 of WANG
 Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
 Offspring*.
@@ -45,8 +45,8 @@ open ProbabilityTheory.BranchingRandomWalk.RootIndexed
 
 @[expose] public section
 
-/-- The killed population used in the two-stage positive-`a` argument. -/
-noncomputable def positiveAKilledPopulation
+/-- The selected BRW population used in the two-stage positive-`a` argument. -/
+noncomputable def positiveASelectedBRWPopulation
     (m ell ellN : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)] :
     RestartedPopulation m := by
@@ -65,12 +65,12 @@ noncomputable def positiveAKilledPopulation
     (positiveARestartedWindow_subset_Iic_upper
       ell ellN logN b v c κ)
 
-theorem positiveAKilledPopulation_finiteSlices
+theorem positiveASelectedBRWPopulation_finiteSlices
     (m ell ellN : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)] :
-    (positiveAKilledPopulation m ell ellN logN b v c κ).FiniteSlices := by
+    (positiveASelectedBRWPopulation m ell ellN logN b v c κ).FiniteSlices := by
   classical
-  dsimp [positiveAKilledPopulation]
+  dsimp [positiveASelectedBRWPopulation]
   exact RootIndexed.CausalPopulation.ofRestartedRealPositionSets_finiteSlices
     (fun _ : Fin m => 0) id measurable_id
     (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))

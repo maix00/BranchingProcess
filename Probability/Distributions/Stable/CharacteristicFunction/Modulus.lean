@@ -73,7 +73,7 @@ theorem IsAlphaStable.norm_charFun_weightedSum
     (μ.map fun x => a * x) ∗ (μ.map fun x => b * x) =
         (μ.prod μ).map (weightedSum a b) := by
     rw [Measure.conv,
-      @Measure.map_prod_map ℝ ℝ ℝ _ _ _ ℝ _ _ _ μ μ hμsfinite hμsfinite
+      @Measure.map_prod_map ℝ ℝ ℝ _ _ _ ℝ _ _ _ μ μ hμsfinite
         (by fun_prop) (by fun_prop)]
     rw [Measure.map_map (by fun_prop) (by fun_prop)]
     rfl

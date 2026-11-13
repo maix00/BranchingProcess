@@ -110,7 +110,10 @@ theorem isTightMeasureSet_of_compactRange_and_oscillationPartitions
       lt_trans hoscillation hsmall, hbound⟩
   obtain ⟨compact, hcompact, hgood⟩ :=
     Skorokhod.exists_isCompact_superset_of_uniform_admitsOscillationPartition
-      ⟨range, hrangeCompact, fun path hpath t => hpath.1 t⟩ hpartitions
+      (K := good)
+      ⟨range, hrangeCompact,
+        fun (path : CadlagPath unitInterval E) (hpath : path ∈ good) t => hpath.1 t⟩
+      hpartitions
   refine ⟨compact, hcompact, ?_⟩
   intro ν hν
   obtain ⟨i, rfl⟩ := hν
@@ -185,7 +188,10 @@ theorem isTightMeasureSet_range_of_eventually_compactRange_and_oscillationPartit
       lt_trans hoscillation hsmall, hbound⟩
   obtain ⟨compact, hcompact, hgood⟩ :=
     Skorokhod.exists_isCompact_superset_of_uniform_admitsOscillationPartition
-      ⟨range, hrangeCompact, fun path hpath t => hpath.1 t⟩ hpartitions
+      (K := good)
+      ⟨range, hrangeCompact,
+        fun (path : CadlagPath unitInterval E) (hpath : path ∈ good) t => hpath.1 t⟩
+      hpartitions
   refine ⟨N, compact, hcompact, ?_⟩
   intro i hi
   calc

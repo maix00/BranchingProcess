@@ -19,7 +19,7 @@ import Probability.Process.Path.Restart.Basic
 
 ## Public declarations
 
-* `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.size_le_pathGeneration_restartedWindow` bounds a one-root killed
+* `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.size_le_pathGeneration_restartedWindow` bounds a one-root selected
   generation size by the unrestricted path-generation sum with the restarted
   window test.
 * `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.size_le_sum_pathGeneration_restartedWindow` gives the same inequality for
@@ -29,7 +29,7 @@ Every retained particle contributes to an unrestricted ancestral path sum.  The
 finite-root version is obtained by partitioning particles by their initial
 root; no integration or spine law is used here.
 
-Writing `P^{(r)}` for the restarted killed population from root `r`, and
+Writing `P^{(r)}` for the restarted selected population from root `r`, and
 `P^{(R)}` for the one from the finite root set `R`, the pointwise bounds are
 
 \[\begin{aligned}
@@ -59,7 +59,7 @@ open ProbabilityTheory.BranchingRandomWalk.Spine
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
-/-- For one initial root, every particle retained by the restarted killed
+/-- For one initial root, every particle selected by the restarted
 population contributes one to the corresponding unrestricted path sum. -/
 theorem size_le_pathGeneration_restartedWindow
     {Root α Mark : Type*} [Countable α] [MeasurableSpace Mark]
@@ -148,7 +148,7 @@ theorem size_le_pathGeneration_restartedWindow
     _ = pathGeneration (⟨d, hd⟩ : Potential Mark) n
         (restartedWindowTest cutoff window) (initialPosition r) (field r) := rfl
 
-/-- With finitely many initial roots, the killed generation size is bounded
+/-- With finitely many initial roots, the selected generation size is bounded
 by the sum of the unrestricted path observables rooted at those labels. -/
 theorem size_le_sum_pathGeneration_restartedWindow
     {Root α Mark : Type*} [Countable α] [MeasurableSpace Mark]

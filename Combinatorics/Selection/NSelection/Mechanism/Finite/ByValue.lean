@@ -44,10 +44,11 @@ value and the label $p$ breaks ties.
   $|\{p\in\operatorname{selectFirstNBy}(N,v,s):v(p)\le a\}|=
   \min(N,|\{p\in s:v(p)\le a\}|)$.
 - `Combinatorics.Selection.NSelection.filter_card_le_filter_selectFirstNBy`
-  transfers threshold counts: if
-  $R\subseteq S$, $|R|\le N$, and the source threshold count is bounded by
-  the target threshold count for every $a$, then the retained source count
-  below every $a$ is bounded by the dynamically selected target count.
+  transfers threshold counts: if `objectsToMatch` is a subpopulation of
+  `objectPopulation`, has size at most \(N\), and every threshold count of
+  `objectPopulation` is bounded by the corresponding count in
+  `availablePartners`, then the dynamically selected first-\(N\) partners
+  dominate every threshold count of `objectsToMatch`.
 - `Combinatorics.Selection.NSelection.leftmostBy` packages the
   dynamic selector as a finite capacity-$N$ mechanism;
   `Combinatorics.Selection.NSelection.leftmostBy_select` identifies
@@ -251,28 +252,30 @@ theorem card_filter_selectFirstNBy [LinearOrder ι] [LinearOrder Value]
               ⟨hp, by simpa [below, key] using hkbelow⟩, rfl⟩
       rw [← himage, Finset.card_image_of_injective _ (valueKey_injective value)]
 
-/-- Dynamic-value version of the finite coupling count.  No compatibility
-between a static label order and the observed values is needed. -/
+/-- Dynamic-value version of the finite selector count. `objectsToMatch` is a
+subpopulation of `objectPopulation`; `availablePartners` supplies the pool
+from which the first `N` partners are selected by `partnerOrderKey`. -/
 theorem filter_card_le_filter_selectFirstNBy
     {κ : Type*} [DecidableEq κ] [LinearOrder ι] [LinearOrder Value]
-    (N : ℕ) (sourceValue : κ → Value) (targetValue : ι → Value)
-    (retained source : Finset κ) (target : Finset ι)
-    (hretained : retained ⊆ source)
-    (hcard : retained.card ≤ N)
-    (hthreshold : ∀ a : Value,
-      (source.filter fun p => sourceValue p ≤ a).card ≤
-        (target.filter fun q => targetValue q ≤ a).card) :
+    (N : ℕ) (objectOrderKey : κ → Value) (partnerOrderKey : ι → Value)
+    (objectsToMatch objectPopulation : Finset κ) (availablePartners : Finset ι)
+    (hobjectsToMatch_subset_objectPopulation : objectsToMatch ⊆ objectPopulation)
+    (hobjectsToMatch_card_le_N : objectsToMatch.card ≤ N)
+    (hobjectPopulation_thresholdCount_le_availablePartner_thresholdCount : ∀ a : Value,
+      (objectPopulation.filter fun p => objectOrderKey p ≤ a).card ≤
+        (availablePartners.filter fun q => partnerOrderKey q ≤ a).card) :
     ∀ a : Value,
-      (retained.filter fun p => sourceValue p ≤ a).card ≤
-        ((selectFirstNBy N targetValue target).filter fun q =>
-          targetValue q ≤ a).card := by
+      (objectsToMatch.filter fun p => objectOrderKey p ≤ a).card ≤
+        ((selectFirstNBy N partnerOrderKey availablePartners).filter fun q =>
+          partnerOrderKey q ≤ a).card := by
   classical
   intro a
   rw [card_filter_selectFirstNBy]
   apply le_min
-  · exact (Finset.card_filter_le _ _).trans hcard
+  · exact (Finset.card_filter_le _ _).trans hobjectsToMatch_card_le_N
   · exact (Finset.card_le_card
-      (Finset.filter_subset_filter _ hretained)).trans (hthreshold a)
+      (Finset.filter_subset_filter _ hobjectsToMatch_subset_objectPopulation)).trans
+        (hobjectPopulation_thresholdCount_le_availablePartner_thresholdCount a)
 
 /-- The dynamic leftmost rule as an exact-capacity selection mechanism. -/
 noncomputable def leftmostBy [LinearOrder ι] [LinearOrder Value]

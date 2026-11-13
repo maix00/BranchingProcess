@@ -97,7 +97,9 @@ theorem exists_dirac_of_norm_charFun_eq_one {μ : Measure ℝ}
     have hμ : μ Set.univ = 1 := measure_univ
     rw [hzero] at hμ
     simp at hμ⟩
-  exact @IsZeroOneMeasure.exists_eq_dirac ℝ _ μ hzeroOne inferInstance hneZero
+  letI : IsZeroOneMeasure μ := hzeroOne
+  letI : NeZero μ := hneZero
+  exact IsZeroOneMeasure.exists_eq_dirac (μ := μ)
 
 end MeasureTheory
 

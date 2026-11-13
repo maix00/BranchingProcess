@@ -12,7 +12,7 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Se
 import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Roots.Selection
 import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
 /-!
-# Decomposing terminal killed-population failure
+# Decomposing terminal selected-population emptiness
 
 ## Internal proof declarations
 
@@ -20,17 +20,17 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
 These two event-decomposition lemmas are used only to prove the quantitative
 terminal-failure estimate in `Failure/Bound.lean`.
 
-`positiveAKilledTerminalEmpty_subset_lowRoots_or_allAvoid` gives,
+`positiveASelectedBRWTerminalEmpty_subset_lowRoots_or_allAvoid` gives,
 almost surely under the root-indexed field law, the inclusion
   \[
-  \{\text{terminal killed population is empty}\}
+  \{\text{terminal selected BRW population is empty}\}
   \subseteq A^c\cup(A\cap\{\text{all chosen second-stage paths fail}\}),
   \]
 where `A` is the event that at least `K` roots survive to the first-stage
 generation. The inclusion assumes `K ≤ m`, `0 < ell ≤ ellN`, the stated
 starting-position bound, and boundary normalization.
 
-`measure_positiveAKilledTerminalEmpty_le` gives the corresponding
+`measure_positiveASelectedBRWTerminalEmpty_le` gives the corresponding
 probability bound
   \[
   \mathbb P(\text{terminal population empty})
@@ -38,7 +38,7 @@ probability bound
       \mathbb P(A\cap\{\text{all chosen second-stage paths fail}\}).
   \]
 
-If the terminal killed slice is empty while the earlier slice contains enough
+If the terminal selected BRW slice is empty while the earlier slice contains enough
 roots, every selected descendant tree must fail its second-stage corridor.
 This turns the pathwise embedding into a probability decomposition that can
 be combined with the predictable-root estimate.
@@ -55,10 +55,10 @@ open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.RootIndexed
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-/-- On the event that the first killed slice has at least K particles,
+/-- On the event that the first selected BRW slice has at least K particles,
 terminal extinction forces all selected descendant fields to miss the
 second-stage corridor, outside the boundary-normalization null set. -/
-lemma positiveAKilledTerminalEmpty_subset_lowRoots_or_allAvoid
+lemma positiveASelectedBRWTerminalEmpty_subset_lowRoots_or_allAvoid
     (m K ell ellN : ℕ) (hKm : K ≤ m)
     (logN b v c κ : ℝ) (hell : 0 < ell) (hellN : ell ≤ ellN)
     (hstart : 0 ≤ b * logN)
@@ -67,8 +67,8 @@ lemma positiveAKilledTerminalEmpty_subset_lowRoots_or_allAvoid
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ) :
-    let P := positiveAKilledPopulation m ell ellN logN b v c κ
-    let hP := positiveAKilledPopulation_finiteSlices
+    let P := positiveASelectedBRWPopulation m ell ellN logN b v c κ
+    let hP := positiveASelectedBRWPopulation_finiteSlices
       m ell ellN logN b v c κ
     let A := secondStageEnoughRoots (K := K)
       (fun _ : ℕ => P) (fun _ : ℕ => hP) (fun _ => ell) 0
@@ -82,9 +82,9 @@ lemma positiveAKilledTerminalEmpty_subset_lowRoots_or_allAvoid
           RootIndexed.selectedSubtreeStepFieldVector (chosen 0) ⁻¹' failure)) := by
   classical
   dsimp
-  let P := positiveAKilledPopulation m ell ellN logN b v c κ
+  let P := positiveASelectedBRWPopulation m ell ellN logN b v c κ
   let hP : P.FiniteSlices :=
-    positiveAKilledPopulation_finiteSlices m ell ellN logN b v c κ
+    positiveASelectedBRWPopulation_finiteSlices m ell ellN logN b v c κ
   let generation : ℕ → ℕ := fun _ => ell
   let A : Set (RestartedField m) :=
     secondStageEnoughRoots (K := K) (fun _ => P) (fun _ => hP)
@@ -127,7 +127,7 @@ lemma positiveAKilledTerminalEmpty_subset_lowRoots_or_allAvoid
 event that enough selected roots all fail their independent second-stage
 corridor. This is the event decomposition preceding the quantitative
 first-stage and capacity estimates in the positive-a proof. -/
-lemma measure_positiveAKilledTerminalEmpty_le
+lemma measure_positiveASelectedBRWTerminalEmpty_le
     (m K ell ellN : ℕ) (hKm : K ≤ m)
     (logN b v c κ : ℝ) (hell : 0 < ell) (hellN : ell ≤ ellN)
     (hstart : 0 ≤ b * logN)
@@ -136,8 +136,8 @@ lemma measure_positiveAKilledTerminalEmpty_le
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ) :
-    let P := positiveAKilledPopulation m ell ellN logN b v c κ
-    let hP := positiveAKilledPopulation_finiteSlices
+    let P := positiveASelectedBRWPopulation m ell ellN logN b v c κ
+    let hP := positiveASelectedBRWPopulation_finiteSlices
       m ell ellN logN b v c κ
     let A := secondStageEnoughRoots (K := K)
       (fun _ : ℕ => P) (fun _ : ℕ => hP) (fun _ => ell) 0
@@ -153,9 +153,9 @@ lemma measure_positiveAKilledTerminalEmpty_le
         failure) := by
   classical
   dsimp
-  let P := positiveAKilledPopulation m ell ellN logN b v c κ
+  let P := positiveASelectedBRWPopulation m ell ellN logN b v c κ
   let hP : P.FiniteSlices :=
-    positiveAKilledPopulation_finiteSlices m ell ellN logN b v c κ
+    positiveASelectedBRWPopulation_finiteSlices m ell ellN logN b v c κ
   let generation : ℕ → ℕ := fun _ => ell
   let A : Set (RestartedField m) :=
     secondStageEnoughRoots (K := K) (fun _ => P) (fun _ => hP)
@@ -167,7 +167,7 @@ lemma measure_positiveAKilledTerminalEmpty_le
   let terminalEmpty : Set (RestartedField m) :=
     {field | ¬ (P ellN field).Nonempty}
   have hsubset :=
-    positiveAKilledTerminalEmpty_subset_lowRoots_or_allAvoid
+    positiveASelectedBRWTerminalEmpty_subset_lowRoots_or_allAvoid
       m K ell ellN hKm logN b v c κ hell hellN hstart μ hboundary
   calc
     (RootIndexed.stepFieldLaw (Root := Fin m) μ) terminalEmpty ≤

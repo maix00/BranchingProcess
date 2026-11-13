@@ -12,7 +12,7 @@ public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.AddressFiltration.RootSubset
 
 /-!
-# First-moment estimates from a fresh reserve subtree
+# First-moment estimates from a fresh continuation subtree
 
 This file connects the coordinate-domain exploration interface to the
 first-moment exceptional-event estimate.  Once a reserve root is chosen from
@@ -23,7 +23,7 @@ gains the probability of the failure event exactly.
 
 ## Public declarations
 
-For a reserve subtree selected from an exploration domain and an event
+For a continuation subtree selected from an exploration domain and an event
 \(E\) measurable in that domain, the absolute first moment factors as
 
 \[\int |g(F(\omega))|\,\mathbf 1_E(\omega)\,d\nu(\omega)
@@ -52,7 +52,7 @@ open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coo
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
-/-- A measurable observable of a fresh, measurably selected reserve subtree is
+/-- A measurable observable of a fresh, measurably selected continuation subtree is
 independent of the information used to select that subtree. -/
 theorem BranchingExplorationDomains.selected_fresh_subtree_observable_independent
     {α X : Type*} [MeasurableSpace X]

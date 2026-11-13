@@ -11,32 +11,32 @@ public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Data.Set.Basic
 
 /-!
-# Order-dominating maps between sets
+# Order-dominating maps between finite populations
 
-The labels and their ordered observations are separate.  No finiteness,
+The labels and their ordered observations are separate. No finiteness,
 countability, time, or branching assumption is built into this definition.
 
 ## Public declarations
 
-- `Order.DominatingMap source target sourceValue targetValue` consists of an
-  map `f` with `f '' source ⊆ target`, injective on `source`, and
-  `targetValue (f a) ≤ sourceValue a` for every `a ∈ source`.
+- `Order.DominatingMap objectsToMatch availablePartners objectOrderKey
+  partnerOrderKey` consists of an injection from `objectsToMatch` into
+  `availablePartners`, with `partnerOrderKey (f a) ≤ objectOrderKey a`.
 - `Order.DominatingMap.refl` gives the identity map, and `trans` composes two
   such maps while preserving their membership, injectivity, and order
   properties.
-- `Order.DominatingMap.card_filter_le` bounds the number of source points
-  below a value by the number of target points below that value whenever both
-  domains are finite.
+- `Order.DominatingMap.card_filter_le` bounds the number of objects whose
+  order key is below a value by the number of available partners whose key is
+  below that value whenever both sets are finite.
 
-Concretely, `f : DominatingMap S T φ ψ` packages
+Concretely, `f : DominatingMap P Q κ₁ κ₂` packages
 \[
-  f(S)\subseteq T,\qquad \operatorname{InjOn}(f,S),\qquad
-  \psi(f(a))\le\phi(a)\quad(a\in S).
+  f(P)\subseteq Q,\qquad \operatorname{InjOn}(f,P),\qquad
+  \kappa_2(f(a))\le\kappa_1(a)\quad(a\in P).
 \]
-For finite `S` and `T`, the induced cardinality comparison is
+For finite `P` and `Q`, the induced cardinality comparison is
 \[
-  \#\{a\in S:\phi(a)\le r\}
-    \le \#\{b\in T:\psi(b)\le r\}\quad(r\in\mathrm{Value}).
+  \#\{a\in P:\kappa_1(a)\le r\}
+    \le \#\{b\in Q:\kappa_2(b)\le r\}\quad(r\in\mathrm{Value}).
 \]
 -/
 
@@ -46,37 +46,44 @@ namespace Order
 
 variable {A B C Value : Type*}
 
-/-- An injective map from `source` to `target` whose target observation is no
-larger than the corresponding source observation. -/
+/-- An injective map from `objectsToMatch` to `availablePartners` whose
+partner order key is no larger than the corresponding object order key. -/
 structure DominatingMap [Preorder Value]
-    (source : Set A) (target : Set B)
-    (sourceValue : A → Value) (targetValue : B → Value) where
+    (objectsToMatch : Set A) (availablePartners : Set B)
+    (objectOrderKey : A → Value) (partnerOrderKey : B → Value) where
   toFun : A → B
-  mapsTo : Set.MapsTo toFun source target
-  injOn : Set.InjOn toFun source
-  dominates : ∀ a ∈ source, targetValue (toFun a) ≤ sourceValue a
+  mapsTo : Set.MapsTo toFun objectsToMatch availablePartners
+  injOn : Set.InjOn toFun objectsToMatch
+  dominates : ∀ a ∈ objectsToMatch,
+    partnerOrderKey (toFun a) ≤ objectOrderKey a
 
 namespace DominatingMap
 
 variable [Preorder Value]
 
-instance (source : Set A) (target : Set B)
-    (sourceValue : A → Value) (targetValue : B → Value) :
-    CoeFun (DominatingMap source target sourceValue targetValue) (fun _ => A → B) :=
+instance (objectsToMatch : Set A) (availablePartners : Set B)
+    (objectOrderKey : A → Value) (partnerOrderKey : B → Value) :
+    CoeFun (DominatingMap objectsToMatch availablePartners
+      objectOrderKey partnerOrderKey) (fun _ => A → B) :=
   ⟨DominatingMap.toFun⟩
 
-def refl (source : Set A) (value : A → Value) :
-    DominatingMap source source value value where
+def refl (objectsToMatch : Set A) (orderKey : A → Value) :
+    DominatingMap objectsToMatch objectsToMatch orderKey orderKey where
   toFun := id
   mapsTo := fun _ ha => ha
   injOn := fun _ _ _ _ h => h
   dominates := fun _ _ => le_rfl
 
-def trans {source : Set A} {middle : Set B} {target : Set C}
-    {sourceValue : A → Value} {middleValue : B → Value} {targetValue : C → Value}
-    (f : DominatingMap source middle sourceValue middleValue)
-    (g : DominatingMap middle target middleValue targetValue) :
-    DominatingMap source target sourceValue targetValue where
+def trans {objectsToMatch : Set A} {middlePartners : Set B}
+    {availablePartners : Set C}
+    {objectOrderKey : A → Value} {middleOrderKey : B → Value}
+    {partnerOrderKey : C → Value}
+    (f : DominatingMap objectsToMatch middlePartners
+      objectOrderKey middleOrderKey)
+    (g : DominatingMap middlePartners availablePartners
+      middleOrderKey partnerOrderKey) :
+    DominatingMap objectsToMatch availablePartners
+      objectOrderKey partnerOrderKey where
   toFun := g ∘ f
   mapsTo := fun _ ha => g.mapsTo (f.mapsTo ha)
   injOn := by
@@ -85,27 +92,30 @@ def trans {source : Set A} {middle : Set B} {target : Set C}
   dominates := fun a ha =>
     (g.dominates (f a) (f.mapsTo ha)).trans (f.dominates a ha)
 
-/-- An order-dominating injection maps every finite lower level set of the
-source into the corresponding lower level set of the target. -/
+/-- An order-dominating injection maps every finite lower level set of
+`objectsToMatch` into the corresponding lower level set of `availablePartners`.
+-/
 theorem card_filter_le [DecidableRel (· ≤ · : Value → Value → Prop)]
-    {source : Set A} {target : Set B}
-    {sourceValue : A → Value} {targetValue : B → Value}
-    (f : DominatingMap source target sourceValue targetValue)
-    (hsource : source.Finite) (htarget : target.Finite) (a : Value) :
-    (hsource.toFinset.filter fun x => sourceValue x ≤ a).card ≤
-      (htarget.toFinset.filter fun y => targetValue y ≤ a).card := by
+    {objectsToMatch : Set A} {availablePartners : Set B}
+    {objectOrderKey : A → Value} {partnerOrderKey : B → Value}
+    (f : DominatingMap objectsToMatch availablePartners
+      objectOrderKey partnerOrderKey)
+    (hobjectsToMatchFinite : objectsToMatch.Finite)
+    (havailablePartnersFinite : availablePartners.Finite) (a : Value) :
+    (hobjectsToMatchFinite.toFinset.filter fun x => objectOrderKey x ≤ a).card ≤
+      (havailablePartnersFinite.toFinset.filter fun y => partnerOrderKey y ≤ a).card := by
   classical
   apply Finset.card_le_card_of_injOn f.toFun
   · intro x hx
     obtain ⟨hx, hxa⟩ := Finset.mem_filter.mp hx
     apply Finset.mem_filter.mpr
-    refine ⟨htarget.mem_toFinset.mpr
-      (f.mapsTo (hsource.mem_toFinset.mp hx)), ?_⟩
-    exact (f.dominates x (hsource.mem_toFinset.mp hx)).trans hxa
+    refine ⟨havailablePartnersFinite.mem_toFinset.mpr
+      (f.mapsTo (hobjectsToMatchFinite.mem_toFinset.mp hx)), ?_⟩
+    exact (f.dominates x (hobjectsToMatchFinite.mem_toFinset.mp hx)).trans hxa
   · intro x hx y hy hxy
     exact f.injOn
-      (hsource.mem_toFinset.mp (Finset.mem_filter.mp hx).1)
-      (hsource.mem_toFinset.mp (Finset.mem_filter.mp hy).1) hxy
+      (hobjectsToMatchFinite.mem_toFinset.mp (Finset.mem_filter.mp hx).1)
+      (hobjectsToMatchFinite.mem_toFinset.mp (Finset.mem_filter.mp hy).1) hxy
 
 end DominatingMap
 

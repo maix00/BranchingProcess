@@ -1,0 +1,548 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+module
+
+public import Probability.BranchingRandomWalk.Restart.Trial.Basic
+public import Probability.BranchingRandomWalk.Restart.Reserve.Lineage
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
+import Probability.Process.Filtration.GeneratedByCoordinates
+
+/-!
+# Root-indexed first-split growth trials
+
+This module constructs growth-trial candidates in a root-indexed
+pre-sampled field and proves that their events are observable at their
+completion generations.
+
+## Public declarations
+
+For a split completion generation \(s>0\), the first selected child of the
+trial root at \(r\) is chosen from the path at generation \(s-1\); a trial
+of length \(\ell\ge1\) then completes at
+
+\[\sigma+(\ell-1)=\tau+\ell.\]
+
+* `Restart.SelectedPath.GrowthTrial.growthTrialRootAt` selects the first selected child after
+  a split. Its root, depth, selected-slot, and fiber-measurability results are
+  `Restart.SelectedPath.GrowthTrial.growthTrialRootAt_root`,
+  `Restart.SelectedPath.GrowthTrial.growthTrialRootAt_depth`,
+  `Restart.SelectedPath.GrowthTrial.growthTrialRootAt_selected`, and
+  `Restart.SelectedPath.GrowthTrial.growthTrialRootAt_fiber_measurable`.
+* `Restart.SelectedPath.GrowthTrial.successAtSelectedRoot_measurable` proves that the
+  event `growthTrialSuccess` below a generation-observable random root is
+  measurable by `start + duration`, when the root map has measurable fibers,
+  countable range, and address depth `start`.
+* `Restart.SelectedPath.GrowthTrial.successTest` defines the candidate
+  event at generation `n`: it is the trial below
+  `growthTrialRootAt (n - duration)` when `0 < n - duration`, and is empty
+  otherwise. When both selectors are measurable,
+  `Restart.SelectedPath.GrowthTrial.successTest_measurable` places this
+  event in the generation-`n` domain filtration.
+* `Restart.SelectedPath.GrowthTrial.completion` is the split completion
+  time plus `duration`;
+  `Restart.SelectedPath.GrowthTrial.completion_eq_tau_add_trialLength` gives
+  `σ + (ℓ - 1) = τ + ℓ` for `1 ≤ ℓ`, and
+  When the split mark is measurable,
+  `Restart.SelectedPath.GrowthTrial.completion_isStoppingTime` proves it
+  is a stopping time.
+* `Restart.SelectedPath.GrowthTrial.successEventAtRoot` records success at
+  that observable completion.
+  `Restart.SelectedPath.GrowthTrial.successEvent_observable` gives its
+  candidate-observable form, and
+  `Restart.SelectedPath.GrowthTrial.candidatesWithin_measurable` proves
+  measurability for all candidates through a fixed generation.
+* `Restart.SelectedPath.GrowthTrial.integral_selectedSubtree_abs_on_growthTrialFailure_le`
+  bounds the expected selected-subtree contribution on the event that every
+  candidate in a finite family fails.
+-/
+
+open MeasureTheory ProbabilityTheory
+
+@[expose] public section
+
+namespace ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath.GrowthTrial
+
+open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
+open Combinatorics.Branching.Step.FiniteSelection
+
+attribute [local instance] Classical.propDecidable Classical.decEq
+
+/-- The address of the first selected child at a prescribed observable split
+generation. Generation zero is totalized because a split completion is
+always at a positive generation. -/
+noncomputable def growthTrialRootAt
+    {Root Trial α X : Type*} [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
+    (R : Step.FiniteSelection α X) (r : Root) (i : Trial) (start : ℕ)
+    (ω : RootIndexed.StepField Root α X) : Root × TreeNode α :=
+  if _h : start = 0 then (r, []) else
+    let parent := lineages.path r i (start - 1) ω
+    (r, parent ++ [firstSelectedSlot R (ω r parent)])
+
+theorem growthTrialRootAt_root
+    {Root Trial α X : Type*} [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
+    (R : Step.FiniteSelection α X) (r : Root) (i : Trial)
+    (start : ℕ) (ω : RootIndexed.StepField Root α X) :
+    (Restart.SelectedPath.GrowthTrial.growthTrialRootAt lineages R r i start ω).1 = r := by
+  by_cases hs : start = 0 <;>
+    simp [growthTrialRootAt, hs]
+
+theorem growthTrialRootAt_depth
+    {Root Trial α X : Type*} [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
+    (R : Step.FiniteSelection α X) (r : Root) (i : Trial)
+    (start : ℕ) (ω : RootIndexed.StepField Root α X) :
+    (Restart.SelectedPath.GrowthTrial.growthTrialRootAt lineages R r i start ω).2.length = start := by
+  by_cases hs : start = 0
+  · simp [growthTrialRootAt, hs]
+  · obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hs
+    simp [growthTrialRootAt, lineages.depth]
+
+/-- On a split mark, the first selected slot is an actual child of the split
+parent. The parent is at generation `start - 1`, and its child is at
+generation `start`. -/
+theorem growthTrialRootAt_selected
+    {Root Trial α X : Type*} [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
+    (R : Step.FiniteSelection α X) (r : Root) (i : Trial)
+    (start : ℕ) (ω : RootIndexed.StepField Root α X)
+    (hstart : 0 < start)
+    (hsplit : ω r (lineages.path r i (start - 1) ω) ∈ splitBy R) :
+    (Restart.SelectedPath.GrowthTrial.growthTrialRootAt lineages R r i start ω).2 =
+        lineages.path r i (start - 1) ω ++
+          [firstSelectedSlot R (ω r (lineages.path r i (start - 1) ω))] ∧
+      firstSelectedSlot R (ω r (lineages.path r i (start - 1) ω)) ∈
+        R (ω r (lineages.path r i (start - 1) ω)) := by
+  constructor
+  · simp [growthTrialRootAt, Nat.ne_of_gt hstart]
+  · apply firstSelectedSlot_mem
+    have hcard : 2 ≤
+        (R (ω r (lineages.path r i (start - 1) ω))).card := by
+      simpa [splitBy] using hsplit
+    exact Finset.card_pos.mp (by omega)
+
+theorem growthTrialRootAt_fiber_measurable
+    {Root Trial α X : Type*} [Countable α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
+    (R : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (r : Root) (i : Trial)
+    (start : ℕ) (p : Root × TreeNode α) :
+    MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) start]
+      {ω | Restart.SelectedPath.GrowthTrial.growthTrialRootAt lineages R r i start ω = p} := by
+  cases start with
+  | zero =>
+      by_cases hp : (r, []) = p
+      · rw [show {ω | Restart.SelectedPath.GrowthTrial.growthTrialRootAt lineages R r i 0 ω = p} =
+            Set.univ by ext ω; simp [growthTrialRootAt, hp]]
+        exact MeasurableSet.univ
+      · rw [show {ω | Restart.SelectedPath.GrowthTrial.growthTrialRootAt lineages R r i 0 ω = p} =
+            ∅ by ext ω; simp [growthTrialRootAt, hp]]
+        exact (RootIndexed.stepFiltration
+          (Root := Root) (α := α) (X := X) 0).measurableSet_empty
+  | succ n =>
+      have hpath : Measurable[RootIndexed.stepFiltration
+          (Root := Root) (α := α) (X := X) (n + 1)]
+          (lineages.path r i n) :=
+        (lineages.path_adapted r i n).mono
+          (RootIndexed.stepFiltration
+            (Root := Root) (α := α) (X := X) |>.mono (Nat.le_succ n)) le_rfl
+      have hmark : Measurable[RootIndexed.stepFiltration
+          (Root := Root) (α := α) (X := X) (n + 1)]
+          (fun ω => ω r (lineages.path r i n ω)) := by
+        let chosen : RootIndexed.StepField Root α X → Root × TreeNode α :=
+          fun ω => (r, lineages.path r i n ω)
+        have hfiber : ∀ q, MeasurableSet[RootIndexed.stepFiltration
+            (Root := Root) (α := α) (X := X) (n + 1)]
+            {ω | chosen ω = q} := by
+          intro q
+          by_cases hq : q.1 = r
+          · have heq : {ω | chosen ω = q} =
+                {ω | lineages.path r i n ω = q.2} := by
+              ext ω
+              simp [chosen, Prod.ext_iff, hq, eq_comm]
+            rw [heq]
+            exact hpath (measurableSet_singleton q.2)
+          · have heq : {ω | chosen ω = q} = ∅ := by
+              ext ω
+              have hqr : r ≠ q.1 := fun h => hq h.symm
+              simp [chosen, Prod.ext_iff, hqr]
+            rw [heq]
+            exact (RootIndexed.stepFiltration
+              (Root := Root) (α := α) (X := X) (n + 1)).measurableSet_empty
+        have hcount : (Set.range chosen).Countable := by
+          have hrange : Set.range chosen =
+              (fun u => (r, u)) '' Set.range (lineages.path r i n) := by
+            ext q
+            simp only [Set.mem_range, Set.mem_image]
+            constructor
+            · rintro ⟨ω, rfl⟩
+              exact ⟨lineages.path r i n ω, ⟨ω, rfl⟩, rfl⟩
+            · rintro ⟨u, ⟨ω, rfl⟩, hq⟩
+              exact ⟨ω, by simpa [chosen] using hq⟩
+          rw [hrange]
+          exact (Set.to_countable (Set.range (lineages.path r i n))).image
+            (fun u => (r, u))
+        exact RootIndexed.selectedStep_measurable chosen hfiber
+          (fun ω => by
+            change (lineages.path r i n ω).length < n + 1
+            rw [lineages.depth r i n ω]
+            omega)
+          hcount
+      have hslot : Measurable[RootIndexed.stepFiltration
+          (Root := Root) (α := α) (X := X) (n + 1)]
+          (fun ω => firstSelectedSlot R (ω r (lineages.path r i n ω))) :=
+        (firstSelectedSlot_measurable R hR).comp hmark
+      have hnode : Measurable[RootIndexed.stepFiltration
+          (Root := Root) (α := α) (X := X) (n + 1)]
+          (fun ω => lineages.path r i n ω ++
+            [firstSelectedSlot R (ω r (lineages.path r i n ω))]) := by
+        exact (measurable_of_countable (fun q : TreeNode α × α =>
+          q.1 ++ [q.2])).comp (hpath.prodMk hslot)
+      by_cases hp : p.1 = r
+      · have heq : {ω | Restart.SelectedPath.GrowthTrial.growthTrialRootAt lineages R r i (n + 1) ω = p} =
+            {ω | lineages.path r i n ω ++
+              [firstSelectedSlot R (ω r (lineages.path r i n ω))] = p.2} := by
+          ext ω
+          simp [growthTrialRootAt, Prod.ext_iff, hp]
+        rw [heq]
+        exact hnode (measurableSet_singleton p.2)
+      · have heq : {ω | Restart.SelectedPath.GrowthTrial.growthTrialRootAt lineages R r i (n + 1) ω = p} = ∅ := by
+          ext ω
+          have hpr : r ≠ p.1 := fun h => hp h.symm
+          simp [growthTrialRootAt, Prod.ext_iff, hpr]
+        rw [heq]
+        exact (RootIndexed.stepFiltration
+          (Root := Root) (α := α) (X := X) (n + 1)).measurableSet_empty
+
+/-- A finite selected-population trial with a random, generation-observable
+root has a measurable band-success event at its endpoint. -/
+theorem successAtSelectedRoot_measurable
+    {Root α X : Type*} [Countable α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] [MeasurableSpace X]
+    (R : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (start duration lower upper : ℕ)
+    (chosen : RootIndexed.StepField Root α X → Root × TreeNode α)
+    (hchosen : ∀ p, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) start] {ω | chosen ω = p})
+    (hcount : (Set.range chosen).Countable)
+    (hdepth : ∀ ω, (chosen ω).2.length = start) :
+    MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) (start + duration)]
+      {ω | growthTrialSuccess R lower upper duration
+        (fun v => ω (chosen ω).1 ((chosen ω).2 ++ v))} := by
+  let S : Set (Root × TreeNode α) := Set.range chosen
+  let _ : Countable S := Set.countable_coe_iff.mpr hcount
+  have hfixed (p : S) : MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) (start + duration)]
+      {ω | growthTrialSuccess R lower upper duration
+        (fun v => ω p.1.1 (p.1.2 ++ v))} := by
+    have hsub : @Measurable (RootIndexed.StepField Root α X)
+        (Mark α (Step α X))
+        (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X)
+          (start + duration))
+        (generationFiltration (M := Step α X) duration)
+        (fun ω v => ω p.1.1 (p.1.2 ++ v)) :=
+      RootIndexed.fixedSubtree_measurable_at p.1 start duration
+        (by obtain ⟨ω, hω⟩ := p.2; simpa [← hω] using hdepth ω)
+    have hlocal : MeasurableSet[generationFiltration
+        (M := Step α X) duration]
+        {ω | growthTrialSuccess R lower upper duration ω} :=
+      growthTrialSuccess_measurable R hR lower upper duration
+    exact hlocal.preimage hsub
+  have heq :
+      {ω | growthTrialSuccess R lower upper duration
+        (fun v => ω (chosen ω).1 ((chosen ω).2 ++ v))} =
+        ⋃ p : S, {ω | chosen ω = p.1} ∩
+          {ω | growthTrialSuccess R lower upper duration
+            (fun v => ω p.1.1 (p.1.2 ++ v))} := by
+    ext ω
+    simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq]
+    constructor
+    · intro h
+      exact ⟨⟨chosen ω, Set.mem_range_self ω⟩, rfl, h⟩
+    · rintro ⟨p, hp, h⟩
+      simpa [hp] using h
+  rw [heq]
+  apply MeasurableSet.iUnion
+  intro p
+  let F := RootIndexed.stepFiltration (Root := Root) (α := α) (X := X)
+  have hfiber : MeasurableSet[F (start + duration)]
+      {ω | chosen ω = p.1} :=
+    F.mono (Nat.le_add_right start duration) _ (hchosen p.1)
+  exact hfiber.inter (hfixed p)
+
+/-- The growth test attached to a first-split candidate.  If the global
+generation is too early to contain a positive split generation followed by
+the requested trial duration, the test is empty. -/
+noncomputable def successTest
+    {Root Trial α X : Type*} [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
+    (splitSelection growthSelection : Step.FiniteSelection α X)
+    (r : Root) (i : Trial) (duration lower upper n : ℕ) :
+    Set (RootIndexed.StepField Root α X) :=
+  if 0 < n - duration then
+    {ω | growthTrialSuccess growthSelection lower upper duration
+      (fun v => ω ((Restart.SelectedPath.GrowthTrial.growthTrialRootAt lineages splitSelection r i
+        (n - duration) ω).1)
+        ((Restart.SelectedPath.GrowthTrial.growthTrialRootAt lineages splitSelection r i
+          (n - duration) ω).2 ++ v))}
+  else ∅
+
+theorem successTest_measurable
+    {Root Trial α X : Type*} [Countable α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
+    (splitSelection growthSelection : Step.FiniteSelection α X)
+    (hsplitSelection : Measurable splitSelection.select)
+    (hgrowth : Measurable growthSelection.select)
+    (r : Root) (i : Trial) (duration lower upper n : ℕ) :
+    MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n]
+      (Restart.SelectedPath.GrowthTrial.successTest lineages splitSelection growthSelection
+        r i duration lower upper n) := by
+  unfold Restart.SelectedPath.GrowthTrial.successTest
+  by_cases hstart : 0 < n - duration
+  · let start := n - duration
+    have hsum : start + duration = n := by dsimp [start]; omega
+    let chosen := Restart.SelectedPath.GrowthTrial.growthTrialRootAt lineages splitSelection r i start
+    have hchosen := Restart.SelectedPath.GrowthTrial.growthTrialRootAt_fiber_measurable lineages
+      splitSelection hsplitSelection r i start
+    have hcount : (Set.range chosen).Countable := by
+      have hnode : (Set.range (fun ω => (chosen ω).2)).Countable :=
+        Set.to_countable _
+      apply hnode.image (fun u => (r, u)) |>.mono
+      rintro p ⟨ω, rfl⟩
+      have hpair : (r, (chosen ω).2) = chosen ω := by
+        have hroot := Restart.SelectedPath.GrowthTrial.growthTrialRootAt_root lineages splitSelection r i start ω
+        have hroot' : (chosen ω).1 = r := by simpa [chosen] using hroot
+        apply Prod.ext
+        · exact hroot'.symm
+        · rfl
+      exact ⟨(chosen ω).2, ⟨ω, rfl⟩,
+        hpair⟩
+    have hdepth : ∀ ω, (chosen ω).2.length = start := by
+      intro ω
+      exact Restart.SelectedPath.GrowthTrial.growthTrialRootAt_depth lineages splitSelection r i start ω
+    have hsuccess := Restart.SelectedPath.GrowthTrial.successAtSelectedRoot_measurable
+      growthSelection hgrowth start duration lower upper chosen
+      hchosen hcount hdepth
+    simp only [hstart, ↓reduceIte]
+    rw [← hsum]
+    simpa [chosen, start] using hsuccess
+  · simp [hstart]
+
+/-- Completion of the first-split growth trial. -/
+noncomputable def completion
+    {Root Trial α X : Type*} [MeasurableSpace X]
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
+    (splitMark : Set (Step α X)) (r : Root) (i : Trial)
+    (duration : ℕ) : RootIndexed.StepField Root α X → WithTop ℕ :=
+  fun ω => lineages.sigma splitMark r i ω + duration
+
+/-- With `duration = ℓ - 1`, the observable candidate endpoint `σ + duration`
+is the `τ + ℓ`. -/
+theorem completion_eq_tau_add_trialLength
+    {Root Trial α X : Type*} [MeasurableSpace X]
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
+    (splitMark : Set (Step α X)) (r : Root) (i : Trial) (ell : ℕ)
+    (hell : 1 ≤ ell) :
+    Restart.SelectedPath.GrowthTrial.completion lineages splitMark r i (ell - 1) =
+      fun ω => lineages.tau splitMark r i ω + ell := by
+  funext ω
+  rw [Restart.SelectedPath.GrowthTrial.completion, lineages.sigma_eq_tau_add_one]
+  have hnat : 1 + (ell - 1) = ell := by omega
+  calc
+    (lineages.tau splitMark r i ω + 1) + (ell - 1) =
+        lineages.tau splitMark r i ω +
+          ((1 : WithTop ℕ) + (ell - 1 : WithTop ℕ)) := by simp [add_assoc]
+    _ = lineages.tau splitMark r i ω + ell := by rw [← hnat]; simp
+
+theorem completion_isStoppingTime
+    {Root Trial α X : Type*} [Countable α] [MeasurableSpace X]
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
+    (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
+    (r : Root) (i : Trial) (duration : ℕ) :
+    IsStoppingTime (RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X))
+      (Restart.SelectedPath.GrowthTrial.completion lineages splitMark r i duration) := by
+  exact (lineages.sigma_isStoppingTime splitMark hsplit r i).add_const' duration
+
+/-- Candidate growth succeeds at the observable generation following the
+first split by `duration` further generations. -/
+noncomputable def successEventAtRoot
+    {Root Trial α X : Type*} [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
+    (splitSelection growthSelection : Step.FiniteSelection α X)
+    (splitMark : Set (Step α X)) (r : Root) (i : Trial)
+    (duration lower upper : ℕ) :
+    Set (RootIndexed.StepField Root α X) :=
+  successAtCompletion
+    (Restart.SelectedPath.GrowthTrial.completion lineages splitMark r i duration)
+    (fun n => Restart.SelectedPath.GrowthTrial.successTest lineages splitSelection growthSelection
+      r i duration lower upper n)
+
+theorem successEvent_observable
+    {Root Trial α X : Type*} [Countable α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
+    (splitSelection growthSelection : Step.FiniteSelection α X)
+    (hsplitSelection : Measurable splitSelection.select)
+    (hgrowth : Measurable growthSelection.select)
+    (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
+    (r : Root) (i : Trial) (duration lower upper : ℕ) :
+    CandidateObservable (ι := Unit)
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+      (fun _ : Unit => Restart.SelectedPath.GrowthTrial.completion lineages splitMark r i duration)
+      (fun _ : Unit => Restart.SelectedPath.GrowthTrial.successEventAtRoot lineages splitSelection
+        growthSelection splitMark r i duration lower upper) := by
+  exact successAtCompletion_observable
+    (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+    (fun _ : Unit => Restart.SelectedPath.GrowthTrial.completion lineages splitMark r i duration)
+    (fun _ n => Restart.SelectedPath.GrowthTrial.successTest lineages splitSelection
+      growthSelection r i duration lower upper n)
+    (fun _ => Restart.SelectedPath.GrowthTrial.completion_isStoppingTime lineages
+      splitMark hsplit r i duration)
+    (fun _ n => Restart.SelectedPath.GrowthTrial.successTest_measurable lineages
+      splitSelection growthSelection hsplitSelection hgrowth
+      r i duration lower upper n)
+
+/-- The success event for any countable family of first-split growth
+candidates is measurable by a fixed horizon. -/
+theorem candidatesWithin_measurable
+    {Root Trial α X : Type*} [Countable α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
+    (splitSelection growthSelection : Step.FiniteSelection α X)
+    (hsplitSelection : Measurable splitSelection.select)
+    (hgrowth : Measurable growthSelection.select)
+    (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
+    (candidates : Set (Root × Trial)) (hcandidates : candidates.Countable)
+    (duration lower upper T : ℕ) :
+    MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) T]
+      (successfulCandidateWithin
+        (fun p => Restart.SelectedPath.GrowthTrial.completion lineages
+          splitMark p.1 p.2 duration)
+        (fun p => Restart.SelectedPath.GrowthTrial.successEventAtRoot lineages
+          splitSelection growthSelection splitMark p.1 p.2
+          duration lower upper)
+        candidates T) := by
+  let F := RootIndexed.stepFiltration (Root := Root) (α := α) (X := X)
+  let completion := fun p : Root × Trial =>
+    Restart.SelectedPath.GrowthTrial.completion lineages splitMark p.1 p.2 duration
+  let test := fun p : Root × Trial =>
+    fun n => Restart.SelectedPath.GrowthTrial.successTest lineages splitSelection growthSelection
+      p.1 p.2 duration lower upper n
+  have hcompletion : ∀ p, IsStoppingTime F (completion p) := by
+    intro p
+    exact Restart.SelectedPath.GrowthTrial.completion_isStoppingTime lineages
+      splitMark hsplit p.1 p.2 duration
+  have htest : ∀ p n, MeasurableSet[F n] (test p n) := by
+    intro p n
+    exact Restart.SelectedPath.GrowthTrial.successTest_measurable lineages
+      splitSelection growthSelection hsplitSelection hgrowth
+      p.1 p.2 duration lower upper n
+  have hobs := successAtCompletion_observable F completion test
+    hcompletion htest
+  exact successfulCandidateWithin_measurable F completion
+    (fun p => successAtCompletion (completion p) (test p)) hobs
+    candidates hcandidates T
+
+/-- The first-split growth event supplies the observable candidate
+family consumed by the existing `L¹` restart estimate. The probability bound
+for candidate failure remains an explicit input, as does freshness of the
+continuation subtree family. -/
+theorem integral_selectedSubtree_abs_on_growthTrialFailure_le
+    {Root Trial κ α X : Type*} [Countable α] [MeasurableSpace α]
+    [MeasurableSpace X]
+    [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
+    (lineages : RootIndexed.PreSampledLineages Root Trial α X)
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (splitSelection growthSelection : Step.FiniteSelection α X)
+    (hsplitSelection : Measurable splitSelection.select)
+    (hgrowth : Measurable growthSelection.select)
+    (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
+    (candidates : Set (Root × Trial)) (hcandidates : candidates.Countable)
+    (T duration lower upper : ℕ)
+    (chosen : RootIndexed.StepField Root α X → κ → Root × TreeNode α)
+    (hchosenRangeCountable : (Set.range chosen).Countable)
+    (hchosenFiberMeasurable : ∀ roots, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) T] {ω | chosen ω = roots})
+    (hchosenDepth : ∀ ω i, (chosen ω i).2.length = T)
+    (hchosenInjective : ∀ ω, Function.Injective (chosen ω))
+    (g : (κ → TreeNode α → Step α X) → ℝ) (hg : Measurable g)
+    (hint : Integrable
+      (fun ω => g (RootIndexed.selectedSubtreeStepFieldVector chosen ω))
+      (RootIndexed.stepFieldLaw (Root := Root) μ))
+    (B p : ℝ) (hB : 0 ≤ B)
+    (hmoment : (∫ ω,
+        |g (RootIndexed.selectedSubtreeStepFieldVector chosen ω)|
+        ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤ B)
+    (hprob : (RootIndexed.stepFieldLaw (Root := Root) μ).real
+      (successfulCandidateWithin
+        (fun q => Restart.SelectedPath.GrowthTrial.completion lineages splitMark q.1 q.2 duration)
+        (fun q => Restart.SelectedPath.GrowthTrial.successEventAtRoot lineages splitSelection
+          growthSelection splitMark q.1 q.2 duration lower upper)
+        candidates T)ᶜ ≤ p) :
+    (∫ ω, |g (RootIndexed.selectedSubtreeStepFieldVector chosen ω)| *
+        (successfulCandidateWithin
+          (fun q => Restart.SelectedPath.GrowthTrial.completion lineages splitMark q.1 q.2 duration)
+          (fun q => Restart.SelectedPath.GrowthTrial.successEventAtRoot lineages splitSelection
+            growthSelection splitMark q.1 q.2 duration lower upper)
+          candidates T)ᶜ.indicator (fun _ => (1 : ℝ)) ω
+      ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤ B * p := by
+  let F := RootIndexed.stepFiltration (Root := Root) (α := α) (X := X)
+  let completion := fun q : Root × Trial =>
+    Restart.SelectedPath.GrowthTrial.completion lineages splitMark q.1 q.2 duration
+  let test := fun q : Root × Trial =>
+    fun n => Restart.SelectedPath.GrowthTrial.successTest lineages splitSelection growthSelection
+      q.1 q.2 duration lower upper n
+  let success := fun q : Root × Trial =>
+    successAtCompletion (completion q) (test q)
+  have hcompletion : ∀ q, IsStoppingTime F (completion q) := by
+    intro q
+    exact Restart.SelectedPath.GrowthTrial.completion_isStoppingTime lineages
+      splitMark hsplit q.1 q.2 duration
+  have htest : ∀ q n, MeasurableSet[F n] (test q n) := by
+    intro q n
+    exact Restart.SelectedPath.GrowthTrial.successTest_measurable lineages
+      splitSelection growthSelection hsplitSelection hgrowth
+      q.1 q.2 duration lower upper n
+  have hobs := successAtCompletion_observable F completion test
+    hcompletion htest
+  have hprob' : (RootIndexed.stepFieldLaw (Root := Root) μ).real
+      (successfulCandidateWithin completion success candidates T)ᶜ ≤ p := by
+    simpa [completion, success, Restart.SelectedPath.GrowthTrial.successEventAtRoot] using hprob
+  have hevent :
+      (successfulCandidateWithin
+        (fun q => Restart.SelectedPath.GrowthTrial.completion lineages splitMark q.1 q.2 duration)
+        (fun q => Restart.SelectedPath.GrowthTrial.successEventAtRoot lineages splitSelection
+          growthSelection splitMark q.1 q.2 duration lower upper)
+        candidates T)ᶜ =
+      (successfulCandidateWithin completion success candidates T)ᶜ := by
+    ext ω
+    simp [completion, success, test, Restart.SelectedPath.GrowthTrial.successEventAtRoot]
+  rw [hevent]
+  rw [RootIndexed.integral_reserve_abs_on_candidateFailure
+    μ completion success hobs candidates hcandidates chosen
+    hchosenRangeCountable hchosenFiberMeasurable hchosenDepth
+    hchosenInjective g hg hint]
+  exact mul_le_mul hmoment hprob' (by positivity) hB
+end ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath.GrowthTrial

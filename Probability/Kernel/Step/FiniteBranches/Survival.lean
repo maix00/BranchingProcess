@@ -113,7 +113,10 @@ theorem partialStepHistoryWeight_succ
   | none => simp
   | some b =>
       simp only [Option.bind_some, Option.elim_some]
-      simp_rw [Fin.cons_succ, htail, mul_assoc]
+      have htail' (history : Fin n → ξ) :
+          Fin.tail (@Fin.cons n (fun _ => ξ) k history) = history :=
+        Fin.tail_cons (α := fun _ => ξ) k history
+      simp_rw [htail', mul_assoc]
       rw [← Finset.mul_sum]
       rfl
 
