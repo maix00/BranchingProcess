@@ -9,7 +9,7 @@ public import Mathlib.Topology.UnitInterval
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Probability.Process.Path.Scaling.UnitInterval
 public import Probability.Process.Path.Representation.Skorokhod
-public import Probability.Process.Brownian.Construction.PreBrownianModification
+public import BrownianMotion.Gaussian.BrownianMotion
 public import Topology.Cadlag.Skorokhod.Corridor.Basic
 import all Probability.Process.Brownian.SmallDeviation.Corridor.Lemmas.LowerBound
 
@@ -60,8 +60,8 @@ theorem IsBrownianReal.measure_closedUnitCorridor_lowerBound_of_rho
     (hB : IsBrownianReal B P) :
     ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / (2 * rho ^ 2))) ≤
       P.map (Skorokhod.ofContinuousMap ∘
-        continuousunitIntervalPath (hB.toIsPreBrownianReal.continuousModification)
-          (hB.toIsPreBrownianReal.continuous_continuousModification))
+        continuousunitIntervalPath (hB.toIsPreBrownianReal.mk B)
+          (hB.toIsPreBrownianReal.continuous_mk))
         (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2)) := by
   exact closedUnitCorridorLowerBoundOfRhoCore hrho hrho_one hB
 
@@ -76,8 +76,8 @@ theorem IsBrownianReal.measure_closedCorridor_lowerBound_of_rho_width
     ENNReal.ofReal (Real.exp
       (-(Real.pi ^ 2) / (2 * rho ^ 2 * width ^ 2))) ≤
       P.map (Skorokhod.ofContinuousMap ∘
-        continuousunitIntervalPath (hB.toIsPreBrownianReal.continuousModification)
-          (hB.toIsPreBrownianReal.continuous_continuousModification))
+        continuousunitIntervalPath (hB.toIsPreBrownianReal.mk B)
+          (hB.toIsPreBrownianReal.continuous_mk))
         (Skorokhod.rangeInClosedInterval (-(width / 2)) (width / 2)) := by
   exact closedCorridorLowerBoundOfRhoWidthCore
     hrho hrho_one hwidth hB
@@ -90,8 +90,8 @@ theorem IsBrownianReal.measure_closedUnitCorridor_lowerBound
     (hB : IsBrownianReal B P) :
     ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2)) ≤
       P.map (Skorokhod.ofContinuousMap ∘
-        continuousunitIntervalPath (hB.toIsPreBrownianReal.continuousModification)
-          (hB.toIsPreBrownianReal.continuous_continuousModification))
+        continuousunitIntervalPath (hB.toIsPreBrownianReal.mk B)
+          (hB.toIsPreBrownianReal.continuous_mk))
         (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2)) := by
   exact closedUnitCorridorLowerBoundCore hB
 
@@ -104,8 +104,8 @@ theorem IsBrownianReal.measure_openCorridor_lowerBound
     {width : ℝ} (hwidth : 1 < width) :
     ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2)) ≤
       P.map (Skorokhod.ofContinuousMap ∘
-        continuousunitIntervalPath (hB.toIsPreBrownianReal.continuousModification)
-          (hB.toIsPreBrownianReal.continuous_continuousModification))
+        continuousunitIntervalPath (hB.toIsPreBrownianReal.mk B)
+          (hB.toIsPreBrownianReal.continuous_mk))
         (Skorokhod.rangeInOpenInterval (-(width / 2)) (width / 2)) := by
   exact openCorridorLowerBoundCore hB hwidth
 
@@ -115,8 +115,8 @@ theorem IsBrownianReal.measure_closedUnitCorridor_ne_zero
     [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
     (hB : IsBrownianReal B P) :
     P.map (Skorokhod.ofContinuousMap ∘
-        continuousunitIntervalPath (hB.toIsPreBrownianReal.continuousModification)
-          (hB.toIsPreBrownianReal.continuous_continuousModification))
+        continuousunitIntervalPath (hB.toIsPreBrownianReal.mk B)
+          (hB.toIsPreBrownianReal.continuous_mk))
         (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2)) ≠ 0 := by
   exact closedUnitCorridorNeZeroCore hB
 

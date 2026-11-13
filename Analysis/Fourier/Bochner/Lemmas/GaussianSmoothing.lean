@@ -34,25 +34,14 @@ This file contains only package-internal proof support for
 - For continuous positive-definite $\varphi$ with $\varphi(0)=1$, the private
   `integrable_smoothed` proves that
   $\varphi_n(\xi)=\varphi(\xi)\,\operatorname{charFun}(N(0,(n+1)^{-1}),\xi)$
-  remains continuous, positive-definite, normalized, and integrable.
-- `tendsto_smoothed` proves $\varphi_n(\xi)\to\varphi(\xi)$ for each $\xi$;
-  `isTight_of_charFun_pointwise_tendsto` provides the tightness step used by
-  the Prokhorov argument.
+remains continuous, positive-definite, normalized, and integrable.
+- `tendsto_smoothed` proves $\varphi_n(\xi)\to\varphi(\xi)$ for each $\xi$.
 -/
 
 open MeasureTheory Complex ComplexConjugate Filter Topology Set Function
 open scoped NNReal ENNReal FourierTransform RealInnerProductSpace
 
 namespace ProbabilityTheory
-
-/-- A pointwise limit of characteristic functions which is continuous at zero
-forms a tight family. This delegates to Mathlib's Lévy convergence development. -/
-private lemma isTight_of_charFun_pointwise_tendsto
-    {μs : ℕ → ProbabilityMeasure ℝ} {φ : ℝ → ℂ}
-    (hφc : Continuous φ)
-    (hconv : ∀ ξ, Tendsto (fun n => charFun (μs n : Measure ℝ) ξ) atTop (𝓝 (φ ξ))) :
-    IsTightMeasureSet (range (fun n => (μs n : Measure ℝ))) :=
-  MeasureTheory.isTightMeasureSet_of_tendsto_charFun hφc.continuousAt hconv
 
 /-! ### Gaussian smoothing infrastructure -/
 

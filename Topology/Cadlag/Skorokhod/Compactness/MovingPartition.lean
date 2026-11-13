@@ -74,7 +74,7 @@ theorem OscillationPartition.stepApproximation_eq_ofPoints_stepPath
 /-- Step paths represented with at most `maxCells` cells, a common positive
 gap, and values in a fixed compact subset of the state space form a compact
 family. -/
-def compactRangeMovingPartitionStepPathFamily {E : Type*} [MetricSpace E]
+noncomputable def compactRangeMovingPartitionStepPathFamily {E : Type*} [MetricSpace E]
     (gap : ℝ) (range : Set E) (hgap : 0 < gap)
     (maxCells : ℕ) : Set (CadlagPath unitInterval E) :=
   ⋃ n : {n : ℕ // n ∈ Set.Icc 1 maxCells},
