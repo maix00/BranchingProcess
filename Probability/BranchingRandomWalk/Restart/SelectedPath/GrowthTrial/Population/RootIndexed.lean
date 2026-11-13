@@ -57,6 +57,8 @@ open ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath.GrowthTrial.Popu
 
 namespace ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath.GrowthTrial.Population
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Trial
+
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
 open Combinatorics.Branching.Step.FiniteSelection
 

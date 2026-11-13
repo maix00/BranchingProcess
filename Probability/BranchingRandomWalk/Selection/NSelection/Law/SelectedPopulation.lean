@@ -114,7 +114,7 @@ theorem RootIndexed.rankInstalledField_totalizedSelectedPopulation_measurable_la
           selectedBRWPopulation nSelectedBRWPopulation n field = choices} := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       have hpriorCount : ∀ k, k < n → (Set.range
           (RootIndexed.rankInstalledBlockChoice selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey
             selectedBRWPopulation nSelectedBRWPopulation k)).Countable := fun k hk => (ih k hk).1

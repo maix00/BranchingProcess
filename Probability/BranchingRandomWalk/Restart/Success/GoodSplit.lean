@@ -69,7 +69,9 @@ open scoped ENNReal
 
 section
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.Restart.Success
+
+open ProbabilityTheory.BranchingRandomWalk.Restart.Trial
 
 open Combinatorics.Branching
 open Combinatorics.Branching.Step.FiniteSelection
@@ -382,6 +384,6 @@ theorem reserveSelectionBelowPotential_nonempty_ae
     (Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2)
     L.potential M ξ hRne
 
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory.BranchingRandomWalk.Restart.Success
 
 end

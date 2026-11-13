@@ -46,8 +46,9 @@ open scoped ENNReal
 
 section
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.Restart.Trial.FirstSplit.Lemmas
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Trial
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
@@ -279,6 +280,6 @@ private lemma selectedPopulation_all_nonempty_ae
       simpa [frontierMarks, hdepth] using hi
 
 
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory.BranchingRandomWalk.Restart.Trial.FirstSplit.Lemmas
 
 end

@@ -32,7 +32,7 @@ surely:
   \Longrightarrow
   \mathbb P_{\mathrm{field}}(\tau_R<\infty)=1.\]
 
-* `ProbabilityTheory.BranchingRandomWalk.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos`
+* `ProbabilityTheory.BranchingRandomWalk.Restart.Trial.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos`
   gives the stated finite-completion conclusion for a measurable finite
   selection under the nonemptiness and positive-split hypotheses.
 -/
@@ -45,8 +45,9 @@ open scoped ENNReal
 
 section
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.Restart.Trial
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Trial.FirstSplit.Lemmas
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
@@ -137,7 +138,8 @@ theorem selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
         selectedPopulationNoSplitPrefix R n ∩
           selectedSubtreeStepField chosen ⁻¹' rootNoSplit := by
       filter_upwards [hpopNonempty] with ω hpop
-      exact propext (selectedPopulationNoSplitPrefix_succ_iff R n ω hpop)
+      simpa only [chosen, Set.mem_inter_iff, Set.mem_preimage, rootNoSplit] using
+        selectedPopulationNoSplitPrefix_succ_iff R n ω hpop
     calc
       ν (selectedPopulationNoSplitPrefix R (n + 1)) =
           ν (selectedPopulationNoSplitPrefix R n ∩
@@ -202,6 +204,6 @@ theorem selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
       hmeasureForever
   simpa using hae
 
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory.BranchingRandomWalk.Restart.Trial
 
 end

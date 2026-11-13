@@ -16,4 +16,4 @@ the cutoff.
   Combinatorics.Branching.Step.FiniteSelection.reserveSelectionBelowPotential_edgePotentials_le_of_ordered
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.reserveSelectionBelowPotential_split_edgePotentials_le_sorted_ae
+  ProbabilityTheory.BranchingRandomWalk.Restart.Success.reserveSelectionBelowPotential_split_edgePotentials_le_sorted_ae

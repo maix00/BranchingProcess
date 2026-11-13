@@ -38,13 +38,13 @@ one-step first moment divided by \(p\):
   \mathbf 1_{\{X_0,\ldots,X_n\notin B\}}\right]
   \le\frac{\mathbb E_L[Y^+]}{p}.\]
 
-- `ProbabilityTheory.BranchingRandomWalk.iidGeometricFailureLeftmostPositiveDisplacement_le`:
+- `ProbabilityTheory.BranchingRandomWalk.Restart.Trial.iidGeometricFailureLeftmostPositiveDisplacement_le`:
   for iid
   steps and a success event `B` of probability `p > 0`, the expected total
   positive leftmost displacement accumulated on failures before the first
   success is bounded by
   `∫ ξ, L.leftmostPositivePart ξ ∂L.raw / p`.
-- `ProbabilityTheory.BranchingRandomWalk.exists_nat_cutoff_iidGeometricFailureLeftmostPositiveDisplacement_le`:
+- `ProbabilityTheory.BranchingRandomWalk.Restart.Trial.exists_nat_cutoff_iidGeometricFailureLeftmostPositiveDisplacement_le`:
   under the supercritical offspring assumption and a finite leftmost first
   moment, some finite cutoff `M` has positive split probability, and the
   corresponding expected failed-cycle displacement is bounded by the same
@@ -56,8 +56,9 @@ open scoped BigOperators
 
 @[expose] public section
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.Restart.Trial
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Success
 open Combinatorics.Branching
 open ProbabilityTheory.BranchingProcess
 
@@ -153,6 +154,6 @@ theorem exists_nat_cutoff_iidGeometricFailureLeftmostPositiveDisplacement_le
     μ L hfirst X hX hXi hLaw R hR M
     (L.raw.real (boundedSelectedSplitEvent L R M)) hp rfl
 
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory.BranchingRandomWalk.Restart.Trial
 
 end

@@ -175,8 +175,10 @@ theorem Cloud.sliceRank_eq_coe_ncard_of_finite [Preorder (RootIndexed.TreeNode R
     C.sliceRank t q = ↑({p | p ∈ C.particles t ∧ p < q}.ncard) := by
   rw [Cloud.sliceRank]
   show {p | p ∈ C.particles t ∧ p < q}.encard = ↑({p | p ∈ C.particles t ∧ p < q}.ncard)
-  rw [Set.Finite.encard_eq_coe_toFinset_card (hfin.subset fun p hp => hp.1),
-    Set.ncard_eq_toFinset_card (hs := hfin.subset fun p hp => hp.1)]
+  have hbelow : {p | p ∈ C.particles t ∧ p < q}.Finite := by
+    exact hfin.subset (fun _ hp => hp.1)
+  rw [hbelow.encard_eq_coe_toFinset_card,
+    Set.ncard_eq_toFinset_card (hs := hbelow)]
 
 /-- If a finite set of particles of a slice is closed downwards in the index order, then its
 largest element has rank one less than the size of the set: everything of the slice below that

@@ -242,7 +242,6 @@ lemma nSelectedBRWFreshField_factorization_on_finite
           RootIndexed.subtreeStepFieldVector (roots field) field
         exact congrArg (fun v => RootIndexed.subtreeStepFieldVector v field) hroots.symm
       simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_preimage]
-      apply propext
       constructor
       · rintro ⟨⟨hAfield, hfinite'⟩, hBfield⟩
         exact ⟨⟨hAfield, hfinite'⟩, by rw [hvec] at hBfield; exact hBfield⟩

@@ -46,7 +46,7 @@ open MeasureTheory ProbabilityTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.Restart.Reserve
 
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
@@ -102,8 +102,8 @@ theorem BranchingExplorationDomains.integral_reserve_abs_on_event
   exact integral_abs_mul_indicator_eq_of_indep
     (offspringFieldLaw μ) (H.domain j)
     (fun ω => g (selectedSubtreeStepField chosen ω)) E hint hE hEfull
-    (H.selected_fresh_subtree_observable_independent μ j chosen
-      hchosen hcount hfresh g hg)
+    (Restart.Reserve.BranchingExplorationDomains.selected_fresh_subtree_observable_independent
+      μ H j chosen hchosen hcount hfresh g hg)
 
 /-- An observable of any measurably selected family of fresh subtrees in an
 arbitrary root-indexed field is independent of the generation domain flow.
@@ -211,6 +211,6 @@ theorem RootIndexed.integral_reserveRoot_abs_on_event
     hg.comp (Measurable.of_comap_le le_rfl)
   exact hm.comap_le
 
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory.BranchingRandomWalk.Restart.Reserve
 
 end
