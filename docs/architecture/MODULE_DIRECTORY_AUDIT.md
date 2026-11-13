@@ -73,7 +73,7 @@ and remaining-work statement is in the final section of this file.
 | `Probability/BranchingRandomWalk/Restart/SelectedPath/GrowthTrial/FiniteSlot` | Finite-slot coupling and growth estimates for selected branching random walks | `Offspring.lean` owns the pushforward offspring law and ENNReal supercriticality; `Coupling.lean` identifies the selected-BRW growth-trial population with a binary-address process and proves its iid row law; `Moments.lean` gives the first- and second-moment recursions and identifies the real encoded mean with the offspring law’s extended expected count; `Growth.lean` converts the supercriticality criterion to the real moment hypothesis and proves finite-horizon growth bounds. `Lemmas/Coding.lean` contains only address-coding and subtree-vector proof support. The deterministic encoding itself is owned by `Combinatorics/BranchingWalk/Step/Selection/FiniteSlot.lean`, and its measurability by `MeasureTheory/BranchingWalk/Step/Selection/FiniteSlot.lean`. |
 | `Probability/RandomMeasure` | General transformations of laws on measure-valued spaces | `ExponentialTilt.lean` is the exponential weighted-image law for an arbitrary random measure; it does not require a counting measure or a point-process finiteness condition. Poisson random measures remain grouped in `Poisson/`. |
 | `Probability/RandomMeasure/Poisson` | Poisson random measures and their public probability interfaces | `RandomMeasure/Basic.lean`, `Evaluation.lean`, and `Independence.lean` expose the realized measure, evaluation laws, and disjoint-set independence; their shared proof support is in `RandomMeasure/Lemmas.lean`. `Integration/`, `Intensity/`, `JumpPath/`, and `Realization/` group integration identities, support and time-mark facts, path bounds, and finite-jump configurations. `PointFamily/` separates the partition and canonical construction, block independence, piece sums, and thinning. The declarations retain the `ProbabilityTheory` namespace. |
-| `Probability/Process/Brownian` | Brownian-process construction, continuous path laws, and support | `Construction/Existence.lean` constructs the Gaussian pre-Brownian process from the random-walk path limit; `PreBrownianModification.lean` owns the project-level continuous-version interface; its one-use fourth-moment Kolmogorov bound is under `Construction/Lemmas/KolmogorovMoment.lean`. `PathLaw/` groups continuous versions and path-space laws; `Scaling/`, `Marginal/`, and `Support/` own the corresponding interfaces. `Reflection/` is divided into `Path/`, `FirstPassage/`, and `Descending/` families. `FirstPassage/Grid.lean` uses Mathlib's generic `hittingBtwn` for finite observations; `GridLaw.lean` contains the Brownian-law theorem for the separate path first-passage grid approximation.
+| `Probability/Process/Brownian` | Brownian-process construction, continuous path laws, and support | `Construction/Existence.lean` constructs the Gaussian pre-Brownian process from the random-walk path limit and uses BrownianMotion's general continuous-modification construction; `PathLaw/ContinuousModification.lean` provides the measurable continuous-path-valued representative used by path-law arguments. The former local fourth-moment modification modules were removed as subsumed by BrownianMotion. `PathLaw/` groups continuous versions and path-space laws; `Scaling/`, `Marginal/`, and `Support/` own the corresponding interfaces. `Reflection/` is divided into `Path/`, `FirstPassage/`, and `Descending/` families. `FirstPassage/Grid.lean` uses Mathlib's generic `hittingBtwn` for finite observations; `GridLaw.lean` contains the Brownian-law theorem for the separate path first-passage grid approximation.
 | `Probability/Process/Stable/PathLaw` | Càdlàg path laws for stable clock processes and stable Lévy processes | `Basic.lean` states the general stable-clock path-law interface; `UnitInterval.lean` constructs its canonical finite-horizon law. `Concatenation.lean` builds a full-time process from i.i.d. unit blocks, and `FullProcess.lean` proves independent increments and stable increment laws. `MonotoneGrid.lean` extends strict finite-grid laws to grids with repeated times; `LinearTube.lean` proves positive mass of Gaussian stable path balls around linear paths. These are complete reusable path-law constructions and theorems; their module-local grid and bridge computations remain private. |
 | `Probability/Process/Stable/SmallDeviation/EscapeRate` | Stable-process range, corridor, endpoint, and path-law escape rates | `Basic.lean` proves the rational-time range escape rate; `Corridor.lean` transfers its constant to centered and shifted corridors; `Endpoint.lean` treats the left-open, right-closed terminal window. `Law.lean` proves uniqueness of the rate constant from the increment law. `PathLaw/Basic.lean` defines the finite-horizon tube and rate predicate, while `PathLaw/Transfer.lean` transfers the process-level result to a stable-clock path law. The comparison and positivity calculations remain private within their theorem modules. |
 | `Probability/Process/Stable/SmallDeviation` | Stable-process small-deviation event interfaces and probability comparisons | The subject root owns the rational range tube, block endpoint-bin lower bound, corridor/range logarithmic comparison, shifted-corridor entrance comparison, and endpoint-constrained comparison. `Blocks/` owns stable time-space rescaling and adjacent-block entrance factorization; these complete stable-process event interfaces are distinct from the theorem-specific construction modules under `Blocks/Lower/` and `Blocks/Upper/`. `EscapeRate/` owns the process-level limits and finite-horizon path-law transfer. |
@@ -29131,3 +29131,55 @@ The shared order-domination structure now consistently names its generic roles
 corresponding `object`/`partner` terminology. Its public and private matching
 interfaces contain no `source`/`target` roles; remaining occurrences of those
 words elsewhere describe different mathematical objects.
+
+
+## Reuse of BrownianMotion's Choquet API (2026-11-13)
+
+The project-local `MeasureTheory/Analytic/Paving/` and
+`MeasureTheory/Analytic/Capacity/` trees duplicated the generic paving,
+capacity, capacitability, and measurable-projection API already provided by
+the BrownianMotion dependency in `BrownianMotion.Choquet.AnalyticSet` and
+`BrownianMotion.Choquet.Capacity`. Their only client outside those trees was
+`MeasureTheory/MeasurableSpace/CadlagPath/PathClass/StepCorridor/NullMeasurable`.
+That client now imports the BrownianMotion capacity module and applies
+`MeasureTheory.MeasurableSet.nullMeasurableSet_snd` directly. The local duplicate
+modules and their current-ledger entries were removed without adding aliases.
+
+The generic `Set.dissipate_congr` result in `Order/SetDissipate.lean` remains:
+the current Mathlib upstream defines `Set.dissipate` and its basic order
+properties, but has no congruence theorem for agreement on all indices below
+the endpoint. The fixed-density theorem
+`MeasureTheory.Measure.measurable_withDensity_fixed` also remains: Mathlib's
+`measurable_withDensity` varies the density over a fixed base measure, whereas
+this project theorem varies the base measure for a fixed density. These are
+different parameter directions.
+
+## BrownianMotion and Mathlib version alignment (2026-11-13)
+
+The project now pins BrownianMotion fork revision
+[`baaa246`](https://github.com/maix00/brownian-motion/tree/baaa2468da869e15e1654cbe416e55a5dc9d08b5), based on
+upstream's latest source revision
+[`8fd8dc5`](https://github.com/RemyDegenne/brownian-motion/tree/8fd8dc52830cdd07cf9cc8eadd533e284425fa6f),
+with Lean `v4.36.0-rc2`. Its standalone Lake manifest is aligned to Mathlib
+revision
+[`2657306`](https://github.com/leanprover-community/mathlib4/tree/26573066084e6e2aa8526ea358bc43b66d96f970),
+which is also the project submodule revision. The BrownianMotion Gaussian
+construction, its Kolmogorov--Chentsov dependency, and the changed project
+clients compile against this Mathlib version.
+
+Where Mathlib already owns the interface, local wrappers now use it directly:
+the Bochner tightness adapter was removed in favor of
+`MeasureTheory.isTightMeasureSet_of_tendsto_charFun`, and the local analytic
+paving/capacity duplicates now use BrownianMotion's generic Choquet API. The
+project's fourth-moment Brownian modification modules were also removed;
+`Probability.Process.Brownian.Construction.Existence` now uses
+`IsPreBrownianReal.mk`, `measurable_mk`, `continuous_mk`, and
+`isBrownianReal_mk` from BrownianMotion. The path-valued representative in
+`PathLaw/ContinuousModification.lean` remains a separate adapter used by the
+Brownian path-law and reflection interfaces.
+
+The older Brownian modification reviews dated 2026-10-22 and 2026-10-29 below
+record the dependency state at those dates. Their description of the local
+fourth-moment route and the unbuildable BrownianMotion Gaussian module is
+superseded by this version-alignment review. The deleted local source files
+are not retained as compatibility modules.

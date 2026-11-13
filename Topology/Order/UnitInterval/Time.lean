@@ -175,7 +175,7 @@ theorem monotone_blockParameter (n : ℕ) :
 
 theorem continuous_blockParameter (n : ℕ) :
     Continuous (blockParameter n) := by
-  exact Continuous.subtype_mk (by fun_prop)
+  exact Continuous.subtype_mk (by simpa only [coe_blockParameter] using (by fun_prop))
     (fun t => (blockParameter n t).property)
 
 theorem blockParameter_eq_sub {t : ℝ≥0} {n : ℕ}
