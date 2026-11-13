@@ -93,13 +93,13 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
         RootIndexed.childAddress (selectedBranchingWalkChildParentSlot child hchild).1
           (selectedBranchingWalkChildParentSlot child hchild).2 = child :=
     Classical.choose_spec (hselectedChildren_subset_offspring hchild)
-  let nSelectedOffspringCorrespondingToSelectedChild (child : RootIndexed.TreeNode Root α)
+  let nSelectionCandidateOfSelectedChild (child : RootIndexed.TreeNode Root α)
       (hchild : child ∈ selectedBranchingWalkChildren) :
       RootIndexed.TreeNode Root α :=
     RootIndexed.childAddress (nSelectedBranchingWalkParentMatching (selectedBranchingWalkChildParentSlot child hchild).1)
       (selectedBranchingWalkChildParentSlot child hchild).2
   have hembedMem : ∀ child hchild,
-      nSelectedOffspringCorrespondingToSelectedChild child hchild ∈
+      nSelectionCandidateOfSelectedChild child hchild ∈
         Combinatorics.Branching.Population.offspringAddressSet (↑nSelectedBranchingWalkParents) nSelectedBranchingWalkChildSlots := by
     intro child hchild
     have hpair := (selectedBranchingWalkChildParentSlot_spec child hchild).1
@@ -109,7 +109,7 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
         (selectedBranchingWalkChildParentSlot child hchild).2,
         hchildSlots_mono_under_parentMatching _ hpair.1 hpair.2, rfl⟩
   have hembedInj : ∀ child hchild child' hchild',
-      nSelectedOffspringCorrespondingToSelectedChild child hchild = nSelectedOffspringCorrespondingToSelectedChild child' hchild' → child = child' := by
+      nSelectionCandidateOfSelectedChild child hchild = nSelectionCandidateOfSelectedChild child' hchild' → child = child' := by
     intro child hchild child' hchild' heq
     change RootIndexed.childAddress (nSelectedBranchingWalkParentMatching (selectedBranchingWalkChildParentSlot child hchild).1)
         (selectedBranchingWalkChildParentSlot child hchild).2 =
@@ -135,8 +135,8 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
     rw [← (selectedBranchingWalkChildParentSlot_spec child hchild).2,
       ← (selectedBranchingWalkChildParentSlot_spec child' hchild').2, hpair]
   have hembedLeft : ∀ child hchild,
-      φ (nSelectedBranchingWalk.position d (nSelectedOffspringCorrespondingToSelectedChild child hchild).1
-          (nSelectedOffspringCorrespondingToSelectedChild child hchild).2) ≤
+      φ (nSelectedBranchingWalk.position d (nSelectionCandidateOfSelectedChild child hchild).1
+          (nSelectionCandidateOfSelectedChild child hchild).2) ≤
         φ (selectedBranchingWalk.position d child.1 child.2) := by
     intro child hchild
     have hpair := (selectedBranchingWalkChildParentSlot_spec child hchild).1
@@ -161,7 +161,7 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
       selectedBranchingWalkChildren (Combinatorics.Branching.Population.offspringAddressSet (↑nSelectedBranchingWalkParents) nSelectedBranchingWalkChildSlots)
       nSelectedBranchingWalkChildren hnSelectedChildren_isFirstNBy hselectedChildren_card_le_N
       (fun child : {child : RootIndexed.TreeNode Root α // child ∈ selectedBranchingWalkChildren} =>
-        nSelectedOffspringCorrespondingToSelectedChild child.1 child.2)
+        nSelectionCandidateOfSelectedChild child.1 child.2)
       (by intro child; exact hembedMem child.1 child.2)
       (by
         intro child child' heq
