@@ -70,6 +70,8 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Trial
+
 open Combinatorics.Branching Combinatorics.UlamHarris
 open _root_.Combinatorics.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection

@@ -30,7 +30,7 @@ times.
 
 #print axioms Combinatorics.Branching.Step.FiniteSelection.firstSelectedSlot_mem
 
-#print axioms ProbabilityTheory.BranchingRandomWalk.splitBy_measurable
+#print axioms ProbabilityTheory.BranchingRandomWalk.Restart.Trial.splitBy_measurable
 
 #print axioms ProbabilityTheory.BranchingRandomWalk.RootIndexed.fixedSubtree_measurable_at
 
@@ -54,13 +54,13 @@ times.
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.PreSampledLineages.failureWithin_measurable
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidateFailure
+  ProbabilityTheory.BranchingRandomWalk.Restart.Reserve.RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidateFailure
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidateFailure_le
+  ProbabilityTheory.BranchingRandomWalk.Restart.Reserve.RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidateFailure_le
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.growthTrialSuccess_measurable
+  ProbabilityTheory.BranchingRandomWalk.Restart.Trial.growthTrialSuccess_measurable
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath.GrowthTrial.successAtSelectedRoot_measurable
@@ -90,7 +90,7 @@ times.
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.PreSampledLineages.sigma_eq_tau_add_one
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le
+  ProbabilityTheory.BranchingRandomWalk.Restart.Failure.RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le
 
 #print axioms
   ProbabilityTheory.Process.HittingTime.Examples.lookahead_time_not_stopping
@@ -102,19 +102,19 @@ times.
   ProbabilityTheory.Process.HittingTime.Examples.delayed_lookahead_completion_not_stopping
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedPopulationSplitCompletion_eq_raw_add_one
+  ProbabilityTheory.BranchingRandomWalk.Restart.Trial.selectedPopulationSplitCompletion_eq_raw_add_one
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedPopulationSplitCompletion_isStoppingTime
+  ProbabilityTheory.BranchingRandomWalk.Restart.Trial.selectedPopulationSplitCompletion_isStoppingTime
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedPopulationRawSplitTime_not_stopping_of_probability
+  ProbabilityTheory.BranchingRandomWalk.Restart.Trial.selectedPopulationRawSplitTime_not_stopping_of_probability
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedPopulation_firstSplit_parent_card_eq_one
+  ProbabilityTheory.BranchingRandomWalk.Restart.Trial.selectedPopulation_firstSplit_parent_card_eq_one
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedPopulation_firstSplit_has_sibling_pair
+  ProbabilityTheory.BranchingRandomWalk.Restart.Trial.selectedPopulation_firstSplit_has_sibling_pair
 
 #print axioms Combinatorics.Branching.Step.FiniteSelection.secondSelectedSlot_measurable
 
@@ -137,16 +137,16 @@ times.
   ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath.GrowthTrial.sigma_continuationChildSubtree_splitCompletion_isStoppingTime
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedPopulationFirstSplitRoots_fiber_measurable
+  ProbabilityTheory.BranchingRandomWalk.Restart.Trial.selectedPopulationFirstSplitRoots_fiber_measurable
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedPopulationFirstSplitRoots_depth
+  ProbabilityTheory.BranchingRandomWalk.Restart.Trial.selectedPopulationFirstSplitRoots_depth
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedPopulationFirstSplitRoots_injective_of_finite
+  ProbabilityTheory.BranchingRandomWalk.Restart.Trial.selectedPopulationFirstSplitRoots_injective_of_finite
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedChildrenAtFirstSplit_measurable
+  ProbabilityTheory.BranchingRandomWalk.Restart.Trial.selectedChildrenAtFirstSplit_measurable
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
@@ -161,4 +161,4 @@ times.
   ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath.GrowthTrial.siblingField_factorization_on_finite
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedPopulation_firstSplit_subtree_vector_factorization
+  ProbabilityTheory.BranchingRandomWalk.Restart.FirstSplit.selectedPopulation_firstSplit_subtree_vector_factorization

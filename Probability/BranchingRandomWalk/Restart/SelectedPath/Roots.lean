@@ -40,6 +40,8 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Trial
+
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
 
 private lemma nat_add_withTop_le_iff

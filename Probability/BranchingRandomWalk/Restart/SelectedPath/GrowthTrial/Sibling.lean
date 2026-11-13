@@ -37,6 +37,8 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath.GrowthTrial
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Trial
+
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
 
 theorem siblingField_factorization

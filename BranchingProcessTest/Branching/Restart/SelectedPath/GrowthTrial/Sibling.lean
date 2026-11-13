@@ -31,13 +31,13 @@ past at the observable split completion.
   ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath.GrowthTrial.measure_recursiveFailure_eq_pow
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.exists_positive_selectedSplit
+  ProbabilityTheory.BranchingRandomWalk.Restart.Success.exists_positive_selectedSplit
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.exists_nat_cutoff_positive_boundedSelectedSplit
+  ProbabilityTheory.BranchingRandomWalk.Restart.Success.exists_nat_cutoff_positive_boundedSelectedSplit
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
+  ProbabilityTheory.BranchingRandomWalk.Restart.Trial.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
 
 /-! The concrete reserve selector receives the nonempty-offspring and
 supercriticality assumptions separately. Its positive split mass is provided
@@ -64,13 +64,13 @@ theorem concrete_reserve_split_completion_ae_finite
         ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι X)) :
     ∃ M : ℕ,
       ∀ᵐ ω ∂ProbabilityTheory.BranchingProcess.offspringFieldLaw L.sorted,
-        ProbabilityTheory.BranchingRandomWalk.selectedPopulationSplitCompletion
+        ProbabilityTheory.BranchingRandomWalk.Restart.Trial.selectedPopulationSplitCompletion
           (Combinatorics.Branching.Step.FiniteSelection.reserveSelectionBelowPotential
             (Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2)
             L.potential (M : ℝ)) ω ≠ ⊤ := by
   letI : IsProbabilityMeasure L.sorted := inferInstance
   obtain ⟨M, hpositive, hsplitMeas⟩ :=
-    ProbabilityTheory.BranchingRandomWalk.exists_nat_cutoff_positive_reserveSplit
+    ProbabilityTheory.BranchingRandomWalk.Restart.Success.exists_nat_cutoff_positive_reserveSplit
       L hsupercritical
   let R : Step.FiniteSelection α X :=
     Combinatorics.Branching.Step.FiniteSelection.reserveSelectionBelowPotential
@@ -84,18 +84,18 @@ theorem concrete_reserve_split_completion_ae_finite
           (α := α) (X := X)) L.potential (M : ℝ)
   have hnonemptyAE : ∀ᵐ ξ ∂L.sorted, (R ξ).Nonempty := by
     simpa [R] using
-      ProbabilityTheory.BranchingRandomWalk.reserveSelectionBelowPotential_nonempty_ae
+      ProbabilityTheory.BranchingRandomWalk.Restart.Success.reserveSelectionBelowPotential_nonempty_ae
         L hnonempty (M : ℝ)
   have hnonemptyMeas : Measurable (fun ξ : Step α X => (R ξ).Nonempty) := by
     exact (measurable_of_countable fun s : Finset α => s.Nonempty).comp hR
   have hnonempty : L.sorted {ξ | (R ξ).Nonempty} = 1 :=
     (ae_iff_prob_eq_one hnonemptyMeas).mp hnonemptyAE
   have hsplit : MeasurableSet {ξ : Step α X | 2 ≤ (R ξ).card} := by
-    simpa [R, ProbabilityTheory.BranchingRandomWalk.splitBy] using hsplitMeas
+    simpa [R, ProbabilityTheory.BranchingRandomWalk.Restart.Trial.splitBy] using hsplitMeas
   have hpositive' : 0 < L.sorted {ξ : Step α X | 2 ≤ (R ξ).card} := by
-    simpa [R, ProbabilityTheory.BranchingRandomWalk.splitBy] using hpositive
+    simpa [R, ProbabilityTheory.BranchingRandomWalk.Restart.Trial.splitBy] using hpositive
   refine ⟨M, ?_⟩
-  exact ProbabilityTheory.BranchingRandomWalk.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
+  exact ProbabilityTheory.BranchingRandomWalk.Restart.Trial.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
     L.sorted R hR hnonempty hsplit hpositive'
 
 #print axioms concrete_reserve_split_completion_ae_finite

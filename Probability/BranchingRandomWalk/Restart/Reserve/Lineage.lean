@@ -39,8 +39,9 @@ open MeasureTheory ProbabilityTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.Restart.Reserve
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Failure
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
 
 /-- The continuation's absolute first moment factors exactly over failure of
@@ -132,12 +133,12 @@ theorem RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidate
             (fun n => test p.1 p.2 n)) candidates T)ᶜ.indicator
           (fun _ => (1 : ℝ)) ω
       ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤ B * p := by
-  rw [lineages.integral_selectedSubtree_abs_on_candidateFailure
-    μ splitMark hsplit test htest candidates hcandidates T chosen
+  rw [RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidateFailure
+    lineages μ splitMark hsplit test htest candidates hcandidates T chosen
     hchosenRangeCountable hchosenFiberMeasurable hchosenDepth
     hchosenInjective g hg hint]
   exact mul_le_mul hmoment hprob (by positivity) hB
 
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory.BranchingRandomWalk.Restart.Reserve
 
 end

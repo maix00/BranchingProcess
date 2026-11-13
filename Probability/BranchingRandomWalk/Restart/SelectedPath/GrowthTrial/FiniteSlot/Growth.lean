@@ -45,6 +45,8 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath.GrowthTrial.FiniteSlot
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Trial
+
 open Combinatorics.Branching Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingProcess
 

@@ -53,6 +53,8 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Trial
+
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
 open Combinatorics.Branching.Step.FiniteSelection
 

@@ -79,6 +79,8 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath.GrowthTrial.Population
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Trial
+
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
 
 attribute [local instance] Classical.propDecidable Classical.decEq

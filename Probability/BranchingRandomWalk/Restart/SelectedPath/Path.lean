@@ -79,6 +79,8 @@ noncomputable def selectedPath {Root α X : Type*}
 
 namespace SelectedPath
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Trial
+
 /-- The selected BRW has a split at generation `n` when the mark on the
 selected path has at least two selected children. -/
 def splitEvent {Root α X : Type*} [LinearOrder α] [OrderBot α]
@@ -276,7 +278,7 @@ def isAlive {Root α X : Type*} [LinearOrder α]
 
 /-- The one-particle selected-path slice, empty once the totalized path has met
 an empty selected offspring family. -/
-def lineageSlice {Root α X : Type*} [LinearOrder α]
+noncomputable def lineageSlice {Root α X : Type*} [LinearOrder α]
     [OrderBot α] (R : Step.FiniteSelection α X) (r : Root)
     (n : ℕ) (ω : RootIndexed.StepField Root α X) :
     Set (RootIndexed.TreeNode Root α) :=

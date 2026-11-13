@@ -51,6 +51,9 @@ section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Restart.SelectedPath.GrowthTrial
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Trial
+open ProbabilityTheory.BranchingRandomWalk.Restart.FirstSplit
+
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw)
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
@@ -110,16 +113,16 @@ theorem selectedPopulationFirstSplitSubtrees_map_eq_product
   let finite : Set (Mark α (Step α X)) := {ω | σ ω ≠ ⊤}
   have hfiniteSet : finite =ᵐ[ν] Set.univ := by
     filter_upwards [hfinite] with ω hω
-    change (σ ω ≠ ⊤) = True
-    exact propext ⟨fun _ => trivial, fun _ => hω⟩
+    change (σ ω ≠ ⊤) ↔ True
+    exact iff_of_true hω trivial
   have hpreimage (B : Set (Fin 2 → Mark α (Step α X))) :
       (finite ∩ selectedPopulationFirstSplitSubtrees R ⁻¹' B) =ᵐ[ν]
         selectedPopulationFirstSplitSubtrees R ⁻¹' B := by
     filter_upwards [hfinite] with ω hω
     change ((σ ω ≠ ⊤) ∧
-      selectedPopulationFirstSplitSubtrees R ω ∈ B) =
+      selectedPopulationFirstSplitSubtrees R ω ∈ B) ↔
         (selectedPopulationFirstSplitSubtrees R ω ∈ B)
-    exact propext (and_iff_right hω)
+    exact and_iff_right hω
   have hmap : Measurable (selectedPopulationFirstSplitSubtrees R) :=
     selectedPopulationFirstSplitSubtrees_measurable R hR
   ext B hB

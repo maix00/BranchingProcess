@@ -39,8 +39,9 @@ open MeasureTheory ProbabilityTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.Restart.Failure
 
+open ProbabilityTheory.BranchingRandomWalk.Restart.Reserve
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 /-- A fresh reserve observable on the failure of any selected countable
@@ -224,6 +225,6 @@ theorem RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le
     g hg hint]
   exact mul_le_mul hmoment hprob (by positivity) hB
 
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory.BranchingRandomWalk.Restart.Failure
 
 end
