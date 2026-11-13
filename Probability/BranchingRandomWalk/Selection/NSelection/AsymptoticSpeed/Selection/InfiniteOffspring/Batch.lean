@@ -10,7 +10,7 @@ public import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
 public import Combinatorics.BranchingWalk.Step.Potential
 public import Combinatorics.BranchingWalk.Step.Ordering.ByPotential
 public import Combinatorics.BranchingWalk.Step.Ordering.Monotone
-public import Combinatorics.Selection.NSelection.Matching.Hall
+public import Combinatorics.Selection.NSelection.Matching.SelectedPopulation
 public import Combinatorics.Selection.NSelection.Matching.ByRank
 public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.Prod.Lex
@@ -141,25 +141,25 @@ theorem infiniteOffspringPosition_select_mono
   classical
   let lowValue := infiniteOffspringPosition positionLow offspring
   let highValue := infiniteOffspringPosition positionHigh offspring
-  have hmatching := exists_injective_le_of_embedding_of_isFirstNBy
+  have hmatching := exists_injective_le_of_partnerAssignment_into_firstNBy
     N highValue lowValue selectedHigh (infiniteOffspringCandidates offspring)
     selectedLow hLow (by rw [hHighCard])
-    (fun q => q)
-    (by intro q hq; exact hHigh.subset hq)
-    (by intro q hq r hr hqr; exact hqr)
+    (fun q : {q // q ∈ selectedHigh} => q.1)
+    (by intro q; exact hHigh.subset q.2)
+    (by intro q r hqr; exact Subtype.ext hqr)
     (by
-      intro q hq
+      intro q
       dsimp [lowValue, highValue, infiniteOffspringPosition]
-      linarith [hposition (ofLex q).1])
-  obtain ⟨matchParticle, hmatchMem, hmatchLe, hmatchInj⟩ := hmatching
+      linarith [hposition (ofLex q.1).1])
+  obtain ⟨partnerOfObject, hmatchMem, hmatchLe, hmatchInj⟩ := hmatching
   have hthreshold : ∀ a : ℝ,
       (selectedHigh.filter fun q => highValue q ≤ a).card ≤
         (selectedLow.filter fun q => lowValue q ≤ a).card := by
     intro a
-    let source := selectedHigh.filter fun q => highValue q ≤ a
-    let target := selectedLow.filter fun q => lowValue q ≤ a
-    let f : {q // q ∈ source} → {q // q ∈ target} := fun q =>
-      ⟨matchParticle q.1 (Finset.mem_filter.mp q.2 |>.1),
+    let selectedHighAtMostA := selectedHigh.filter fun q => highValue q ≤ a
+    let selectedLowAtMostA := selectedLow.filter fun q => lowValue q ≤ a
+    let f : {q // q ∈ selectedHighAtMostA} → {q // q ∈ selectedLowAtMostA} := fun q =>
+      ⟨partnerOfObject q.1 (Finset.mem_filter.mp q.2 |>.1),
         Finset.mem_filter.mpr ⟨
           hmatchMem q.1 (Finset.mem_filter.mp q.2 |>.1),
           (hmatchLe q.1 (Finset.mem_filter.mp q.2 |>.1)).trans
@@ -170,7 +170,7 @@ theorem infiniteOffspringPosition_select_mono
       apply hmatchInj q.1 (Finset.mem_filter.mp q.2 |>.1)
         r.1 (Finset.mem_filter.mp r.2 |>.1)
       exact congrArg Subtype.val hqr
-    simpa [source, target] using Finset.card_le_card_of_injective hf
+    simpa [selectedHighAtMostA, selectedLowAtMostA] using Finset.card_le_card_of_injective hf
   intro i
   let q := selectedLabelAtRank highValue selectedHigh hHighCard i
   have hq : q ∈ selectedHigh := by
@@ -189,7 +189,7 @@ theorem infiniteOffspringPosition_select_mono
       (selectedLabelAtRank_mem lowValue selectedLow hLowCard i)
       (hrank.trans hrank'.symm)
   rw [← hEq]
-  exact matchByRank_value_le highValue lowValue selectedHigh selectedLow
+  exact matchByRank_partnerOrderKey_le highValue lowValue selectedHigh selectedLow
     (by rw [hHighCard, hLowCard]) hthreshold q hq
 
 /-- A batch is admissible when each parent has finite negative exponential

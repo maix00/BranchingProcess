@@ -12,8 +12,8 @@ public import Combinatorics.BranchingWalk.Basic.BranchingWalk
 # Selection containment on branching walks
 
 `RootIndexed.SelectContain β β'` says that `β` is a selection of `β'`: its initial
-population is contained in that of `β'`, and every survive child of `β` is
-survive with the same displacement in `β'`. It is the partial order that a
+population is contained in that of `β'`, and every survive child of `β` has
+the same displacement in `β'`. It is the partial order that a
 selection mechanism preserves: selecting can only remove particles or
 children, never change or add one.
 
@@ -26,7 +26,7 @@ order is handled separately by the ordered-step API after any reindexing.
 
 * `Combinatorics.Branching.RootIndexed.SelectContain β β'` means that the
   initial positions agree and every surviving selected child has the same
-  optional step as in the source walk:
+  optional step as in the containing walk:
   \[
     (\forall r,\; \beta_0(r)=\beta'_0(r))
       \land
@@ -53,7 +53,7 @@ namespace Branching
 namespace RootIndexed
 
 /-- `β` is a selection of `β'`: every root keeps its initial position, and every
-selected child survives with the same displacement in the source walk. -/
+selected child survives with the same displacement in the containing walk. -/
 def SelectContain {Root α Mark Position : Type*}
     (β β' : RootIndexed.BranchingWalk Root α Mark Position) : Prop :=
   (∀ r, β.initial r = β'.initial r) ∧
