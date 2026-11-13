@@ -178,6 +178,8 @@ jobs:
             Probability.Distributions.Stable.Attraction.Normal.QuadraticTail \
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.Upper \
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.Endpoint.Lemmas.Return \
+            Probability.Process.RandomWalk.FunctionalLimit.Normal.PathLimit.LinearTube \
+            Probability.Process.RandomWalk.Path.Skorokhod.Oscillation.Partition \
             MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy \
             Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnion \
             Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation \

@@ -13,12 +13,12 @@ public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Identity
 public import Probability.Process.RandomWalk.Path.Restart.FirstMoment
 
 /-!
-# First moments of causal killed populations
+# First moments of causally selected populations
 
 ## Public declarations
 
 * `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.lintegral_size_le_spine_restartedWindow` bounds the expected size of the
-  one-root killed generation by the tilted-spine integral
+  one-root selected generation by the tilted-spine integral
   `∫⁻ increment, exp(displacement n increment) * restartedWindowTest ...`.
 * `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.lintegral_size_le_sum_spine_restartedWindow` gives the corresponding
   finite-root bound, summing that integral over the initial roots.
@@ -27,7 +27,7 @@ The pathwise bounds are integrated under the root-indexed field law and then
 reduced to one-dimensional spine expectations.
 
 Write `\Psi_{c,W}` for `restartedWindowTest`, `H_n(x,\xi)` for the increment
-history starting at `x`, and `S_n(\xi)` for its displacement. For the killed
+history starting at `x`, and `S_n(\xi)` for its displacement. For the selected
 population `P` from one root `r`, and `P_R` from a finite root set `R`, the
 first-moment bounds are
 
@@ -57,7 +57,7 @@ open ProbabilityTheory.BranchingRandomWalk.Spine
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
-/-- The first moment of a one-root restarted killed generation is bounded by
+/-- The first moment of a one-root restarted selected generation is bounded by
 the corresponding spine path expectation.  This theorem contains no second
 moment or pair estimate. -/
 theorem lintegral_size_le_spine_restartedWindow
@@ -116,7 +116,7 @@ theorem lintegral_size_le_spine_restartedWindow
       pathManyToOneCore (⟨d, hd⟩ : Potential Mark) μ hboundary n htest
         (initialPosition r)
 
-/-- The finite-root killed population needs only the sum of the corresponding
+/-- The finite-root selected population needs only the sum of the corresponding
 one-dimensional spine expectations.  No independence between the summands
 is used in this first-moment estimate. -/
 theorem lintegral_size_le_sum_spine_restartedWindow

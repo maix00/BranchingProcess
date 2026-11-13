@@ -18,7 +18,7 @@ domination of multi-root clouds.
 ## Public declarations
 
 For each threshold \(a\), an injective parent match with compatible offspring
-slots and no larger target child values gives the lower-tail comparison
+slots and no larger partner-child order keys gives the lower-tail comparison
 \[
 \bigl|\{(p,i)\in P_C:\psi_C(p,i)\le a\}\bigr|
 \le
@@ -28,9 +28,9 @@ The same inequality follows when the parent populations are related by
 injective or rankwise spatial domination.
 
 * `Combinatorics.Branching.Selection.Coupling.offspringPairs_filter_card_le`
-  compares the cardinalities of the source and target parent-slot pairs whose
+  compares the cardinalities of the object-population and partner-population parent-slot pairs whose
   values are at most `a`, assuming an injective parent match, compatible slots,
-  and `targetValue (matchParent p) i ≤ sourceValue p i`.
+  and `partnerChildOrderKey (matchParent p) i ≤ objectChildOrderKey p i`.
 * `Combinatorics.Branching.Selection.Coupling.offspringPairs_filter_card_le_of_injectivelyDominatesBy`
   obtains that comparison from injective domination of finite multi-root
   clouds and a shared-slot value comparison.
@@ -47,33 +47,32 @@ open Combinatorics.UlamHarris
 
 variable {Root α Position Value : Type*}
 
-/-- Shared offspring preserve the lower-tail count comparison.  A source
+/-- Shared offspring preserve the lower-tail count comparison.  An object
 parent `p` is coupled to `matchParent p`; both use the same slot `i`.  The
-target may contain additional parents or slots.  The sole spatial hypothesis
-is that advancing the matched target parent by the shared mark lies weakly to
-the left of advancing the source parent.
+partner population may contain additional parents or slots. The spatial
+hypothesis compares the positions after applying that shared mark.
 
 This is the multi-root one-generation core: `Root` is arbitrary, and the map
 may match particles belonging to different roots while the child construction
-retains the target particle's root. -/
+retains the partner particle's root. -/
 theorem offspringPairs_filter_card_le
     [Preorder Value] [DecidableRel (· ≤ · : Value → Value → Prop)]
-    (source target : Finset (RootIndexed.TreeNode Root α))
-    (sourceSlots targetSlots : RootIndexed.TreeNode Root α → Finset α)
+    (objectsToMatch availablePartners : Finset (RootIndexed.TreeNode Root α))
+    (objectSlots partnerSlots : RootIndexed.TreeNode Root α → Finset α)
     (matchParent : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α)
-    (hmatch_mem : ∀ p ∈ source, matchParent p ∈ target)
-    (hmatch_inj : Set.InjOn matchParent source)
-    (hslot : ∀ p ∈ source, sourceSlots p ⊆ targetSlots (matchParent p))
-    (sourceValue targetValue : RootIndexed.TreeNode Root α → α → Value)
-    (hle : ∀ p ∈ source, ∀ i ∈ sourceSlots p,
-      targetValue (matchParent p) i ≤ sourceValue p i)
+    (hmatch_mem : ∀ p ∈ objectsToMatch, matchParent p ∈ availablePartners)
+    (hmatch_inj : Set.InjOn matchParent objectsToMatch)
+    (hslot : ∀ p ∈ objectsToMatch, objectSlots p ⊆ partnerSlots (matchParent p))
+    (objectChildOrderKey partnerChildOrderKey : RootIndexed.TreeNode Root α → α → Value)
+    (hle : ∀ p ∈ objectsToMatch, ∀ i ∈ objectSlots p,
+      partnerChildOrderKey (matchParent p) i ≤ objectChildOrderKey p i)
     (a : Value) :
-    ((offspringPairs source sourceSlots).filter fun
+    ((offspringPairs objectsToMatch objectSlots).filter fun
         (pi : RootIndexed.TreeNode Root α × α) =>
-        sourceValue pi.1 pi.2 ≤ a).card ≤
-      ((offspringPairs target targetSlots).filter fun
+        objectChildOrderKey pi.1 pi.2 ≤ a).card ≤
+      ((offspringPairs availablePartners partnerSlots).filter fun
         (qi : RootIndexed.TreeNode Root α × α) =>
-        targetValue qi.1 qi.2 ≤ a).card := by
+        partnerChildOrderKey qi.1 qi.2 ≤ a).card := by
   classical
   let pairMatch : RootIndexed.TreeNode Root α × α →
       RootIndexed.TreeNode Root α × α := fun pi => (matchParent pi.1, pi.2)
@@ -85,9 +84,9 @@ theorem offspringPairs_filter_card_le
     exact ⟨mem_offspringPairs.mpr ⟨hmatch_mem pi.1 hp, hslot pi.1 hp hi⟩,
       (hle pi.1 hp pi.2 hi).trans hvalue⟩
   · intro pi hpi qi hqi heq
-    have hp : pi.1 ∈ source :=
+    have hp : pi.1 ∈ objectsToMatch :=
       (mem_offspringPairs.mp (Finset.mem_filter.mp hpi).1).1
-    have hq : qi.1 ∈ source :=
+    have hq : qi.1 ∈ objectsToMatch :=
       (mem_offspringPairs.mp (Finset.mem_filter.mp hqi).1).1
     change (matchParent pi.1, pi.2) = (matchParent qi.1, qi.2) at heq
     obtain ⟨hmatched, hslots⟩ := Prod.ext_iff.mp heq
@@ -100,46 +99,46 @@ shared slots, gives the lower-tail comparison of candidate pairs. -/
 theorem offspringPairs_filter_card_le_of_injectivelyDominatesBy
     [Preorder Value] [DecidableRel (· ≤ · : Value → Value → Prop)]
     (φ : Position → Value) {Time : Type*}
-    {C D : Cloud Time Root α Position} (t : Time)
-    (hCfinite : (C.particles t).Finite)
-    (hDfinite : (D.particles t).Finite)
-    (hdom : C.InjectivelyDominatesBy φ D t)
-    (sourceSlots targetSlots : RootIndexed.TreeNode Root α → Finset α)
-    (sourceValue targetValue : RootIndexed.TreeNode Root α → α → Value)
-    (hshared : ∀ p ∈ C.particles t, ∀ q ∈ D.particles t,
-      φ (D.position q.1 q.2) ≤ φ (C.position p.1 p.2) →
-      ∀ i ∈ sourceSlots p,
-        i ∈ targetSlots q ∧ targetValue q i ≤ sourceValue p i)
+    {objectsToMatchCloud availablePartnersCloud : Cloud Time Root α Position} (t : Time)
+    (hobjectsToMatchFinite : (objectsToMatchCloud.particles t).Finite)
+    (havailablePartnersFinite : (availablePartnersCloud.particles t).Finite)
+    (hdom : objectsToMatchCloud.InjectivelyDominatesBy φ availablePartnersCloud t)
+    (objectSlots partnerSlots : RootIndexed.TreeNode Root α → Finset α)
+    (objectChildOrderKey partnerChildOrderKey : RootIndexed.TreeNode Root α → α → Value)
+    (hshared : ∀ p ∈ objectsToMatchCloud.particles t, ∀ q ∈ availablePartnersCloud.particles t,
+      φ (availablePartnersCloud.position q.1 q.2) ≤ φ (objectsToMatchCloud.position p.1 p.2) →
+      ∀ i ∈ objectSlots p,
+        i ∈ partnerSlots q ∧ partnerChildOrderKey q i ≤ objectChildOrderKey p i)
     (a : Value) :
-    ((offspringPairs hCfinite.toFinset sourceSlots).filter fun
+    ((offspringPairs hobjectsToMatchFinite.toFinset objectSlots).filter fun
         (pi : RootIndexed.TreeNode Root α × α) =>
-        sourceValue pi.1 pi.2 ≤ a).card ≤
-      ((offspringPairs hDfinite.toFinset targetSlots).filter fun
+        objectChildOrderKey pi.1 pi.2 ≤ a).card ≤
+      ((offspringPairs havailablePartnersFinite.toFinset partnerSlots).filter fun
         (qi : RootIndexed.TreeNode Root α × α) =>
-        targetValue qi.1 qi.2 ≤ a).card := by
+        partnerChildOrderKey qi.1 qi.2 ≤ a).card := by
   classical
-  obtain ⟨matchParticle, hmem, hinj, hleft⟩ := hdom
-  apply offspringPairs_filter_card_le hCfinite.toFinset hDfinite.toFinset
-    sourceSlots targetSlots matchParticle
+  obtain ⟨partnerOfObject, hmem, hinj, hleft⟩ := hdom
+  apply offspringPairs_filter_card_le hobjectsToMatchFinite.toFinset havailablePartnersFinite.toFinset
+    objectSlots partnerSlots partnerOfObject
   · intro p hp
-    apply hDfinite.mem_toFinset.mpr
-    exact hmem (hCfinite.mem_toFinset.mp hp)
+    apply havailablePartnersFinite.mem_toFinset.mpr
+    exact hmem (hobjectsToMatchFinite.mem_toFinset.mp hp)
   · intro p hp q hq hpq
-    apply hinj (hCfinite.mem_toFinset.mp hp) (hCfinite.mem_toFinset.mp hq) hpq
+    apply hinj (hobjectsToMatchFinite.mem_toFinset.mp hp) (hobjectsToMatchFinite.mem_toFinset.mp hq) hpq
   · intro p hp i hi
-    exact (hshared p (hCfinite.mem_toFinset.mp hp) (matchParticle p)
-      (hmem (hCfinite.mem_toFinset.mp hp))
-      (hleft p (hCfinite.mem_toFinset.mp hp)) i hi).1
+    exact (hshared p (hobjectsToMatchFinite.mem_toFinset.mp hp) (partnerOfObject p)
+      (hmem (hobjectsToMatchFinite.mem_toFinset.mp hp))
+      (hleft p (hobjectsToMatchFinite.mem_toFinset.mp hp)) i hi).1
   · intro p hp i hi
-    exact (hshared p (hCfinite.mem_toFinset.mp hp) (matchParticle p)
-      (hmem (hCfinite.mem_toFinset.mp hp))
-      (hleft p (hCfinite.mem_toFinset.mp hp)) i hi).2
+    exact (hshared p (hobjectsToMatchFinite.mem_toFinset.mp hp) (partnerOfObject p)
+      (hmem (hobjectsToMatchFinite.mem_toFinset.mp hp))
+      (hleft p (hobjectsToMatchFinite.mem_toFinset.mp hp)) i hi).2
 
 /-- Rankwise domination of two finite multi-root parent clouds yields the
 lower-tail comparison for their coupled offspring candidates.  The hypothesis
 `hshared` states the local fact supplied by the coupling: equal-rank matched
-parents expose the same source slots in the target construction, and applying
-the same slot keeps the target child weakly to the left.
+parents expose the same object slots in the partner construction, and applying
+the same slot keeps the partner child weakly to the left.
 
 This theorem composes the two formerly separate steps of the induction:
 extracting an injective parent matching and propagating it through one shared
@@ -148,45 +147,45 @@ theorem offspringPairs_filter_card_le_of_rankwiseDominatesBy
     [LinearOrder (RootIndexed.TreeNode Root α)] [Preorder Value]
     [DecidableRel (· ≤ · : Value → Value → Prop)]
     (φ : Position → Value) {Time : Type*}
-    {C D : Cloud Time Root α Position} (t : Time)
-    (hCfinite : (C.particles t).Finite)
-    (hDfinite : (D.particles t).Finite)
-    (hdom : C.RankwiseDominatesBy φ D t)
-    (sourceSlots targetSlots : RootIndexed.TreeNode Root α → Finset α)
-    (sourceValue targetValue : RootIndexed.TreeNode Root α → α → Value)
-    (hshared : ∀ p ∈ C.particles t, ∀ q ∈ D.particles t,
-      (D.mapPosition φ).sliceRank t q = (C.mapPosition φ).sliceRank t p →
-      φ (D.position q.1 q.2) ≤ φ (C.position p.1 p.2) →
-      ∀ i ∈ sourceSlots p,
-        i ∈ targetSlots q ∧ targetValue q i ≤ sourceValue p i)
+    {objectsToMatchCloud availablePartnersCloud : Cloud Time Root α Position} (t : Time)
+    (hobjectsToMatchFinite : (objectsToMatchCloud.particles t).Finite)
+    (havailablePartnersFinite : (availablePartnersCloud.particles t).Finite)
+    (hdom : objectsToMatchCloud.RankwiseDominatesBy φ availablePartnersCloud t)
+    (objectSlots partnerSlots : RootIndexed.TreeNode Root α → Finset α)
+    (objectChildOrderKey partnerChildOrderKey : RootIndexed.TreeNode Root α → α → Value)
+    (hshared : ∀ p ∈ objectsToMatchCloud.particles t, ∀ q ∈ availablePartnersCloud.particles t,
+      (availablePartnersCloud.mapPosition φ).sliceRank t q = (objectsToMatchCloud.mapPosition φ).sliceRank t p →
+      φ (availablePartnersCloud.position q.1 q.2) ≤ φ (objectsToMatchCloud.position p.1 p.2) →
+      ∀ i ∈ objectSlots p,
+        i ∈ partnerSlots q ∧ partnerChildOrderKey q i ≤ objectChildOrderKey p i)
     (a : Value) :
-    ((offspringPairs hCfinite.toFinset sourceSlots).filter fun
+    ((offspringPairs hobjectsToMatchFinite.toFinset objectSlots).filter fun
         (pi : RootIndexed.TreeNode Root α × α) =>
-        sourceValue pi.1 pi.2 ≤ a).card ≤
-      ((offspringPairs hDfinite.toFinset targetSlots).filter fun
+        objectChildOrderKey pi.1 pi.2 ≤ a).card ≤
+      ((offspringPairs havailablePartnersFinite.toFinset partnerSlots).filter fun
         (qi : RootIndexed.TreeNode Root α × α) =>
-        targetValue qi.1 qi.2 ≤ a).card := by
+        partnerChildOrderKey qi.1 qi.2 ≤ a).card := by
   classical
-  obtain ⟨matchParticle, hmem, hinj, hrank, hleft⟩ :=
+  obtain ⟨partnerOfObject, hmem, hinj, hrank, hleft⟩ :=
     Cloud.exists_injective_match_of_rankwiseDominatesBy_of_finite
-      φ t hCfinite hdom
-  apply offspringPairs_filter_card_le hCfinite.toFinset hDfinite.toFinset
-    sourceSlots targetSlots matchParticle
+      φ t hobjectsToMatchFinite hdom
+  apply offspringPairs_filter_card_le hobjectsToMatchFinite.toFinset havailablePartnersFinite.toFinset
+    objectSlots partnerSlots partnerOfObject
   · intro p hp
-    apply hDfinite.mem_toFinset.mpr
-    exact hmem (hCfinite.mem_toFinset.mp hp)
+    apply havailablePartnersFinite.mem_toFinset.mpr
+    exact hmem (hobjectsToMatchFinite.mem_toFinset.mp hp)
   · intro p hp q hq hpq
-    apply hinj (hCfinite.mem_toFinset.mp hp) (hCfinite.mem_toFinset.mp hq) hpq
+    apply hinj (hobjectsToMatchFinite.mem_toFinset.mp hp) (hobjectsToMatchFinite.mem_toFinset.mp hq) hpq
   · intro p hp i hi
-    exact (hshared p (hCfinite.mem_toFinset.mp hp) (matchParticle p)
-      (hmem (hCfinite.mem_toFinset.mp hp))
-      (hrank p (hCfinite.mem_toFinset.mp hp))
-      (hleft p (hCfinite.mem_toFinset.mp hp)) i hi).1
+    exact (hshared p (hobjectsToMatchFinite.mem_toFinset.mp hp) (partnerOfObject p)
+      (hmem (hobjectsToMatchFinite.mem_toFinset.mp hp))
+      (hrank p (hobjectsToMatchFinite.mem_toFinset.mp hp))
+      (hleft p (hobjectsToMatchFinite.mem_toFinset.mp hp)) i hi).1
   · intro p hp i hi
-    exact (hshared p (hCfinite.mem_toFinset.mp hp) (matchParticle p)
-      (hmem (hCfinite.mem_toFinset.mp hp))
-      (hrank p (hCfinite.mem_toFinset.mp hp))
-      (hleft p (hCfinite.mem_toFinset.mp hp)) i hi).2
+    exact (hshared p (hobjectsToMatchFinite.mem_toFinset.mp hp) (partnerOfObject p)
+      (hmem (hobjectsToMatchFinite.mem_toFinset.mp hp))
+      (hrank p (hobjectsToMatchFinite.mem_toFinset.mp hp))
+      (hleft p (hobjectsToMatchFinite.mem_toFinset.mp hp)) i hi).2
 
 end Combinatorics.Branching.Selection.Coupling
 
