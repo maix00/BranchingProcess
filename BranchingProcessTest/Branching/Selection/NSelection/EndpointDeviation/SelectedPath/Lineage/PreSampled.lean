@@ -90,7 +90,7 @@ times.
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.PreSampledLineages.sigma_eq_tau_add_one
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Lemmas.Failure.RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Lemmas.Failure.RootIndexed.integral_disjointRootFamily_abs_on_candidateFailure_le
 
 #print axioms
   ProbabilityTheory.Process.HittingTime.Examples.lookahead_time_not_stopping

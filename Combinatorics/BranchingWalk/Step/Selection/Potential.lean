@@ -153,16 +153,16 @@ theorem firstOrBelowPotential_card_ge_two_of_boundedSecond
   have hsecondBelow : secondSelectedSlot R ξ ∈ (R.belowPotential φ M) ξ := by
     simp [Step.FiniteSelection.belowPotential,
       Step.FiniteSelection.mem_filter, hslots.1, hbound]
-  have hfirstReserve : firstSelectedSlot R ξ ∈
+  have hfirstRetained : firstSelectedSlot R ξ ∈
       firstOrBelowPotential R φ M ξ :=
     Finset.mem_union.mpr (Or.inl hfirstOnly)
-  have hsecondReserve : secondSelectedSlot R ξ ∈
+  have hsecondRetained : secondSelectedSlot R ξ ∈
       firstOrBelowPotential R φ M ξ :=
     Finset.mem_union.mpr (Or.inr hsecondBelow)
   have hlt : 1 < (firstOrBelowPotential R φ M ξ).card :=
     Finset.one_lt_card_iff.mpr
       ⟨firstSelectedSlot R ξ, secondSelectedSlot R ξ,
-        hfirstReserve, hsecondReserve, hslots.2⟩
+        hfirstRetained, hsecondRetained, hslots.2⟩
   omega
 
 theorem firstOrBelowPotential_card_ge_two_iff_boundedSecond

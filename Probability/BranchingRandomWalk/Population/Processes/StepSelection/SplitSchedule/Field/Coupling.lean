@@ -11,7 +11,7 @@ import Probability.BranchingRandomWalk.Selection.Coupling.StepSelection
 /-!
 # Spatial realization of an iterated split pool
 
-Finite populations in the iterated active/reserve field are embedded into
+Finite populations in the iterated active and additional-root field are embedded into
 the original pre-sampled field through the cumulative split-pool address map.
 Their absolute positions agree exactly.
 ## Public declarations
@@ -43,59 +43,59 @@ open Combinatorics.Branching.Selection.Coupling
 
 /-- Descendants selected from every active root of an iterated split pool. -/
 noncomputable def activePopulation
-    {Reserve α X : Type*} (N : ℕ) [LinearOrder (TreeNode α)]
-    [DecidableEq (RootIndexed.TreeNode (Fin N ⊕ Reserve) α)]
+    {AdditionalRoot α X : Type*} (N : ℕ) [LinearOrder (TreeNode α)]
+    [DecidableEq (RootIndexed.TreeNode (Fin N ⊕ AdditionalRoot) α)]
     (R : Step.FiniteSelection α X)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
-    (reserve : Reserve → Fin N ⊕ Reserve) (stem : TreeNode α)
-    (j n : ℕ) (step : RootIndexed.StepField (Fin N ⊕ Reserve) α X) :
-    Finset (RootIndexed.TreeNode (Fin N ⊕ Reserve) α) :=
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot) (stem : TreeNode α)
+    (j n : ℕ) (step : RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α X) :
+    Finset (RootIndexed.TreeNode (Fin N ⊕ AdditionalRoot) α) :=
   RootIndexed.StepSelection.labelledPopulationOn R (activeRoots N) n
-    (iteratedPoolField N R trial duration target fallback reserve stem j step)
+    (iteratedPoolField N R trial duration target fallback additionalRoots stem j step)
 
 /-- Couple the finite active population of an iterated split pool to its
 first-`N` BRW counterpart by recursively installing matched steps at equal rank.
 The base field and fallback field may be random, and the absolute initial
 positions may consequently depend on the same sample. -/
 noncomputable def coupledInjection
-    {Ω Reserve α Mark Position Value : Type*}
+    {Ω AdditionalRoot α Mark Position Value : Type*}
     (N : ℕ)
     [LinearOrder (TreeNode α)]
-    [LinearOrder (RootIndexed.TreeNode (Fin N ⊕ Reserve) α)]
+    [LinearOrder (RootIndexed.TreeNode (Fin N ⊕ AdditionalRoot) α)]
     [LinearOrder Value] [AddCommMonoid Position]
     (R : Step.FiniteSelection α Mark)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (restartFallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
-    (reserve : Reserve → Fin N ⊕ Reserve) (stem : TreeNode α)
-    (base fallback : Ω → RootIndexed.StepField (Fin N ⊕ Reserve) α Mark)
-    (initial : Fin N ⊕ Reserve → Position)
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (restartFallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot) (stem : TreeNode α)
+    (base fallback : Ω → RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α Mark)
+    (initial : Fin N ⊕ AdditionalRoot → Position)
     (d : Mark → Position) (φ : Position → Value)
     (j : ℕ)
     (hadmits : ∀ (ω : Ω) (n : ℕ)
-        (β : RootIndexed.StepField (Fin N ⊕ Reserve) α Mark)
+        (β : RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α Mark)
         (parents : Finset
-          (RootIndexed.TreeNode (Fin N ⊕ Reserve) α)),
+          (RootIndexed.TreeNode (Fin N ⊕ AdditionalRoot) α)),
       Combinatorics.Selection.NSelection.AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration
           (iteratedPoolInitialPosition N R initial d trial duration target
-            restartFallback reserve stem j (base ω))
+            restartFallback additionalRoots stem j (base ω))
           d φ (n + 1) β)
         (Combinatorics.Branching.Population.childrenAtGeneration n parents β))
     (hcard : ∀ n ω,
-      (activePopulation N R trial duration target restartFallback reserve stem
+      (activePopulation N R trial duration target restartFallback additionalRoots stem
         j n (base ω)).card ≤ N)
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
     (n : ℕ) (ω : Ω) :
     let selectedBRWStepField := fun sample =>
-      iteratedPoolField N R trial duration target restartFallback reserve stem
+      iteratedPoolField N R trial duration target restartFallback additionalRoots stem
         j (base sample)
     let initialAt := fun sample =>
       iteratedPoolInitialPosition N R initial d trial duration target
-        restartFallback reserve stem j (base sample)
+        restartFallback additionalRoots stem j (base sample)
     let selectedBRWPopulation := fun k sample =>
-      activePopulation N R trial duration target restartFallback reserve stem
+      activePopulation N R trial duration target restartFallback additionalRoots stem
         j k (base sample)
     let nSelectedBRWStepField := ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.coupledField
       N (activeRoots N) initialAt d φ hadmits
@@ -116,10 +116,10 @@ noncomputable def coupledInjection
     (ProbabilityTheory.BranchingRandomWalk.Selection.Coupling.RootIndexed.coupledInjection_labelledPopulation
       N R (activeRoots N) (activeRoots N) Finset.Subset.rfl
       (fun sample => iteratedPoolInitialPosition N R initial d trial duration
-        target restartFallback reserve stem j (base sample))
+        target restartFallback additionalRoots stem j (base sample))
       d φ hadmits
       (fun sample => iteratedPoolField N R trial duration target restartFallback
-        reserve stem j (base sample))
+        additionalRoots stem j (base sample))
       fallback
       (by simpa [activePopulation] using hcard)
       htranslate n ω)
@@ -127,70 +127,70 @@ noncomputable def coupledInjection
 /-- Original pre-sampled addresses occupied by a finite population in an
 iterated split pool. -/
 noncomputable def originalPopulation
-    {Reserve α X : Type*} [LinearOrder (TreeNode α)]
+    {AdditionalRoot α X : Type*} [LinearOrder (TreeNode α)]
     (N : ℕ) (R : Step.FiniteSelection α X)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
     (hfallbackDepth : ∀ i, (fallback i).2.length = duration)
     (hfallbackInjective : Function.Injective fallback)
-    (reserve : Reserve → Fin N ⊕ Reserve)
-    (hreserve : Function.Injective reserve)
-    (htrial : ∀ k r, trial k ≠ reserve r)
-    (hfallbackReserve : ∀ i r, (fallback i).1 ≠ reserve r)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot)
+    (hadditionalRoots : Function.Injective additionalRoots)
+    (htrial : ∀ k r, trial k ≠ additionalRoots r)
+    (hfallbackAdditionalRoots : ∀ i r, (fallback i).1 ≠ additionalRoots r)
     (stem : TreeNode α) (hstem : stem.length = duration)
-    (j : ℕ) (step : RootIndexed.StepField (Fin N ⊕ Reserve) α X)
+    (j : ℕ) (step : RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α X)
     (population : Finset
-      (RootIndexed.TreeNode (Fin N ⊕ Reserve) α)) :
-    Finset (RootIndexed.TreeNode (Fin N ⊕ Reserve) α) :=
+      (RootIndexed.TreeNode (Fin N ⊕ AdditionalRoot) α)) :
+    Finset (RootIndexed.TreeNode (Fin N ⊕ AdditionalRoot) α) :=
   RootIndexed.iteratedSelectedPopulation
-    (fun _ => poolRoots N R trial duration target fallback reserve stem)
+    (fun _ => poolRoots N R trial duration target fallback additionalRoots stem)
     j step
     (iteratedPoolAddress_injective N R trial duration target fallback
-      hfallbackDepth hfallbackInjective reserve hreserve htrial
-      hfallbackReserve stem hstem j step)
+      hfallbackDepth hfallbackInjective additionalRoots hadditionalRoots htrial
+      hfallbackAdditionalRoots stem hstem j step)
     population
 
 /-- A population in the iterated split pool and its original-address image
 have equal positions, expressed as mutual spatial coupling in the direction
 used by the selection machinery. -/
 theorem iteratedPopulation_injectivelyDominatesBy_original
-    {Reserve α Mark Position Value : Type*}
+    {AdditionalRoot α Mark Position Value : Type*}
     [LinearOrder (TreeNode α)] [AddCommMonoid Position] [Preorder Value]
     (φ : Position → Value) (d : Mark → Position)
     (N : ℕ) (R : Step.FiniteSelection α Mark)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
     (hfallbackDepth : ∀ i, (fallback i).2.length = duration)
     (hfallbackInjective : Function.Injective fallback)
-    (reserve : Reserve → Fin N ⊕ Reserve)
-    (hreserve : Function.Injective reserve)
-    (htrial : ∀ k r, trial k ≠ reserve r)
-    (hfallbackReserve : ∀ i r, (fallback i).1 ≠ reserve r)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot)
+    (hadditionalRoots : Function.Injective additionalRoots)
+    (htrial : ∀ k r, trial k ≠ additionalRoots r)
+    (hfallbackAdditionalRoots : ∀ i r, (fallback i).1 ≠ additionalRoots r)
     (stem : TreeNode α) (hstem : stem.length = duration)
-    (initial : Fin N ⊕ Reserve → Position)
+    (initial : Fin N ⊕ AdditionalRoot → Position)
     (j : ℕ)
-    (step : RootIndexed.StepField (Fin N ⊕ Reserve) α Mark)
+    (step : RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α Mark)
     (population : Finset
-      (RootIndexed.TreeNode (Fin N ⊕ Reserve) α)) :
+      (RootIndexed.TreeNode (Fin N ⊕ AdditionalRoot) α)) :
     (populationCloud d
         (RootIndexed.BranchingWalk.ofStepField
           (iteratedPoolInitialPosition N R initial d trial duration target
-            fallback reserve stem j step)
-          (iteratedPoolField N R trial duration target fallback reserve stem
+            fallback additionalRoots stem j step)
+          (iteratedPoolField N R trial duration target fallback additionalRoots stem
             j step))
         population).InjectivelyDominatesBy φ
       (populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initial step)
         (originalPopulation N R trial duration target fallback
-          hfallbackDepth hfallbackInjective reserve hreserve htrial
-          hfallbackReserve stem hstem j step population)) () := by
+          hfallbackDepth hfallbackInjective additionalRoots hadditionalRoots htrial
+          hfallbackAdditionalRoots stem hstem j step population)) () := by
   exact RootIndexed.iteratedPopulation_injectivelyDominatesBy_original
     φ initial d
-    (fun _ => poolRoots N R trial duration target fallback reserve stem)
+    (fun _ => poolRoots N R trial duration target fallback additionalRoots stem)
     j step
     (iteratedPoolAddress_injective N R trial duration target fallback
-      hfallbackDepth hfallbackInjective reserve hreserve htrial
-      hfallbackReserve stem hstem j step)
+      hfallbackDepth hfallbackInjective additionalRoots hadditionalRoots htrial
+      hfallbackAdditionalRoots stem hstem j step)
     population
 
 end SplitSchedule

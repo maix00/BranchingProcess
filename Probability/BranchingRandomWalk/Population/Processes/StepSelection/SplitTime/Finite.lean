@@ -8,7 +8,8 @@ module
 
 public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitTime.Basic
 public import Probability.BranchingProcess.Offspring.FieldLaw
-import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Lemmas.FirstSplit.FiniteCompletion
+import all Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitTime.Lemmas.FiniteCompletion
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.SelectedSubtree
 import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
@@ -32,7 +33,7 @@ surely:
   \Longrightarrow
   \mathbb P_{\mathrm{field}}(\tau_R<\infty)=1.\]
 
-* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Lemmas.FirstSplit.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos`
+* `ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos`
   gives the stated finite-completion conclusion for a measurable finite
   selection under the nonemptiness and positive-split hypotheses.
 -/
@@ -45,10 +46,9 @@ open scoped ENNReal
 
 section
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Lemmas.FirstSplit
+namespace ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime
 
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Lemmas.FirstSplit
-open ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime
+open ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime.Lemmas
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
@@ -205,6 +205,6 @@ theorem selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
       hmeasureForever
   simpa using hae
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Lemmas.FirstSplit
+end ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime
 
 end

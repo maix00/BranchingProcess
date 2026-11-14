@@ -28,11 +28,17 @@ endpoint-deviation proof are under the sibling `EndpointDeviation/Lemmas/`.
 The first observable split of a selected population is a reusable process fact
 owned by `Probability/BranchingRandomWalk/Population/Processes/StepSelection/SplitTime/`.
 The fixed-root time shift belongs beside it in `RootIndexed.lean`. The
+almost-sure finite completion is in `SplitTime/Finite.lean`, with its proof
+helpers in `SplitTime/Lemmas/FiniteCompletion.lean`. The
 two-sibling stopped subtree factorization used by endpoint deviation remains in
 `EndpointDeviation/Lemmas/FirstSplit/`. Generic selected-subtree integration is
 owned by `Genealogy/Exploration/IndependentSubtreeIntegration.lean`, and the
 independent eventwise integral bound is at
 `Probability/Independence/Integration/IndependentUpperBound.lean`.
+
+`AsymptoticSpeed/Limit/EndpointExpectation.lean` uses the public stopped
+endpoint law to transfer the expectation of a terminal payoff on finite
+completion to a fresh descendant field and the stopped endpoint data.
 
 Generic process interfaces stay separate by role: observable candidate
 completion and success belong under `Probability/Process/HittingTime/`, while

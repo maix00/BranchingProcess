@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SelectedPath.GrowthTrial.Sibling
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SelectedPath.GrowthTrial.Recursive
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Lemmas.FirstSplit.Finite
+import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitTime.Finite
 import Probability.BranchingRandomWalk.Step.Selection.BoundedSplit
 
 /-!
@@ -37,7 +37,7 @@ domain past at the observable split completion.
   ProbabilityTheory.BranchingRandomWalk.Step.Selection.exists_nat_cutoff_positive_boundedSelectedSplit
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Lemmas.FirstSplit.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
+  ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
 
 /-! The concrete first-or-below-potential selector receives the nonempty-offspring and
 supercriticality assumptions separately. Its positive split mass is provided
@@ -95,7 +95,7 @@ theorem concrete_firstOrBelowPotential_split_completion_ae_finite
   have hpositive' : 0 < L.sorted {ξ : Step α X | 2 ≤ (R ξ).card} := by
     simpa [R, Combinatorics.Branching.Step.FiniteSelection.splitBy] using hpositive
   refine ⟨M, ?_⟩
-  exact ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Lemmas.FirstSplit.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
+  exact ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
     L.sorted R hR hnonempty hsplit hpositive'
 
 #print axioms concrete_firstOrBelowPotential_split_completion_ae_finite
