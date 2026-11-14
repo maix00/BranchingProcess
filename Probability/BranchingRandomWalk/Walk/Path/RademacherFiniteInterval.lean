@@ -17,8 +17,8 @@ public import Probability.BranchingRandomWalk.Walk.Rademacher
 
 For `interiorCount n : ℕ` and an initial site `start : Fin interiorCount`,
 `ProbabilityTheory.BranchingRandomWalk.RandomWalk.intervalRademacherKernel_pow_apply_univ_eq_processInClosedInterval`
-identifies the $n$-step killed-kernel mass with the path probability of the
-branching-walk realization:
+identifies the $n$-step mass of the interval-restricted kernel with the path
+probability of the branching-walk realization:
 
 $$
 (K^n)(\mathrm{start},\mathrm{univ})
@@ -28,8 +28,8 @@ $$
 $$
 
 Here $K$ is `intervalRademacherKernel`. The theorem identifies its iterated
-survival mass with the same finite-time window event under the
-singleton-slot branching-walk law. The generic composition and iterate laws
+mass with the same finite-time window event under the singleton-slot
+branching-walk law. The generic composition and iterate laws
 for kernels are supplied by Mathlib; this module provides the project-specific
 identification with the branching-walk path event.
 -/

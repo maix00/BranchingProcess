@@ -51,8 +51,8 @@ positions leaves each step field fixed:
   `(β.mapInitial f).initial r = f (β.initial r)`.
 * `Combinatorics.Branching.RootIndexed.BranchingWalk.mapMarks_measurable`
   assumes measurable mark and position spaces and measurable `f`, and proves
-  that `mapMarks f` is measurable. Under measurable mark, source-position,
-  and target-position spaces, and measurable `f`,
+  that `mapMarks f` is measurable. Under measurable mark, initial-position,
+  and mapped-position spaces, and measurable `f`,
   `Combinatorics.Branching.RootIndexed.BranchingWalk.mapInitial_measurable`
   proves the corresponding measurability statement for `mapInitial f`.
 -/

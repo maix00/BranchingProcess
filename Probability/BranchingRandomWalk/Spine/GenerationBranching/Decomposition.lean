@@ -18,7 +18,7 @@ import Mathlib.Probability.Independence.Integration
 
 The root step and each child descendant field have their product law under the
 pre-sampled i.i.d. step field. The generation-address equivalence records the
-deterministic decomposition of generation `n + 1` into a first child slot and
+deterministic decomposition of generation `n + 1` into a first selected child slot and
 a generation-`n` address inside that child's subtree.
 
 ## Public declarations

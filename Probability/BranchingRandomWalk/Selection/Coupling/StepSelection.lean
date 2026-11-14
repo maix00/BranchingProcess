@@ -11,41 +11,44 @@ public import Probability.BranchingRandomWalk.Coupling.Field.Position
 public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.RootIndexed
 
 /-!
-# Coupling a labelled step-selected trial to an `N`-selected population
+# Coupling `selectedBranchingWalk` to `nSelectedBranchingWalk`
 
-A single-root trial is embedded into the multi-root particle labels used by
-the cloud coupling. The source and target may be built from different step
-fields on the same sample. Their relationship is stated only through selected
-slot inclusion and equality of the corresponding mapped increments.
+The single-root process `selectedBranchingWalk` is coupled to the
+multi-root process `nSelectedBranchingWalk`. They may use different step
+fields on the same sample; their relation is specified by selected-slot
+inclusion and equality of the corresponding mapped increments.
 
-For a fixed root \(r\), let
+For a fixed root \(\texttt{selectedBranchingWalkRoot}\), let
 \[
-  S_n(\omega)
-    :=\operatorname{labelledPopulation}
-      \bigl(R,n,\operatorname{sourceStep}(\omega),r\bigr),
+  P^{\mathrm{sel}}_{n,\omega}
+    := \operatorname{labelledPopulation}
+      \bigl(\texttt{selectedBranchingWalkSelectionRule},n,
+        \texttt{selectedBranchingWalkStepField}(\omega),
+        \texttt{selectedBranchingWalkRoot}\bigr),
   \qquad
-  T_n(\omega)
-    :=\operatorname{selectedPopulation}
-      \bigl(N,\mathrm{roots},\mathrm{initial},d,\varphi,\mathrm{hadmits},
-        n,\omega\bigr).
+  P^N_{n,\omega}
+    := \operatorname{selectedPopulation}
+      \bigl(N,\texttt{nSelectedBranchingWalkRoots},\texttt{initial},d,\varphi,
+        \texttt{nSelectedBranchingWalkAdmitsFirstNBy},n,\omega\bigr).
 \]
-Define their spatial clouds by
+The corresponding spatial clouds are
 \[
-  C_n^{\mathrm{src}}(\omega)
+  C^{\mathrm{sel}}_{n,\omega}
     :=\operatorname{populationCloud}\,d\,
       \bigl(\operatorname{ofStepField}
-        (\mathrm{initial},\operatorname{sourceStep}(\omega))\bigr)\,S_n(\omega),
+        (\texttt{initial},\texttt{selectedBranchingWalkStepField}(\omega))\bigr)
+      \,P^{\mathrm{sel}}_{n,\omega},
   \qquad
-  C_n^N(\omega)
+  C^N_{n,\omega}
     :=\operatorname{populationCloud}\,d\,
-      \bigl(\operatorname{ofStepField}(\mathrm{initial},\omega)\bigr)\,T_n(\omega).
+      \bigl(\operatorname{ofStepField}(\texttt{initial},\omega)\bigr)
+      \,P^N_{n,\omega}.
 \]
-Under the stated selected-slot, increment, and capacity hypotheses, the
-labelled coupling gives
+Under the selected-slot, increment, and capacity hypotheses, the coupling
+gives
 \[
   \forall n,\omega,\qquad
-  C_n^{\mathrm{src}}(\omega)
-    \preceq_{\varphi} C_n^N(\omega),
+  C^{\mathrm{sel}}_{n,\omega}\preceq_{\varphi} C^N_{n,\omega},
 \]
 where \(C\preceq_{\varphi}D\) means
 \(\texttt{Cloud.InjectivelyDominatesBy }\varphi\,C\,D\,()\).
@@ -53,16 +56,17 @@ where \(C\preceq_{\varphi}D\) means
 ## Public declarations
 
 - `ProbabilityTheory.BranchingRandomWalk.Selection.Coupling.RootIndexed.coupledInjection_labelledPopulation`:
-  for finite `sourceRoots ⊆ targetRoots`, constructs the equal-rank slice
-  injection from the labelled source population to the first-$N$ target.
+  for finite `selectedBranchingWalkRoots ⊆ nSelectedBranchingWalkRoots`,
+  constructs the equal-rank slice injection from the labelled
+  `selectedBranchingWalk` population to `nSelectedBranchingWalk`.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.Coupling.generationInjection_labelledPopulation`:
   constructs a canonical single-root slice injection at a fixed generation.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.Coupling.injectivelyDominatesBy_labelledPopulation`:
-  if each labelled source population has size at most $N$, matched parents
-  share selected slots and mapped increments, and $φ$ preserves order under
-  common translations, then its cloud is injectively dominated by the
-  multi-root first-$N$ cloud at every generation. No offspring-law or
-  address-order assumption is required.
+  if each labelled `selectedBranchingWalk` population has size at most $N$,
+  the parents paired by `nSelectedBranchingWalkParentMatching` share selected
+  slots and mapped increments, and $φ$ preserves order under common
+  translations, then its cloud is injectively dominated by the
+  `nSelectedBranchingWalk` cloud at every generation.
 -/
 
 @[expose] public section
@@ -75,223 +79,224 @@ open Combinatorics.UlamHarris
 open Combinatorics.Branching
 open Combinatorics.Branching.Selection.Coupling
 
-variable {Root α Mark Position Value : Type*}
+variable {Root α Mark Position OrderKey : Type*}
 
-/-- Couple a finite root-indexed family of step-selected source particles to
-a causal first-`N` population. The target field is built by equal-rank step
-installation, so selected-slot inclusion and increment agreement follow from
-the construction. Only the root sets are finite; the ambient root and slot
+/-- Couple `selectedBranchingWalk` particles from a finite set of roots to the
+causal `nSelectedBranchingWalk` population. The latter field is built by
+equal-rank step installation, which gives selected-slot inclusion and
+increment agreement. Only the root sets are finite; the ambient root and slot
 types need no countability assumptions. -/
 noncomputable def RootIndexed.coupledInjection_labelledPopulation
     {Ω : Type*}
     [DecidableEq (RootIndexed.TreeNode Root α)]
-    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder OrderKey]
     [AddCommMonoid Position]
-    (N : ℕ) (R : Step.FiniteSelection α Mark)
-    (sourceRoots targetRoots : Finset Root) (hroots : sourceRoots ⊆ targetRoots)
-    (initial : Ω → Root → Position) (d : Mark → Position) (φ : Position → Value)
-    (hadmits : ∀ (ω : Ω) (n : ℕ) (β : RootIndexed.StepField Root α Mark)
-        (parents : Finset (RootIndexed.TreeNode Root α)),
+    (N : ℕ) (selectedBranchingWalkSelectionRule : Step.FiniteSelection α Mark)
+    (selectedBranchingWalkRoots nSelectedBranchingWalkRoots : Finset Root) (hroots : selectedBranchingWalkRoots ⊆ nSelectedBranchingWalkRoots)
+    (initial : Ω → Root → Position) (d : Mark → Position) (φ : Position → OrderKey)
+    (nSelectedBranchingWalkAdmitsFirstNBy : ∀ (ω : Ω) (n : ℕ) (β : RootIndexed.StepField Root α Mark)
+        (nSelectedBranchingWalkParents : Finset (RootIndexed.TreeNode Root α)),
       Combinatorics.Selection.NSelection.AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
-        (Combinatorics.Branching.Population.childrenAtGeneration n parents β))
-    (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
+        (Combinatorics.Branching.Population.childrenAtGeneration n nSelectedBranchingWalkParents β))
+    (selectedBranchingWalkStepField nSelectedBranchingWalkFallbackStepField : Ω → RootIndexed.StepField Root α Mark)
     (hcard : ∀ n ω,
       (RootIndexed.StepSelection.labelledPopulationOn
-        R sourceRoots n (sourceStep ω)).card ≤ N)
+        selectedBranchingWalkSelectionRule selectedBranchingWalkRoots n (selectedBranchingWalkStepField ω)).card ≤ N)
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
     (n : ℕ) (ω : Ω) :
     Cloud.SliceDominatingMap φ
       (populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField (initial ω) (sourceStep ω))
+        (RootIndexed.BranchingWalk.ofStepField (initial ω) (selectedBranchingWalkStepField ω))
         (RootIndexed.StepSelection.labelledPopulationOn
-          R sourceRoots n (sourceStep ω)))
+          selectedBranchingWalkSelectionRule selectedBranchingWalkRoots n (selectedBranchingWalkStepField ω)))
       (populationCloud d
         (RootIndexed.BranchingWalk.ofStepField (initial ω)
-          (RootIndexed.coupledField N targetRoots initial d φ hadmits sourceStep
-            fallback
+          (RootIndexed.coupledField N nSelectedBranchingWalkRoots initial d φ nSelectedBranchingWalkAdmitsFirstNBy selectedBranchingWalkStepField
+            nSelectedBranchingWalkFallbackStepField
             (fun k sample => RootIndexed.StepSelection.labelledPopulationOn
-              R sourceRoots k (sourceStep sample)) n ω))
-        (RootIndexed.coupledPopulation N targetRoots initial d φ hadmits
-          sourceStep fallback
+              selectedBranchingWalkSelectionRule selectedBranchingWalkRoots k (selectedBranchingWalkStepField sample)) n ω))
+        (RootIndexed.coupledPopulation N nSelectedBranchingWalkRoots initial d φ nSelectedBranchingWalkAdmitsFirstNBy
+          selectedBranchingWalkStepField nSelectedBranchingWalkFallbackStepField
           (fun k sample => RootIndexed.StepSelection.labelledPopulationOn
-            R sourceRoots k (sourceStep sample)) n ω)) () := by
-  apply RootIndexed.coupledInjection N targetRoots initial d φ hadmits
-    sourceStep fallback
+            selectedBranchingWalkSelectionRule selectedBranchingWalkRoots k (selectedBranchingWalkStepField sample)) n ω)) () := by
+  apply RootIndexed.coupledInjection N nSelectedBranchingWalkRoots initial d φ nSelectedBranchingWalkAdmitsFirstNBy
+    selectedBranchingWalkStepField nSelectedBranchingWalkFallbackStepField
     (fun k sample => RootIndexed.StepSelection.labelledPopulationOn
-      R sourceRoots k (sourceStep sample))
-    (fun _ sample p => ↑(R (sourceStep sample p.1 p.2)))
+      selectedBranchingWalkSelectionRule selectedBranchingWalkRoots k (selectedBranchingWalkStepField sample))
+    (fun _ sample p => ↑(selectedBranchingWalkSelectionRule (selectedBranchingWalkStepField sample p.1 p.2)))
   · intro sample
     refine ⟨id, ?_, Set.injOn_id _, ?_⟩
     · intro p hp
-      obtain ⟨r, hr, hroot, hpopulation⟩ :=
+      obtain ⟨selectedBranchingWalkRoot, hselectedBranchingWalkRoot, hroot, hpopulation⟩ :=
         (RootIndexed.StepSelection.mem_labelledPopulationOn
-          R sourceRoots 0 (sourceStep sample) p).mp hp
-      have hp' : p = (r, []) := by
+          selectedBranchingWalkSelectionRule selectedBranchingWalkRoots 0 (selectedBranchingWalkStepField sample) p).mp hp
+      have hp' : p = (selectedBranchingWalkRoot, []) := by
         apply Prod.ext
         · exact hroot
         · simpa using hpopulation
       subst p
-      change (r, []) ∈ RootIndexed.initialPopulation (α := α) targetRoots
+      change (selectedBranchingWalkRoot, []) ∈ RootIndexed.initialPopulation (α := α) nSelectedBranchingWalkRoots
       rw [RootIndexed.initialPopulation, Finset.mem_map]
-      exact ⟨r, hroots hr, rfl⟩
+      exact ⟨selectedBranchingWalkRoot, hroots hselectedBranchingWalkRoot, rfl⟩
     · intro p hp
-      obtain ⟨r, _, hroot, hpopulation⟩ :=
+      obtain ⟨selectedBranchingWalkRoot, _, hroot, hpopulation⟩ :=
         (RootIndexed.StepSelection.mem_labelledPopulationOn
-          R sourceRoots 0 (sourceStep sample) p).mp hp
-      have hp' : p = (r, []) := by
+          selectedBranchingWalkSelectionRule selectedBranchingWalkRoots 0 (selectedBranchingWalkStepField sample) p).mp hp
+      have hp' : p = (selectedBranchingWalkRoot, []) := by
         apply Prod.ext
         · exact hroot
         · simpa using hpopulation
       subst p
       simp only [id_eq]
-      change φ (RootIndexed.position (initial sample) d (fallback sample) r []) ≤
-        φ (RootIndexed.position (initial sample) d (sourceStep sample) r [])
+      change φ (RootIndexed.position (initial sample) d (nSelectedBranchingWalkFallbackStepField sample) selectedBranchingWalkRoot []) ≤
+        φ (RootIndexed.position (initial sample) d (selectedBranchingWalkStepField sample) selectedBranchingWalkRoot [])
       simp
   · intro k sample
     exact RootIndexed.StepSelection.labelledPopulationOn_succ_subset
-      R sourceRoots k (sourceStep sample)
+      selectedBranchingWalkSelectionRule selectedBranchingWalkRoots k (selectedBranchingWalkStepField sample)
   · intro k sample p hp i hi
-    exact R.subset_support (sourceStep sample p.1 p.2) i hi
+    exact selectedBranchingWalkSelectionRule.subset_support (selectedBranchingWalkStepField sample p.1 p.2) i hi
   · exact htranslate
   · exact fun k _ => hcard (k + 1) ω
 
-/-- Data-valued canonical coupling of a labelled step-selected trial to the
-multi-root first-`N` population.  At generation zero the labelled root is
-included by identity; every successor map is the canonical equal-rank map. -/
+/-- Data-valued canonical coupling of the labelled
+`selectedBranchingWalk` trial to `nSelectedBranchingWalk`. At generation zero
+the labelled root is included by identity; every successor map is the
+canonical equal-rank map. -/
 noncomputable def generationInjection_labelledPopulation
     [DecidableEq (RootIndexed.TreeNode Root α)]
-    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder OrderKey]
     [AddCommMonoid Position]
-    (φ : Position → Value) (d : Mark → Position) (N : ℕ)
-    (R : Step.FiniteSelection α Mark)
-    (roots : Finset Root) (r : Root) (hr : r ∈ roots)
+    (φ : Position → OrderKey) (d : Mark → Position) (N : ℕ)
+    (selectedBranchingWalkSelectionRule : Step.FiniteSelection α Mark)
+    (nSelectedBranchingWalkRoots : Finset Root) (selectedBranchingWalkRoot : Root) (hselectedBranchingWalkRoot : selectedBranchingWalkRoot ∈ nSelectedBranchingWalkRoots)
     (initial : Root → Position)
-    (sourceStep : RootIndexed.StepField Root α Mark →
+    (selectedBranchingWalkStepField : RootIndexed.StepField Root α Mark →
       RootIndexed.StepField Root α Mark)
-    (hadmits : ∀ (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
-        (parents : Finset (RootIndexed.TreeNode Root α)),
+    (nSelectedBranchingWalkAdmitsFirstNBy : ∀ (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
+        (nSelectedBranchingWalkParents : Finset (RootIndexed.TreeNode Root α)),
       Combinatorics.Selection.NSelection.AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration initial d φ (n + 1) ω)
-        (Combinatorics.Branching.Population.childrenAtGeneration n parents ω))
+        (Combinatorics.Branching.Population.childrenAtGeneration n nSelectedBranchingWalkParents ω))
     (hcard : ∀ n ω,
       (RootIndexed.StepSelection.labelledPopulation
-        R n (sourceStep ω) r).card ≤ N)
-    (hslots : ∀ n ω (parents : Cloud.SliceDominatingMap φ
+        selectedBranchingWalkSelectionRule n (selectedBranchingWalkStepField ω) selectedBranchingWalkRoot).card ≤ N)
+    (hslots : ∀ n ω (nSelectedBranchingWalkParentMatching : Cloud.SliceDominatingMap φ
         (populationCloud d
-          (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
-          (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
+          (RootIndexed.BranchingWalk.ofStepField initial (selectedBranchingWalkStepField ω))
+          (RootIndexed.StepSelection.labelledPopulation selectedBranchingWalkSelectionRule n (selectedBranchingWalkStepField ω) selectedBranchingWalkRoot))
         (populationCloud d (RootIndexed.BranchingWalk.ofStepField initial ω)
-          (RootIndexed.selectedPopulation N roots initial d φ hadmits n ω)) ()),
-      ∀ p ∈ RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r,
-        ↑(R (sourceStep ω p.1 p.2)) ⊆
-          {i | survive (ω (parents p).1 (parents p).2) i})
-    (hsharedIncrement : ∀ n ω (parents : Cloud.SliceDominatingMap φ
+          (RootIndexed.selectedPopulation N nSelectedBranchingWalkRoots initial d φ nSelectedBranchingWalkAdmitsFirstNBy n ω)) ()),
+      ∀ p ∈ RootIndexed.StepSelection.labelledPopulation selectedBranchingWalkSelectionRule n (selectedBranchingWalkStepField ω) selectedBranchingWalkRoot,
+        ↑(selectedBranchingWalkSelectionRule (selectedBranchingWalkStepField ω p.1 p.2)) ⊆
+          {i | survive (ω (nSelectedBranchingWalkParentMatching p).1 (nSelectedBranchingWalkParentMatching p).2) i})
+    (hsharedIncrement : ∀ n ω (nSelectedBranchingWalkParentMatching : Cloud.SliceDominatingMap φ
         (populationCloud d
-          (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
-          (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
+          (RootIndexed.BranchingWalk.ofStepField initial (selectedBranchingWalkStepField ω))
+          (RootIndexed.StepSelection.labelledPopulation selectedBranchingWalkSelectionRule n (selectedBranchingWalkStepField ω) selectedBranchingWalkRoot))
         (populationCloud d (RootIndexed.BranchingWalk.ofStepField initial ω)
-          (RootIndexed.selectedPopulation N roots initial d φ hadmits n ω)) ()),
-      ∀ p ∈ RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r,
-      ∀ i ∈ R (sourceStep ω p.1 p.2),
-        value' ((ω (parents p).1 (parents p).2).map d) i =
-          value' ((sourceStep ω p.1 p.2).map d) i)
+          (RootIndexed.selectedPopulation N nSelectedBranchingWalkRoots initial d φ nSelectedBranchingWalkAdmitsFirstNBy n ω)) ()),
+      ∀ p ∈ RootIndexed.StepSelection.labelledPopulation selectedBranchingWalkSelectionRule n (selectedBranchingWalkStepField ω) selectedBranchingWalkRoot,
+      ∀ i ∈ selectedBranchingWalkSelectionRule (selectedBranchingWalkStepField ω p.1 p.2),
+        value' ((ω (nSelectedBranchingWalkParentMatching p).1 (nSelectedBranchingWalkParentMatching p).2).map d) i =
+          value' ((selectedBranchingWalkStepField ω p.1 p.2).map d) i)
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark) :
     Cloud.SliceDominatingMap φ
       (populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
-        (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
+        (RootIndexed.BranchingWalk.ofStepField initial (selectedBranchingWalkStepField ω))
+        (RootIndexed.StepSelection.labelledPopulation selectedBranchingWalkSelectionRule n (selectedBranchingWalkStepField ω) selectedBranchingWalkRoot))
       (populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initial ω)
         (RootIndexed.selectedPopulation
-          N roots initial d φ hadmits n ω)) () :=
-  generationInjection_selectedPopulation φ d N roots initial
+          N nSelectedBranchingWalkRoots initial d φ nSelectedBranchingWalkAdmitsFirstNBy n ω)) () :=
+  generationInjection_selectedPopulation φ d N nSelectedBranchingWalkRoots initial
     (fun sample => RootIndexed.BranchingWalk.ofStepField
-      initial (sourceStep sample))
+      initial (selectedBranchingWalkStepField sample))
     (fun k sample => RootIndexed.StepSelection.labelledPopulation
-      R k (sourceStep sample) r)
-    (fun _ sample p => ↑(R (sourceStep sample p.1 p.2))) hadmits
+      selectedBranchingWalkSelectionRule k (selectedBranchingWalkStepField sample) selectedBranchingWalkRoot)
+    (fun _ sample p => ↑(selectedBranchingWalkSelectionRule (selectedBranchingWalkStepField sample p.1 p.2))) nSelectedBranchingWalkAdmitsFirstNBy
     (fun sample =>
       { toFun := id
         mapsTo := by
           intro p hp
-          have hp' : p = (r, []) := by simpa using hp
+          have hp' : p = (selectedBranchingWalkRoot, []) := by simpa using hp
           subst p
-          change (r, []) ∈ RootIndexed.initialPopulation (α := α) roots
+          change (selectedBranchingWalkRoot, []) ∈ RootIndexed.initialPopulation (α := α) nSelectedBranchingWalkRoots
           rw [RootIndexed.initialPopulation, Finset.mem_map]
-          exact ⟨r, hr, rfl⟩
+          exact ⟨selectedBranchingWalkRoot, hselectedBranchingWalkRoot, rfl⟩
         injOn := Set.injOn_id _
         dominates := by
           intro p hp
-          have hp' : p = (r, []) := by simpa using hp
+          have hp' : p = (selectedBranchingWalkRoot, []) := by simpa using hp
           subst p
-          change φ (RootIndexed.position initial d sample r []) ≤
-            φ (RootIndexed.position initial d (sourceStep sample) r [])
+          change φ (RootIndexed.position initial d sample selectedBranchingWalkRoot []) ≤
+            φ (RootIndexed.position initial d (selectedBranchingWalkStepField sample) selectedBranchingWalkRoot [])
           simp })
     (fun k sample =>
       RootIndexed.StepSelection.labelledPopulation_succ_subset
-        R k (sourceStep sample) r)
+        selectedBranchingWalkSelectionRule k (selectedBranchingWalkStepField sample) selectedBranchingWalkRoot)
     (fun k sample => hcard (k + 1) sample)
     hslots hsharedIncrement htranslate n ω
 
-/-- A capacity-bounded single-root step-selected population is dominated by
-the multi-root first-`N` population whenever matched parents share every
-selected slot and its displacement. No law, countability, or address ordering
-of offspring is assumed. -/
+/-- A capacity-bounded single-root `selectedBranchingWalk` population is
+dominated by `nSelectedBranchingWalk` whenever the parents paired by
+`nSelectedBranchingWalkParentMatching` share every selected slot and its
+displacement. No offspring law, countability, or address ordering is assumed. -/
 theorem injectivelyDominatesBy_labelledPopulation
     [DecidableEq (RootIndexed.TreeNode Root α)]
-    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder OrderKey]
     [AddCommMonoid Position]
-    (φ : Position → Value) (d : Mark → Position) (N : ℕ)
-    (R : Step.FiniteSelection α Mark)
-    (roots : Finset Root) (r : Root) (hr : r ∈ roots)
+    (φ : Position → OrderKey) (d : Mark → Position) (N : ℕ)
+    (selectedBranchingWalkSelectionRule : Step.FiniteSelection α Mark)
+    (nSelectedBranchingWalkRoots : Finset Root) (selectedBranchingWalkRoot : Root) (hselectedBranchingWalkRoot : selectedBranchingWalkRoot ∈ nSelectedBranchingWalkRoots)
     (initial : Root → Position)
-    (sourceStep : RootIndexed.StepField Root α Mark →
+    (selectedBranchingWalkStepField : RootIndexed.StepField Root α Mark →
       RootIndexed.StepField Root α Mark)
-    (hadmits : ∀ (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
-        (parents : Finset (RootIndexed.TreeNode Root α)),
+    (nSelectedBranchingWalkAdmitsFirstNBy : ∀ (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
+        (nSelectedBranchingWalkParents : Finset (RootIndexed.TreeNode Root α)),
       Combinatorics.Selection.NSelection.AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration initial d φ (n + 1) ω)
-        (Combinatorics.Branching.Population.childrenAtGeneration n parents ω))
+        (Combinatorics.Branching.Population.childrenAtGeneration n nSelectedBranchingWalkParents ω))
     (hcard : ∀ n ω,
       (RootIndexed.StepSelection.labelledPopulation
-        R n (sourceStep ω) r).card ≤ N)
-    (hslots : ∀ n ω (parents : Cloud.SliceDominatingMap φ
+        selectedBranchingWalkSelectionRule n (selectedBranchingWalkStepField ω) selectedBranchingWalkRoot).card ≤ N)
+    (hslots : ∀ n ω (nSelectedBranchingWalkParentMatching : Cloud.SliceDominatingMap φ
         (populationCloud d
-          (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
-          (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
+          (RootIndexed.BranchingWalk.ofStepField initial (selectedBranchingWalkStepField ω))
+          (RootIndexed.StepSelection.labelledPopulation selectedBranchingWalkSelectionRule n (selectedBranchingWalkStepField ω) selectedBranchingWalkRoot))
         (populationCloud d (RootIndexed.BranchingWalk.ofStepField initial ω)
-          (RootIndexed.selectedPopulation N roots initial d φ hadmits n ω)) ()),
-      ∀ p ∈ RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r,
-        ↑(R (sourceStep ω p.1 p.2)) ⊆
-          {i | survive (ω (parents p).1 (parents p).2) i})
-    (hsharedIncrement : ∀ n ω (parents : Cloud.SliceDominatingMap φ
+          (RootIndexed.selectedPopulation N nSelectedBranchingWalkRoots initial d φ nSelectedBranchingWalkAdmitsFirstNBy n ω)) ()),
+      ∀ p ∈ RootIndexed.StepSelection.labelledPopulation selectedBranchingWalkSelectionRule n (selectedBranchingWalkStepField ω) selectedBranchingWalkRoot,
+        ↑(selectedBranchingWalkSelectionRule (selectedBranchingWalkStepField ω p.1 p.2)) ⊆
+          {i | survive (ω (nSelectedBranchingWalkParentMatching p).1 (nSelectedBranchingWalkParentMatching p).2) i})
+    (hsharedIncrement : ∀ n ω (nSelectedBranchingWalkParentMatching : Cloud.SliceDominatingMap φ
         (populationCloud d
-          (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
-          (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
+          (RootIndexed.BranchingWalk.ofStepField initial (selectedBranchingWalkStepField ω))
+          (RootIndexed.StepSelection.labelledPopulation selectedBranchingWalkSelectionRule n (selectedBranchingWalkStepField ω) selectedBranchingWalkRoot))
         (populationCloud d (RootIndexed.BranchingWalk.ofStepField initial ω)
-          (RootIndexed.selectedPopulation N roots initial d φ hadmits n ω)) ()),
-      ∀ p ∈ RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r,
-      ∀ i ∈ R (sourceStep ω p.1 p.2),
-        value' ((ω (parents p).1 (parents p).2).map d) i =
-          value' ((sourceStep ω p.1 p.2).map d) i)
+          (RootIndexed.selectedPopulation N nSelectedBranchingWalkRoots initial d φ nSelectedBranchingWalkAdmitsFirstNBy n ω)) ()),
+      ∀ p ∈ RootIndexed.StepSelection.labelledPopulation selectedBranchingWalkSelectionRule n (selectedBranchingWalkStepField ω) selectedBranchingWalkRoot,
+      ∀ i ∈ selectedBranchingWalkSelectionRule (selectedBranchingWalkStepField ω p.1 p.2),
+        value' ((ω (nSelectedBranchingWalkParentMatching p).1 (nSelectedBranchingWalkParentMatching p).2).map d) i =
+          value' ((selectedBranchingWalkStepField ω p.1 p.2).map d) i)
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
     ∀ n ω,
       (populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
+        (RootIndexed.BranchingWalk.ofStepField initial (selectedBranchingWalkStepField ω))
         (RootIndexed.StepSelection.labelledPopulation
-          R n (sourceStep ω) r)).InjectivelyDominatesBy φ
+          selectedBranchingWalkSelectionRule n (selectedBranchingWalkStepField ω) selectedBranchingWalkRoot)).InjectivelyDominatesBy φ
       (populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initial ω)
         (RootIndexed.selectedPopulation
-          N roots initial d φ hadmits n ω)) () := by
+          N nSelectedBranchingWalkRoots initial d φ nSelectedBranchingWalkAdmitsFirstNBy n ω)) () := by
   intro n ω
-  exact (generationInjection_labelledPopulation φ d N R roots r hr initial
-    sourceStep hadmits hcard hslots hsharedIncrement htranslate n ω).injectivelyDominatesBy
+  exact (generationInjection_labelledPopulation φ d N selectedBranchingWalkSelectionRule nSelectedBranchingWalkRoots selectedBranchingWalkRoot hselectedBranchingWalkRoot initial
+    selectedBranchingWalkStepField nSelectedBranchingWalkAdmitsFirstNBy hcard hslots hsharedIncrement htranslate n ω).injectivelyDominatesBy
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.Coupling
 

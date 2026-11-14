@@ -42,13 +42,13 @@ breaker, guarantees that the first-`N` segment exists.
   `Combinatorics.Branching.Step.FiniteSelection.preserveFirstBelowPotential_isBoundedBy`
   proves the selected cardinality is at most `N` when `1 ≤ N`.
 - `firstOnlySelectedChild R` retains the least slot of `R ξ`, and
-  `reserveSelectionBelowPotential R φ M` retains this first child together
+  `firstOrBelowPotential R φ M` retains this first child together
   with the selected children whose potential is at most `M`.
-- `reserveSelectionBelowPotential_subset` and
-  `reserveSelectionBelowPotential_isBoundedBy` give inclusion and capacity;
-  `reserveSelectionBelowPotential_nonempty_of_selected_nonempty` preserves
+- `firstOrBelowPotential_subset` and
+  `firstOrBelowPotential_isBoundedBy` give inclusion and capacity;
+  `firstOrBelowPotential_nonempty_of_selected_nonempty` preserves
   nonemptiness, and
-  `reserveSelectionBelowPotential_card_ge_two_of_boundedSecond` gives a split
+  `firstOrBelowPotential_card_ge_two_of_boundedSecond` gives a split
   when the second selected child's potential is at most the cutoff.
 - `potentialValue'_firstSelectedSlot_le_second_of_ordered` compares the
   selected children's potentials on an ordered step.
@@ -66,7 +66,7 @@ open Selection.NSelection
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
-/-- Kill selected children whose potential exceeds a threshold. -/
+/-- Select the children whose potential is at most the threshold. -/
 noncomputable def belowPotential [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (φ : Potential X) (a : ℝ) :
     Step.FiniteSelection α X :=
@@ -87,7 +87,7 @@ noncomputable def firstSelectedSlotPositivePotential
 
 /-- Retain the least selected slot unconditionally and retain every other
 selected slot whose potential is at most the cutoff. -/
-noncomputable def reserveSelectionBelowPotential
+noncomputable def firstOrBelowPotential
     [LinearOrder α] [OrderBot α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (φ : Potential X) (M : ℝ) :
     Step.FiniteSelection α X where
@@ -97,11 +97,11 @@ noncomputable def reserveSelectionBelowPotential
     · exact (firstOnlySelectedChild R).subset_support ξ i hi
     · exact (R.belowPotential φ M).subset_support ξ i hi
 
-theorem reserveSelectionBelowPotential_subset
+theorem firstOrBelowPotential_subset
     [LinearOrder α] [OrderBot α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (φ : Potential X) (M : ℝ)
     (ξ : Step α X) :
-    reserveSelectionBelowPotential R φ M ξ ⊆ R ξ := by
+    firstOrBelowPotential R φ M ξ ⊆ R ξ := by
   intro i hi
   rcases Finset.mem_union.mp hi with hi | hi
   · exact (Step.FiniteSelection.mem_filter R
@@ -110,14 +110,14 @@ theorem reserveSelectionBelowPotential_subset
       (fun ξ i => ξ.potentialValue' φ i ≤ M) ξ i).mp (by
         simpa [Step.FiniteSelection.belowPotential] using hi) |>.1
 
-theorem reserveSelectionBelowPotential_isBoundedBy
+theorem firstOrBelowPotential_isBoundedBy
     [LinearOrder α] [OrderBot α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (φ : Potential X) (M : ℝ)
     {N : ℕ} (hR : R.IsBoundedBy N) :
-    (reserveSelectionBelowPotential R φ M).IsBoundedBy N := by
+    (firstOrBelowPotential R φ M).IsBoundedBy N := by
   intro ξ
   exact (Finset.card_le_card
-    (reserveSelectionBelowPotential_subset R φ M ξ)).trans (hR ξ)
+    (firstOrBelowPotential_subset R φ M ξ)).trans (hR ξ)
 
 theorem firstOnlySelectedChild_nonempty_of_selected_nonempty
     [LinearOrder α] [OrderBot α]
@@ -129,21 +129,21 @@ theorem firstOnlySelectedChild_nonempty_of_selected_nonempty
   rw [firstOnlySelectedChild, Step.FiniteSelection.mem_filter]
   exact ⟨hfirst, rfl⟩
 
-theorem reserveSelectionBelowPotential_nonempty_of_selected_nonempty
+theorem firstOrBelowPotential_nonempty_of_selected_nonempty
     [LinearOrder α] [OrderBot α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (φ : Potential X) (M : ℝ)
     (ξ : Step α X) (hne : (R ξ).Nonempty) :
-    (reserveSelectionBelowPotential R φ M ξ).Nonempty := by
+    (firstOrBelowPotential R φ M ξ).Nonempty := by
   obtain ⟨i, hi⟩ := firstOnlySelectedChild_nonempty_of_selected_nonempty
     R ξ hne
   exact ⟨i, Finset.mem_union.mpr (Or.inl hi)⟩
 
-theorem reserveSelectionBelowPotential_card_ge_two_of_boundedSecond
+theorem firstOrBelowPotential_card_ge_two_of_boundedSecond
     [LinearOrder α] [OrderBot α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (φ : Potential X) (M : ℝ)
     (ξ : Step α X) (hcard : 2 ≤ (R ξ).card)
     (hbound : ξ.potentialValue' φ (secondSelectedSlot R ξ) ≤ M) :
-    2 ≤ (reserveSelectionBelowPotential R φ M ξ).card := by
+    2 ≤ (firstOrBelowPotential R φ M ξ).card := by
   have hslots := secondSelectedSlot_mem_of_card R ξ hcard
   have hfirst : firstSelectedSlot R ξ ∈ R ξ :=
     firstSelectedSlot_mem R ξ (Finset.card_pos.mp (by omega))
@@ -154,45 +154,45 @@ theorem reserveSelectionBelowPotential_card_ge_two_of_boundedSecond
     simp [Step.FiniteSelection.belowPotential,
       Step.FiniteSelection.mem_filter, hslots.1, hbound]
   have hfirstReserve : firstSelectedSlot R ξ ∈
-      reserveSelectionBelowPotential R φ M ξ :=
+      firstOrBelowPotential R φ M ξ :=
     Finset.mem_union.mpr (Or.inl hfirstOnly)
   have hsecondReserve : secondSelectedSlot R ξ ∈
-      reserveSelectionBelowPotential R φ M ξ :=
+      firstOrBelowPotential R φ M ξ :=
     Finset.mem_union.mpr (Or.inr hsecondBelow)
-  have hlt : 1 < (reserveSelectionBelowPotential R φ M ξ).card :=
+  have hlt : 1 < (firstOrBelowPotential R φ M ξ).card :=
     Finset.one_lt_card_iff.mpr
       ⟨firstSelectedSlot R ξ, secondSelectedSlot R ξ,
         hfirstReserve, hsecondReserve, hslots.2⟩
   omega
 
-theorem reserveSelectionBelowPotential_card_ge_two_iff_boundedSecond
+theorem firstOrBelowPotential_card_ge_two_iff_boundedSecond
     [LinearOrder α] [OrderBot α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : R.IsBoundedBy 2)
     (φ : Potential X) (M : ℝ) (ξ : Step α X) :
-    2 ≤ (reserveSelectionBelowPotential R φ M ξ).card ↔
+    2 ≤ (firstOrBelowPotential R φ M ξ).card ↔
       2 ≤ (R ξ).card ∧
         ξ.potentialValue' φ (secondSelectedSlot R ξ) ≤ M := by
   constructor
   · intro hsplit
-    have hsubset := reserveSelectionBelowPotential_subset R φ M ξ
+    have hsubset := firstOrBelowPotential_subset R φ M ξ
     have hScard_le :
-        (reserveSelectionBelowPotential R φ M ξ).card ≤ (R ξ).card :=
+        (firstOrBelowPotential R φ M ξ).card ≤ (R ξ).card :=
       Finset.card_le_card hsubset
     have hRcap : (R ξ).card ≤ 2 := hR ξ
     have hRcard : (R ξ).card = 2 := by omega
-    have hSeq : reserveSelectionBelowPotential R φ M ξ = R ξ := by
+    have hSeq : firstOrBelowPotential R φ M ξ = R ξ := by
       apply Finset.eq_of_subset_of_card_le hsubset
       rw [hRcard]
       exact hsplit
     have hsecond := secondSelectedSlot_mem_of_card R ξ
       (by omega : 2 ≤ (R ξ).card)
     have hsecondS : secondSelectedSlot R ξ ∈
-        reserveSelectionBelowPotential R φ M ξ := by
+        firstOrBelowPotential R φ M ξ := by
       rw [hSeq]
       exact hsecond.1
     have hunion : secondSelectedSlot R ξ ∈
         firstOnlySelectedChild R ξ ∪ (R.belowPotential φ M) ξ := by
-      simpa [reserveSelectionBelowPotential] using hsecondS
+      simpa [firstOrBelowPotential] using hsecondS
     have hbelow : secondSelectedSlot R ξ ∈ (R.belowPotential φ M) ξ := by
       rcases Finset.mem_union.mp hunion with hfirst | hbounded
       · have hfirst' :=
@@ -209,7 +209,7 @@ theorem reserveSelectionBelowPotential_card_ge_two_iff_boundedSecond
           simpa [Step.FiniteSelection.belowPotential] using hbelow)
     exact ⟨by omega, hbelow'.2⟩
   · rintro ⟨hcard, hbound⟩
-    exact reserveSelectionBelowPotential_card_ge_two_of_boundedSecond
+    exact firstOrBelowPotential_card_ge_two_of_boundedSecond
       R φ M ξ hcard hbound
 
 theorem potentialValue'_firstSelectedSlot_le_second_of_ordered
@@ -225,35 +225,35 @@ theorem potentialValue'_firstSelectedSlot_le_second_of_ordered
     (firstSelectedSlot_lt_second_of_card R ξ hcard).le hsurvive
   simpa [Step.potentialValue', Step.potentialAt?, Step.map, value'] using hmono
 
-theorem reserveSelectionBelowPotential_edgePotentials_le_of_ordered
+theorem firstOrBelowPotential_edgePotentials_le_of_ordered
     [LinearOrder α] [OrderBot α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : R.IsBoundedBy 2)
     (φ : Potential X) (M : ℝ) (ξ : Step α X)
     (hordered : ξ.IsOrderedBy φ)
-    (hsplit : 2 ≤ (reserveSelectionBelowPotential R φ M ξ).card) :
+    (hsplit : 2 ≤ (firstOrBelowPotential R φ M ξ).card) :
     ξ.potentialValue' φ
-        (firstSelectedSlot (reserveSelectionBelowPotential R φ M) ξ) ≤ M ∧
+        (firstSelectedSlot (firstOrBelowPotential R φ M) ξ) ≤ M ∧
       ξ.potentialValue' φ
-        (secondSelectedSlot (reserveSelectionBelowPotential R φ M) ξ) ≤ M := by
+        (secondSelectedSlot (firstOrBelowPotential R φ M) ξ) ≤ M := by
   have hbounded :=
-    (reserveSelectionBelowPotential_card_ge_two_iff_boundedSecond
+    (firstOrBelowPotential_card_ge_two_iff_boundedSecond
       R hR φ M ξ).mp hsplit
   have hRcard : (R ξ).card = 2 := by
     have hSleR := Finset.card_le_card
-      (reserveSelectionBelowPotential_subset R φ M ξ)
+      (firstOrBelowPotential_subset R φ M ξ)
     have hRcap : (R ξ).card ≤ 2 := hR ξ
     omega
-  have hSeq : reserveSelectionBelowPotential R φ M ξ = R ξ := by
+  have hSeq : firstOrBelowPotential R φ M ξ = R ξ := by
     apply Finset.eq_of_subset_of_card_le
-      (reserveSelectionBelowPotential_subset R φ M ξ)
+      (firstOrBelowPotential_subset R φ M ξ)
     rw [hRcard]
     exact hsplit
   have hfirstEq :
-      firstSelectedSlot (reserveSelectionBelowPotential R φ M) ξ =
+      firstSelectedSlot (firstOrBelowPotential R φ M) ξ =
         firstSelectedSlot R ξ := by
     simp [firstSelectedSlot, hSeq]
   have hsecondEq :
-      secondSelectedSlot (reserveSelectionBelowPotential R φ M) ξ =
+      secondSelectedSlot (firstOrBelowPotential R φ M) ξ =
         secondSelectedSlot R ξ := by
     simp [secondSelectedSlot, hSeq, hfirstEq]
   have hfirst_le := potentialValue'_firstSelectedSlot_le_second_of_ordered

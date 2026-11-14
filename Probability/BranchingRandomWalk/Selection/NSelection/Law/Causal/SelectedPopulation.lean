@@ -9,16 +9,16 @@ module
 public import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Population
 
 /-!
-# Causal interface for first-N populations
+# Causal interface for first-N BRW populations
 
-The totalized first-N population is a finite causal population on the same
-pre-sampled field.  This interface lets it serve as the source process in
+The totalized first-\(N\) BRW population is a finite causal population on the
+same pre-sampled field. It serves as the \(N\)-selected BRW population in
 rank-installed couplings.
 
 
 ## Public declarations
 
-The totalized first-\(N\) process is a finite causal source, and every
+The totalized first-\(N\) BRW is a finite causal population, and every
 positive-generation slice obeys the capacity bound:
 
 \[
@@ -27,11 +27,11 @@ P_{n+1}(\omega)\text{ is finite},\qquad
 |P_{n+1}(\omega)|\le N.
 \]
 
-* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.selectedPopulationTotalizedSource`:
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.nSelectedBRWPopulationTotalizedCausalPopulation`:
   views the totalized first-`N` population on the left coordinate of a
   two-copy pre-sampled field as a causal population.
-* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.selectedPopulationTotalizedSource_finiteSlices`:
-  proves that every generation slice of that causal source is finite.
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.nSelectedBRWPopulationTotalizedCausalPopulation_finiteSlices`:
+  proves that every generation slice of that causal BRW population is finite.
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.selectedPopulationTotalized_card_le`:
   every positive-generation totalized selected slice satisfies
   `card (selectedPopulationTotalized (n + 1) field) ≤ N`, including fields
@@ -50,7 +50,7 @@ open ProbabilityTheory.BranchingRandomWalk.Coupling
 
 /-- The totalized first-N population from a finite set of roots, viewed on
 the left half of a two-copy pre-sampled field as a causal population. -/
-noncomputable def RootIndexed.selectedPopulationTotalizedSource
+noncomputable def RootIndexed.nSelectedBRWPopulationTotalizedCausalPopulation
     {Root α Mark Position Value : Type*}
     [MeasurableSpace Mark]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
@@ -123,8 +123,8 @@ noncomputable def RootIndexed.selectedPopulationTotalizedSource
         φ hφ n).comp (leftMeasurable n)
     exact (measurable_finset_iff.mp hmeas p)
 
-/-- The selected causal source has finite slices on every raw field. -/
-theorem RootIndexed.selectedPopulationTotalizedSource_finiteSlices
+/-- The selected first-\(N\) BRW has finite slices on every raw field. -/
+theorem RootIndexed.nSelectedBRWPopulationTotalizedCausalPopulation_finiteSlices
     {Root α Mark Position Value : Type*}
     [MeasurableSpace Mark]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
@@ -140,7 +140,7 @@ theorem RootIndexed.selectedPopulationTotalizedSource_finiteSlices
     (d : Mark → Position) (hd : Measurable d)
     (φ : Position → Value) (hφ : Measurable φ) :
     RootIndexed.CausalPopulation.FiniteSlices
-      (RootIndexed.selectedPopulationTotalizedSource (Root := Root) (α := α)
+      (RootIndexed.nSelectedBRWPopulationTotalizedCausalPopulation (Root := Root) (α := α)
         (Mark := Mark) (Position := Position) (Value := Value)
         N roots initial d hd φ hφ) := by
   intro n field

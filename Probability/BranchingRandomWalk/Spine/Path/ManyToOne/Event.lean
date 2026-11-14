@@ -17,7 +17,8 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Defs
 
 This file records the many-to-one estimate for an arbitrary measurable
 finite-history corridor. It is the first-moment input used when bounding the
-number of particles in a killed branching random walk.
+number of particles whose ancestral paths satisfy the prescribed corridor
+condition in a branching random walk.
 
 ## Public declarations
 

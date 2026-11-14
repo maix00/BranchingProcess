@@ -23,7 +23,7 @@ public import Analysis.Asymptotics.Power.FloorProduct
 ## Public declarations
 
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_positiveA_populationLowCount_le_exp_neg_power`:
-  put `m_n=\lfloor N_n^a\rfloor`, let `K_n` be the first-stage killed
+  put `m_n=\lfloor N_n^a\rfloor`, let `K_n` be the first-stage selected BRW
   population size at cutoff `\ell_n=\operatorname{positiveAFirstStageCutoff}(N,n)`,
   and let `p_n=\operatorname{toReal}(u_n^2/(w_n+R_n))` be the one-root PZ
   quotient, with `u_n`, `w_n`, and `R_n` as in `FirstStage/Lemmas/PZAssembly.lean`.
@@ -61,7 +61,7 @@ open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 /-- Under the finite second moment, boundary normalization, and
-finite cross-weight assumptions, the first-stage killed population has at
+finite cross-weight assumptions, the first-stage selected BRW population has at
 least `N^δ` successful particles with an exponentially small failure
 probability. The exponent condition is only the parameter budget
 `δ < a - b - 2v - 3ε`; it is not an additional probabilistic hypothesis. -/

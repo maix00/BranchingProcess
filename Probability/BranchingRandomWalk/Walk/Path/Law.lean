@@ -13,10 +13,10 @@ public import Mathlib.MeasureTheory.Measure.Map
 /-!
 # Laws of observed single-lineage paths
 
-The process observed from a possibly killed singleton-slot walk is an
-`Option`-valued path.  This file identifies its full path law, under the
-increment-path encoding, with the law of the corresponding directly summed
-position path.
+The process observed from a singleton-slot walk whose unique child may be
+absent is an `Option`-valued path. This file identifies its full path law,
+under the increment-path encoding, with the law of the corresponding directly
+summed position path.
 
 For any increment-path law \(\mu\), observing the increment-encoded walk
 has the same full path law as summing the increments directly:
@@ -27,7 +27,7 @@ has the same full path law as summing the increments directly:
 
 ## Public declarations
 
-- `processPath` observes the possibly killed walk at every discrete time;
+- `processPath` observes the singleton-slot walk at every discrete time;
   `processPath_measurable` proves its path-valued map measurable.
 - `positionPath` gives the directly summed position path, and
   `positionPath_measurable` proves its measurability.
@@ -46,7 +46,8 @@ namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 open Combinatorics.Branching
 open ProbabilityTheory.RandomWalk
 
-/-- Observe a possibly killed random walk at every discrete time. -/
+/-- Observe a singleton-slot walk, including lineage presence, at every
+discrete time. -/
 noncomputable def processPath
     {Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]
@@ -66,8 +67,9 @@ theorem processPath_measurable
   rw [measurable_pi_iff]
   exact fun n => process_measurable d hd n
 
-/-- Encode an increment path as the full `Option`-valued position path.  The
-`some` constructor records that the increment-encoded walk is never killed. -/
+/-- Encode an increment path as the full `Option`-valued position path. The
+`some` constructor records that the increment-encoded walk has a position at
+every generation. -/
 def positionPath
     {Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]

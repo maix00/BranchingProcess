@@ -28,7 +28,7 @@ import MeasureTheory.MeasurableSpace.CountableEvaluation
 - `ProbabilityTheory.BranchingRandomWalk.selectedPopulation_card_le`:
   every generation contains at most \(N\) selected particles.
 - `ProbabilityTheory.BranchingRandomWalk.selectedPopulation_nonempty_of_first_child`:
-  a first child at every nonempty generation keeps the selected population
+  a first selected child at every nonempty generation keeps the selected population
   nonempty.
 
 All `m` initial roots enter one common selection pool. At each generation

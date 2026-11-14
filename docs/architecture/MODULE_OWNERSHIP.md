@@ -16,7 +16,7 @@ identify misplaced application-specific assumptions.
 | Optional child configurations and deterministic branching walks | `Combinatorics/BranchingWalk` | `Step` defines optional child marks; `surviveAlong` and `BranchingWalk` give the realized-address and position model; `Genealogy/Survival` distinguishes descendants at every depth from one infinite lineage and applies Mathlib's inverse-system form of König's lemma under finite branching. `MarkedTree/Equivalence` converts sibling-closed step fields to and from marked realized trees; `SiblingOrderTransport` transports whole addresses when sibling slots are relabelled; `SiblingMonotonicity` relates step order to sibling-mark order; `OfBranchingWalk` constructs root-indexed marked trees from walks. Mathlib's [`RootedTree`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/SuccPred/Tree.html) uses the ancestor order, while [`Quiver.Arborescence`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Quiver/Arborescence.html) uses unique directed paths; neither models the optional slot labels and relative edge marks of these interfaces. `Walk/Basic` specializes the branching walk to a single lineage, `Walk/Equiv` identifies it with its initial position and optional increment sequence, and `Walk/Path/Position` connects its positions to `AdditivePath`. |
 | Set-valued generations in a fixed branching field | `Combinatorics/BranchingWalk/Population` | `Offspring` owns the arbitrary parent-slot and child-address constructions; `Basic` defines generation-indexed populations and keeps layerwise finiteness as a separate property; `Genealogy` proves root, path, parent, and prefix consequences. These definitions have no probability-space or selection assumptions and form the deterministic population layer used by later measurable population processes. |
 | Deterministic branching-walk data and path positions | `Combinatorics/BranchingWalk/Basic` | `FiniteSupport.lean` and `Ordering/Orderable.lean` lift step predicates to fields and root-indexed walks; `Sibling/` distinguishes sibling-closed fields from relabelable sibling-closable fields; `Position/` defines address-dependent additive displacement and positions from mapped edge marks; `Survival/Basic.lean` owns the time-free realized-particle set and its generation slices. These are complete branch-walk interfaces, not proof-only lemmas. The address-dependent displacement stays here: Mathlib's `Quiver.Path` represents composable arrows and their endpoints, while list folds and `mapAccumr` are generic traversals without this Ulam--Harris step-field semantics. |
-| Optional-child steps and finite selections | `Combinatorics/BranchingWalk/Step` | `Basic`, `Count`, `Relation`, and `Measurability` define the optional-slot object and its coordinate interfaces; `Potential` projects marks to a measurable real value; `Measure/` owns the point-measure and exponential-weight observations. `Measure/ExponentialWeight` proves that finite negative (positive) total weight makes every lower (upper) real-potential level finite. `Selection/Finite`, `Selection/Slot`, `Selection/Potential`, and `Selection/ReserveSpine` define finite selections from an actual branching step, including the deterministic first/second reserve-slot rule and the potential-cutoff bound for the retained reserve slot; every selected slot lies in `support ξ`, and the specialized rules use slot order or real potential. `Selection/Potential` also owns the selected-first-slot positive-potential observable; its measurability theorem is in `MeasureTheory/BranchingWalk/Step/Selection/Potential`. The deterministic operations belong to `Combinatorics/BranchingWalk/Step/Selection`; measurable adapters belong to `MeasureTheory/BranchingWalk/Step/Selection`; random split events and cutoff laws belong to `Probability/BranchingRandomWalk`. The lower-finite order argument used to construct potential-first selections itself belongs to the generic `Combinatorics/Selection/NSelection/Mechanism/Infinite/Basic` layer. The coordinate product σ-algebra uses Mathlib’s generic `MeasurableSpace.pi` instance ([documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/MeasurableSpace/Constructions.html)); the duplicate step-specific instance was removed. |
+| Optional-child steps and finite selections | `Combinatorics/BranchingWalk/Step` | `Basic`, `Count`, `Relation`, and `Measurability` define the optional-slot object and its coordinate interfaces; `Potential` projects marks to a measurable real value; `Measure/` owns the point-measure and exponential-weight observations. `Measure/ExponentialWeight` proves that finite negative (positive) total weight makes every lower (upper) real-potential level finite. `Selection/Finite`, `Selection/Slot`, `Selection/Potential`, and `Selection/Continuation` define finite selections from an actual branching step, including the deterministic first/second selected-slot rule and the potential-cutoff estimate for the selected continuation slot; every selected slot lies in `support ξ`, and the specialized rules use slot order or real potential. `Selection/Potential` also owns the selected-first-slot positive-potential observable; its measurability theorem is in `MeasureTheory/BranchingWalk/Step/Selection/Potential`. The deterministic operations belong to `Combinatorics/BranchingWalk/Step/Selection`; measurable adapters belong to `MeasureTheory/BranchingWalk/Step/Selection`; random split events and cutoff laws belong to `Probability/BranchingRandomWalk`. The lower-finite order argument used to construct potential-first selections itself belongs to the generic `Combinatorics/Selection/NSelection/Mechanism/Infinite/Basic` layer. The coordinate product σ-algebra uses Mathlib’s generic `MeasurableSpace.pi` instance ([documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/MeasurableSpace/Constructions.html)); the duplicate step-specific instance was removed. |
 | Order duality of real-marked branching steps | `Combinatorics/BranchingWalk/Step/Ordering` | `OrderDual.lean` maps every real mark through `OrderDual.toDual`, proves survival and support preservation, identifies the dual potential with the negative real mark, and transfers realized and total exponential weights without a probability law or countability assumption. The law-level tilted-spine identity stays under `Probability/BranchingRandomWalk/Spine/Tilted`. Mathlib provides the generic `OrderDual` type and `toDual`/`ofDual` maps, but not this optional-child-step and exponential-weight adapter ([Mathlib OrderDual documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Order/OrderDual.html); checked against pinned revision `380f2aafb622cb2c1c93dac545b6389083c68c51). |
 | Ordered optional-child steps and slot normal forms | `Combinatorics/BranchingWalk/Step/Ordering` | `SiblingClosed` describes initial-segment support; `SiblingClosable` describes injective, support-covering relabeling into that form; `Monotone` and `ByPotential` own increasing/decreasing mark order and measurable ordered-step events; `Orderable` owns the increasing normal form and its finite-support existence theorem; `SiblingRank` counts surviving predecessors; `SlotOrder` gives finite prefixes of abstract slot orders; `MeasureInvariance` preserves point measures under reordering. The one-use mark-then-slot finite-rank construction is under `Lemmas/FiniteRank.lean` and is imported internally by `Orderable`, not exported as a public rank API. Mathlib's `Finset.sort` and `Finset.orderIsoOfFin` provide sorted finite lists and finite linear-order enumerations, while `orderIsoNatOfLinearSuccPredArch` supplies the generic ℕ slot representation; none directly states the support-covering self-relabeling of an optional child step. |
 | Embedded space-time traces of deterministic branching walks | `Combinatorics/BranchingWalk/Trajectory` | `Basic` stores the vertex image as the existing `CloudSet Time X` and the edge image as a set in `Time × X`; `Step` constructs these from a marked step field; `Measurability` induces the coordinate σ-algebra and proves measurability of both coordinates and the vertex space-time set. Mathlib's `Quiver.Path` stores composable arrows and their endpoints, not the geometric space-time image, so it does not replace this trace object. |
@@ -74,7 +74,7 @@ identify misplaced application-specific assumptions.
 | Cosine Tauberian kernel and its real Mellin estimates | `Analysis/Fourier/CosineTauberian` | The kernel, compact Fourier profile, power-weighted integrals, frequency-average coercivity, and regular-variation limit form a coherent analytic API; proof-only uses of Mathlib's complex Mellin transform stay ordinary imports |
 | Positive-definite Fourier representation on `ℝ` | `Analysis/Fourier/Bochner` | `Theorem` states that continuous `φ : ℝ → ℂ` with `IsPositiveDefinite φ` and `φ 0 = 1` is the characteristic function of a probability measure; its one-use Fejér, inverse-density, and Gaussian-smoothing derivations are package-private under `Lemmas/` |
 | Generic compact-system constructions | `Topology/Compactness/CompactSystem/Operations` | Extends Mathlib's `IsCompactSystem` with products, countable intersections, finite unions, finite intersections, sum and sigma systems, equivalence transport, finite-subset systems, and compact-interval systems; these results do not depend on analytic sets or capacities |
-| Analytic sets, pavings, and capacities | Mathlib `MeasureTheory.Constructions.Polish.Basic`; project `MeasureTheory/Analytic/Paving` and `Capacity` | Mathlib owns the generic analytic-set predicate and continuous-image results. The project owns analytic sets relative to a paving and abstract capacity/Choquet results; a redundant local wrapper around Mathlib's continuous-image theorem was removed. |
+| Analytic pavings, capacities, and measurable projections | `BrownianMotion.Choquet.AnalyticSet` and `BrownianMotion.Choquet.Capacity`; local client `MeasureTheory/MeasurableSpace/CadlagPath/PathClass/StepCorridor/NullMeasurable` | Reuse the BrownianMotion fork's generic paving, capacity, Choquet, and projection results. The corridor module keeps only its path-specific measurable relation and application theorem; the local duplicate paving/capacity hierarchy has been removed. |
 | Measure operations, product estimates, and invariance under limits | `MeasureTheory/Measure`, `MeasureTheory/Integral`, and `MeasureTheory/OuterMeasure` | `Measure/Convolution/Power`, `Measure/Algebra/{DiracSum,IntegerValued}`, `Measure/InnerMeasure`, `Measure/EventLimits`, `Measure/Convergence/MapInvariance`, `Measure/Pi/FiniteReindexCover`, `Integral/MeasurePreserving`, `Integral/Lebesgue/RestrictLimit`, and `OuterMeasure/Finite/Cover`. Finite multiplicative recurrences are stated at the ordered-commutative-monoid level in `Algebra/Order/Monoid/Recurrence`; measure-process clients instantiate that generic result. |
 | Finite-family and continuous-path tightness | `MeasureTheory/Measure/Tight` and `MeasureTheory/Measure/ContinuousMap/Tightness` | `Tight/FiniteFamily` states that the image of any finite index set under individually tight measures is tight; `Tight/Sequence` derives finite-prefix and eventual-uniform compact-mass criteria from it. `ContinuousMap/Tightness` gives Arzelà–Ascoli criteria from equicontinuity, moduli, and oscillation bounds. `ContinuousMap/RangeOscillation` bounds the measure of a continuous-path range event by its finite corridor cover. The path-specific finite-family proof now consumes the generic finite-image theorem. |
 | Measurable finite partial sums | `MeasureTheory/Function` | `FinPartialSum` proves measurability of every finite partial-sum coordinate for a measurable additive monoid, without a topology assumption |
@@ -112,12 +112,12 @@ identify misplaced application-specific assumptions.
 | Lévy path-law semantics and convergence | `Probability/Process/Levy/PathLaw` | `UnitInterval` constructs the unit-interval law and its finite-evaluation identities; `Corridor` identifies both zero-start corridor and endpoint-window corridor probabilities with their complete-segment process events; `Convergence` proves weak convergence of a tight family of these path laws from convergence of each interval-increment law, using independent-increment finite-grid assembly and càdlàg path-law identification. Scalar domain-of-attraction inputs and tightness estimates remain with their source-process theories. |
 | Three-dimensional Bessel radial path law | `Probability/Process/Brownian/Bessel` | `ThreeDimensional.lean` constructs the triple product law, radial process, and path law; `Endpoint.lean` proves positivity of the time-one radius from the one-time Gaussian law and transfers it to the path law; `Support.lean` proves support for every nonnegative linear path. The path-law endpoint transfer needs continuity and measurability, while the underlying radius-positivity theorem does not. The coordinatewise radial-error estimate and its path-space transfer are single-client proof steps in `Bessel/Lemmas/Support.lean`. Mathlib's `abs_norm_sub_norm_le` is a generic norm reverse-triangle inequality, but it does not replace this coordinatewise estimate directly. Mathlib provides Brownian process laws and Bessel special functions, but no stochastic Bessel-process/path-law interface; the local radial construction therefore remains the model owner ([Brownian process API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/BrownianMotion/Basic.html), [Bessel special-functions API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/SpecialFunctions/Bessel.html)). The package cites J.-P. Imhof, “Density factorizations for Brownian motion, meander and the three-dimensional Bessel process, and applications,” *Journal of Applied Probability* 21(3) (1984), 500–510, Theorem 1, DOI 10.2307/3213612. |
 | Brownian terminal-excursion (meander) law | `Probability/Process/Brownian/Meander` | `LastZero.lean` and `LastZeroLaw.lean` give the Brownian almost-sure facts and Iglehart path law; `LastSignChange.lean` identifies Bolthausen's transform with that law; `LastZeroSupport.lean` gives the support input used by conditioned-walk limits. The deterministic last-zero API is in `Topology/ContinuousMap/LastZero`, the sign-stable and endpoint-sign APIs are in `Topology/ContinuousMap/LastSignChange`, and their shared terminal affine clock is in `Topology/Order/UnitInterval/Time`; Brownian probability statements remain in the Brownian process layer. These four files state complete path-law, identification, and support results, rather than one-use proof stages. The headers cite Bolthausen (1976), Theorem 3.2, and Iglehart (1974), Section 3, Theorem (3.4). |
-| Standard Gaussian Brownian witnesses and continuous modifications | `Probability/Process/Brownian/Construction` | `Existence.lean` obtains a pre-Brownian and continuous Brownian witness on the path-block space used by random-walk functional-limit results; `KolmogorovMoment.lean` gives the fourth-moment Kolmogorov bound for every `IsPreBrownianReal` process; `PreBrownianModification.lean` supplies its selected measurable, pathwise-continuous modification. Mathlib owns the Brownian process predicates, and the buildable BrownianMotion Kolmogorov–Chentsov theorem supplies the general modification result. The canonical BrownianMotion process construction is not currently importable with the pinned dependency because its transitive targets fail to build, so the repository's tight-source construction remains the local owner. |
+| Standard Gaussian Brownian witnesses and continuous modifications | `Probability/Process/Brownian/Construction` | `Existence.lean` obtains a pre-Brownian and continuous Brownian witness on the path-block space used by random-walk functional-limit results. It uses Mathlib's `IsPreBrownianReal` and `IsBrownianReal` predicates and BrownianMotion's more general `IsPreBrownianReal.mk` construction for the continuous modification. The former local fourth-moment estimate and modification modules were removed because this dependency construction subsumes them. BrownianMotion fork revision `baaa246` is based on upstream's latest source revision `8fd8dc52830cdd07cf9cc8eadd533e284425fa6f`; its Lake manifest and Mathlib fork revision `26573066084e6e2aa8526ea358bc43b66d96f970` build together with Lean `v4.36.0-rc2`. |
 | Markov processes and chains | `Probability/Process/Markov` | `Basic.lean` states the conditional-expectation Markov property using Mathlib kernels, separates transition-family composition from the process property, and derives the discrete-time kernel-power specialization; `Stopping/Basic.lean` defines the finite-stopping-time strong Markov property and proves that a discrete-time Markov chain satisfies it. |
 | Ranked selection at a discrete stopping time | `Probability/Process/Stopping/Selection` | `Ranked.lean` applies the generic combinatorial rank selector to arbitrary time-indexed finite candidate sets and value maps at a `WithTop ℕ` stopping time, then proves measurability with respect to the stopping-time σ-algebra and the corresponding rank, membership, and injectivity laws. Its stopped-process and filtration semantics follow Mathlib's `Probability/Process/Stopping`; the underlying capacity selector remains in `Combinatorics/Selection`, and fixed-time selector measurability remains in `MeasureTheory/Selection`. |
 | First-declaration and population-overflow stopping times | `Probability/Process/HittingTime` | `Declarations.lean` presents Mathlib's `hittingAfter` as an event-indexed first-success time, with finite-time, exact-time, one-generation-shift, and stopping-time laws; `PopulationOverflow.lean` defines the first time an arbitrary set-valued population exceeds capacity $N$, gives its cardinality characterizations and stopping-time criterion, and specializes to finite-set processes; `Geometric.lean` proves the measurable fibers and geometric mass formula $\mathbb P(\tau=k)=p(1-p)^k$ for independent events of common probability $p$; `ObservableCandidates.lean` gives a filtration-generic interface for candidate completion observability, countable candidate unions, and first successful completion times. `Examples/Lookahead.lean` contains finite-filtration counterexamples illustrating the adaptedness hypotheses. The official [Mathlib hitting-time API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/HittingTime.html) supplies the underlying process hitting time and adapted stopping-time theorem; its [independent-event API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Basic.html) supplies finite intersection products, while event-indexed success and population-overflow interfaces are reusable specializations. |
 | Process corridor events, range, and one-jump entrance | `Probability/Process/Corridor` | `Segment.lean` owns the process segment increment, full-segment corridor and endpoint events, and their pathwise inclusion/monotonicity algebra; `Range.lean` relates rational-coordinate range events to complete-segment corridors and their finite cover, transfers rational range probabilities along an identical rational-coordinate process law, and extends rational interior oscillation bounds to the endpoint from a.s. càdlàg paths and fixed-time continuity; `ShortTime.lean` proves that a fixed centered rational-time corridor has probability tending to one as the time horizon tends to zero for an a.s. càdlàg process; the deterministic limit steps use Mathlib’s [`Function.leftLim`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Topology/Order/LeftRightLim.html) API; `PoissonEntrance.lean` proves corridor-entry probability from an explicit one-jump decomposition and does not assume a Lévy-process predicate. Càdlàg rational-coordinate characterizations and null-measurability stay in `Probability/Process/Path/Skorokhod/Corridor/Segment.lean`. |
-| Brownian laws, modifications, reflection, and path-valued interfaces | `Probability/Process/Brownian` | `Construction/Existence` constructs the pre-Brownian process from the Gaussian random-walk path limit; `Construction/PreBrownianModification` provides the continuous modification used by the path-law and small-deviation clients; `PathLaw/` owns continuous and Skorokhod-valued representatives and their laws; `Reflection/Path`, `Reflection/FirstPassage`, and `Reflection/Descending` respectively own Brownian path consequences, reflection at first passages, and laws/increments of descending hitting times; `FiniteDimensional/UniformGrid`, `TimeReversal/`, and `Support/` provide the corresponding complete Brownian interfaces. The closedness of a pointwise path constraint is generic and belongs to `Topology/ContinuousMap/Range`, not to the Brownian probability module. The fourth-moment Kolmogorov input specific to this construction is internal under `Construction/Lemmas/`; generic path transformations and measure interfaces remain with `Probability/Process/Path` and `MeasureTheory/Measure`. |
+| Brownian laws, modifications, reflection, and path-valued interfaces | `Probability/Process/Brownian` | `Construction/Existence` constructs the pre-Brownian process from the Gaussian random-walk path limit and obtains its continuous Brownian witness using BrownianMotion's `IsPreBrownianReal.mk`; `PathLaw/` owns continuous and Skorokhod-valued representatives and their laws; `Reflection/Path`, `Reflection/FirstPassage`, and `Reflection/Descending` respectively own Brownian path consequences, reflection at first passages, and laws/increments of descending hitting times; `FiniteDimensional/UniformGrid`, `TimeReversal/`, and `Support/` provide the corresponding complete Brownian interfaces. Mathlib owns the Brownian process predicates; BrownianMotion supplies the general Gaussian continuous-modification construction. The closedness of a pointwise path constraint is generic and belongs to `Topology/ContinuousMap/Range`. Generic path transformations and measure interfaces remain with `Probability/Process/Path` and `MeasureTheory/Measure`. |
 | Path-space geometry, path-valued realizations, and generic tightness criteria | `Topology` and `Probability/Process/Path` | `Topology/Cadlag/Skorokhod` owns the path space, $J_1$ metric, time changes, and deterministic corridor and oscillation events. `Probability/Process/Path/Representation` turns coordinate processes into continuous or càdlàg path-valued maps and their image laws, with `Cadlag.lean` handling the almost-surely càdlàg realization; `Transform/Continuous` owns deterministic freeze, shift, and rebase maps on continuous path space; `FirstPassage`, `Extrema`, `Reflection`, and `TimeReversal` own the corresponding specialized path operations; `Skorokhod` and `PathClass/StepCorridor` connect those path objects to measurable tube events. `FirstPassage/Basic` specializes Mathlib's `MeasureTheory.hittingAfter` to evaluation of a continuous path and proves its infimum formula; `Prefix` gives path-locality, and `Measurability` proves closedness of hitting-by-$t$ sets and Borel measurability of the continuous-path passage time. `Restart`, `Reflection`, `Descending`, and `GridApproximation` state their full deterministic path interfaces. These build on Mathlib's `CadlagPath`, continuous-map Borel structure, and generic `hittingAfter`; Mathlib does not supply the path-specific continuity, restart, or path-space measurability results. See the [Mathlib càdlàg order API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Topology/Order/Cadlag.html) and [hitting-time API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/HittingTime.html). |
 | First eligible unit-window times on continuous paths | `Probability/Process/Path/AboveStart/FirstWindow/Time` | `Core` defines window eligibility and the unrestricted and finite-horizon first times with their order characterizations; `Basic` gives the public measurability entry and countable-infimum relation; the rational-grid approximation proof used only for measurability is under `Lemmas/Approximation`; `Continuity`, `FiniteHorizon`, `RunningMinimum`, and `Tail` give reusable regularity, restriction, path-characterization, and probability-law interfaces. General positive-duration windows and their relation to monotonicity remain in `AboveStart/LocalMinimum`. The definitions are deterministic continuous-path objects; Brownian and random-walk hypotheses enter only in their application layers. |
 | Skorokhod time changes and finite-partition clocks | `Topology/Cadlag/Skorokhod/TimeChange` | `Basic` owns the general time-change object as an `OrderIso` of `[0,1]` and derives its homeomorphism from the order topology; `LogDistortion` owns secant-slope and composition bounds; `FinitePartition` constructs the piecewise-affine knot-matching clock and its path/log-distortion consequences. `Limit/Convergence` gives the continuous-map uniform limit of cumulative clocks under a summable distortion budget; `Limit/Strict` upgrades it to a time change; `Limit/LogDistortion` proves stability of the distortion bound; `Limit/Tail` constructs tail limits and factors the global limit through each finite prefix. These are independently stated convergence interfaces, while the one-use estimates stay private in their proof modules. The single-use secant-slope estimate belongs in `FinitePartition/Lemmas/SecantSlope.lean`. |
@@ -185,10 +185,10 @@ identify misplaced application-specific assumptions.
 | Stable-domain small-deviation blocks and complete-block counts | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Scale` | `BlockLength` owns the stable block length and its scale limits; `BlockCount` exposes the complete-horizon and segment-count limits, specializing the generic quotient/remainder API in `Analysis/Asymptotics/Scale/Block/`; the rounded regular-variation constructions live in `SlowMultiplier`. The Theorem 4 equation (44) probability combination is proof support under `Mogulskii/Lemmas/Theorem4/Scale/EscapeRate`, while the original-process comparison in equation (42) remains separate. The endpoint-core bridge count and index-one centering transfer stay in `Stable/Discrete/Lemmas/` |
 | Stable Mogulskii block corridors and one-block bounds | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Corridor` | owns the stable-length tube events and the source IID block-to-horizon estimates; its closed-range estimate applies the general theorem in `Probability/ConvergenceInDistribution/CadlagPath/RangeOscillation` |
 | Power-law small-deviation asymptotics at zero | `Probability/MeasureTheory/Asymptotics` | `HasPowerLawSmallDeviationRate` records eventual positivity and the limit $\varepsilon^\alpha\log p(\varepsilon)\to C$ for any scalar function; `HasStableProcessEscapeRate` specializes it to stable range-tube probabilities, while `HasStableCenteredCorridorEscapeRate` records the centered-corridor rate in `Stable/SmallDeviation/EscapeRate/PathLaw/Basic`; `PathLaw/Transfer` transfers corridor and escape-rate probabilities between a stable clock path law and a realizing stable Lévy process, using stable path-law uniqueness and the generic Lévy path-law event bridge |
-| Injective matching with pointwise order domination | `Order/DominatingMap` | `Order.DominatingMap` bundles `f : A → B`, `Set.MapsTo f source target`, `Set.InjOn f source`, and `targetValue (f a) ≤ sourceValue a`. Mathlib provides these set-map and injectivity predicates separately, and `RelEmbedding` preserves and reflects a relation on one carrier; neither bundles this cross-carrier, two-observation inequality. Cloud slice matching specializes this generic structure. |
+| Injective matching with pointwise order domination | `Order/DominatingMap` | `Order.DominatingMap objectsToMatch availablePartners objectOrderKey partnerOrderKey` bundles an injection from the objects to match into their available partners and the inequality `partnerOrderKey (f object) ≤ objectOrderKey object`. Mathlib provides the set-map and injectivity predicates separately, and `RelEmbedding` preserves and reflects a relation on one carrier; neither bundles this cross-carrier, two-observation inequality. Cloud slice matching specializes this generic structure. |
 | Fixed-density transformations of measures | `MeasureTheory/Measure/WithDensity.lean` | `Measure.measurable_withDensity_fixed` proves measurability of the map from a variable base measure to its measure with a fixed measurable density. It complements Mathlib’s `measurable_withDensity`, which fixes the base measure and varies the density; the exponential random-measure tilt uses this parameter-dual result. |
 | Lower-tail comparison of measures | `MeasureTheory/Measure/LowerTail` | `Measure.LowerTailDominates μ ν` means $\mu(\operatorname{Iic}(a))\le\nu(\operatorname{Iic}(a))$ at every threshold in any preorder, with no finite-mass or probability assumption. Mathlib’s pointwise measure order and Borel-order uniqueness statements are different interfaces; `Combinatorics/BranchingWalk/Cloud/Order/Slice` specializes this relation to particle Dirac sums and rankwise order. |
-| Branching random-walk models, populations, and field coupling | `Probability/BranchingRandomWalk` | `Law.lean` names arbitrary probability laws on walk space; `IID.lean` constructs and transports the canonical product-field law; `Measurability.lean` owns coordinate and finite-survival measurability; `BranchingProperty.lean` gives the selected-subtree law. In `Walk/`, `MeasurableEquiv.lean` identifies singleton-slot walks with their initial positions and optional increments; `Path/` connects this representation to random-walk path laws, finite windows, scaling, and generation-cloud positions; `Rademacher.lean` defines the singleton-slot Rademacher model, and `Path/RademacherFiniteInterval.lean` identifies its finite closed-window event with the killed interval-kernel mass. These are adapters specific to the singleton branching-walk representation; general random-walk path and window APIs remain under `Probability/Process/RandomWalk`. `Population/` owns root-indexed and finite multi-root candidate generation and selected-process recursion; `Restart/RootedTrial/` owns reserve-spine and finite-slot couplings; `Restart/Trial/` owns selected-population split and finite-growth trial interfaces; `Restart/Success/GoodSplit` applies the generic offspring split-mass theorem to a `StepLaw` selector and obtains a finite potential cutoff; almost-sure nonemptiness of the reserve selector remains conditional on the separate offspring nonempty assumption; `Restart/Reserve` owns first-moment estimates for fresh reserve fields; `Restart/Trial/GeometricFirstMoment` specializes the generic IID marked-reward formula from `Probability/Sequence/IID/GeometricReward`. `Restart/RootedTrial/Completion/` owns stopped endpoint laws and causal-source capacity bounds, with proof-only steps under its nested `Lemmas/`. Offspring fields and spine remain at their respective semantic layers |
+| Branching random-walk models, populations, and field coupling | `Probability/BranchingRandomWalk` | `Law.lean` names arbitrary probability laws on walk space; `IID.lean` constructs and transports the canonical product-field law; `Measurability.lean` owns coordinate and finite-survival measurability; `BranchingProperty.lean` gives the selected-subtree law. In `Walk/`, `MeasurableEquiv.lean` identifies singleton-slot walks with their initial positions and optional increments; `Path/` connects this representation to random-walk path laws, finite windows, scaling, and generation-cloud positions; `Rademacher.lean` defines the singleton-slot Rademacher model, and `Path/RademacherFiniteInterval.lean` identifies its finite closed-window event with the killed interval-kernel mass. General random-walk path and window APIs remain under `Probability/Process/RandomWalk`. `Population/` owns root-indexed and finite multi-root candidate generation and selected-process recursion; `Population/Processes/StepSelection/SplitTime/` owns the reusable observable first-split time, its parent/sibling facts, and the fixed-root time shift. `Genealogy/Exploration/IndependentSubtreeIntegration.lean` gives the general first-moment factorization for observables of measurably selected fresh subtrees. The endpoint-specific selected-path growth-trial construction is under `Selection/NSelection/EndpointDeviation/SelectedPath/`, with one-use proof stages under the sibling `Lemmas/` directory. `Selection/NSelection/EndpointDeviation/Lemmas/FirstSplit/` owns its two-sibling factorization and finite-completion estimate. `Step/Selection/BoundedSplit.lean` proves the reusable positive-probability cutoff result for a first-or-below-potential selector; the split event and its measurability are owned by `Combinatorics/BranchingWalk/Step/Selection/Split.lean` and `MeasureTheory/BranchingWalk/Step/Selection/Split.lean`. The generic repeated-trial interfaces remain in `Probability/Process/HittingTime/ObservableCandidates` and `Probability/Sequence/IID/GeometricReward`.
 | Generation branching and additive path-potential decomposition | `Probability/BranchingRandomWalk/Spine/GenerationBranching` | `Decomposition` identifies generation addresses with a first child and a subtree address, gives the root/subtree product law, and states `pathPotential_cons` and the arbitrary-prefix `pathPotential_append` formula; `Measurability` gives joint endpoint-observable and operator measurability; `Recursion` integrates the pathwise decomposition to identify generation observables with iterated branching operators. The prefix/suffix potential identity is part of the path-potential interface, while reserve-spine probability estimates consume it as a dependency. |
 | Measurable ordering of random branching-step laws and first-child observations | `Probability/BranchingRandomWalk/Step/Ordering` | `Realization` defines the measurable support-covering ordered realization of one random step; `Field` defines the optional least-slot mark, its node field, and generation measurability; `Law` packages the raw offspring law, potential, and deterministic ordering and transfers point-measure functionals and exponential weights; `Support` gives simultaneous almost-sure ordering, nonemptiness, and first-child survival. Its four modules are complete probability interfaces, not a proof-only chain. Mathlib provides [`Measure.map`, `map_apply`, and `map_map`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Map.html) and [`iIndepFun`/product-law results](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/InfinitePi.html); these supply measure transport and coordinate independence, while child-slot coverage, multiplicity-preserving point measures, and generation-local first-child observations remain specific to branching steps. Whole-tree address transport remains under the deterministic `Combinatorics` layer |
 | Finite step-selected branching populations and split-schedule trials | `Probability/BranchingRandomWalk/Population/Processes/StepSelection` | `Basic` owns the recursive selected population and its parent and nonemptiness relations, including the reusable predecessor result from a nonempty successor generation; `SelectedPath` defines edgewise selection and characterizes generation membership by path length and selected edges; `RootIndexed` adds root labels; `Concurrent/{Basic,Scheduled}` groups the global-clock population and its causal-schedule specialization; `SplitSchedule/Definition` owns threshold-triggered trial times and successful root extraction, `Field` owns fresh-pool/product-law and spatial-coupling interfaces, and `Trials` owns completion, iteration, and repeated-success results |
@@ -466,6 +466,11 @@ assumptions and semantics with this statement, and record why the local public
 interface is still needed. Cross-module use is an audit trigger; mathematical
 generality, the strongest sound candidate interface, and the content added by
 the theorem determine whether to expose it and where to place it.
+
+The Brownian modification reviews dated 2026-10-22 and 2026-10-29 below
+describe the dependency state at those times. The current ownership and
+version status is recorded in the 2026-11-13 BrownianMotion and Mathlib
+alignment review in `MODULE_DIRECTORY_AUDIT.md`.
 
 Keep a model-specific assumption at the application boundary. For example,
 the definition of a generic measurable path should not assume a stable law,
@@ -1059,66 +1064,67 @@ concatenation and root-indexed field reindexing in this statement; the project
 theorem specializes those principles to that general field construction. See
 the [official measurable-space constructions documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/MeasurableSpace/Constructions.html).
 
-The restart-specific declarations remain with their semantics:
-Restart/RootedTrial/Reserve/Causal.lean defines candidates observable from
-the reserve spine and their source population, including the inclusion of the
-live spine address in the source slice;
-Restart/RootedTrial/Coupling/ReserveSpine.lean compares that source with the
-rank-installed first-N population;
-Restart/RootedTrial/Reward/PositivePart.lean owns the pathwise edge-sum and
-source-minimum positive-part estimates; the deterministic one-step cutoff
-inequality belongs to `Combinatorics/BranchingWalk/Step/Selection/ReserveSpine`.
-`Reward/Expectation.lean` integrates the pathwise estimate using the
-fixed-generation sampled-step law. Its first-slot positive-potential
-observable is shared with the deterministic branching-step selection layer,
-and its measurability result is owned by the corresponding MeasureTheory
-adapter;
-Restart/RootedTrial/Completion/Endpoint.lean defines the first-success
-completion time and its rank-installed endpoint vector;
-EndpointFreshField.lean states the joint product law of endpoint positions
-and their fresh descendant field;
-FixedHorizon.lean pushes that law through a fixed-horizon population
-observable; and EndpointHorizon.lean gives the time-position-field law and
-its measurable-observable consequence. The root-family, address-geometry,
-and fresh-field factorization stages used only in that proof chain are under
-Completion/Lemmas/EndpointHorizon/. The product law is a complete reusable
-probability statement, so it remains outside Lemmas/; the short pushforward
-steps and factorization intermediates remain in the proof subtree.
+## Selected-path endpoint-deviation construction and split-time ownership
 
-The split replaces the mixed Coupling/Basic.lean module; no forwarding
-aliases preserve its old path. The endpoint modules are not all independent
-theorem entries: Endpoint.lean defines stopping data, while the joint law,
-fixed-horizon law, and endpoint-horizon law are the public probabilistic
-interfaces.
+The selected-path growth-trial construction is specific to the endpoint-deviation
+argument. Its root module,
+`Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPath/Path.lean`,
+defines `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.selectedPath`.
+At a split, the first selected child starts a growth trial and the second
+selected child continues the path. `SelectedPath/Splits.lean` proves the
+continuation-subtree identities; `SelectedPath/GrowthTrial/` defines trial
+indices, populations, success events, and completion times;
+`SelectedPath/Completion/` gives the first successful completion and endpoint
+rank vector; `SelectedPath/Coupling/` transfers the endpoint population law to
+the first-`N` process. The binary-slot law, its coupling, moment recurrences,
+and finite-horizon growth bound remain inside
+`SelectedPath/GrowthTrial/FiniteSlot/`. Its one-use address coding is in that
+folder's `Lemmas/Coding.lean`.
 
-`Completion/RootIndexed/CapStopped.lean` also exposes
-`RootIndexed.capStoppedPopulationAt_selectedRoot_measurable`: a root whose
-fibers are measurable at generation $s$ and whose address has depth $s$ gives
-a rooted cap-stopped population measurable at generation $s+a$. The theorem
-is stated for an arbitrary measurable selected root, so it is part of the
-root-indexed cap-stopped interface; the reserve-lineage specialization is
-proved at its caller. `Completion/Lemmas/` contains only its remaining
-theorem-specific proof steps.
+The first split of a selected population is independent of this endpoint
+construction. `Population/Processes/StepSelection/SplitTime/Basic.lean` owns
+the raw first-split declaration, its observable completion, the stopping-time
+property, and the parent/child address facts at the first split.
+`SplitTime/RootIndexed.lean` gives the fixed-subtree generation offset. The
+product law of the two sibling descendant fields is used only by the
+endpoint-deviation proof and is in
+`Selection/NSelection/EndpointDeviation/Lemmas/FirstSplit/BranchingProperty.lean`;
+it applies the generic stopped subtree-vector factorization from
+`Genealogy/Exploration/RootIndexed/StoppingSubtrees/Vector/Factorization.lean`.
 
-Within `Restart/RootedTrial/Spine/`, `ReservePath.lean` owns the recursive
-second-child reserve path, its lineage and causal-population interfaces. The
-deterministic rule that chooses the second selected child at a split, the
-first for a singleton, and `⊥` for an empty selection is owned by
-`Combinatorics/BranchingWalk/Step/Selection/ReserveSpine.lean`;
-`Splits.lean` owns the live split count, its stopping time, and the identities
-between an absolute reserve path and its recursively rooted subtree;
-`SelectedRoot.lean` lifts split-completion stopping times to selected roots;
-`SiblingTrial.lean` gives the complete factorization of first-child growth and
-second-child reserve events; and `BoundedOffspring.lean` turns the reserve rule
-into a finite-slot Galton--Watson law and a uniform growth estimate. These
-statements expose the construction's objects and probability interfaces to
-the neighboring `Reserve/` and `Coupling/` modules. Their local calculations
-prove those named interfaces rather than forming a separate reusable
-proof-only chain, so this group does not need another `Lemmas/` subtree.
+Generic fresh-subtree integration belongs to
+`Genealogy/Exploration/IndependentSubtreeIntegration.lean`, where it is stated
+for the root-indexed explored-domain interface. The eventwise expectation
+inequality for independent random variables belongs to
+`Probability/Independence/Integration/IndependentUpperBound.lean`. The
+pre-sampled-lineage failure estimate, endpoint geometry, and other one-use
+steps remain under `EndpointDeviation/Lemmas/`; reusable declarations do not
+belong there merely because the endpoint proof imports them.
+
+At the branching-step level, `Combinatorics/BranchingWalk/Step/Selection/Split.lean`
+defines `splitBy R = {ξ | 2 ≤ |R ξ|}`, and
+`MeasureTheory/BranchingWalk/Step/Selection/Split.lean` proves its
+measurability. The positive bounded-potential split result is more general
+than the selected-path construction: it applies to a measurable finite
+selection retaining at least two children whenever available. It is therefore
+owned by `Probability/BranchingRandomWalk/Step/Selection/BoundedSplit.lean`,
+not by endpoint-deviation `Lemmas/`. The first-child-preserving potential rule
+is named `firstOrBelowPotential`; references to a reserve pool or reserve
+lineage retain `reserve` only when those objects are actually involved.
+
+Generic restart behavior is represented by its mathematical components rather
+than one `Restart` namespace. Candidate success and observable completion use
+`Probability/Process/HittingTime/ObservableCandidates.lean`, repeated i.i.d.
+reward uses `Probability/Sequence/IID/GeometricReward/`, and causal schedules
+use `Probability/Process/Stopping/CausalSchedule/`. These interfaces describe
+different trial dependencies and remain independent of BRW. No new general
+`Probability/Process/Restart/` module is needed. The separate
+`Probability/Process/Path/Restart/` continues to mean path rebasing and
+relative-window constraints.
 
 ## Finite-slot population coupling
 
-`Probability/BranchingRandomWalk/Restart/RootedTrial/FiniteSlot/Coupling.lean`
+`Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPath/GrowthTrial/FiniteSlot/Coupling.lean`
 owns the coded active-label set, the generation's offspring row and its product
 law, and the pathwise and conditional first-moment recursions. Its principal
 objects are
@@ -1130,7 +1136,7 @@ objects are
 The finite address, encode/decode, and level-root arguments that identify the
 binary labels with the selected source population are proof support specific
 to this coupling. They are grouped in
-`Probability/BranchingRandomWalk/Restart/RootedTrial/FiniteSlot/Lemmas/Coding.lean`.
+`Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPath/GrowthTrial/FiniteSlot/Lemmas/Coding.lean`.
 The general selected-path predicate and its equivalence with membership in a
 finite step-selected generation belong to
 `Population/Processes/StepSelection/SelectedPath.lean`; they do not depend on
@@ -1148,7 +1154,8 @@ The nonemptiness implication
 `Population/Processes/StepSelection/Basic.lean`: it requires only a nonempty
 selected family at every visited mark and applies to every finite-step
 selection. The conversion from this fact and the binary population bound to a
-complete trial event belongs to `Restart/Trial/Basic.lean`, beside the
+complete trial event belongs to
+`Selection/NSelection/EndpointDeviation/SelectedPath/GrowthTrial/Basic.lean`, beside the
 definition of `growthTrialSuccess`. Neither implication needs an individual
 module.
 
@@ -1162,19 +1169,20 @@ The integrated population moment formulas
 `finiteSlotPopulationSizeReal_integral_eq_pow` and
 `finiteSlotPopulationSizeReal_sq_integral_eq_recursion` now sit in
 `FiniteSlot/Moments.lean` beside their one-step recursions. `FiniteSlot/Growth`
-contains the finite-slot probability estimates and no longer depends on the
-reserve-candidate layer. The two results that combine these estimates with a
-reserve cutoff or an observable reserve candidate are grouped in
-`Reserve/GrowthSuccess.lean`, above both contributing modules in the import
-graph. This groups a coherent public result family without creating one file
-per helper lemma.
+contains the finite-slot probability estimates and uses the general bounded-
+split result from `Probability/BranchingRandomWalk/Step/Selection/BoundedSplit.lean`
+through the selected-offspring-law adapter. `GrowthTrial/Success.lean` combines
+that estimate with the observable trial population and the nonempty-mark
+assumption; its cutoff is expressed using `firstOrBelowPotential`.
 
-The generic selected-slot, split, and `growthTrialSuccess` definitions remain
-in `Restart/Trial/Basic.lean`. The separate root-indexed candidate family—first
-child addresses, completion times, event measurability, and the first-failure
-integral estimate—lives in `Restart/Trial/RootIndexed.lean`. Those declarations
-form a complete root-indexed construction and are public interfaces, so the
-file is a semantic module rather than proof-only support under `Lemmas/`.
+The generic `splitBy` event is owned by
+`Combinatorics/BranchingWalk/Step/Selection/Split.lean`, with its measurability
+theorem in the corresponding `MeasureTheory` module. The endpoint-specific
+`growthTrialSuccess` event remains with the selected-path trial in
+`EndpointDeviation/SelectedPath/GrowthTrial/Basic.lean`. The general first
+observable split and fixed-root time shift are in
+`Population/Processes/StepSelection/SplitTime/`; their use in the endpoint proof
+does not change their ownership.
 
 ## Generic N-selection mechanisms and branching-walk layers
 
@@ -1203,9 +1211,10 @@ BranchingWalk module paths or namespaces.
 
 The generic finite order-statistic comparison by lower-tail counts belongs to
 `Combinatorics/Selection/NSelection/Mechanism/Finite/AtRank.lean`.
-The value-preserving candidate-bijection theorem belongs to
-`Matching/ByRank.lean`, and lower-tail Hall matching belongs to
-`Matching/Hall.lean`.
+The order-key-preserving partner-bijection theorem belongs to
+`Matching/ByRank.lean`, generic threshold-count matching belongs to
+`Matching/ThresholdCount.lean`, and the first-`N` population matching
+specialization belongs to `Matching/SelectedPopulation.lean`.
 
 The ranked offspring-batch law is part of
 `AsymptoticSpeed/Selection/PopulationBatch.lean`, beside the ranked-root

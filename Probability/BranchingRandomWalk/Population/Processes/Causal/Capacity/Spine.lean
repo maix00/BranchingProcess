@@ -26,7 +26,7 @@ public import Probability.Process.RandomWalk.Path.Restart.FirstMoment
 This file is the capacity-event bridge: generic causal-population Markov bounds
 are instantiated with the one-dimensional restarted-window first moments.
 
-For the restarted-window killed population from a finite root set `R`, the
+For the restarted-window selected population from a finite root set `R`, the
 capacity estimate and its uniform-first-moment specialization are
 
 \[\begin{aligned}
@@ -60,7 +60,7 @@ open ProbabilityTheory.BranchingRandomWalk.Spine
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
-/-- Finite-horizon overload of the finite-root killed population is bounded
+/-- Finite-horizon overload of the finite-root selected population is bounded
 entirely by one-dimensional spine first moments. -/
 theorem measure_capacityEvent_compl_le_sum_spine_restartedWindow
     {Root α Mark : Type*} [Countable α] [MeasurableSpace Mark]
@@ -182,7 +182,7 @@ theorem measure_capacityEvent_compl_le_card_mul_sum_of_windowFirstMomentBound
       rw [ENNReal.mul_div_right_comm]
 
 /-- A horizontal-tube estimate for the tilted one-step law gives the complete
-finite-root capacity bound for the restarted killed population.  All
+finite-root capacity bound for the restarted selected population.  All
 branching information has disappeared from the right-hand side except for
 the number of initial roots. -/
 theorem measure_capacityEvent_compl_le_horizontalTubeBound

@@ -101,7 +101,7 @@ theorem secondStageRankRoot_eq_ranked_of_card
   refine ⟨p, hp'.1, hroot, ?_⟩
   simpa [value] using hp'.2
 
-/-- A chosen rank root is an actual member of the finite killed slice whenever
+/-- A chosen rank root is an actual member of the finite selected BRW slice whenever
 that slice contains at least `K` particles. -/
 theorem secondStageRankRoot_mem_of_card
     {m K : ℕ} [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]

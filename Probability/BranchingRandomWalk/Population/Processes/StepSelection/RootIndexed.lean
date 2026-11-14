@@ -190,7 +190,7 @@ theorem labelledPopulation_succ_subset
 /-! ## A finite family of labelled roots -/
 
 /-- Combine the selected descendants of a finite set of roots while retaining
-their root labels.  This is the multi-root source population used by spatial
+their root labels.  This is the multi-root step-selected BRW population used by spatial
 couplings; the ambient root type itself remains arbitrary. -/
 noncomputable def labelledPopulationOn
     {Root α X : Type*} [DecidableEq (RootIndexed.TreeNode Root α)]

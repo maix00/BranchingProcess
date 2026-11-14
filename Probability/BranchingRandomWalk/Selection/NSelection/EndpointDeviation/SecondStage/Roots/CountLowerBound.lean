@@ -21,7 +21,7 @@ public import Analysis.Asymptotics.Power.FloorProduct
 ## Public declarations
 
 Under the first-stage budget \(\delta<a-b-2v-3\varepsilon\), if
-\(K_n=\lfloor N_n^\delta\rfloor\), the probability that the killed slice has
+\(K_n=\lfloor N_n^\delta\rfloor\), the probability that the selected BRW slice has
 fewer than \(K_n\) roots is eventually exponentially small:
 
 \[
@@ -31,15 +31,15 @@ fewer than \(K_n\) roots is eventually exponentially small:
 \le \exp(-N_n^\delta).
 \]
 
-* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveAKilledEnoughRootEvent`:
-  the event that the first-stage killed population at its cutoff contains at
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveASelectedBRWEnoughRootEvent`:
+  the event that the first-stage selected BRW population at its cutoff contains at
   least `K` particles.
-* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_measure_positiveAKilledEnoughRoots_compl_le_exp_neg_power`:
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_measure_positiveASelectedBRWEnoughRoots_compl_le_exp_neg_power`:
   if `δ < a - b - 2 * v - 3 * ε`, the probability that this population
   contains fewer than `floor (N n ^ δ)` particles is eventually at most
   `exp (-N n ^ δ)`.
 
-The first-stage PZ budget bounds the probability that the killed slice has
+The first-stage PZ budget bounds the probability that the selected BRW slice has
 fewer than floor(N^δ) particles. This is the low-root term in the terminal
 failure decomposition.
 -/
@@ -59,22 +59,22 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 @[expose] public section
 
-/-- The event that the first-stage killed slice contains at least K
+/-- The event that the first-stage selected BRW slice contains at least K
 particles. -/
-noncomputable def positiveAKilledEnoughRootEvent
+noncomputable def positiveASelectedBRWEnoughRootEvent
     (m K ell ellN : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)] :
     Set (RestartedField m) :=
-  let P := positiveAKilledPopulation m ell ellN logN b v c κ
+  let P := positiveASelectedBRWPopulation m ell ellN logN b v c κ
   let hP : P.FiniteSlices :=
-    positiveAKilledPopulation_finiteSlices m ell ellN logN b v c κ
+    positiveASelectedBRWPopulation_finiteSlices m ell ellN logN b v c κ
   secondStageEnoughRoots (K := K)
     (fun _ : ℕ => P) (fun _ : ℕ => hP) (fun _ => ell) 0
 
-/-- Under the first-stage PZ power budget, the probability that the killed
+/-- Under the first-stage PZ power budget, the probability that the selected
 population at the first cutoff has fewer than floor(N^δ) particles is at most
 exp(-N^δ), with δ < a - b - 2v - 3ε. -/
-theorem eventually_measure_positiveAKilledEnoughRoots_compl_le_exp_neg_power
+theorem eventually_measure_positiveASelectedBRWEnoughRoots_compl_le_exp_neg_power
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
@@ -97,7 +97,7 @@ theorem eventually_measure_positiveAKilledEnoughRoots_compl_le_exp_neg_power
     let L : ℕ → ℝ := logarithmOfSampleSize N
     ∀ᶠ n : ℕ in atTop,
       (RootIndexed.stepFieldLaw (Root := Fin (m n)) μ)
-        (@positiveAKilledEnoughRootEvent
+        (@positiveASelectedBRWEnoughRootEvent
           (m n) (K n) (ell n) (ellN n) (L n) b v c κ (hTree n))ᶜ ≤
         ENNReal.ofReal (Real.exp (-((N n : ℝ) ^ delta))) := by
   classical
@@ -178,17 +178,17 @@ theorem eventually_measure_positiveAKilledEnoughRoots_compl_le_exp_neg_power
       (K n : ℝ) ≤
         (m n : ℝ) * (pzMean n).toReal / 4 :=
     hKReal.trans hthresholdN
-  let enough := positiveAKilledEnoughRootEvent
+  let enough := positiveASelectedBRWEnoughRootEvent
     (m n) (K n) (ell n) (ellN n) (L n) b v c κ
   have hsubset : enoughᶜ ⊆ populationLow n := by
     intro field hfield
     have hcard : ¬ K n ≤
-        (((positiveAKilledPopulation_finiteSlices
+        (((positiveASelectedBRWPopulation_finiteSlices
             (m n) (ell n) (ellN n) (L n) b v c κ).toFinset
               (ell n) field).card) := by
-      simpa [enough, positiveAKilledEnoughRootEvent,
+      simpa [enough, positiveASelectedBRWEnoughRootEvent,
         secondStageEnoughRoots] using hfield
-    have hcardLt : (((positiveAKilledPopulation_finiteSlices
+    have hcardLt : (((positiveASelectedBRWPopulation_finiteSlices
           (m n) (ell n) (ellN n) (L n) b v c κ).toFinset
             (ell n) field).card : ℝ) < (K n : ℝ) := by
       exact_mod_cast Nat.lt_of_not_ge hcard
