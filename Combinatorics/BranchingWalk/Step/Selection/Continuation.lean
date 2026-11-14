@@ -38,9 +38,9 @@ the second selected child that continues the path.
 - `Combinatorics.Branching.Step.FiniteSelection.selectedContinuationSlot_eq_bot_of_selected_empty`
   gives its value on the empty family.
 - `Combinatorics.Branching.Step.FiniteSelection.potentialValue'_selectedContinuationSlot_le_cutoff_add_firstSelectedSlotPositive`
-  gives, after truncation by `reserveSelectionBelowPotential`,
+  gives, after truncation by `firstOrBelowPotential`,
   `\(\xi.potentialValue'(\varphi,
-  selectedContinuationSlot(reserveSelectionBelowPotential(R,\varphi,M),\xi))
+  selectedContinuationSlot(firstOrBelowPotential(R,\varphi,M),\xi))
   \le M+firstSelectedSlotPositivePotential(R,\varphi,\xi)\)`.
 -/
 
@@ -92,26 +92,26 @@ theorem potentialValue'_selectedContinuationSlot_le_cutoff_add_firstSelectedSlot
     (φ : Potential X) (M : ℝ) (hM : 0 ≤ M) (ξ : Step α X)
     (hordered : ξ.IsOrderedBy φ) (hne : (R ξ).Nonempty) :
     ξ.potentialValue' φ
-      (selectedContinuationSlot (reserveSelectionBelowPotential R φ M) ξ) ≤
+      (selectedContinuationSlot (firstOrBelowPotential R φ M) ξ) ≤
       M + firstSelectedSlotPositivePotential R φ ξ := by
   change ξ.potentialValue' φ
-      (selectedContinuationSlot (reserveSelectionBelowPotential R φ M) ξ) ≤
+      (selectedContinuationSlot (firstOrBelowPotential R φ M) ξ) ≤
         M + max 0 (ξ.potentialValue' φ (firstSelectedSlot R ξ))
-  let S := reserveSelectionBelowPotential R φ M
+  let S := firstOrBelowPotential R φ M
   have hfirstR : firstSelectedSlot R ξ ∈ R ξ :=
     firstSelectedSlot_mem R ξ hne
   have hfirstOnly : firstSelectedSlot R ξ ∈ firstOnlySelectedChild R ξ := by
     rw [firstOnlySelectedChild, Step.FiniteSelection.mem_filter]
     exact ⟨hfirstR, rfl⟩
   have hfirstS : firstSelectedSlot R ξ ∈ S ξ := by
-    change firstSelectedSlot R ξ ∈ reserveSelectionBelowPotential R φ M ξ
-    rw [reserveSelectionBelowPotential]
+    change firstSelectedSlot R ξ ∈ firstOrBelowPotential R φ M ξ
+    rw [firstOrBelowPotential]
     exact Finset.mem_union.mpr (Or.inl hfirstOnly)
   have hS_nonempty : (S ξ).Nonempty := ⟨firstSelectedSlot R ξ, hfirstS⟩
   by_cases hsplit : 2 ≤ (S ξ).card
   · rw [selectedContinuationSlot_eq_second_of_split S ξ hsplit]
     obtain ⟨_, hsecond⟩ :=
-      reserveSelectionBelowPotential_edgePotentials_le_of_ordered
+      firstOrBelowPotential_edgePotentials_le_of_ordered
         R hR φ M ξ hordered hsplit
     exact hsecond.trans (le_add_of_nonneg_right (le_max_left 0
       (ξ.potentialValue' φ (firstSelectedSlot R ξ))))

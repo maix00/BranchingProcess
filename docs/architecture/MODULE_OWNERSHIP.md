@@ -188,7 +188,7 @@ identify misplaced application-specific assumptions.
 | Injective matching with pointwise order domination | `Order/DominatingMap` | `Order.DominatingMap objectsToMatch availablePartners objectOrderKey partnerOrderKey` bundles an injection from the objects to match into their available partners and the inequality `partnerOrderKey (f object) ≤ objectOrderKey object`. Mathlib provides the set-map and injectivity predicates separately, and `RelEmbedding` preserves and reflects a relation on one carrier; neither bundles this cross-carrier, two-observation inequality. Cloud slice matching specializes this generic structure. |
 | Fixed-density transformations of measures | `MeasureTheory/Measure/WithDensity.lean` | `Measure.measurable_withDensity_fixed` proves measurability of the map from a variable base measure to its measure with a fixed measurable density. It complements Mathlib’s `measurable_withDensity`, which fixes the base measure and varies the density; the exponential random-measure tilt uses this parameter-dual result. |
 | Lower-tail comparison of measures | `MeasureTheory/Measure/LowerTail` | `Measure.LowerTailDominates μ ν` means $\mu(\operatorname{Iic}(a))\le\nu(\operatorname{Iic}(a))$ at every threshold in any preorder, with no finite-mass or probability assumption. Mathlib’s pointwise measure order and Borel-order uniqueness statements are different interfaces; `Combinatorics/BranchingWalk/Cloud/Order/Slice` specializes this relation to particle Dirac sums and rankwise order. |
-| Branching random-walk models, populations, and field coupling | `Probability/BranchingRandomWalk` | `Law.lean` names arbitrary probability laws on walk space; `IID.lean` constructs and transports the canonical product-field law; `Measurability.lean` owns coordinate and finite-survival measurability; `BranchingProperty.lean` gives the selected-subtree law. In `Walk/`, `MeasurableEquiv.lean` identifies singleton-slot walks with their initial positions and optional increments; `Path/` connects this representation to random-walk path laws, finite windows, scaling, and generation-cloud positions; `Rademacher.lean` defines the singleton-slot Rademacher model, and `Path/RademacherFiniteInterval.lean` identifies its finite closed-window event with the killed interval-kernel mass. These are adapters specific to the singleton branching-walk representation; general random-walk path and window APIs remain under `Probability/Process/RandomWalk`. `Population/` owns root-indexed and finite multi-root candidate generation and selected-process recursion. `Restart/SelectedPath/` owns the selected-BRW path-based restart construction: `Restart.selectedPath` follows the second selected child at a split while the first selected child starts a growth trial; `GrowthTrial/`, the `Population` namespace, `Completion/`, and `Coupling/` own the growth-trial family, selected-BRW population, endpoint, and coupling to the first-`N` BRW. `Restart/Trial/` owns root-indexed first-split interfaces, and `Restart/Reserve/` owns reserve-field and reserve-selection estimates. `Restart/Success/GoodSplit` applies the generic offspring split-mass theorem to a `StepLaw` selector and obtains a finite potential cutoff; almost-sure nonemptiness of the reserve selector remains conditional on the separate offspring nonempty assumption. `Restart/Trial/GeometricFirstMoment` specializes the generic IID marked-reward formula from `Probability/Sequence/IID/GeometricReward`. Offspring fields and spines remain at their respective semantic layers. |
+| Branching random-walk models, populations, and field coupling | `Probability/BranchingRandomWalk` | `Law.lean` names arbitrary probability laws on walk space; `IID.lean` constructs and transports the canonical product-field law; `Measurability.lean` owns coordinate and finite-survival measurability; `BranchingProperty.lean` gives the selected-subtree law. In `Walk/`, `MeasurableEquiv.lean` identifies singleton-slot walks with their initial positions and optional increments; `Path/` connects this representation to random-walk path laws, finite windows, scaling, and generation-cloud positions; `Rademacher.lean` defines the singleton-slot Rademacher model, and `Path/RademacherFiniteInterval.lean` identifies its finite closed-window event with the killed interval-kernel mass. General random-walk path and window APIs remain under `Probability/Process/RandomWalk`. `Population/` owns root-indexed and finite multi-root candidate generation and selected-process recursion; `Population/Processes/StepSelection/SplitTime/` owns the reusable observable first-split time, its parent/sibling facts, and the fixed-root time shift. `Genealogy/Exploration/IndependentSubtreeIntegration.lean` gives the general first-moment factorization for observables of measurably selected fresh subtrees. The endpoint-specific selected-path growth-trial construction is under `Selection/NSelection/EndpointDeviation/SelectedPath/`, with one-use proof stages under the sibling `Lemmas/` directory. `Selection/NSelection/EndpointDeviation/Lemmas/FirstSplit/` owns its two-sibling factorization and finite-completion estimate. `Step/Selection/BoundedSplit.lean` proves the reusable positive-probability cutoff result for a first-or-below-potential selector; the split event and its measurability are owned by `Combinatorics/BranchingWalk/Step/Selection/Split.lean` and `MeasureTheory/BranchingWalk/Step/Selection/Split.lean`. The generic repeated-trial interfaces remain in `Probability/Process/HittingTime/ObservableCandidates` and `Probability/Sequence/IID/GeometricReward`.
 | Generation branching and additive path-potential decomposition | `Probability/BranchingRandomWalk/Spine/GenerationBranching` | `Decomposition` identifies generation addresses with a first child and a subtree address, gives the root/subtree product law, and states `pathPotential_cons` and the arbitrary-prefix `pathPotential_append` formula; `Measurability` gives joint endpoint-observable and operator measurability; `Recursion` integrates the pathwise decomposition to identify generation observables with iterated branching operators. The prefix/suffix potential identity is part of the path-potential interface, while reserve-spine probability estimates consume it as a dependency. |
 | Measurable ordering of random branching-step laws and first-child observations | `Probability/BranchingRandomWalk/Step/Ordering` | `Realization` defines the measurable support-covering ordered realization of one random step; `Field` defines the optional least-slot mark, its node field, and generation measurability; `Law` packages the raw offspring law, potential, and deterministic ordering and transfers point-measure functionals and exponential weights; `Support` gives simultaneous almost-sure ordering, nonemptiness, and first-child survival. Its four modules are complete probability interfaces, not a proof-only chain. Mathlib provides [`Measure.map`, `map_apply`, and `map_map`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Map.html) and [`iIndepFun`/product-law results](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/InfinitePi.html); these supply measure transport and coordinate independence, while child-slot coverage, multiplicity-preserving point measures, and generation-local first-child observations remain specific to branching steps. Whole-tree address transport remains under the deterministic `Combinatorics` layer |
 | Finite step-selected branching populations and split-schedule trials | `Probability/BranchingRandomWalk/Population/Processes/StepSelection` | `Basic` owns the recursive selected population and its parent and nonemptiness relations, including the reusable predecessor result from a nonempty successor generation; `SelectedPath` defines edgewise selection and characterizes generation membership by path length and selected edges; `RootIndexed` adds root labels; `Concurrent/{Basic,Scheduled}` groups the global-clock population and its causal-schedule specialization; `SplitSchedule/Definition` owns threshold-triggered trial times and successful root extraction, `Field` owns fresh-pool/product-law and spatial-coupling interfaces, and `Trials` owns completion, iteration, and repeated-success results |
@@ -1064,40 +1064,67 @@ concatenation and root-indexed field reindexing in this statement; the project
 theorem specializes those principles to that general field construction. See
 the [official measurable-space constructions documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/MeasurableSpace/Constructions.html).
 
-The restart-specific declarations follow the selected-BRW semantics of the
-objects they define. `Restart/SelectedPath/Path.lean` defines
-`Restart.selectedPath` and its depth, alive-state, and split-event interfaces.
-At a split, the first selected child is the growth-trial root and the second
-selected child is the continuation child. `Restart/SelectedPath/Splits.lean`
-identifies the continuation subtree with the path after the split, while
-`GrowthTrial/` defines candidate indices, trial populations, success events,
-and their completion times. The `SelectedPath.Population` namespace defines
-the selected-BRW population slice and its causal family. `Completion/` owns
-the first successful completion time and the rank-installed endpoint vector.
-`Coupling/` compares the selected-BRW population with the n-selected-BRW
-population and transfers endpoint laws.
+## Selected-path endpoint-deviation construction and split-time ownership
 
-`GrowthTrial/FiniteSlot/` contains the binary-slot law, its coupling and
-moment recurrences, and the finite-horizon growth bound. The address-coding
-steps used only in that construction are in
-`GrowthTrial/FiniteSlot/Lemmas/Coding.lean`. Endpoint root, geometry,
-factorization, and pushforward steps used only in that proof chain are under
-`Completion/Lemmas/`. The generic finite-concurrent-population capacity
-estimate remains in `Probability/Process/Stopping/Concurrent/Finite`.
-`Restart/Trial/` owns the root-indexed first-split interfaces, and
-`Restart/Reserve/` retains results whose objects are reserve fields or
-reserve-selection distributions.
+The selected-path growth-trial construction is specific to the endpoint-deviation
+argument. Its root module,
+`Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPath/Path.lean`,
+defines `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.selectedPath`.
+At a split, the first selected child starts a growth trial and the second
+selected child continues the path. `SelectedPath/Splits.lean` proves the
+continuation-subtree identities; `SelectedPath/GrowthTrial/` defines trial
+indices, populations, success events, and completion times;
+`SelectedPath/Completion/` gives the first successful completion and endpoint
+rank vector; `SelectedPath/Coupling/` transfers the endpoint population law to
+the first-`N` process. The binary-slot law, its coupling, moment recurrences,
+and finite-horizon growth bound remain inside
+`SelectedPath/GrowthTrial/FiniteSlot/`. Its one-use address coding is in that
+folder's `Lemmas/Coding.lean`.
 
-The namespace hierarchy records the same distinction as the file tree:
-`ProbabilityTheory.BranchingRandomWalk.Restart` contains `selectedPath`; its
-path properties are under `SelectedPath`, and its trial, population,
-completion, and coupling interfaces are under `SelectedPath.GrowthTrial`,
-`SelectedPath.Population`, `SelectedPath.Completion`, and
-`SelectedPath.Coupling`. Names inside these namespaces identify the
-mathematical object without repeating the full process prefix.
+The first split of a selected population is independent of this endpoint
+construction. `Population/Processes/StepSelection/SplitTime/Basic.lean` owns
+the raw first-split declaration, its observable completion, the stopping-time
+property, and the parent/child address facts at the first split.
+`SplitTime/RootIndexed.lean` gives the fixed-subtree generation offset. The
+product law of the two sibling descendant fields is used only by the
+endpoint-deviation proof and is in
+`Selection/NSelection/EndpointDeviation/Lemmas/FirstSplit/BranchingProperty.lean`;
+it applies the generic stopped subtree-vector factorization from
+`Genealogy/Exploration/RootIndexed/StoppingSubtrees/Vector/Factorization.lean`.
+
+Generic fresh-subtree integration belongs to
+`Genealogy/Exploration/IndependentSubtreeIntegration.lean`, where it is stated
+for the root-indexed explored-domain interface. The eventwise expectation
+inequality for independent random variables belongs to
+`Probability/Independence/Integration/IndependentUpperBound.lean`. The
+pre-sampled-lineage failure estimate, endpoint geometry, and other one-use
+steps remain under `EndpointDeviation/Lemmas/`; reusable declarations do not
+belong there merely because the endpoint proof imports them.
+
+At the branching-step level, `Combinatorics/BranchingWalk/Step/Selection/Split.lean`
+defines `splitBy R = {ξ | 2 ≤ |R ξ|}`, and
+`MeasureTheory/BranchingWalk/Step/Selection/Split.lean` proves its
+measurability. The positive bounded-potential split result is more general
+than the selected-path construction: it applies to a measurable finite
+selection retaining at least two children whenever available. It is therefore
+owned by `Probability/BranchingRandomWalk/Step/Selection/BoundedSplit.lean`,
+not by endpoint-deviation `Lemmas/`. The first-child-preserving potential rule
+is named `firstOrBelowPotential`; references to a reserve pool or reserve
+lineage retain `reserve` only when those objects are actually involved.
+
+Generic restart behavior is represented by its mathematical components rather
+than one `Restart` namespace. Candidate success and observable completion use
+`Probability/Process/HittingTime/ObservableCandidates.lean`, repeated i.i.d.
+reward uses `Probability/Sequence/IID/GeometricReward/`, and causal schedules
+use `Probability/Process/Stopping/CausalSchedule/`. These interfaces describe
+different trial dependencies and remain independent of BRW. No new general
+`Probability/Process/Restart/` module is needed. The separate
+`Probability/Process/Path/Restart/` continues to mean path rebasing and
+relative-window constraints.
+
 ## Finite-slot population coupling
 
-`Probability/BranchingRandomWalk/Restart/SelectedPath/GrowthTrial/FiniteSlot/Coupling.lean`
+`Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPath/GrowthTrial/FiniteSlot/Coupling.lean`
 owns the coded active-label set, the generation's offspring row and its product
 law, and the pathwise and conditional first-moment recursions. Its principal
 objects are
@@ -1109,7 +1136,7 @@ objects are
 The finite address, encode/decode, and level-root arguments that identify the
 binary labels with the selected source population are proof support specific
 to this coupling. They are grouped in
-`Probability/BranchingRandomWalk/Restart/SelectedPath/GrowthTrial/FiniteSlot/Lemmas/Coding.lean`.
+`Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPath/GrowthTrial/FiniteSlot/Lemmas/Coding.lean`.
 The general selected-path predicate and its equivalence with membership in a
 finite step-selected generation belong to
 `Population/Processes/StepSelection/SelectedPath.lean`; they do not depend on
@@ -1127,7 +1154,8 @@ The nonemptiness implication
 `Population/Processes/StepSelection/Basic.lean`: it requires only a nonempty
 selected family at every visited mark and applies to every finite-step
 selection. The conversion from this fact and the binary population bound to a
-complete trial event belongs to `Restart/Trial/Basic.lean`, beside the
+complete trial event belongs to
+`Selection/NSelection/EndpointDeviation/SelectedPath/GrowthTrial/Basic.lean`, beside the
 definition of `growthTrialSuccess`. Neither implication needs an individual
 module.
 
@@ -1141,19 +1169,20 @@ The integrated population moment formulas
 `finiteSlotPopulationSizeReal_integral_eq_pow` and
 `finiteSlotPopulationSizeReal_sq_integral_eq_recursion` now sit in
 `FiniteSlot/Moments.lean` beside their one-step recursions. `FiniteSlot/Growth`
-contains the finite-slot probability estimates and no longer depends on the
-reserve-candidate layer. The two results that combine these estimates with a
-reserve cutoff or an observable reserve candidate are grouped in
-`Reserve/GrowthSuccess.lean`, above both contributing modules in the import
-graph. This groups a coherent public result family without creating one file
-per helper lemma.
+contains the finite-slot probability estimates and uses the general bounded-
+split result from `Probability/BranchingRandomWalk/Step/Selection/BoundedSplit.lean`
+through the selected-offspring-law adapter. `GrowthTrial/Success.lean` combines
+that estimate with the observable trial population and the nonempty-mark
+assumption; its cutoff is expressed using `firstOrBelowPotential`.
 
-The generic selected-slot, split, and `growthTrialSuccess` definitions remain
-in `Restart/Trial/Basic.lean`. The separate root-indexed candidate family—first
-child addresses, completion times, event measurability, and the first-failure
-integral estimate—lives in `Restart/Trial/RootIndexed.lean`. Those declarations
-form a complete root-indexed construction and are public interfaces, so the
-file is a semantic module rather than proof-only support under `Lemmas/`.
+The generic `splitBy` event is owned by
+`Combinatorics/BranchingWalk/Step/Selection/Split.lean`, with its measurability
+theorem in the corresponding `MeasureTheory` module. The endpoint-specific
+`growthTrialSuccess` event remains with the selected-path trial in
+`EndpointDeviation/SelectedPath/GrowthTrial/Basic.lean`. The general first
+observable split and fixed-root time shift are in
+`Population/Processes/StepSelection/SplitTime/`; their use in the endpoint proof
+does not change their ownership.
 
 ## Generic N-selection mechanisms and branching-walk layers
 

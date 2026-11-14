@@ -17,16 +17,33 @@ than the application that first needs it.
 | `Probability` | Laws, filtrations, independence, random processes, and almost-everywhere statements | IID sequences, random walks, Lévy and stable processes |
 | `Probability/BranchingRandomWalk` | Random branching models and their bridges to general process and measure interfaces | offspring fields, spines, selection and coupling |
 
-Within the branching-random-walk layer, the path-based restart construction is
-owned by `Probability/BranchingRandomWalk/Restart/SelectedPath/`. Its public
-root is `Restart.selectedPath`: at a split, the first selected child starts a
-growth trial and the second selected child continues the path. The
-`SelectedPath.GrowthTrial`, `SelectedPath.Population`,
-`SelectedPath.Completion`, and `SelectedPath.Coupling` namespaces distinguish
-the trial family, the selected-BRW population, the first-`N` endpoint, and the
-coupling between the two BRW processes. Root-indexed first-split trial
-interfaces remain under `Restart/Trial/`; actual reserve-field and reserve
-selection results remain under `Restart/Reserve/`.
+The selected-path construction for the endpoint-deviation argument is owned by
+`Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPath/`.
+Its root `selectedPath` follows the second selected child at each split while
+the first selected child starts a growth trial. Trial populations, completion,
+and coupling are grouped beneath `SelectedPath/GrowthTrial/`,
+`SelectedPath/Completion/`, and `SelectedPath/Coupling/`; one-use steps for the
+endpoint-deviation proof are under the sibling `EndpointDeviation/Lemmas/`.
+
+The first observable split of a selected population is a reusable process fact
+owned by `Probability/BranchingRandomWalk/Population/Processes/StepSelection/SplitTime/`.
+The fixed-root time shift belongs beside it in `RootIndexed.lean`. The
+two-sibling stopped subtree factorization used by endpoint deviation remains in
+`EndpointDeviation/Lemmas/FirstSplit/`. Generic selected-subtree integration is
+owned by `Genealogy/Exploration/IndependentSubtreeIntegration.lean`, and the
+independent eventwise integral bound is at
+`Probability/Independence/Integration/IndependentUpperBound.lean`.
+
+Generic process interfaces stay separate by role: observable candidate
+completion and success belong under `Probability/Process/HittingTime/`, while
+i.i.d. geometric reward belongs under `Probability/Sequence/IID/GeometricReward/`.
+These cover distinct trial protocols, so no umbrella `Probability/Process/Restart/`
+module is introduced. `Probability/Process/Path/Restart/` retains its own
+path-rebasing and relative-window meaning. The branching-step split event and
+its measurability belong to `Combinatorics/BranchingWalk/Step/Selection/Split.lean`
+and `MeasureTheory/BranchingWalk/Step/Selection/Split.lean`; the general
+positive-probability bounded-split estimate belongs to
+`Probability/BranchingRandomWalk/Step/Selection/BoundedSplit.lean`.
 
 `Probability/Process/Path/Representation/Continuous.lean` owns both the
 bundling and measurability interfaces for continuous sample paths and the
@@ -174,7 +191,7 @@ Selection modules are placed by the data they take as input:
   measurability theorem belongs to
   `MeasureTheory/BranchingWalk/Step/Selection/FiniteSlot.lean`, and the
   pushforward offspring law and supercriticality criterion belong to
-  `Probability/BranchingRandomWalk/Restart/SelectedPath/GrowthTrial/FiniteSlot/Offspring.lean`.
+  `Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPath/GrowthTrial/FiniteSlot/Offspring.lean`.
 - `MeasureTheory/Selection/` owns measurable selector realizations and their
   measurability results. Measurability results whose input is a branching step
   belong to `MeasureTheory/BranchingWalk/Step/Selection/`. The generation
