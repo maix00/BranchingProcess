@@ -84,7 +84,7 @@ theorem selectedContinuationSlot_eq_first_of_singleton [LinearOrder α] [OrderBo
   have hne : (R ξ).Nonempty := Finset.card_pos.mp (by omega)
   simp [selectedContinuationSlot, htwo, hne]
 
-/-- After potential truncation, the reserve slot has potential at most the
+/-- After potential truncation, the continuation slot has potential at most the
 cutoff plus the positive potential of the original first selected slot. -/
 theorem potentialValue'_selectedContinuationSlot_le_cutoff_add_firstSelectedSlotPositive
     [LinearOrder α] [OrderBot α] [MeasurableSpace X]

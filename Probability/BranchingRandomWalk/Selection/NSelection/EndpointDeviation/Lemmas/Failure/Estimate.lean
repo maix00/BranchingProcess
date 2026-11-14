@@ -28,12 +28,12 @@ integrable subtree observable \(g\), independence gives
 - `RootIndexed.integral_selectedSubtree_abs_on_candidateFailure`,
   `RootIndexed.integral_selectedSubtree_abs_on_boundedCandidateFailure`,
   `RootIndexed.integral_selectedSubtree_abs_on_boundedCandidateFailure_le`,
-  `RootIndexed.integral_reserveRoot_abs_on_candidateFailure`, and
-  `RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le`: factor the
+  `RootIndexed.integral_disjointRootFamily_abs_on_candidateFailure`, and
+  `RootIndexed.integral_disjointRootFamily_abs_on_candidateFailure_le`: factor the
   first absolute moment of a fresh selected-subtree observable by the
   probability of candidate failure, including bounded forms. The
-  `integral_reserveRoot_abs_on_candidateFailure` variants apply the estimate
-  to an explicit family of reserve roots.
+  `integral_disjointRootFamily_abs_on_candidateFailure` variants apply the estimate
+  to an explicit family of additional roots.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -162,13 +162,13 @@ theorem RootIndexed.integral_selectedSubtree_abs_on_boundedCandidateFailure_le
   exact mul_le_mul hmoment hprob (by positivity) hB
 
 /-- Failure of trials confined to one initial-root set is independent of an
-entire fixed forest carried by disjoint reserve roots.  The trial and reserve
+entire fixed forest carried by disjoint additional roots.  The trial and additionalRoots
 trees are pre-sampled together in the same root-indexed field. -/
-theorem RootIndexed.integral_reserveRoot_abs_on_candidateFailure
+theorem RootIndexed.integral_disjointRootFamily_abs_on_candidateFailure
     {Root κ α X ι : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
-    (trials : Set Root) (reserve : κ → Root)
-    (hdisjoint : Disjoint trials (Set.range reserve)) {T : ℕ}
+    (trials : Set Root) (additionalRoots : κ → Root)
+    (hdisjoint : Disjoint trials (Set.range additionalRoots)) {T : ℕ}
     (completion : ι → RootIndexed.StepField Root α X → WithTop ℕ)
     (success : ι → Set (RootIndexed.StepField Root α X))
     (hobservable : CandidateObservable
@@ -177,30 +177,30 @@ theorem RootIndexed.integral_reserveRoot_abs_on_candidateFailure
     (candidates : Set ι)
     (hcandidates : candidates.Countable)
     (g : (κ → TreeNode α → Step α X) → ℝ) (hg : Measurable g)
-    (hint : Integrable (fun ω => g (fun i => ω (reserve i)))
+    (hint : Integrable (fun ω => g (fun i => ω (additionalRoots i)))
       (RootIndexed.stepFieldLaw (Root := Root) μ)) :
     let failure :=
       (successfulCandidateWithin completion success candidates T)ᶜ
-    (∫ ω, |g (fun i => ω (reserve i))| *
+    (∫ ω, |g (fun i => ω (additionalRoots i))| *
         failure.indicator (fun _ => (1 : ℝ)) ω
       ∂RootIndexed.stepFieldLaw (Root := Root) μ) =
-      (∫ ω, |g (fun i => ω (reserve i))|
+      (∫ ω, |g (fun i => ω (additionalRoots i))|
         ∂RootIndexed.stepFieldLaw (Root := Root) μ) *
         (RootIndexed.stepFieldLaw (Root := Root) μ).real failure := by
   dsimp only
-  apply RootIndexed.integral_reserveRoot_abs_on_event μ trials reserve
+  apply RootIndexed.integral_disjointRootFamily_abs_on_event μ trials additionalRoots
     hdisjoint T g hg _ _ hint
   exact (successfulCandidateWithin_measurable
     (RootIndexed.rootFiltration (α := α) (X := X) trials)
     completion success hobservable candidates hcandidates T).compl
 
 /-- Quantitative first-moment restart error for a disjoint pre-sampled
-reserve forest. -/
-theorem RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le
+disjoint forest. -/
+theorem RootIndexed.integral_disjointRootFamily_abs_on_candidateFailure_le
     {Root κ α X ι : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
-    (trials : Set Root) (reserve : κ → Root)
-    (hdisjoint : Disjoint trials (Set.range reserve)) {T : ℕ}
+    (trials : Set Root) (additionalRoots : κ → Root)
+    (hdisjoint : Disjoint trials (Set.range additionalRoots)) {T : ℕ}
     (completion : ι → RootIndexed.StepField Root α X → WithTop ℕ)
     (success : ι → Set (RootIndexed.StepField Root α X))
     (hobservable : CandidateObservable
@@ -209,19 +209,19 @@ theorem RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le
     (candidates : Set ι)
     (hcandidates : candidates.Countable)
     (g : (κ → TreeNode α → Step α X) → ℝ) (hg : Measurable g)
-    (hint : Integrable (fun ω => g (fun i => ω (reserve i)))
+    (hint : Integrable (fun ω => g (fun i => ω (additionalRoots i)))
       (RootIndexed.stepFieldLaw (Root := Root) μ))
     (B p : ℝ) (hB : 0 ≤ B)
-    (hmoment : (∫ ω, |g (fun i => ω (reserve i))|
+    (hmoment : (∫ ω, |g (fun i => ω (additionalRoots i))|
       ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤ B)
     (hprob : (RootIndexed.stepFieldLaw (Root := Root) μ).real
       (successfulCandidateWithin completion success candidates T)ᶜ ≤ p) :
-    (∫ ω, |g (fun i => ω (reserve i))| *
+    (∫ ω, |g (fun i => ω (additionalRoots i))| *
         (successfulCandidateWithin completion success candidates T)ᶜ.indicator
           (fun _ => (1 : ℝ)) ω
       ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤ B * p := by
-  rw [RootIndexed.integral_reserveRoot_abs_on_candidateFailure μ trials
-    reserve hdisjoint completion success hobservable candidates hcandidates
+  rw [RootIndexed.integral_disjointRootFamily_abs_on_candidateFailure μ trials
+    additionalRoots hdisjoint completion success hobservable candidates hcandidates
     g hg hint]
   exact mul_le_mul hmoment hprob (by positivity) hB
 

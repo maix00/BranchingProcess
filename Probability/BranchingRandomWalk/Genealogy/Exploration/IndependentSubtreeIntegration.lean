@@ -39,8 +39,8 @@ where \(F(\omega)\) is the selected fresh subtree field.
   `RootIndexed.integral_selectedSubtree_observable_abs_on_event`: give the
   corresponding independence and exact first-moment factorization for
   measurably selected fresh subtrees. The separate
-  `RootIndexed.integral_reserveRoot_abs_on_event` is specialized to a fixed
-  disjoint family of reserve roots.
+  `RootIndexed.integral_disjointRootFamily_abs_on_event` is specialized to a fixed
+  disjoint family of additional roots.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -174,42 +174,42 @@ theorem RootIndexed.integral_selectedSubtree_observable_abs_on_event
       hfiber hdepth hinj g hg)
 
 /-- Exact first-moment factorization when all trials are confined to one set
-of initial roots and the continuation reads a fixed disjoint reserve-root
+of initial roots and the continuation reads a fixed disjoint additional-root
 family.  This is the canonical concurrent pre-sampling interface: trial and
-reserve trees coexist in one root-indexed field, but their coordinates are
+additional trees coexist in one root-indexed field, but their coordinates are
 disjoint. -/
-theorem RootIndexed.integral_reserveRoot_abs_on_event
+theorem RootIndexed.integral_disjointRootFamily_abs_on_event
     {Root κ α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
-    (trials : Set Root) (reserve : κ → Root)
-    (hdisjoint : Disjoint trials (Set.range reserve)) (n : ℕ)
+    (trials : Set Root) (additionalRoots : κ → Root)
+    (hdisjoint : Disjoint trials (Set.range additionalRoots)) (n : ℕ)
     (g : (κ → TreeNode α → Step α X) → ℝ) (hg : Measurable g)
     (E : Set (RootIndexed.StepField Root α X))
     (hE : MeasurableSet[RootIndexed.rootFiltration
       (α := α) (X := X) trials n] E)
     (hint : Integrable
-      (fun ω => g (fun i => ω (reserve i)))
+      (fun ω => g (fun i => ω (additionalRoots i)))
       (RootIndexed.stepFieldLaw (Root := Root) μ)) :
-    (∫ ω, |g (fun i => ω (reserve i))| *
+    (∫ ω, |g (fun i => ω (additionalRoots i))| *
         E.indicator (fun _ => (1 : ℝ)) ω
       ∂RootIndexed.stepFieldLaw (Root := Root) μ) =
-      (∫ ω, |g (fun i => ω (reserve i))|
+      (∫ ω, |g (fun i => ω (additionalRoots i))|
         ∂RootIndexed.stepFieldLaw (Root := Root) μ) *
         (RootIndexed.stepFieldLaw (Root := Root) μ).real E := by
   have hEfull : MeasurableSet E :=
     (RootIndexed.rootFiltration
       (α := α) (X := X) trials |>.le n) E hE
-  have hind := RootIndexed.reserveField_independent μ trials reserve
+  have hind := RootIndexed.rootFamilyField_independent_of_disjoint μ trials additionalRoots
     hdisjoint n
   apply integral_abs_mul_indicator_eq_of_indep
     (RootIndexed.stepFieldLaw (Root := Root) μ)
     (RootIndexed.rootFiltration (α := α) (X := X) trials n)
-    (fun ω => g (fun i => ω (reserve i))) E hint hE hEfull
+    (fun ω => g (fun i => ω (additionalRoots i))) E hint hE hEfull
   apply indep_of_indep_of_le_right hind
   have hm : Measurable[MeasurableSpace.comap
-      (fun ω : RootIndexed.StepField Root α X => fun i => ω (reserve i))
+      (fun ω : RootIndexed.StepField Root α X => fun i => ω (additionalRoots i))
       inferInstance]
-      (fun ω => g (fun i => ω (reserve i))) :=
+      (fun ω => g (fun i => ω (additionalRoots i))) :=
     hg.comp (Measurable.of_comap_le le_rfl)
   exact hm.comap_le
 

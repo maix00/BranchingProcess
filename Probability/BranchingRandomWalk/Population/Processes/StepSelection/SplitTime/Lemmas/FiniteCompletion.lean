@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Lemmas.FirstSplit.BranchingProperty
+import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitTime.Basic
+import Probability.BranchingProcess.Offspring.FieldLaw
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.SelectedSubtree
 import Mathlib.Analysis.SpecificLimits.Basic
 
@@ -46,9 +47,8 @@ open scoped ENNReal
 
 section
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Lemmas.FirstSplit
+namespace ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime.Lemmas
 
-open ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
@@ -280,6 +280,6 @@ private lemma selectedPopulation_all_nonempty_ae
       simpa [frontierMarks, hdepth] using hi
 
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Lemmas.FirstSplit
+end ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime.Lemmas
 
 end

@@ -10,7 +10,7 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Selecte
 /-!
 # Iterating the successful split root pool
 
-When the ambient root type is the active/reserve sum, the fresh-pool
+When the ambient root type is the active and additional sum, the fresh-pool
 construction can be applied repeatedly.  Every finite number of restart
 stages preserves the complete root-indexed product law.
 ## Public declarations
@@ -45,210 +45,210 @@ namespace SplitSchedule
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 
-/-- Repeatedly replace an active/reserve field by the fresh root pool supplied
+/-- Repeatedly replace an active and additional field by the fresh root pool supplied
 by its first successful fixed-age split trial. -/
 noncomputable def iteratedPoolField
-    {Reserve α X : Type*} [LinearOrder (TreeNode α)]
+    {AdditionalRoot α X : Type*} [LinearOrder (TreeNode α)]
     (N : ℕ) (R : Step.FiniteSelection α X)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
-    (reserve : Reserve → Fin N ⊕ Reserve) (stem : TreeNode α) :
-    ℕ → RootIndexed.StepField (Fin N ⊕ Reserve) α X →
-      RootIndexed.StepField (Fin N ⊕ Reserve) α X :=
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot) (stem : TreeNode α) :
+    ℕ → RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α X →
+      RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α X :=
   RootIndexed.iteratedSelectedSubtreeStepField fun _ =>
-    poolRoots N R trial duration target fallback reserve stem
+    poolRoots N R trial duration target fallback additionalRoots stem
 
 @[simp] theorem iteratedPoolField_zero
-    {Reserve α X : Type*} [LinearOrder (TreeNode α)]
+    {AdditionalRoot α X : Type*} [LinearOrder (TreeNode α)]
     (N : ℕ) (R : Step.FiniteSelection α X)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
-    (reserve : Reserve → Fin N ⊕ Reserve) (stem : TreeNode α) :
-    iteratedPoolField N R trial duration target fallback reserve stem 0 = id :=
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot) (stem : TreeNode α) :
+    iteratedPoolField N R trial duration target fallback additionalRoots stem 0 = id :=
   rfl
 
 /-- Cumulative original coordinates of the roots in an iterated split pool. -/
 noncomputable def iteratedPoolRoots
-    {Reserve α X : Type*} [LinearOrder (TreeNode α)]
+    {AdditionalRoot α X : Type*} [LinearOrder (TreeNode α)]
     (N : ℕ) (R : Step.FiniteSelection α X)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
-    (reserve : Reserve → Fin N ⊕ Reserve) (stem : TreeNode α) :
-    ℕ → RootIndexed.StepField (Fin N ⊕ Reserve) α X →
-      Fin N ⊕ Reserve → (Fin N ⊕ Reserve) × TreeNode α :=
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot) (stem : TreeNode α) :
+    ℕ → RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α X →
+      Fin N ⊕ AdditionalRoot → (Fin N ⊕ AdditionalRoot) × TreeNode α :=
   RootIndexed.iteratedSelectedRoots fun _ =>
-    poolRoots N R trial duration target fallback reserve stem
+    poolRoots N R trial duration target fallback additionalRoots stem
 
 /-- Embed a particle of an iterated pool into the original pre-sampled field. -/
 noncomputable def iteratedPoolAddress
-    {Reserve α X : Type*} [LinearOrder (TreeNode α)]
+    {AdditionalRoot α X : Type*} [LinearOrder (TreeNode α)]
     (N : ℕ) (R : Step.FiniteSelection α X)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
-    (reserve : Reserve → Fin N ⊕ Reserve) (stem : TreeNode α)
-    (j : ℕ) (step : RootIndexed.StepField (Fin N ⊕ Reserve) α X)
-    (p : RootIndexed.TreeNode (Fin N ⊕ Reserve) α) :
-    RootIndexed.TreeNode (Fin N ⊕ Reserve) α :=
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot) (stem : TreeNode α)
+    (j : ℕ) (step : RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α X)
+    (p : RootIndexed.TreeNode (Fin N ⊕ AdditionalRoot) α) :
+    RootIndexed.TreeNode (Fin N ⊕ AdditionalRoot) α :=
   RootIndexed.iteratedSelectedAddress
-    (fun _ => poolRoots N R trial duration target fallback reserve stem)
+    (fun _ => poolRoots N R trial duration target fallback additionalRoots stem)
     j step p
 
 /-- The iterated concrete field reads the original pre-sampled field at its
 cumulative root/address coordinates. -/
 theorem iteratedPoolField_apply
-    {Reserve α X : Type*} [LinearOrder (TreeNode α)]
+    {AdditionalRoot α X : Type*} [LinearOrder (TreeNode α)]
     (N : ℕ) (R : Step.FiniteSelection α X)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
-    (reserve : Reserve → Fin N ⊕ Reserve) (stem : TreeNode α)
-    (j : ℕ) (step : RootIndexed.StepField (Fin N ⊕ Reserve) α X)
-    (i : Fin N ⊕ Reserve) (v : TreeNode α) :
-    iteratedPoolField N R trial duration target fallback reserve stem j
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot) (stem : TreeNode α)
+    (j : ℕ) (step : RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α X)
+    (i : Fin N ⊕ AdditionalRoot) (v : TreeNode α) :
+    iteratedPoolField N R trial duration target fallback additionalRoots stem j
         step i v =
-      step (iteratedPoolRoots N R trial duration target fallback reserve stem
+      step (iteratedPoolRoots N R trial duration target fallback additionalRoots stem
         j step i).1
-        ((iteratedPoolRoots N R trial duration target fallback reserve stem
+        ((iteratedPoolRoots N R trial duration target fallback additionalRoots stem
           j step i).2 ++ v) :=
   RootIndexed.iteratedSelectedSubtreeStepField_apply
-    (fun _ => poolRoots N R trial duration target fallback reserve stem)
+    (fun _ => poolRoots N R trial duration target fallback additionalRoots stem)
     j step i v
 
 theorem iteratedPoolField_eq_at_address
-    {Reserve α X : Type*} [LinearOrder (TreeNode α)]
+    {AdditionalRoot α X : Type*} [LinearOrder (TreeNode α)]
     (N : ℕ) (R : Step.FiniteSelection α X)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
-    (reserve : Reserve → Fin N ⊕ Reserve) (stem : TreeNode α)
-    (j : ℕ) (step : RootIndexed.StepField (Fin N ⊕ Reserve) α X)
-    (p : RootIndexed.TreeNode (Fin N ⊕ Reserve) α) :
-    iteratedPoolField N R trial duration target fallback reserve stem j
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot) (stem : TreeNode α)
+    (j : ℕ) (step : RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α X)
+    (p : RootIndexed.TreeNode (Fin N ⊕ AdditionalRoot) α) :
+    iteratedPoolField N R trial duration target fallback additionalRoots stem j
         step p.1 p.2 =
-      step (iteratedPoolAddress N R trial duration target fallback reserve stem
+      step (iteratedPoolAddress N R trial duration target fallback additionalRoots stem
         j step p).1
-        (iteratedPoolAddress N R trial duration target fallback reserve stem
+        (iteratedPoolAddress N R trial duration target fallback additionalRoots stem
           j step p).2 :=
   RootIndexed.iteratedSelectedSubtreeStepField_eq_at_address
-    (fun _ => poolRoots N R trial duration target fallback reserve stem)
+    (fun _ => poolRoots N R trial duration target fallback additionalRoots stem)
     j step p
 
 /-- Any step functional, including a finite selection rule, agrees at an
 iterated pool particle and its embedded original address. -/
 theorem map_iteratedPoolField
-    {Reserve α X Y : Type*} [LinearOrder (TreeNode α)]
+    {AdditionalRoot α X Y : Type*} [LinearOrder (TreeNode α)]
     (F : Step α X → Y)
     (N : ℕ) (R : Step.FiniteSelection α X)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
-    (reserve : Reserve → Fin N ⊕ Reserve) (stem : TreeNode α)
-    (j : ℕ) (step : RootIndexed.StepField (Fin N ⊕ Reserve) α X)
-    (p : RootIndexed.TreeNode (Fin N ⊕ Reserve) α) :
-    F (iteratedPoolField N R trial duration target fallback reserve stem j
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot) (stem : TreeNode α)
+    (j : ℕ) (step : RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α X)
+    (p : RootIndexed.TreeNode (Fin N ⊕ AdditionalRoot) α) :
+    F (iteratedPoolField N R trial duration target fallback additionalRoots stem j
         step p.1 p.2) =
-      F (step (iteratedPoolAddress N R trial duration target fallback reserve
+      F (step (iteratedPoolAddress N R trial duration target fallback additionalRoots
         stem j step p).1
-        (iteratedPoolAddress N R trial duration target fallback reserve stem
+        (iteratedPoolAddress N R trial duration target fallback additionalRoots stem
           j step p).2) :=
   RootIndexed.map_iteratedSelectedSubtreeStepField F
-    (fun _ => poolRoots N R trial duration target fallback reserve stem)
+    (fun _ => poolRoots N R trial duration target fallback additionalRoots stem)
     j step p
 
 theorem iteratedPoolAddress_injective
-    {Reserve α X : Type*} [LinearOrder (TreeNode α)]
+    {AdditionalRoot α X : Type*} [LinearOrder (TreeNode α)]
     (N : ℕ) (R : Step.FiniteSelection α X)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
     (hfallbackDepth : ∀ i, (fallback i).2.length = duration)
     (hfallbackInjective : Function.Injective fallback)
-    (reserve : Reserve → Fin N ⊕ Reserve)
-    (hreserve : Function.Injective reserve)
-    (htrial : ∀ k r, trial k ≠ reserve r)
-    (hfallbackReserve : ∀ i r, (fallback i).1 ≠ reserve r)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot)
+    (hadditionalRoots : Function.Injective additionalRoots)
+    (htrial : ∀ k r, trial k ≠ additionalRoots r)
+    (hfallbackAdditionalRoots : ∀ i r, (fallback i).1 ≠ additionalRoots r)
     (stem : TreeNode α) (hstem : stem.length = duration) :
-    ∀ j (step : RootIndexed.StepField (Fin N ⊕ Reserve) α X),
+    ∀ j (step : RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α X),
       Function.Injective
-        (iteratedPoolAddress N R trial duration target fallback reserve stem
+        (iteratedPoolAddress N R trial duration target fallback additionalRoots stem
           j step) := by
   exact RootIndexed.iteratedSelectedAddress_injective
-    (fun _ => poolRoots N R trial duration target fallback reserve stem)
+    (fun _ => poolRoots N R trial duration target fallback additionalRoots stem)
     (fun _ => duration)
     (fun _ => poolRoots_depth N R trial duration target fallback
-      hfallbackDepth reserve stem hstem)
+      hfallbackDepth additionalRoots stem hstem)
     (fun _ => poolRoots_injective N R trial duration target fallback
-      hfallbackInjective reserve hreserve htrial hfallbackReserve stem)
+      hfallbackInjective additionalRoots hadditionalRoots htrial hfallbackAdditionalRoots stem)
 
 /-- Absolute initial positions associated with the cumulative split-pool
 coordinates. -/
 noncomputable def iteratedPoolInitialPosition
-    {Reserve α Mark Position : Type*} [AddCommMonoid Position]
+    {AdditionalRoot α Mark Position : Type*} [AddCommMonoid Position]
     [LinearOrder (TreeNode α)]
     (N : ℕ) (R : Step.FiniteSelection α Mark)
-    (initial : Fin N ⊕ Reserve → Position) (d : Mark → Position)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
-    (reserve : Reserve → Fin N ⊕ Reserve) (stem : TreeNode α)
-    (j : ℕ) (step : RootIndexed.StepField (Fin N ⊕ Reserve) α Mark) :
-    Fin N ⊕ Reserve → Position :=
+    (initial : Fin N ⊕ AdditionalRoot → Position) (d : Mark → Position)
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot) (stem : TreeNode α)
+    (j : ℕ) (step : RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α Mark) :
+    Fin N ⊕ AdditionalRoot → Position :=
   RootIndexed.iteratedSelectedInitialPosition initial d
-    (fun _ => poolRoots N R trial duration target fallback reserve stem)
+    (fun _ => poolRoots N R trial duration target fallback additionalRoots stem)
     j step
 
 /-- The concrete iteration preserves all absolute positions in an arbitrary
 additive position space under an arbitrary mark displacement map. -/
 theorem position_iteratedPoolField
-    {Reserve α Mark Position : Type*} [AddCommMonoid Position]
+    {AdditionalRoot α Mark Position : Type*} [AddCommMonoid Position]
     [LinearOrder (TreeNode α)]
     (N : ℕ) (R : Step.FiniteSelection α Mark)
-    (initial : Fin N ⊕ Reserve → Position) (d : Mark → Position)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
-    (reserve : Reserve → Fin N ⊕ Reserve) (stem : TreeNode α)
-    (j : ℕ) (step : RootIndexed.StepField (Fin N ⊕ Reserve) α Mark)
-    (i : Fin N ⊕ Reserve) (v : TreeNode α) :
+    (initial : Fin N ⊕ AdditionalRoot → Position) (d : Mark → Position)
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot) (stem : TreeNode α)
+    (j : ℕ) (step : RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α Mark)
+    (i : Fin N ⊕ AdditionalRoot) (v : TreeNode α) :
     RootIndexed.position
         (iteratedPoolInitialPosition N R initial d trial duration target
-          fallback reserve stem j step) d
-        (iteratedPoolField N R trial duration target fallback reserve stem j
+          fallback additionalRoots stem j step) d
+        (iteratedPoolField N R trial duration target fallback additionalRoots stem j
           step) i v =
       RootIndexed.position initial d step
-        (iteratedPoolRoots N R trial duration target fallback reserve stem
+        (iteratedPoolRoots N R trial duration target fallback additionalRoots stem
           j step i).1
-        ((iteratedPoolRoots N R trial duration target fallback reserve stem
+        ((iteratedPoolRoots N R trial duration target fallback additionalRoots stem
           j step i).2 ++ v) :=
   RootIndexed.position_iteratedSelectedSubtreeStepField initial d
-    (fun _ => poolRoots N R trial duration target fallback reserve stem)
+    (fun _ => poolRoots N R trial duration target fallback additionalRoots stem)
     j step i v
 
 /-- Every finite concrete restart iteration retains the original product
 field law. -/
 theorem iteratedPoolField_law
-    {Reserve α X : Type*} [Countable α] [MeasurableSpace X]
+    {AdditionalRoot α X : Type*} [Countable α] [MeasurableSpace X]
     [LinearOrder (TreeNode α)]
     (N : ℕ) (R : Step.FiniteSelection α X) (hR : Measurable R.select)
-    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
-    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
+    (trial : ℕ → Fin N ⊕ AdditionalRoot) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ AdditionalRoot) × TreeNode α)
     (hfallbackDepth : ∀ i, (fallback i).2.length = duration)
     (hfallbackInjective : Function.Injective fallback)
-    (reserve : Reserve → Fin N ⊕ Reserve)
-    (hreserve : Function.Injective reserve)
-    (htrial : ∀ k r, trial k ≠ reserve r)
-    (hfallbackReserve : ∀ i r, (fallback i).1 ≠ reserve r)
+    (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot)
+    (hadditionalRoots : Function.Injective additionalRoots)
+    (htrial : ∀ k r, trial k ≠ additionalRoots r)
+    (hfallbackAdditionalRoots : ∀ i r, (fallback i).1 ≠ additionalRoots r)
     (stem : TreeNode α) (hstem : stem.length = duration)
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ] :
     ∀ j,
-      (RootIndexed.stepFieldLaw (Root := Fin N ⊕ Reserve) μ).map
-          (iteratedPoolField N R trial duration target fallback reserve stem j) =
-        RootIndexed.stepFieldLaw (Root := Fin N ⊕ Reserve) μ := by
+      (RootIndexed.stepFieldLaw (Root := Fin N ⊕ AdditionalRoot) μ).map
+          (iteratedPoolField N R trial duration target fallback additionalRoots stem j) =
+        RootIndexed.stepFieldLaw (Root := Fin N ⊕ AdditionalRoot) μ := by
   exact RootIndexed.iteratedSelectedSubtreeStepField_law μ
-    (fun _ => poolRoots N R trial duration target fallback reserve stem)
+    (fun _ => poolRoots N R trial duration target fallback additionalRoots stem)
     (fun _ => duration)
     (fun _ => poolRoots_range_countable
-      N R trial duration target fallback reserve stem)
+      N R trial duration target fallback additionalRoots stem)
     (fun _ => poolRoots_fiber_adapted
-      N R hR trial duration target fallback reserve stem)
+      N R hR trial duration target fallback additionalRoots stem)
     (fun _ => poolRoots_depth N R trial duration target fallback
-      hfallbackDepth reserve stem hstem)
+      hfallbackDepth additionalRoots stem hstem)
     (fun _ => poolRoots_injective N R trial duration target fallback
-      hfallbackInjective reserve hreserve htrial hfallbackReserve stem)
+      hfallbackInjective additionalRoots hadditionalRoots htrial hfallbackAdditionalRoots stem)
 
 end SplitSchedule
 end StepSelection

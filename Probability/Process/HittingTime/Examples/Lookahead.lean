@@ -105,7 +105,7 @@ theorem lookahead_completion_isStoppingTime :
     exact MeasurableSpace.measurableSet_top
 
 /-- A trial outcome is observed at generation two; generation one still has
-the trivial σ-algebra. This models choosing the generation-one reserve
+the trivial σ-algebra. This models choosing the generation-one continuation
 population only after seeing whether a later trial failed. -/
 def delayedTrialFiltration : Filtration ℕ (⊤ : MeasurableSpace Bool) where
   seq n := if n < 2 then ⊥ else ⊤

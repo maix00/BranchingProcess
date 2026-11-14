@@ -31,7 +31,7 @@ child labels live in `α`; it is not tied to `ℕ`. `𝕍 = TreeNode ℕ` is the
 Ulam--Harris node set in standard notation.
 
 `Mark α M` is the mark function `TreeNode α → M`: it assigns a mark to
-*every* address, including reserve branches the walk never visits, and the
+*every* address, including branches the walk never visits, and the
 generation filtration of
 `Probability/BranchingRandomWalk/Tree/Filtration.lean` is defined on it. This
 is a separate object from a `MarkedTree`, which carries marks only on its
