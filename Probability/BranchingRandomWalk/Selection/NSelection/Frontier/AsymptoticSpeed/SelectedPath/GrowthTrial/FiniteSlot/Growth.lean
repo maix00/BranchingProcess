@@ -41,13 +41,11 @@ has the uniform lower bound
   for a binary selector implies $\mathbb P(\#S=2)>0$.
 * `exists_nat_cutoff_binaryOffspringMean_gt_one`: if $\rho>1$, filtering
   all retained marks at a large enough common cutoff preserves mean $>1$.
-* `measure_finiteSlotPopulation_ge_rpow` gives a scale-uniform lower
-  bound for the event that the selected population reaches `N ^ a` by its
-  logarithmic horizon:
-  `P(Z_⌈(a log N + log 2)/log ρ⌉₊ ≥ N ^ a) ≥ 1/(4 K(ρ,v))`.
-* `measure_finiteSlotGrowthTrialSuccess_at_logarithmicHorizon` gives the same lower
-  bound for the full trial event at any positive target up to $\lceil N^a\rceil$, including nonempty intermediate generations
-  and the endpoint upper cap `2 ^ duration`.
+* `measure_finiteSlotPopulation_ge_threshold`: if $2x\le\rho^d$ and
+  $x\ge0$, then $P(Z_d\ge x)\ge 1/(4K(\rho,v))$.
+* `measure_finiteSlotGrowthTrialSuccess_of_mean_ge` gives the same bound
+  for full success at an integer target at most $\lceil x\rceil$ and
+  with the capacity $2^d$.
 -/
 
 @[expose] public section
@@ -232,7 +230,7 @@ theorem exists_nat_cutoff_binaryOffspringMean_gt_one
 logarithmic horizon with a probability bounded below independently of the
 scale.  Only the original offspring mean is used: second moments are finite
 because the selected row has at most two children. -/
-theorem measure_finiteSlotPopulation_ge_rpow
+theorem measure_finiteSlotPopulation_ge_threshold
     {α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [MeasurableSpace X]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
@@ -241,14 +239,11 @@ theorem measure_finiteSlotPopulation_ge_rpow
     (hcapacity : ∀ ξ, (S ξ).card ≤ 2)
     (hmean : 1 < finiteSlotOffspringMeanReal
       (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))
-    (N : ℕ) (a : ℝ) (hN : 1 ≤ N) :
+    (duration : ℕ) (threshold : ℝ) (hthreshold : 0 ≤ threshold)
+    (hscale : 2 * threshold ≤ (finiteSlotOffspringMeanReal
+      (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS)) ^ duration) :
     (offspringFieldLaw μ).real
-      {ω | (N : ℝ) ^ a ≤
-        finiteSlotPopulationSizeReal S ω
-          ⌈(a * Real.log N + Real.log 2) /
-            Real.log (finiteSlotOffspringMeanReal
-              (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _)
-                S hS))⌉₊} ≥
+      {ω | threshold ≤ finiteSlotPopulationSizeReal S ω duration} ≥
       1 / (4 * normalizedSecondMomentConstant
         (finiteSlotOffspringMeanReal
           (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))
@@ -297,16 +292,16 @@ theorem measure_finiteSlotPopulation_ge_rpow
     intro n
     simpa [m₂, Z, ν, ρ, v] using
       finiteSlotPopulationSizeReal_sq_integral_eq_recursion μ S hS hcapacity n
-  have hprob := measure_ge_rpow_of_moment_recursion
+  have hprob := measure_ge_half_mean_of_moment_recursion
     (offspringFieldLaw μ) ρ v hmean hvar Z m₂ hZmeas hZnonneg hZint hZmem
     hmean' hm₂zero
-    (fun n => rfl) hm₂succ N a hN
+    (fun n => rfl) hm₂succ duration threshold hthreshold hscale
   simpa [Z, ν, ρ, v] using hprob
 
 /-- The finite-slot second-moment bound applies to the complete growth-trial
 event on the actual pre-sampled selected population. A positive terminal
 target certifies survival to every preceding age. -/
-theorem measure_finiteSlotGrowthTrialSuccess_at_logarithmicHorizon
+theorem measure_finiteSlotGrowthTrialSuccess_of_mean_ge
     {α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [MeasurableSpace X]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
@@ -315,17 +310,13 @@ theorem measure_finiteSlotGrowthTrialSuccess_at_logarithmicHorizon
     (hcapacity : ∀ ξ, (S ξ).card ≤ 2)
     (hmean : 1 < finiteSlotOffspringMeanReal
       (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))
-    (N : ℕ) (a : ℝ) (hN : 1 ≤ N)
-    (lower : ℕ) (hlower : lower ≤ ⌈(N : ℝ) ^ a⌉₊)
+    (duration lower : ℕ) (threshold : ℝ) (hthreshold : 0 ≤ threshold)
+    (hscale : 2 * threshold ≤ (finiteSlotOffspringMeanReal
+      (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS)) ^ duration)
+    (hlower : lower ≤ ⌈threshold⌉₊)
     (hprior : 0 < lower ∨ ∀ᵐ ξ ∂μ, (S ξ).Nonempty) :
     (offspringFieldLaw μ).real
-      {ω | growthTrialSuccess S lower
-        (2 ^ ⌈(a * Real.log N + Real.log 2) /
-          Real.log (finiteSlotOffspringMeanReal
-            (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))⌉₊)
-        ⌈(a * Real.log N + Real.log 2) /
-          Real.log (finiteSlotOffspringMeanReal
-            (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))⌉₊ ω} ≥
+      {ω | growthTrialSuccess S lower (2 ^ duration) duration ω} ≥
       1 / (4 * normalizedSecondMomentConstant
         (finiteSlotOffspringMeanReal
           (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))
@@ -336,10 +327,9 @@ theorem measure_finiteSlotGrowthTrialSuccess_at_logarithmicHorizon
   let ν := ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS
   let ρ := finiteSlotOffspringMeanReal ν
   let v := finiteSlotOffspringSecondMomentReal ν - ρ ^ 2
-  let duration := ⌈(a * Real.log N + Real.log 2) / Real.log ρ⌉₊
   let upper := 2 ^ duration
   let endpoint : Set (Mark α (Step α X)) :=
-    {ω | (N : ℝ) ^ a ≤ finiteSlotPopulationSizeReal S ω duration}
+    {ω | threshold ≤ finiteSlotPopulationSizeReal S ω duration}
   let success : Set (Mark α (Step α X)) :=
     {ω | growthTrialSuccess S lower upper duration ω}
   have hprior' : ∀ᵐ ω ∂offspringFieldLaw μ,
@@ -370,8 +360,8 @@ theorem measure_finiteSlotGrowthTrialSuccess_at_logarithmicHorizon
           offspringFieldLaw_coordinate μ u, hsplitOne]
         simp
       exact hall.mono fun _ => Or.inr
-  have hendpoint := measure_finiteSlotPopulation_ge_rpow
-    μ S hS hcapacity hmean N a hN
+  have hendpoint := measure_finiteSlotPopulation_ge_threshold
+    μ S hS hcapacity hmean duration threshold hthreshold hscale
   have hsuccess_mono : (offspringFieldLaw μ).real endpoint ≤
       (offspringFieldLaw μ).real success := by
     have hsub : endpoint ≤ᵐ[offspringFieldLaw μ] success := by
@@ -379,7 +369,7 @@ theorem measure_finiteSlotGrowthTrialSuccess_at_logarithmicHorizon
       intro hendpoint
       have hcard : lower ≤ (Selection.Stepwise.population S duration ω).card := by
         have hendpoint' := hendpoint
-        change (N : ℝ) ^ a ≤
+        change threshold ≤
           ((finiteSlotActiveLabels S ω duration).card : ℝ) at hendpoint'
         rw [finiteSlotActiveLabels_card_eq_population_card S ω hcapacity duration]
           at hendpoint'
@@ -396,7 +386,7 @@ theorem measure_finiteSlotGrowthTrialSuccess_at_logarithmicHorizon
   calc
     1 / (4 * normalizedSecondMomentConstant ρ v) ≤
         (offspringFieldLaw μ).real endpoint := by
-      simpa [endpoint, duration, ν, ρ, v] using hendpoint
+      simpa [endpoint, ν, ρ, v] using hendpoint
     _ ≤ (offspringFieldLaw μ).real success := hsuccess_mono
 
 

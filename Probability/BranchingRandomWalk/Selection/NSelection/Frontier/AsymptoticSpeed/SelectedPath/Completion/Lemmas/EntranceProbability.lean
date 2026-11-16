@@ -145,11 +145,15 @@ lemma exists_logarithmicEntrance_failure_le_polynomial
     linarith
   let K := fun n => ⌊δ * logN n⌋₊
   let nClock := fun n => ⌈(4 * δ / p₀) * logN n⌉₊
-  let duration := fun n => ⌈(α * logN n + Real.log 2) / Real.log ρ⌉₊
+  let β := α / 2
+  have hβ : 0 < β := by dsimp [β]; linarith
+  have hβα : β < α := by dsimp [β]; linarith
+  let duration := fun n => ⌊α * logN n / Real.log ρ⌋₊ - 1
   let upper := fun n => 2 ^ duration n
   let T := fun n => nClock n + duration n
   obtain ⟨hscales, hT, hTH⟩ :=
     logarithmicEntrance_scales hρ hp₀ ha hδ hM hsmall hbudget hN ht hH
+      duration (fun i => trialDuration_le hρ ha.le (N i))
   let q := max (1 / 2) (1 - p₁)
   have hq : 0 < q := (show (0 : ℝ) < 1 / 2 by norm_num).trans_le (le_max_left _ _)
   have hq1 : q < 1 := max_lt (by norm_num) (by linarith)
@@ -160,11 +164,12 @@ lemma exists_logarithmicEntrance_failure_le_polynomial
     eventually_geometric_and_exponential_entrance_bound hδ hq hq1 hB hvEq hlog K nClock hK
   have habsorb : ∀ᶠ i in atTop, 4 ≤ Real.exp (b / 2 * logN i) :=
     (Real.tendsto_exp_atTop.comp (hlog.const_mul_atTop (by positivity))).eventually_ge_atTop 4
-  refine ⟨α, ha, ha1, R, growth, hR, hgrowth, upper, duration, T, hT, hTH,
+  refine ⟨β, hβ, hβα.trans ha1, R, growth, hR, hgrowth, upper, duration, T, hT, hTH,
     b / 2, by positivity, ?_⟩
-  filter_upwards [hscales, hprob, habsorb, hN.eventually_ge_atTop 1] with i hs hp hab hN1
+  filter_upwards [hscales, hprob, habsorb, hN.eventually_ge_atTop 1,
+    eventually_two_rpow_le_pow_trialDuration hρ hβα hN] with i hs hp hab hN1 hmean
   dsimp only
-  let lower := ⌊(N i : ℝ) ^ α⌋₊
+  let lower := ⌊(N i : ℝ) ^ β⌋₊
   let G := growthTrialSuccess growth lower (upper i) (duration i)
   let x := v * (δ * logN i)
   let w := Real.exp (-b * logN i)
@@ -178,8 +183,8 @@ lemma exists_logarithmicEntrance_failure_le_polynomial
   have hsuccessMeas : MeasurableSet {ω | G ω} :=
     (generationFiltration (M := Step ℕ ℝ)).le (duration i) _
       (growthTrialSuccess_measurable growth hgrowth lower (upper i) (duration i))
-  have hsuccess' : p₁ ≤ (ν {ω | G ω}).toReal := hsuccess (N i) α lower hN1
-      (Nat.floor_pos.mpr (Real.one_le_rpow (by exact_mod_cast hN1) ha.le))
+  have hsuccess' : p₁ ≤ (ν {ω | G ω}).toReal := hsuccess (duration i) lower ((N i : ℝ) ^ β) (by positivity) hmean
+      (Nat.floor_pos.mpr (Real.one_le_rpow (by exact_mod_cast hN1) hβ.le))
       (Nat.floor_le_ceil _)
   have hfail : ν {ω | ¬ G ω} ≤ ENNReal.ofReal q := by
     change ν {ω | G ω}ᶜ ≤ ENNReal.ofReal q
