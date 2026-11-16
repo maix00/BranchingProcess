@@ -44,7 +44,7 @@ noncomputable def unitPoint (k : ℕ) (j : (unitGrid k).Index) : unitInterval :=
       UniformGrid.point_mem_Icc (unitGrid k) j⟩
 
 /-- The dyadic coordinate set in the real unit interval. -/
-def unitPoints : Set unitInterval := ⋃ k, Set.range (unitPoint k)
+noncomputable def unitPoints : Set unitInterval := ⋃ k, Set.range (unitPoint k)
 
 theorem countable_unitPoints : unitPoints.Countable := by
   unfold unitPoints

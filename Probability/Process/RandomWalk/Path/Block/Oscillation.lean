@@ -126,8 +126,8 @@ theorem blockOscillationEvent_of_additiveSegment
     (hsegment : Metric.OscillationBounded
       (fun k : Fin (length + 1) =>
         AdditivePath.displacement (start + (k : ℕ)) increment) width) :
-    blockOscillationEvent width length
-      (Combinatorics.Sequence.blockCoordinates start length increment) := by
+    Combinatorics.Sequence.blockCoordinates start length increment ∈
+      blockOscillationEvent width length := by
   change Metric.OscillationBounded
     (fun k : Fin (length + 1) =>
       Fin.partialSum
