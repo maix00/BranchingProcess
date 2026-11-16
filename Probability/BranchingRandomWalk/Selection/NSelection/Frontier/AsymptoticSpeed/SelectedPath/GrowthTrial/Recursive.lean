@@ -18,10 +18,9 @@ trial succeeds.  Under almost-sure finite split completion, the branching
 property makes this decomposition an independent pair of full descendant
 fields.  The finite all-failure event therefore has an exact product law.
 
-This is the retrospective candidate construction for continuation siblings in
-finite branching trials. It proves
-the candidate event law; it does not identify the retrospectively restarted
-population with an adapted selected BRW process.
+The recursion enumerates candidate subtrees on a fixed pre-sampled tree.
+It describes the trial events. The adapted generation populations used in
+the coupling are defined separately.
 
 ## Public declarations
 
