@@ -17,13 +17,11 @@ import Combinatorics.UlamHarris.Order
 
 ## Internal proof declarations
 
-* `exists_logarithmicEntrance_failure_le_polynomial`: for every $eta>0$,
-  one can choose $alphain(0,1)$ and the growth and clock scales so that
-  $T_N=o(log^3N)$, and
-  $mathbb P(G_N^c)le N^{-b}$ eventually for some $b>0$. The good event
-  $G_N$ is successful completion by $T_N$ with at least
-  $lfloor N^alpha
-floor$ actual particles below $etalog N$.
+* `exists_logarithmicEntrance_failure_le_polynomial`: for $\eta>0$ one
+  can choose $\alpha\in(0,1)$ and a clock $T_N=o(\log^3N)$, with
+  $P(G_N^c)\le N^{-b}$ eventually for some $b>0$. On $G_N$ the first trial
+  reaching $\lceil N^\alpha\rceil$ completes by $T_N$ and at least
+  $\lfloor N^\alpha\rfloor$ actual particles lie below $\eta\log N$.
 
 This is the entrance estimate in Wang Yiyang, *Asymptotic Speed of the
 N-Branching Random Walk with Infinite Offspring* (Fudan University, 2026),
@@ -68,7 +66,7 @@ lemma exists_logarithmicEntrance_failure_le_polynomial
       (∀ᶠ n in atTop, T n ≤ H n) ∧
       ∃ b : ℝ, 0 < b ∧ ∀ᶠ n in atTop,
         let lower := ⌊(N n : ℝ) ^ α⌋₊
-        let τ := Completion.time R growth hR hgrowth lower (upper n) (duration n) (0 : ℕ)
+        let τ := Completion.time R growth hR hgrowth ⌈(N n : ℝ) ^ α⌉₊ (upper n) (duration n) (0 : ℕ)
         let trials := SelectedPath.Population.leftBRWFamily_finiteSlices R growth
           hR hgrowth (upper n) (duration n) (0 : ℕ)
         let stage := RootIndexed.restartedRealPositionNSelectedBRWField (N n) {0}
@@ -97,8 +95,8 @@ lemma exists_logarithmicEntrance_failure_le_polynomial
   let law := Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _)
     growth hgrowth
   let ρ := finiteSlotOffspringMeanReal law
-  let p₁ := 1 / (4 * normalizedSecondMomentConstant ρ
-    (finiteSlotOffspringSecondMomentReal law - ρ ^ 2))
+  let p₁ := ((ρ - 1) / ρ) ^ 2 / normalizedSecondMomentConstant ρ
+    (finiteSlotOffspringSecondMomentReal law - ρ ^ 2)
   let p₀ := (μ (splitBy R)).toReal
   have hM : (0 : ℝ) ≤ M := by positivity
   have hp₀ : 0 < p₀ := ENNReal.toReal_pos (ne_of_gt hsplit) (measure_ne_top _ _)
@@ -145,10 +143,7 @@ lemma exists_logarithmicEntrance_failure_le_polynomial
     linarith
   let K := fun n => ⌊δ * logN n⌋₊
   let nClock := fun n => ⌈(4 * δ / p₀) * logN n⌉₊
-  let β := α / 2
-  have hβ : 0 < β := by dsimp [β]; linarith
-  have hβα : β < α := by dsimp [β]; linarith
-  let duration := fun n => ⌊α * logN n / Real.log ρ⌋₊ - 1
+  let duration := fun n => ⌊α * logN n / Real.log ρ⌋₊ + 2
   let upper := fun n => 2 ^ duration n
   let T := fun n => nClock n + duration n
   obtain ⟨hscales, hT, hTH⟩ :=
@@ -164,12 +159,11 @@ lemma exists_logarithmicEntrance_failure_le_polynomial
     eventually_geometric_and_exponential_entrance_bound hδ hq hq1 hB hvEq hlog K nClock hK
   have habsorb : ∀ᶠ i in atTop, 4 ≤ Real.exp (b / 2 * logN i) :=
     (Real.tendsto_exp_atTop.comp (hlog.const_mul_atTop (by positivity))).eventually_ge_atTop 4
-  refine ⟨β, hβ, hβα.trans ha1, R, growth, hR, hgrowth, upper, duration, T, hT, hTH,
+  refine ⟨α, ha, ha1, R, growth, hR, hgrowth, upper, duration, T, hT, hTH,
     b / 2, by positivity, ?_⟩
-  filter_upwards [hscales, hprob, habsorb, hN.eventually_ge_atTop 1,
-    eventually_two_rpow_le_pow_trialDuration hρ hβα hN] with i hs hp hab hN1 hmean
+  filter_upwards [hscales, hprob, habsorb, hN.eventually_ge_atTop 1] with i hs hp hab hN1
   dsimp only
-  let lower := ⌊(N i : ℝ) ^ β⌋₊
+  let lower := ⌈(N i : ℝ) ^ α⌉₊
   let G := growthTrialSuccess growth lower (upper i) (duration i)
   let x := v * (δ * logN i)
   let w := Real.exp (-b * logN i)
@@ -183,9 +177,11 @@ lemma exists_logarithmicEntrance_failure_le_polynomial
   have hsuccessMeas : MeasurableSet {ω | G ω} :=
     (generationFiltration (M := Step ℕ ℝ)).le (duration i) _
       (growthTrialSuccess_measurable growth hgrowth lower (upper i) (duration i))
-  have hsuccess' : p₁ ≤ (ν {ω | G ω}).toReal := hsuccess (duration i) lower ((N i : ℝ) ^ β) (by positivity) hmean
-      (Nat.floor_pos.mpr (Real.one_le_rpow (by exact_mod_cast hN1) hβ.le))
-      (Nat.floor_le_ceil _)
+  have hsuccess' : p₁ ≤ (ν {ω | G ω}).toReal :=
+    hsuccess (duration i) lower ((N i : ℝ) ^ α) (by positivity)
+      (rpow_mul_mean_le_pow_trialDuration hρ (N i) α hN1)
+      (Nat.ceil_pos.mpr (Real.rpow_pos_of_pos (by exact_mod_cast Nat.zero_lt_of_lt hN1) α))
+      le_rfl
   have hfail : ν {ω | ¬ G ω} ≤ ENNReal.ofReal q := by
     change ν {ω | G ω}ᶜ ≤ ENNReal.ofReal q
     rw [measure_compl hsuccessMeas (measure_ne_top _ _), measure_univ]
@@ -226,16 +222,21 @@ lemma exists_logarithmicEntrance_failure_le_polynomial
     lower (upper i) (duration i) (Nat.succ_le_of_lt (pow_pos (by decide) _))
     hbound hs.2.2.2.2.1 M hcut (0 : ℕ) (nClock i) (K i) hs.1 hs.2.1
     x (η * logN i) hs.2.2.2.2.2
-  refine hfinite.trans ((add_le_add (add_le_add (add_le_add hclock hpow) hpow) hlarge).trans ?_)
-  have heq : Real.exp (-b * logN i) * Real.exp (b / 2 * logN i) =
-      Real.exp (-(b / 2) * logN i) := by rw [← Real.exp_add]; congr 1; ring
-  have hlast : w + w + w + w ≤ Real.exp (-(b / 2) * logN i) := by
-    calc
-      _ = w * 4 := by ring
-      _ ≤ _ := (mul_le_mul_of_nonneg_left hab (Real.exp_nonneg _)).trans_eq heq
-  have hw : 0 ≤ w := Real.exp_nonneg _
-  rw [← ENNReal.ofReal_add hw hw, ← ENNReal.ofReal_add (add_nonneg hw hw) hw,
-    ← ENNReal.ofReal_add (add_nonneg (add_nonneg hw hw) hw) hw]
-  exact ENNReal.ofReal_le_ofReal hlast
+  refine (measure_mono (fun {_field} hbad => ?_)).trans
+    (hfinite.trans ((add_le_add (add_le_add (add_le_add hclock hpow) hpow) hlarge).trans ?_))
+  · intro hgood
+    obtain ⟨j, hj, ⟨e, he⟩, hτ⟩ := hgood
+    exact hbad ⟨j, hj, ⟨(Fin.castLEEmb (Nat.floor_le_ceil ((N i : ℝ) ^ α))).trans e,
+      fun k => he (Fin.castLEEmb (Nat.floor_le_ceil ((N i : ℝ) ^ α)) k)⟩, hτ⟩
+  · have heq : Real.exp (-b * logN i) * Real.exp (b / 2 * logN i) =
+        Real.exp (-(b / 2) * logN i) := by rw [← Real.exp_add]; congr 1; ring
+    have hlast : w + w + w + w ≤ Real.exp (-(b / 2) * logN i) := by
+      calc
+        _ = w * 4 := by ring
+        _ ≤ _ := (mul_le_mul_of_nonneg_left hab (Real.exp_nonneg _)).trans_eq heq
+    have hw : 0 ≤ w := Real.exp_nonneg _
+    rw [← ENNReal.ofReal_add hw hw, ← ENNReal.ofReal_add (add_nonneg hw hw) hw,
+      ← ENNReal.ofReal_add (add_nonneg (add_nonneg hw hw) hw) hw]
+    exact ENNReal.ofReal_le_ofReal hlast
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas
