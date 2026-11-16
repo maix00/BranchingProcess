@@ -68,9 +68,9 @@ lemma eventually_measure_actualEndpoint_ge_le_badEntrance_add_polynomial
     (hgrowth : Measurable growth.select)
     (upper duration : ℕ → ℕ) (c : ℕ → ℝ) :
     let lower := fun n => Nat.floor ((N n : ℝ) ^ a)
-    let τ := fun n => Completion.time R growth hR hgrowth (lower n) (upper n) (duration n) r
+    let τ := fun n => Completion.time R growth hR hgrowth ⌈(N n : ℝ) ^ a⌉₊ (upper n) (duration n) r
     let hτ := fun n => Completion.time_isStoppingTime R growth hR hgrowth
-      (lower n) (upper n) (duration n) r
+      ⌈(N n : ℝ) ^ a⌉₊ (upper n) (duration n) r
     let trials := fun n => SelectedPath.Population.leftBRWFamily_finiteSlices R growth
       hR hgrowth (upper n) (duration n) r
     let installed := fun n => RootIndexed.stoppedRankInstalledTrajectoryField (N n) {r}

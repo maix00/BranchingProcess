@@ -25,15 +25,15 @@ observable success event for each enabled growth-trial candidate.
 
 ## Public declarations
 
-At a horizon $d$ with $2x\le\rho^d$, the uniform positive bound applies
+At a horizon $d$ with $\rho x\le\rho^d$, the uniform positive bound applies
 to an integer target $1\le q\le\lceil x\rceil$ and a cap of $2^d$.
 
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.exists_success_probability_lower_bound` states that under
   nonempty supercritical offspring assumptions there is a finite cutoff
   `M` for which the selector retaining the first two slots with potential
   at most $M$ has mean $\rho>1$, and the path selector has positive split
-  probability at the same cutoff. If $2x\le\rho^d$, the probability of full
-  success is at least $1/(4K(\rho,v))$ for a positive integer target up to
+  probability at the same cutoff. If $\rho x\le\rho^d$, the probability of full
+  success is at least $((\rho-1)/\rho)^2/K(\rho,v)$ for a positive integer target up to
   $\lceil x\rceil$ and a cap of $2^d$.
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.successEvent_of_binary_horizon_ae` states that
   an enabled split candidate satisfies the full trial event almost surely when
@@ -81,10 +81,10 @@ theorem exists_success_probability_lower_bound
       let law := Selection.Stepwise.binaryOffspringLaw ⟨μ, inferInstance⟩ S hS
       let ρ := finiteSlotOffspringMeanReal law
       let variance := finiteSlotOffspringSecondMomentReal law - ρ ^ 2
-      let p₁ := 1 / (4 * normalizedSecondMomentConstant ρ variance)
+      let p₁ := ((ρ - 1) / ρ) ^ 2 / normalizedSecondMomentConstant ρ variance
       1 < ρ ∧ 0 < μ (splitBy (firstOrBelowPotential B realPotential (M : ℝ))) ∧
         0 < p₁ ∧ ∀ (duration lower : ℕ) (threshold : ℝ),
-          0 ≤ threshold → 2 * threshold ≤ ρ ^ duration →
+          0 ≤ threshold → ρ * threshold ≤ ρ ^ duration →
           0 < lower → lower ≤ ⌈threshold⌉₊ →
         (offspringFieldLaw μ).real
           {ω | growthTrialSuccess S lower (2 ^ duration) duration ω} ≥ p₁ := by

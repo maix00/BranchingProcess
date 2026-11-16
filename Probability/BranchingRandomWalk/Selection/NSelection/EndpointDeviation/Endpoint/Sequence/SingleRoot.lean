@@ -106,10 +106,10 @@ theorem eventually_singleRootEndpointMinimum_ge_le_polynomial
     hN.eventually_ge_atTop 1] with n hn ht' habsorb hlogn hNn
   let logN := Real.log (N n : ℝ)
   let x := ζ * logN
-  let m := ⌊(N n : ℝ) ^ a⌋₊
-  let τ := SelectedPath.Completion.time R growth hR hgrowth m (upper n) (duration n) (0 : ℕ)
+  let lower := ⌈(N n : ℝ) ^ a⌉₊
+  let τ := SelectedPath.Completion.time R growth hR hgrowth lower (upper n) (duration n) (0 : ℕ)
   let hτ := SelectedPath.Completion.time_isStoppingTime R growth hR hgrowth
-    m (upper n) (duration n) (0 : ℕ)
+    lower (upper n) (duration n) (0 : ℕ)
   let trials := SelectedPath.Population.leftBRWFamily_finiteSlices R growth hR hgrowth
     (upper n) (duration n) (0 : ℕ)
   let installed := RootIndexed.stoppedRankInstalledTrajectoryField (N n) ({0} : Finset ℕ)

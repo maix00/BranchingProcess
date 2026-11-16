@@ -15,13 +15,11 @@ import Mathlib.Algebra.Order.Floor.Semiring
 
 ## Internal proof declarations
 
-* `trialDuration_le` gives $d_N\le\alpha\log N/\log\rho$ for the
-  original duration $d_N=\lfloor\alpha\log N/\log\rho\rfloor-1$.
-* `eventually_two_rpow_le_pow_trialDuration`: if $\beta<\alpha$, then
-  $2N^\beta\le\rho^{d_N}$ eventually.
-* `logarithmicEntrance_scales`: the logarithmic clock and split count
-  bounds give the population and displacement budgets for a duration below
-  $\alpha\log N/\log\rho$. The total entrance horizon is $o(\log^3N)$.
+* `trialDuration_le` gives $d_N\le\alpha\log N/\log\rho+2$ for
+  $d_N=\lfloor\alpha\log N/\log\rho\rfloor+2$.
+* `rpow_mul_mean_le_pow_trialDuration` gives $\rho N^\alpha\le\rho^{d_N}$.
+* `logarithmicEntrance_scales` bounds the clock, capacity and displacement
+  for a duration below $\alpha\log N/\log\rho+2$. The entrance horizon is $o(\log^3N)$.
 * `eventually_geometric_and_exponential_entrance_bound`: when $0<q<1$,
   the clock error and the first-$K$ failure terms are bounded by a common
   polynomial rate. The weighted trial-root term
@@ -58,45 +56,34 @@ private lemma eventually_affine_le_exp_mul (A B b : ℝ) (hb : 0 < b) :
   filter_upwards [hlim (gt_mem_nhds (show (0 : ℝ) < 1 by norm_num))] with x hx
   exact ((div_lt_iff₀ (Real.exp_pos _)).mp hx).le.trans_eq (one_mul _)
 
-/-- The original floor duration uses no more than its real logarithmic bound. -/
+/-- The growth trial uses $d_N=\ell-1$ generations, with a bounded rounding term. -/
 lemma trialDuration_le {ρ : ℝ} (hρ : 1 < ρ) {α : ℝ} (ha : 0 ≤ α) (N : ℕ) :
-    ((⌊α * Real.log (N : ℝ) / Real.log ρ⌋₊ - 1 : ℕ) : ℝ) ≤
-      α * Real.log (N : ℝ) / Real.log ρ := by
-  have hnonneg := div_nonneg (mul_nonneg ha (Real.log_natCast_nonneg N)) (Real.log_pos hρ).le
-  exact (Nat.cast_le.mpr (Nat.sub_le _ _)).trans (Nat.floor_le hnonneg)
+    ((⌊α * Real.log (N : ℝ) / Real.log ρ⌋₊ + 2 : ℕ) : ℝ) ≤
+      α * Real.log (N : ℝ) / Real.log ρ + 2 := by
+  rw [Nat.cast_add]
+  exact add_le_add_left (Nat.floor_le
+    (div_nonneg (mul_nonneg ha (Real.log_natCast_nonneg N)) (Real.log_pos hρ).le)) _
 
-/-- With the original duration, any smaller exponent gives a target below
-half the mean for all sufficiently large populations. -/
-lemma eventually_two_rpow_le_pow_trialDuration
-    {ρ α β : ℝ} (hρ : 1 < ρ) (hβα : β < α)
-    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) :
-    ∀ᶠ i in atTop, 2 * (N i : ℝ) ^ β ≤ ρ ^ (⌊α * Real.log (N i : ℝ) / Real.log ρ⌋₊ - 1) := by
+/-- The mean at the corrected duration exceeds the target by a factor of at least $\rho$. -/
+lemma rpow_mul_mean_le_pow_trialDuration {ρ : ℝ} (hρ : 1 < ρ)
+    (N : ℕ) (α : ℝ) (hN : 1 ≤ N) :
+    ρ * (N : ℝ) ^ α ≤ ρ ^ (⌊α * Real.log (N : ℝ) / Real.log ρ⌋₊ + 2) := by
   have hρlog := Real.log_pos hρ
-  let d i := ⌊α * Real.log (N i : ℝ) / Real.log ρ⌋₊ - 1
-  have hlog : Tendsto (fun i => Real.log (N i : ℝ)) atTop atTop :=
-    Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop.comp hN)
-  have hgap : ∀ᶠ i in atTop,
-      Real.log 2 + 2 * Real.log ρ ≤ (α - β) * Real.log (N i : ℝ) :=
-    (hlog.const_mul_atTop (sub_pos.mpr hβα)).eventually_ge_atTop _
-  filter_upwards [hN.eventually_ge_atTop 1, hgap] with i hi hgi
-  let x := α * Real.log (N i : ℝ) / Real.log ρ
-  have hNpos : 0 < (N i : ℝ) := by exact_mod_cast Nat.zero_lt_of_lt hi
+  have hρpos : 0 < ρ := by positivity
+  have hNpos : 0 < (N : ℝ) := by exact_mod_cast Nat.zero_lt_of_lt hN
+  let x := α * Real.log (N : ℝ) / Real.log ρ
+  let d := ⌊x⌋₊ + 2
   have hfloor : x < (⌊x⌋₊ : ℝ) + 1 := Nat.lt_floor_add_one _
-  have hfd : (⌊x⌋₊ : ℝ) ≤ (d i : ℝ) + 1 := by
-    have hn : ⌊x⌋₊ ≤ d i + 1 := by dsimp [d, x]; omega
-    exact_mod_cast hn
-  have hduration : α * Real.log (N i : ℝ) < ((d i : ℝ) + 2) * Real.log ρ := by
-    have hx : x < (d i : ℝ) + 2 := by linarith
-    exact (div_lt_iff₀ hρlog).mp hx
-  have hmean : 2 * (N i : ℝ) ^ β ≤ ρ ^ d i := by
-    rw [← Real.exp_log (by norm_num : (0 : ℝ) < 2),
-      Real.rpow_def_of_pos hNpos, ← Real.exp_add]
-    have hpow : ρ ^ d i = Real.exp ((d i : ℝ) * Real.log ρ) := by
-      rw [Real.exp_nat_mul, Real.exp_log (by linarith : 0 < ρ)]
-    rw [hpow]
-    apply Real.exp_le_exp.mpr
-    nlinarith only [hduration, hgi]
-  exact hmean
+  have hbound : α * Real.log (N : ℝ) < ((⌊x⌋₊ : ℝ) + 1) * Real.log ρ :=
+    (div_lt_iff₀ hρlog).mp hfloor
+  have heq : ρ ^ d = Real.exp ((d : ℝ) * Real.log ρ) := by
+    rw [Real.exp_nat_mul, Real.exp_log hρpos]
+  change ρ * (N : ℝ) ^ α ≤ ρ ^ d
+  rw [heq, ← Real.exp_log hρpos, Real.rpow_def_of_pos hNpos, ← Real.exp_add]
+  apply Real.exp_le_exp.mpr
+  rw [Real.log_exp]
+  simp only [d, Nat.cast_add, Nat.cast_ofNat]
+  linarith
 
 lemma logarithmicEntrance_scales
     {ρ p α δ M v η : ℝ}
@@ -107,7 +94,7 @@ lemma logarithmicEntrance_scales
     {N H : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t : ℝ} (ht : 0 < t)
     (hH : Tendsto (fun n => (H n : ℝ) / Real.log (N n : ℝ) ^ 3) atTop (𝓝 t))
     (d : ℕ → ℕ) (hduration : ∀ i,
-      (d i : ℝ) ≤ α * Real.log (N i : ℝ) / Real.log ρ) :
+      (d i : ℝ) ≤ α * Real.log (N i : ℝ) / Real.log ρ + 2) :
     let L := fun i => Real.log (N i : ℝ)
     let K := fun i => ⌊δ * L i⌋₊
     let n := fun i => ⌈(4 * δ / p) * L i⌉₊
@@ -128,19 +115,21 @@ lemma logarithmicEntrance_scales
   let C := 4 * δ / p
   have hA : 0 < A := div_pos ha hρlog
   have hC : 0 < C := div_pos (by positivity) hp
-  have hduration' (i : ℕ) : (d i : ℝ) ≤ A * L i := by
+  have hduration' (i : ℕ) : (d i : ℝ) ≤ A * L i + 2 := by
     simpa [A, div_eq_mul_inv, mul_right_comm] using hduration i
   have hclock (i : ℕ) (hi : 0 ≤ L i) : (n i : ℝ) ≤ C * L i + 1 :=
     (Nat.ceil_lt_add_one (mul_nonneg hC.le hi)).le
   have hA' : A < 1 / (2 * Real.log 2) := hsmall
   have hcapEventually : ∀ᶠ i in atTop, 1 + (d i + 1) * (2 * 2 ^ d i) ≤ N i := by
-    filter_upwards [hL.eventually_ge_atTop 0,
-      hL.eventually (eventually_affine_le_exp_mul (4 * A) 4 (1 / 2) (by norm_num)),
+    filter_upwards [hL.eventually_ge_atTop (2 / (1 / (2 * Real.log 2) - A)),
+      hL.eventually (eventually_affine_le_exp_mul (4 * A) 12 (1 / 2) (by norm_num)),
       hN.eventually_ge_atTop 2] with i hlog hfactor hN2
     have hd := hduration' i
     have hsmall' : (d i : ℝ) ≤ L i / (2 * Real.log 2) := by
-      exact hd.trans (by simpa only [one_div, div_eq_mul_inv, one_mul, mul_comm] using
-        mul_le_mul_of_nonneg_right hA'.le hlog)
+      have hh := (div_le_iff₀ (sub_pos.mpr hA')).mp hlog
+      rw [mul_sub, div_eq_mul_inv, one_mul] at hh
+      rw [div_eq_mul_inv]
+      linarith [mul_comm (L i) A]
     have hpow : (2 : ℝ) ^ d i ≤ Real.exp (L i / 2) := by
       calc
         (2 : ℝ) ^ d i = Real.exp ((d i : ℝ) * Real.log 2) := by
@@ -167,7 +156,8 @@ lemma logarithmicEntrance_scales
       1 + (d i + 1) * (2 * 2 ^ d i) ≤ N i ∧
       v * (δ * L i) + (K i : ℝ) * M + M * d i ≤ η * L i := by
     filter_upwards [hL.eventually_ge_atTop 1, hL.eventually_ge_atTop (2 / δ),
-      hcapEventually] with i hlog hlogK hcap
+      hL.eventually_ge_atTop (2 * M / (η - ((v + M) * δ + M * A))),
+      hcapEventually] with i hlog hlogK hlogc hcap
     have hLpos : 0 < L i := by linarith
     have hnpos : 0 < n i := Nat.ceil_pos.mpr (mul_pos hC hLpos)
     have hnlo : C * L i ≤ (n i : ℝ) := Nat.le_ceil _
@@ -185,18 +175,17 @@ lemma logarithmicEntrance_scales
     refine ⟨hnpos, hnK, hKlo, hKhi, hcap, ?_⟩
     have hdle := mul_le_mul_of_nonneg_left (hduration' i) hM
     have hKle := mul_le_mul_of_nonneg_right hKhi hM
-    exact (by nlinarith only [hdle, hKle] :
-      v * (δ * L i) + (K i : ℝ) * M + M * d i ≤ ((v + M) * δ + M * A) * L i).trans
-      (mul_le_mul_of_nonneg_right hbudget.le hLpos.le)
+    have hc := (div_le_iff₀ (sub_pos.mpr hbudget)).mp hlogc
+    nlinarith only [hdle, hKle, hc]
   have hT : Tendsto (fun i => (T i : ℝ) / L i ^ 3) atTop (𝓝 0) := by
-    have hzero : Tendsto (fun i => (C + A + 1) / L i ^ 2) atTop (𝓝 0) :=
+    have hzero : Tendsto (fun i => (C + A + 3) / L i ^ 2) atTop (𝓝 0) :=
       tendsto_const_nhds.div_atTop ((tendsto_pow_atTop (by norm_num : (2 : ℕ) ≠ 0)).comp hL)
     apply squeeze_zero' _ _ hzero
     · exact Eventually.of_forall fun _ => by
         positivity
     · filter_upwards [hL.eventually_ge_atTop 1] with i hi
       have hpos : 0 < L i := by linarith
-      have hupper : (T i : ℝ) ≤ (C + A + 1) * L i := by
+      have hupper : (T i : ℝ) ≤ (C + A + 3) * L i := by
         change ((n i + d i : ℕ) : ℝ) ≤ _
         push_cast
         nlinarith [hclock i hpos.le, hduration' i]
