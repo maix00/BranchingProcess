@@ -9,12 +9,13 @@ module
 import Probability.BranchingRandomWalk.Assumptions.Moments
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Coupling.SampledMark
 import Probability.Sequence.IID.GeometricReward.ExponentialTransform
+import Probability.Sequence.IID.GeometricReward.FirstMoment
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Lemmas.RecursiveClock
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitTime.Finite
 import Probability.BranchingRandomWalk.Spine.GenerationBranching.Decomposition
 
 /-!
-# Exponential moment of the displacement before the first split
+# Moments of the displacement before the first split
 
 ## Internal proof declarations
 
@@ -24,6 +25,9 @@ import Probability.BranchingRandomWalk.Spine.GenerationBranching.Decomposition
   the potential of the current split's parent relative to the cycle origin.
 * `splitChildPosition_le_splitWaitingDisplacement_add` bounds a split
   child's potential by the parent's potential plus the split cutoff $M$.
+* `splitWaitingDisplacement_firstMoment`: with $p=P(B)>0$,
+  $mathbb E[X_1]=mathbb E[Ymathbf1_{B^c}]/p$ and
+  $mathbb E[(X_1)_+]lemathbb E[Y_+]/p$ under the first moment.
 * `exists_splitWaitingDisplacement_exponentialMoment` identifies its
   exponential moment under the pre-sampled tree law.
 
@@ -417,5 +421,152 @@ lemma splitChildPosition_le_splitWaitingDisplacement_add
     · change Spine.pathPotential realPotential ω (selectedPopulationFirstSplitRoots R ω 1) ≤ _
       rw [hroot₁]
       exact hchild _ (hcut p hs).2
+
+private lemma rewardSum_eq_before_firstSplit
+    (R : Step.FiniteSelection ℕ ℝ) (ω : RootIndexed.StepField PUnit.{1} ℕ ℝ)
+    (n : ℕ) (hn : splitEvent R PUnit.unit.{1} n ω)
+    (hbefore : ∀ i < n, ¬ splitEvent R PUnit.unit.{1} i ω)
+    (Y : Step ℕ ℝ → ℝ) :
+    (∑' i, geometricPrefixRewardTerm (Coupling.step R PUnit.unit.{1}) (splitBy R)
+      (fun ξ => Y ξ * (splitBy R)ᶜ.indicator (fun _ => (1 : ℝ)) ξ) i ω) =
+      ∑ i ∈ Finset.range n, Y (Coupling.step R PUnit.unit.{1} i ω) := by
+  classical
+  let X := Coupling.step R PUnit.unit.{1}
+  let B := splitBy R
+  let f i := geometricPrefixRewardTerm X B (fun ξ =>
+    Y ξ * Bᶜ.indicator (fun _ => (1 : ℝ)) ξ) i ω
+  change (∑' i, f i) = _
+  rw [tsum_eq_sum (s := Finset.range n)]
+  · apply Finset.sum_congr rfl
+    intro i hi
+    have hi' := Finset.mem_range.mp hi
+    have hprefix : ω ∈ geometricFailurePrefix X B i := by
+      simp only [geometricFailurePrefix, Set.mem_iInter, Set.mem_preimage, Finset.mem_range]
+      exact fun j hj => hbefore j (hj.trans hi')
+    have hcurrent : X i ω ∈ Bᶜ := hbefore i hi'
+    simp [f, geometricPrefixRewardTerm, hprefix, hcurrent]
+    rfl
+  · intro i hi
+    have hni : n ≤ i := Nat.le_of_not_gt (Finset.mem_range.not.mp hi)
+    rcases hni.eq_or_lt with rfl | hlt
+    · have hcurrent : X n ω ∉ Bᶜ := fun h => h hn
+      simp [f, geometricPrefixRewardTerm, hcurrent]
+    · have hprefix : ω ∉ geometricFailurePrefix X B i := by
+        simp only [geometricFailurePrefix, Set.mem_iInter, Set.mem_preimage, Finset.mem_range]
+        exact fun h => h n hlt hn
+      simp [f, geometricPrefixRewardTerm, hprefix]
+
+/-- The stopped displacement $X_1$ counts only failed marks before the
+split. Its positive-part expectation uses the same-trial failure indicator,
+as in Wang Yiyang, Theorem 1.2. -/
+lemma splitWaitingDisplacement_firstMoment
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (L : StepLaw ι ℕ X) [IsProbabilityMeasure L.raw]
+    (hboundary : HasBoundaryNormalization L.potential L.raw) (hfirst : HasLeftmostFirstMoment L)
+    (R : Step.FiniteSelection ℕ ℝ) (hR : Measurable R.select)
+    (hne : L.sortedPotentialImage {ξ | (R ξ).Nonempty} = 1)
+    (hp : 0 < L.sortedPotentialImage (splitBy R)) :
+    let μ := L.sortedPotentialImage
+    let ν := offspringFieldLaw μ
+    let p := μ.real (splitBy R)
+    Integrable (splitWaitingDisplacement R) ν ∧
+      (∫ ω, splitWaitingDisplacement R ω ∂ν) =
+        (∫ ξ in (splitBy R)ᶜ, value' ξ 0 ∂μ) / p ∧
+      (∫ ω, max (splitWaitingDisplacement R ω) 0 ∂ν) ≤
+        (∫ ξ, max (value' ξ 0) 0 ∂μ) / p := by
+  intro μ ν p
+  let P := RootIndexed.stepFieldLaw (Root := PUnit.{1}) μ
+  let eval : RootIndexed.StepField PUnit.{1} ℕ ℝ → Mark ℕ (Step ℕ ℝ) := fun ω => ω PUnit.unit
+  have heval : Measurable eval := measurable_pi_apply _
+  have hlaw : P.map eval = ν := RootIndexed.stepFieldLaw_root_marginal μ _
+  let B := splitBy R
+  let C := Coupling.step R PUnit.unit.{1}
+  let Y (ξ : Step ℕ ℝ) := value' ξ 0
+  let reward (g : Step ℕ ℝ → ℝ) (ξ : Step ℕ ℝ) := Bᶜ.indicator g ξ
+  let total (g : Step ℕ ℝ → ℝ) (ω : RootIndexed.StepField PUnit.{1} ℕ ℝ) :=
+    ∑' i, geometricPrefixRewardTerm C B (reward g) i ω
+  have hB := splitBy_measurable R hR
+  have hp' : 0 < p := ENNReal.toReal_pos hp.ne' (measure_ne_top _ _)
+  have hY : Measurable Y := value'_measurable 0
+  have hYi : Integrable Y μ :=
+    (integrable_norm_iff hY.aestronglyMeasurable).mp (by
+      simpa only [Y, Real.norm_eq_abs] using
+        L.integrable_sortedPotentialImage_firstSlot_abs hboundary hfirst)
+  have htotal (g : Step ℕ ℝ → ℝ) (hg : Measurable g) (hgi : Integrable g μ) :
+      Integrable (total g) P ∧
+        (∫ ω, total g ω ∂P) = (∫ ξ in Bᶜ, g ξ ∂μ) / p := by
+    have hmeas := hg.indicator hB.compl
+    have hint := hgi.indicator hB.compl
+    refine ⟨iidGeometricReward_integrable P μ C (Coupling.step_measurable R hR _)
+      (Coupling.step_iIndepFun μ R hR _) (Coupling.step_law μ R hR _) B hB (reward g)
+      hmeas hint p hp' rfl, ?_⟩
+    rw [← integral_indicator hB.compl]
+    exact iidGeometricReward_integral P μ C (Coupling.step_measurable R hR _)
+      (Coupling.step_iIndepFun μ R hR _) (Coupling.step_law μ R hR _) B hB (reward g)
+      hmeas hint p hp' rfl
+  have hF := (splitWaitingDisplacement_measurable R hR).mono
+    (selectedPopulationSplitCompletion_isStoppingTime R hR).measurableSpace_le le_rfl
+  have hsplit := selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
+    μ R hR hne hB hp
+  have hfinite : ∀ᵐ ω ∂P, selectedPopulationSplitCompletion R (eval ω) ≠ ⊤ :=
+    ae_of_ae_map heval.aemeasurable (by rwa [hlaw])
+  have hs : MeasurableSet {ξ | (R ξ).Nonempty} := by
+    have hm : Measurable (fun ξ => (R ξ).card) :=
+      (measurable_of_countable fun s : Finset ℕ => s.card).comp hR
+    rw [show {ξ | (R ξ).Nonempty} = (fun ξ => (R ξ).card) ⁻¹' Set.Ioi 0 by
+      ext ξ
+      exact Finset.card_pos.symm]
+    exact hm measurableSet_Ioi
+  have hall : ∀ᵐ ω ∂P, ∀ u, (R (eval ω u)).Nonempty := by
+    apply ae_all_iff.2
+    intro u
+    have hmeas : Measurable (fun ω => eval ω u) := (measurable_pi_apply u).comp heval
+    apply (ae_mem_iff_measure_eq (hmeas hs).nullMeasurableSet).2
+    rw [← Measure.map_apply hmeas hs, RootIndexed.stepFieldLaw_coordinate_marginal μ _ u, hne]
+    exact measure_univ.symm
+  have hsum : ∀ᵐ ω ∂P, ∀ g : Step ℕ ℝ → ℝ,
+      total g ω = ∑ i ∈ Finset.range ((selectedPopulationSplitCompletion R (eval ω)).untopD 0 - 1),
+        g (C i ω) := by
+    filter_upwards [hfinite, hall] with ω hω hmarks
+    obtain ⟨j, hj⟩ := WithTop.ne_top_iff_exists.mp hω
+    cases j with
+    | zero => exact (selectedPopulationSplitCompletion_ne_zero R _ hj.symm).elim
+    | succ n =>
+      have hn := selectedPopulationRawSplitTime_eq_of_completion_eq R _ n hj.symm
+      obtain ⟨hb, hbefore⟩ := first_sampled_split_of_rawSplitTime_eq R PUnit.unit.{1} ω n hmarks hn
+      intro g
+      have heq : reward g = fun ξ => g ξ * Bᶜ.indicator (fun _ => (1 : ℝ)) ξ := by
+        funext ξ
+        by_cases hξ : ξ ∈ Bᶜ <;> simp [reward, hξ]
+      rw [show total g ω = ∑' i, geometricPrefixRewardTerm C B (reward g) i ω from rfl,
+        heq, rewardSum_eq_before_firstSplit R ω n hb hbefore g, ← hj]
+      change (∑ i ∈ Finset.range n, g (C i ω)) =
+        ∑ i ∈ Finset.range ((↑(n + 1) : WithTop ℕ).untopD 0 - 1), g (C i ω)
+      change (∑ i ∈ Finset.range n, g (C i ω)) =
+        ∑ i ∈ Finset.range (n + 1 - 1), g (C i ω)
+      rw [Nat.add_sub_cancel]
+  have heq : (fun ω => splitWaitingDisplacement R (eval ω)) =ᵐ[P] total Y := by
+    filter_upwards [hsum] with ω hω
+    exact (hω Y).symm
+  let Ypos := fun ξ => max (Y ξ) 0
+  have hposInt : Integrable Ypos μ := hYi.real_toNNReal
+  have hbound : ∀ᵐ ω ∂P, max (splitWaitingDisplacement R (eval ω)) 0 ≤ total Ypos ω := by
+    filter_upwards [hsum, heq] with ω hω hw
+    rw [hw, hω Y, hω Ypos, max_le_iff]
+    exact ⟨Finset.sum_le_sum fun i _ => le_max_left _ _,
+      Finset.sum_nonneg fun i _ => le_max_right _ _⟩
+  obtain ⟨hint, hformula⟩ := htotal Y hY hYi
+  obtain ⟨hpos, hposFormula⟩ := htotal Ypos (hY.max measurable_const) hposInt
+  have hintcomp := hint.congr heq.symm
+  have hcycle : Integrable (splitWaitingDisplacement R) ν := by
+    rw [← hlaw]
+    exact (integrable_map_measure hF.aestronglyMeasurable heval.aemeasurable).2 hintcomp
+  refine ⟨hcycle, ?_, ?_⟩
+  · rw [← hlaw, integral_map heval.aemeasurable hF.aestronglyMeasurable,
+      integral_congr_ae heq, hformula]
+  · rw [← hlaw, integral_map heval.aemeasurable (hF.max measurable_const).aestronglyMeasurable]
+    exact (integral_mono_ae hintcomp.real_toNNReal hpos hbound).trans
+      (hposFormula.trans_le (div_le_div_of_nonneg_right
+        (setIntegral_le_integral hposInt (Eventually.of_forall fun _ => le_max_right _ _)) hp'.le))
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas

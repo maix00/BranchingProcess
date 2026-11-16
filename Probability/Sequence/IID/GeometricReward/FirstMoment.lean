@@ -23,6 +23,8 @@ import all Probability.Sequence.IID.GeometricReward.Lemmas.FailurePrefix
 
 ## Public declarations
 
+- `iidGeometricReward_integrable` proves integrability of the reward sum below
+  when the individual reward is integrable and $p>0$.
 - `iidGeometricReward_integral` gives the expected sum of a general reward over
   IID trials up to and including the first successful mark.
 - `iidGeometricFailurePositiveReward_integral` gives the exact formula for a
@@ -55,7 +57,7 @@ namespace ProbabilityTheory
 
 variable {Ω α : Type*} [MeasurableSpace Ω] [MeasurableSpace α]
 
-theorem iidGeometricReward_integral
+private theorem iidGeometricReward_terms_summable
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     (ν : Measure α) [IsProbabilityMeasure ν]
     (X : ℕ → Ω → α) (hX : ∀ i, Measurable (X i))
@@ -63,8 +65,8 @@ theorem iidGeometricReward_integral
     (B : Set α) (hB : MeasurableSet B)
     (R : α → ℝ) (hR : Measurable R) (hRi : Integrable R ν)
     (p : ℝ) (hp : 0 < p) (hprob : ν.real B = p) :
-    ∫ ω, ∑' n, geometricPrefixRewardTerm X B R n ω ∂μ =
-      (∫ x, R x ∂ν) / p := by
+    (∀ n, Integrable (geometricPrefixRewardTerm X B R n) μ) ∧
+      Summable (fun n => ∫ ω, |geometricPrefixRewardTerm X B R n ω| ∂μ) := by
   have hq : ν.real Bᶜ = 1 - p := by
     rw [← hprob, measureReal_compl hB, probReal_univ]
   have hq_nonneg : 0 ≤ ν.real Bᶜ := measureReal_nonneg
@@ -101,6 +103,72 @@ theorem iidGeometricReward_integral
       (show Integrable R (μ.map (X n)) by rw [hLaw n]; exact hRi).comp_measurable (hX n)
     have hind := indep_geometricFailurePrefix_current μ X hX hXi B hB R hR n
     exact hind.integrable_mul hRcomp hprefixInt
+  exact ⟨htermsInt, hsumNorm⟩
+
+theorem iidGeometricReward_integrable
+    (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (ν : Measure α) [IsProbabilityMeasure ν]
+    (X : ℕ → Ω → α) (hX : ∀ i, Measurable (X i))
+    (hXi : iIndepFun X μ) (hLaw : ∀ i, μ.map (X i) = ν)
+    (B : Set α) (hB : MeasurableSet B)
+    (R : α → ℝ) (hR : Measurable R) (hRi : Integrable R ν)
+    (p : ℝ) (hp : 0 < p) (hprob : ν.real B = p) :
+    Integrable (fun ω => ∑' n, geometricPrefixRewardTerm X B R n ω) μ := by
+  let f := geometricPrefixRewardTerm X B R
+  obtain ⟨hfi, hs⟩ :=
+    iidGeometricReward_terms_summable μ ν X hX hXi hLaw B hB R hR hRi p hp hprob
+  have hfin : (∑' n, ∫⁻ ω, ‖f n ω‖ₑ ∂μ) < ∞ := by
+    have heq (n : ℕ) : ∫⁻ ω, ‖f n ω‖ₑ ∂μ =
+        ‖∫ ω, ‖f n ω‖ ∂μ‖ₑ := by
+      change (∫⁻ ω, (↑‖f n ω‖₊ : ℝ≥0∞) ∂μ) = _
+      rw [lintegral_coe_eq_integral _ (hfi n).norm]
+      change ENNReal.ofReal (∫ ω, ‖f n ω‖ ∂μ) = ‖∫ ω, ‖f n ω‖ ∂μ‖ₑ
+      rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (integral_nonneg fun ω => norm_nonneg (f n ω))]
+    rw [funext heq]
+    apply lt_top_iff_ne_top.mpr
+    exact ENNReal.tsum_coe_ne_top_iff_summable.2 <| NNReal.summable_coe.1 (by
+      simpa only [f, coe_nnNorm, Real.norm_eq_abs] using hs.abs)
+  have hnorm (ω : Ω) : ‖∑' n, f n ω‖ₑ ≤ ∑' n, ‖f n ω‖ₑ := by
+    change (↑‖∑' n, f n ω‖₊ : ℝ≥0∞) ≤ ∑' n, (↑‖f n ω‖₊ : ℝ≥0∞)
+    by_cases h : Summable (fun n => ‖f n ω‖)
+    · have hs' : Summable (fun n => ‖f n ω‖₊) := NNReal.summable_coe.1 h
+      rw [← ENNReal.coe_tsum]
+      rw [ENNReal.coe_le_coe]
+      apply NNReal.coe_le_coe.mp
+      rw [NNReal.coe_tsum]
+      exact norm_tsum_le_tsum_norm h
+      exact hs'
+    · have heq : (∑' n, (↑‖f n ω‖₊ : ℝ≥0∞)) = ∞ := by
+        apply not_ne_iff.mp
+        intro h'
+        exact h (NNReal.summable_coe.2 (ENNReal.tsum_coe_ne_top_iff_summable.mp h'))
+      rw [heq]
+      exact le_top
+  have hm (n : ℕ) : Measurable (f n) :=
+    (hR.comp (hX n)).mul (measurable_const.indicator (measurableSet_geometricFailurePrefix hX hB n))
+  refine ⟨(Measurable.tsum hm).aestronglyMeasurable, ?_⟩
+  rw [hasFiniteIntegral_iff_eNorm]
+  exact lt_of_le_of_lt ((lintegral_mono hnorm).trans_eq
+    (lintegral_tsum (fun n => (hm n).eNorm.aemeasurable))) hfin
+
+theorem iidGeometricReward_integral
+    (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (ν : Measure α) [IsProbabilityMeasure ν]
+    (X : ℕ → Ω → α) (hX : ∀ i, Measurable (X i))
+    (hXi : iIndepFun X μ) (hLaw : ∀ i, μ.map (X i) = ν)
+    (B : Set α) (hB : MeasurableSet B)
+    (R : α → ℝ) (hR : Measurable R) (hRi : Integrable R ν)
+    (p : ℝ) (hp : 0 < p) (hprob : ν.real B = p) :
+    ∫ ω, ∑' n, geometricPrefixRewardTerm X B R n ω ∂μ =
+      (∫ x, R x ∂ν) / p := by
+  have hq : ν.real Bᶜ = 1 - p := by
+    rw [← hprob, measureReal_compl hB, probReal_univ]
+  have hq_nonneg : 0 ≤ ν.real Bᶜ := measureReal_nonneg
+  have hq_lt : ν.real Bᶜ < 1 := by
+    rw [hq]
+    linarith
+  obtain ⟨htermsInt, hsumNorm⟩ :=
+    iidGeometricReward_terms_summable μ ν X hX hXi hLaw B hB R hR hRi p hp hprob
   have hsum := integral_tsum_of_summable_integral_norm htermsInt hsumNorm
   rw [← hsum]
   rw [show (fun n => ∫ ω, geometricPrefixRewardTerm X B R n ω ∂μ) =
