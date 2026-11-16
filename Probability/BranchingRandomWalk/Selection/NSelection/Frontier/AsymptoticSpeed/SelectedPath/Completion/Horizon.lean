@@ -10,6 +10,7 @@ public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.Asym
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Coupling.Population
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Basic
 public import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Coupling
+public import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Stopping
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.EndpointHorizon.RootFamily
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.EndpointHorizon.Geometry
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.EndpointHorizon.FreshField
@@ -21,6 +22,11 @@ public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.
 
 ## Public declarations
 
+* `timePositionStoppedEntrance_jointLaw_on_finite` gives the product law
+  $\mathcal L_{\{\tau<\infty\}}(\tau,X,\Phi)=
+  \mathcal L_{\{\tau<\infty\}}(\tau,X)\otimes Q_m$, where $X$ is stopped
+  measurable and $\Phi$ consists of the $m$ actual descendant subtrees after
+  rank installation ends at $\tau$.
 * ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.timePositionFreshField_jointLaw_on_finite gives the
   product-law identity
   \[
@@ -190,6 +196,87 @@ theorem timePositionFreshField_jointLaw_on_finite
     Measure.ext_prod hrect
   refine ⟨hpair, ?_⟩
   simpa [τ, P, Q, E, endpointData, data, nSelectedBRWEndpointRankVector, nSelectedBRWEndpointRoots, fresh] using hjoint
+
+/-- The actual field that stops installing entrance marks at the successful
+completion has fresh descendant fields at the retained ranks, conditional on
+the stopped time and position data. -/
+theorem timePositionStoppedEntrance_jointLaw_on_finite
+    {Root α : Type*} (lower : ℕ) [Countable α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
+    [MeasurableSpace Root] [MeasurableSingletonClass Root]
+    [MeasurableSingletonClass (Root ⊕ Root)]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    [MeasurableSingletonClass (RootIndexed.TreeNode Root α)]
+    [Countable (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)]
+    [MeasurableSpace (RootIndexed.TreeNode (Fin lower) α)]
+    [MeasurableSingletonClass (RootIndexed.TreeNode (Fin lower) α)]
+    [Countable (RootIndexed.TreeNode (Fin lower) α)]
+    [DecidableEq (RootIndexed.TreeNode (Fin lower) α)]
+    [LinearOrder (RootIndexed.TreeNode (Fin lower) α)]
+    (hnodePath : Measurable
+      (fun p : RootIndexed.TreeNode Root α => p.2))
+    (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
+    (hnorm : HasBoundaryNormalization realPotential μ)
+    (N : ℕ) (initialPosition : Root → ℝ)
+    (R growth : Step.FiniteSelection α ℝ) (hR : Measurable R.select)
+    (hgrowth : Measurable growth.select) (upper duration : ℕ)
+    (hupper : 1 ≤ upper) (hbounded : growth.IsBoundedBy 2)
+    (hcapacity : 1 + (duration + 1) * (2 * upper) ≤ N) (r : Root)
+    (positions : RootIndexed.StepField (Root ⊕ Root) α ℝ →
+      Fin lower → ℝ)
+    (hpositions : Measurable[
+      (ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.time_isStoppingTime
+        R growth hR hgrowth lower upper duration r).measurableSpace]
+      positions) :
+    let τ := Completion.time R growth hR hgrowth lower upper duration r
+    let hτ := Completion.time_isStoppingTime R growth hR hgrowth lower upper duration r
+    let trials := SelectedPath.Population.leftBRWFamily_finiteSlices R growth hR hgrowth
+      upper duration r
+    let installed := RootIndexed.stoppedRankInstalledTrajectoryField N {r} initialPosition trials τ hτ
+    let P := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
+    let Q := RootIndexed.stepFieldLaw (Root := Fin lower) μ
+    let data := fun field => (τ field, positions field)
+    let roots := fun field (i : Fin lower) =>
+      (r, (endpointNodesByRank N initialPosition R growth hR hgrowth
+        lower upper duration r field i).2)
+    let outcome := fun field => (data field,
+      RootIndexed.subtreeStepFieldVector (roots field) (installed field))
+    AEMeasurable outcome (P.restrict {field | τ field ≠ ⊤}) ∧
+      (P.restrict {field | τ field ≠ ⊤}).map outcome =
+        ((P.restrict {field | τ field ≠ ⊤}).map data).prod Q := by
+  intro τ hτ trials installed P Q data roots outcome
+  obtain ⟨hrawMeas, hraw⟩ := timePositionFreshField_jointLaw_on_finite lower hnodePath μ hnorm
+    N initialPosition R growth hR hgrowth upper duration hupper hbounded hcapacity
+    r positions hpositions
+  let rightRoots := fun field (i : Fin lower) => ((Sum.inr r : Root ⊕ Root), (roots field i).2)
+  change (P.restrict {field | τ field ≠ ⊤}).map
+    (fun field => (data field, RootIndexed.subtreeStepFieldVector (rightRoots field) field)) =
+    ((P.restrict {field | τ field ≠ ⊤}).map data).prod Q at hraw
+  let rawOutcome := fun field => (data field, RootIndexed.subtreeStepFieldVector (rightRoots field) field)
+  have hrawMeas' : Measurable rawOutcome := hrawMeas
+  have hagree : outcome =ᵐ[P.restrict {field | τ field ≠ ⊤}] rawOutcome := by
+    have hfinite : MeasurableSet {field | τ field ≠ ⊤} :=
+      hτ.measurableSpace_le _ (hτ.measurable (measurableSet_singleton (⊤ : WithTop ℕ))).compl
+    apply (ae_restrict_iff' hfinite).2
+    have hroots := Lemmas.EndpointHorizon.endpointFreshRoots_eq_nSelectedBRW_ae μ hnorm
+      N initialPosition R growth hR hgrowth lower upper duration hupper hbounded hcapacity r
+    filter_upwards [hroots] with field hfield hfin
+    obtain ⟨n, hn⟩ := WithTop.ne_top_iff_exists.mp hfin
+    change (data field, RootIndexed.subtreeStepFieldVector (roots field) (installed field)) =
+      (data field, RootIndexed.subtreeStepFieldVector (rightRoots field) field)
+    congr 1
+    funext i v
+    have hdepth := Lemmas.EndpointHorizon.endpointFreshRoots_depth N initialPosition R growth
+      hR hgrowth lower upper duration hupper r field n hn.symm i
+    rw [hfield hfin i] at hdepth
+    have hlen : n ≤ ((roots field i).2 ++ v).length := by
+      rw [List.length_append]
+      exact hdepth.ge.trans (Nat.le_add_right _ _)
+    exact RootIndexed.stoppedRankInstalledTrajectoryField_apply_of_le_length
+      N {r} initialPosition trials τ hτ field n hn.symm r _ hlen
+
+  exact ⟨hrawMeas'.aemeasurable.congr hagree.symm, (Measure.map_congr hagree).trans hraw⟩
 
 /-- Transfer any measurable continuation observable whose remaining horizon
 is read from the successful endpoint time.  For a deterministic terminal
