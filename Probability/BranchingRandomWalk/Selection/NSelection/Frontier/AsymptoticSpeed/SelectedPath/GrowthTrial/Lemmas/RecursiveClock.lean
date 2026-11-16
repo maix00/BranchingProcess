@@ -13,6 +13,10 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticS
 
 ## Internal proof declarations
 
+* `first_sampled_split_of_rawSplitTime_eq` identifies the population's raw split
+  index with the first split mark on the selected path.
+* `firstSplitRoots_eq_of_rawSplitTime_eq` identifies the two sibling addresses
+  at the first sampled split.
 * `mem_recursiveFailure_of_no_success`: if at least $K$ live splits occur
   before $n$ and their growth trials all fail, the root field belongs to the
   $K$-fold recursive failure event.
@@ -32,6 +36,103 @@ open Combinatorics.Branching.Step.FiniteSelection
 open Combinatorics.Branching.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath
 open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 
+private lemma population_eq_singleton_before_split
+    {Root α X : Type*} [LinearOrder α] [OrderBot α] [MeasurableSpace X]
+    (R : Step.FiniteSelection α X) (r : Root) (ω : RootIndexed.StepField Root α X)
+    (k : ℕ) (hne : ∀ u, (R (ω r u)).Nonempty)
+    (hearly : ∀ j < k, ¬ splitEvent R r j ω) :
+    ∀ j ≤ k, Selection.Stepwise.population R j (ω r) = {selectedPath R r j ω} := by
+  classical
+  intro j
+  induction j with
+  | zero => intro; rfl
+  | succ j ih =>
+    intro hj
+    have hcard : (R (ω r (selectedPath R r j ω))).card = 1 := by
+      have hpos := Finset.card_pos.mpr (hne (selectedPath R r j ω))
+      have hnot := hearly j (by omega)
+      change ¬ 2 ≤ (R (ω r (selectedPath R r j ω))).card at hnot
+      omega
+    obtain ⟨i, hi⟩ := Finset.card_eq_one.mp hcard
+    have hmem := continuationSlot_mem_of_selected_nonempty R
+      (ω r (selectedPath R r j ω)) (hne _)
+    rw [hi] at hmem
+    have hslot := Finset.mem_singleton.mp hmem
+    rw [Selection.Stepwise.population_succ, ih (by omega), selectedPath, hslot]
+    simp [Selection.Stepwise.grow, Selection.Stepwise.children, frontierMarks, hi, depth]
+
+private lemma rawSplitTime_eq_of_first_sampled_split
+    {Root α X : Type*} [LinearOrder α] [OrderBot α] [MeasurableSpace X]
+    (R : Step.FiniteSelection α X) (r : Root) (ω : RootIndexed.StepField Root α X)
+    (k : ℕ) (hne : ∀ u, (R (ω r u)).Nonempty)
+    (hs : splitEvent R r k ω) (hearly : ∀ j < k, ¬ splitEvent R r j ω) :
+    selectedPopulationRawSplitTime R (ω r) = k := by
+  classical
+  have hpop := population_eq_singleton_before_split R r ω k hne hearly
+  apply (firstDeclaredSuccess_eq_iff (selectedPopulationSplitDeclaration R) (ω r) k).2
+  constructor
+  · change 2 ≤ (Selection.Stepwise.population R (k + 1) (ω r)).card
+    rw [Selection.Stepwise.population_succ, hpop k le_rfl]
+    change 2 ≤ (R (ω r (selectedPath R r k ω))).card at hs
+    have hinj : Function.Injective (fun i : α => selectedPath R r k ω ++ [i]) := by
+      intro i j hij
+      exact List.singleton_injective (List.append_right_injective _ hij)
+    simp only [Selection.Stepwise.grow, Finset.singleton_biUnion, Selection.Stepwise.children,
+      frontierMarks, depth, ite_true]
+    calc
+      2 ≤ (R (ω r (selectedPath R r k ω))).card := hs
+      _ = _ := by
+        symm
+        convert! Finset.card_image_of_injective (R (ω r (selectedPath R r k ω))) hinj
+  · intro j hj
+    change ¬ 2 ≤ (Selection.Stepwise.population R (j + 1) (ω r)).card
+    rw [hpop _ (by omega)]
+    simp
+
+lemma first_sampled_split_of_rawSplitTime_eq
+    {Root α X : Type*} [LinearOrder α] [OrderBot α] [MeasurableSpace X]
+    (R : Step.FiniteSelection α X) (r : Root) (ω : RootIndexed.StepField Root α X)
+    (k : ℕ) (hne : ∀ u, (R (ω r u)).Nonempty)
+    (hraw : selectedPopulationRawSplitTime R (ω r) = k) :
+    splitEvent R r k ω ∧ ∀ j < k, ¬ splitEvent R r j ω := by
+  classical
+  have hdecl := (firstDeclaredSuccess_eq_iff (selectedPopulationSplitDeclaration R) (ω r) k).mp hraw
+  have hearly : ∀ j < k, ¬ splitEvent R r j ω := by
+    intro j hj hs
+    have hex : ∃ i, i < k ∧ splitEvent R r i ω := ⟨j, hj, hs⟩
+    let i := Nat.find hex
+    have hi := Nat.find_spec hex
+    have hmin (l : ℕ) (hl : l < i) (hs' : splitEvent R r l ω) : False :=
+      Nat.find_min hex hl ⟨hl.trans hi.1, hs'⟩
+    have heq := rawSplitTime_eq_of_first_sampled_split R r ω i hne hi.2 hmin
+    have : i = k := WithTop.coe_injective (heq.symm.trans hraw)
+    omega
+  refine ⟨?_, hearly⟩
+  by_contra hs
+  have hall (j : ℕ) (hj : j < k + 1) : ¬ splitEvent R r j ω := by
+    by_cases hjk : j < k
+    · exact hearly j hjk
+    · rwa [show j = k by omega]
+  have hpop := population_eq_singleton_before_split R r ω (k + 1) hne hall (k + 1) le_rfl
+  have hcard := hdecl.1
+  change 2 ≤ (Selection.Stepwise.population R (k + 1) (ω r)).card at hcard
+  rw [hpop] at hcard
+  simp at hcard
+
+lemma firstSplitRoots_eq_of_rawSplitTime_eq
+    {Root α X : Type*} [LinearOrder α] [OrderBot α] [MeasurableSpace X]
+    (R : Step.FiniteSelection α X) (r : Root) (ω : RootIndexed.StepField Root α X)
+    (k : ℕ) (hne : ∀ u, (R (ω r u)).Nonempty)
+    (hraw : selectedPopulationRawSplitTime R (ω r) = k) :
+    let p := selectedPath R r k ω
+    let ξ := ω r p
+    selectedPopulationFirstSplitRoots R (ω r) 0 = p ++ [firstSelectedSlot R ξ] ∧
+      selectedPopulationFirstSplitRoots R (ω r) 1 = p ++ [secondSelectedSlot R ξ] := by
+  classical
+  obtain ⟨_, hearly⟩ := first_sampled_split_of_rawSplitTime_eq R r ω k hne hraw
+  have hpop := population_eq_singleton_before_split R r ω k hne hearly
+  simp [selectedPopulationFirstSplitRoots, hraw, selectedChildrenAtFirstSplit, hpop k le_rfl]
+
 private lemma firstSplitSubtrees_eq
     {Root α X : Type*} [LinearOrder α] [OrderBot α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (r : Root) (ω : RootIndexed.StepField Root α X)
@@ -44,45 +145,8 @@ private lemma firstSplitSubtrees_eq
     selectedPopulationFirstSplitSubtrees R (ω r) 1 =
       continuationFieldAtSplit R r k ω PUnit.unit := by
   classical
-  have hpop : ∀ j ≤ k, Selection.Stepwise.population R j (ω r) =
-      {selectedPath R r j ω} := by
-    intro j
-    induction j with
-    | zero => intro; rfl
-    | succ j ih =>
-      intro hj
-      have hcard : (R (ω r (selectedPath R r j ω))).card = 1 := by
-        have hpos := Finset.card_pos.mpr (hne (selectedPath R r j ω))
-        have hnot := hearly j (by omega)
-        change ¬ 2 ≤ (R (ω r (selectedPath R r j ω))).card at hnot
-        omega
-      obtain ⟨i, hi⟩ := Finset.card_eq_one.mp hcard
-      have hmem := continuationSlot_mem_of_selected_nonempty R
-        (ω r (selectedPath R r j ω)) (hne _)
-      rw [hi] at hmem
-      have hslot := Finset.mem_singleton.mp hmem
-      rw [Selection.Stepwise.population_succ, ih (by omega), selectedPath, hslot]
-      simp [Selection.Stepwise.grow, Selection.Stepwise.children, frontierMarks, hi, depth]
-  have hraw : selectedPopulationRawSplitTime R (ω r) = k := by
-    apply (firstDeclaredSuccess_eq_iff (selectedPopulationSplitDeclaration R) (ω r) k).2
-    constructor
-    · change 2 ≤ (Selection.Stepwise.population R (k + 1) (ω r)).card
-      rw [Selection.Stepwise.population_succ, hpop k le_rfl]
-      change 2 ≤ (R (ω r (selectedPath R r k ω))).card at hs
-      have hinj : Function.Injective (fun i : α => selectedPath R r k ω ++ [i]) := by
-        intro i j hij
-        exact List.singleton_injective (List.append_right_injective _ hij)
-      simp only [Selection.Stepwise.grow, Finset.singleton_biUnion, Selection.Stepwise.children,
-        frontierMarks, depth, ite_true]
-      calc
-        2 ≤ (R (ω r (selectedPath R r k ω))).card := hs
-        _ = _ := by
-          symm
-          convert! Finset.card_image_of_injective (R (ω r (selectedPath R r k ω))) hinj
-    · intro j hj
-      change ¬ 2 ≤ (Selection.Stepwise.population R (j + 1) (ω r)).card
-      rw [hpop _ (by omega)]
-      simp
+  have hpop := population_eq_singleton_before_split R r ω k hne hearly
+  have hraw := rawSplitTime_eq_of_first_sampled_split R r ω k hne hs hearly
   simp [selectedPopulationFirstSplitSubtrees, selectedPopulationFirstSplitRoots, hraw,
     selectedChildrenAtFirstSplit, hpop k le_rfl, selectedSubtreeStepFieldVector,
     subtreeStepFieldVector]
