@@ -107,7 +107,7 @@ instance {ι κ X : Type*} [MeasurableSpace X] [LT κ] {φ : Potential X} :
         Combinatorics.Branching.Step κ X) :=
   ⟨MeasurableStepOrdering.ordered⟩
 
-/-- The optional first child selected by a deterministic measurable ordering
+/-- The optional first selected child selected by a deterministic measurable ordering
 rule. -/
 def MeasurableStepOrdering.first?
     {ι κ X : Type*} [MeasurableSpace X]

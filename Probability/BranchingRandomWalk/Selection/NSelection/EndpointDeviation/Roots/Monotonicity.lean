@@ -22,10 +22,10 @@ The declarations in
 - `measurableSet_RootIndexed_selectedPopulationEndpointBelow`: this event is
   measurable.
 - `RootIndexed.measure_selectedPopulationEndpointBelow_mono_roots`: if
-  `sourceRoots ⊆ targetRoots` and the boundary normalization holds, then the
+  `subsetBRWRoots ⊆ supersetBRWRoots` and the boundary normalization holds, then the
   root-indexed step-field law satisfies
-  $\nu(\operatorname{EndpointBelow}(\text{sourceRoots},n,x))\le
-  \nu(\operatorname{EndpointBelow}(\text{targetRoots},n,x))$.
+  $\nu(\operatorname{EndpointBelow}(\text{subsetBRWRoots},n,x))\le
+  \nu(\operatorname{EndpointBelow}(\text{supersetBRWRoots},n,x))$.
 
 The rank-installed coupling shows that adding initial roots can only increase
 the probability of finding a selected endpoint below a fixed threshold.  The
@@ -123,44 +123,44 @@ private lemma RootIndexed.selectedPopulationNestedRoots_endpointBelow_ae
     [LinearOrder (RootIndexed.TreeNode Root α)]
     (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
     (hnorm : HasBoundaryNormalization realPotential μ)
-    (N : ℕ) (sourceRoots targetRoots : Finset Root)
-    (hroots : sourceRoots ⊆ targetRoots)
+    (N : ℕ) (subsetBRWRoots supersetBRWRoots : Finset Root)
+    (hroots : subsetBRWRoots ⊆ supersetBRWRoots)
     (initialPosition : Root → ℝ) (n : ℕ) (x : ℝ) :
     ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ,
       (∃ p : RootIndexed.TreeNode Root α,
-        p ∈ RootIndexed.selectedPopulationTotalized N sourceRoots
+        p ∈ RootIndexed.selectedPopulationTotalized N subsetBRWRoots
           initialPosition id id n (RootIndexed.StepField.left field) ∧
         RootIndexed.position initialPosition id (RootIndexed.StepField.left field)
           p.1 p.2 ≤ x) →
       (∃ q : RootIndexed.TreeNode Root α,
-        q ∈ RootIndexed.restartedRealPositionMatchedPopulation N targetRoots
+        q ∈ RootIndexed.restartedRealPositionNSelectedBRWPopulation N supersetBRWRoots
           initialPosition id
-          (fun k field => RootIndexed.selectedPopulationTotalized N sourceRoots
+          (fun k field => RootIndexed.selectedPopulationTotalized N subsetBRWRoots
             initialPosition id id k (RootIndexed.StepField.left field)) n field ∧
         RootIndexed.position initialPosition id
-          (RootIndexed.restartedRealPositionMatchedField N targetRoots
+          (RootIndexed.restartedRealPositionNSelectedBRWField N supersetBRWRoots
             initialPosition id
-            (fun k field => RootIndexed.selectedPopulationTotalized N sourceRoots
+            (fun k field => RootIndexed.selectedPopulationTotalized N subsetBRWRoots
               initialPosition id id k (RootIndexed.StepField.left field)) n field)
           q.1 q.2 ≤ x) := by
   have hcoupled := RootIndexed.selectedPopulationNestedRootsCoupledInjection_ae
-    μ hnorm N sourceRoots targetRoots hroots initialPosition n
+    μ hnorm N subsetBRWRoots supersetBRWRoots hroots initialPosition n
   filter_upwards [hcoupled] with field hcoupled
   intro hbelow
   rcases hbelow with ⟨p, hp, hpx⟩
   rcases hcoupled with ⟨hmap⟩
   let q := hmap p
-  have hq : q ∈ RootIndexed.restartedRealPositionMatchedPopulation N targetRoots
+  have hq : q ∈ RootIndexed.restartedRealPositionNSelectedBRWPopulation N supersetBRWRoots
       initialPosition id
-      (fun k field => RootIndexed.selectedPopulationTotalized N sourceRoots
+      (fun k field => RootIndexed.selectedPopulationTotalized N subsetBRWRoots
         initialPosition id id k (RootIndexed.StepField.left field)) n field := by
     exact hmap.mapsTo (by simpa [Combinatorics.Branching.Selection.Coupling.populationCloud]
       using hp)
   have hposition :
       RootIndexed.position initialPosition id
-          (RootIndexed.restartedRealPositionMatchedField N targetRoots
+          (RootIndexed.restartedRealPositionNSelectedBRWField N supersetBRWRoots
             initialPosition id
-            (fun k field => RootIndexed.selectedPopulationTotalized N sourceRoots
+            (fun k field => RootIndexed.selectedPopulationTotalized N subsetBRWRoots
               initialPosition id id k (RootIndexed.StepField.left field)) n field)
           q.1 q.2 ≤
         RootIndexed.position initialPosition id (RootIndexed.StepField.left field)
@@ -169,7 +169,7 @@ private lemma RootIndexed.selectedPopulationNestedRoots_endpointBelow_ae
         (Combinatorics.Branching.Selection.Coupling.populationCloud id
           (RootIndexed.BranchingWalk.ofStepField initialPosition
             (RootIndexed.StepField.left field))
-          (RootIndexed.selectedPopulationTotalized N sourceRoots
+          (RootIndexed.selectedPopulationTotalized N subsetBRWRoots
             initialPosition id id n (RootIndexed.StepField.left field))).particles () := by
       simpa [Combinatorics.Branching.Selection.Coupling.populationCloud] using hp
     have hdom := hmap.dominates p hp'
@@ -188,14 +188,14 @@ theorem RootIndexed.measure_selectedPopulationEndpointBelow_mono_roots
     [LinearOrder (RootIndexed.TreeNode Root α)]
     (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
-    (N : ℕ) (sourceRoots targetRoots : Finset Root)
-    (hroots : sourceRoots ⊆ targetRoots)
+    (N : ℕ) (subsetBRWRoots supersetBRWRoots : Finset Root)
+    (hroots : subsetBRWRoots ⊆ supersetBRWRoots)
     (initialPosition : Root → ℝ) (n : ℕ) (threshold : ℝ) :
     (RootIndexed.stepFieldLaw (Root := Root) μ)
-        (RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α) N sourceRoots
+        (RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α) N subsetBRWRoots
           initialPosition n threshold) ≤
       (RootIndexed.stepFieldLaw (Root := Root) μ)
-        (RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α) N targetRoots
+        (RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α) N supersetBRWRoots
           initialPosition n threshold) := by
   classical
   letI : DecidableEq (RootIndexed.TreeNode Root α) :=
@@ -204,23 +204,23 @@ theorem RootIndexed.measure_selectedPopulationEndpointBelow_mono_roots
   let μRoot := RootIndexed.stepFieldLaw (Root := Root) μ
   let left : RootIndexed.StepField (Root ⊕ Root) α ℝ →
       RootIndexed.StepField Root α ℝ := RootIndexed.StepField.left
-  let source := RootIndexed.selectedPopulationTotalizedSource
+  let subsetNSelectedBRWPopulation := RootIndexed.nSelectedBRWPopulationTotalizedCausalPopulation
     (Root := Root) (α := α) (Mark := ℝ) (Position := ℝ) (Value := ℝ)
-    N sourceRoots initialPosition id measurable_id id measurable_id
-  let sourceFinite := RootIndexed.selectedPopulationTotalizedSource_finiteSlices
+    N subsetBRWRoots initialPosition id measurable_id id measurable_id
+  let subsetNSelectedBRWPopulationFiniteSlices := RootIndexed.nSelectedBRWPopulationTotalizedCausalPopulation_finiteSlices
     (Root := Root) (α := α) (Mark := ℝ) (Position := ℝ) (Value := ℝ)
-    N sourceRoots initialPosition id measurable_id id measurable_id
-  have hsourceEq : sourceFinite.toFinset =
-      (fun k field => RootIndexed.selectedPopulationTotalized N sourceRoots
+    N subsetBRWRoots initialPosition id measurable_id id measurable_id
+  have hsubsetNSelectedBRWPopulationEq : subsetNSelectedBRWPopulationFiniteSlices.toFinset =
+      (fun k field => RootIndexed.selectedPopulationTotalized N subsetBRWRoots
         initialPosition id id k (RootIndexed.StepField.left field)) := by
     funext k
     funext field
     apply Finset.coe_injective
     rw [RootIndexed.CausalPopulation.FiniteSlices.coe_toFinset]
-    change (source.toPopulation field).particles k = _
+    change (subsetNSelectedBRWPopulation.toPopulation field).particles k = _
     rfl
-  let targetField := RootIndexed.restartedRealPositionMatchedField N targetRoots
-    initialPosition id sourceFinite.toFinset n
+  let supersetNSelectedBRWField := RootIndexed.restartedRealPositionNSelectedBRWField N supersetBRWRoots
+    initialPosition id subsetNSelectedBRWPopulationFiniteSlices.toFinset n
   have hleftMeasurable : Measurable left := by
     change Measurable (RootIndexed.StepField.reindex Sum.inl)
     rw [measurable_pi_iff]
@@ -234,87 +234,87 @@ theorem RootIndexed.measure_selectedPopulationEndpointBelow_mono_roots
     exact RootIndexed.stepFieldLaw_reindex μ Sum.inl Sum.inl_injective
   have hleftSet : MeasurableSet
       (RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α)
-        N sourceRoots initialPosition
+        N subsetBRWRoots initialPosition
         n threshold) :=
     measurableSet_RootIndexed_selectedPopulationEndpointBelow
-      (Root := Root) (α := α) N sourceRoots initialPosition n threshold
-  have htargetSet : MeasurableSet
+      (Root := Root) (α := α) N subsetBRWRoots initialPosition n threshold
+  have hsupersetNSelectedBRWEventSet : MeasurableSet
       (RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α)
-        N targetRoots initialPosition
+        N supersetBRWRoots initialPosition
         n threshold) :=
     measurableSet_RootIndexed_selectedPopulationEndpointBelow
-      (Root := Root) (α := α) N targetRoots initialPosition n threshold
-  have htargetLaw : Measurable targetField ∧ P.map targetField = μRoot := by
+      (Root := Root) (α := α) N supersetBRWRoots initialPosition n threshold
+  have hsupersetNSelectedBRWLaw : Measurable supersetNSelectedBRWField ∧ P.map supersetNSelectedBRWField = μRoot := by
     change Measurable
-        (RootIndexed.restartedRealPositionMatchedField N targetRoots initialPosition id
-          sourceFinite.toFinset n) ∧
-      P.map (RootIndexed.restartedRealPositionMatchedField N targetRoots
-        initialPosition id sourceFinite.toFinset n) = μRoot
+        (RootIndexed.restartedRealPositionNSelectedBRWField N supersetBRWRoots initialPosition id
+          subsetNSelectedBRWPopulationFiniteSlices.toFinset n) ∧
+      P.map (RootIndexed.restartedRealPositionNSelectedBRWField N supersetBRWRoots
+        initialPosition id subsetNSelectedBRWPopulationFiniteSlices.toFinset n) = μRoot
     have hleft : RootIndexed.StepField.left =
         (RootIndexed.StepField.reindex Sum.inl :
           RootIndexed.StepField (Root ⊕ Root) α ℝ → RootIndexed.StepField Root α ℝ) := rfl
-    simpa only [P, μRoot, RootIndexed.restartedRealPositionMatchedField, hleft] using
+    simpa only [P, μRoot, RootIndexed.restartedRealPositionNSelectedBRWField, hleft] using
       (RootIndexed.rankInstalledField_causalPopulation_measurable_law
-        μ N targetRoots initialPosition id measurable_id id measurable_id
-        source sourceFinite n)
-  have hsourceMarginal : P (left ⁻¹'
+        μ N supersetBRWRoots initialPosition id measurable_id id measurable_id
+        subsetNSelectedBRWPopulation subsetNSelectedBRWPopulationFiniteSlices n)
+  have hsubsetNSelectedBRWMarginal : P (left ⁻¹'
       RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α)
-        N sourceRoots initialPosition
+        N subsetBRWRoots initialPosition
         n threshold) =
       μRoot (RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α)
-        N sourceRoots
+        N subsetBRWRoots
         initialPosition n threshold) := by
     rw [← hleftLaw, Measure.map_apply hleftMeasurable hleftSet]
-  have htargetMarginal : P (targetField ⁻¹'
+  have hsupersetNSelectedBRWMarginal : P (supersetNSelectedBRWField ⁻¹'
       RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α)
-        N targetRoots initialPosition
+        N supersetBRWRoots initialPosition
         n threshold) =
       μRoot (RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α)
-        N targetRoots
+        N supersetBRWRoots
         initialPosition n threshold) := by
-    rw [← htargetLaw.2, Measure.map_apply htargetLaw.1 htargetSet]
+    rw [← hsupersetNSelectedBRWLaw.2, Measure.map_apply hsupersetNSelectedBRWLaw.1 hsupersetNSelectedBRWEventSet]
   have hcoupled := RootIndexed.selectedPopulationNestedRoots_endpointBelow_ae
-    μ hboundary N sourceRoots targetRoots hroots initialPosition n threshold
+    μ hboundary N subsetBRWRoots supersetBRWRoots hroots initialPosition n threshold
   have hsubset : ∀ᵐ field ∂P,
       field ∈ left ⁻¹'
-          RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α) N sourceRoots
+          RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α) N subsetBRWRoots
             initialPosition n threshold →
-        field ∈ targetField ⁻¹'
-          RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α) N targetRoots
+        field ∈ supersetNSelectedBRWField ⁻¹'
+          RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α) N supersetBRWRoots
             initialPosition n threshold := by
     filter_upwards [hcoupled] with field hcoupled
-    intro hsource
-    have hsource' : ∃ p : RootIndexed.TreeNode Root α,
-        p ∈ RootIndexed.selectedPopulationTotalized N sourceRoots
+    intro hsubsetNSelectedBRWEvent
+    have hsubsetNSelectedBRWWitness : ∃ p : RootIndexed.TreeNode Root α,
+        p ∈ RootIndexed.selectedPopulationTotalized N subsetBRWRoots
           initialPosition id id n (RootIndexed.StepField.left field) ∧
         RootIndexed.position initialPosition id (RootIndexed.StepField.left field)
           p.1 p.2 ≤ threshold := by
-      simpa [left, RootIndexed.selectedPopulationEndpointBelow] using hsource
-    rcases hcoupled hsource' with ⟨q, hq, hqx⟩
-    have htarget : ∃ q : RootIndexed.TreeNode Root α,
-        q ∈ RootIndexed.restartedRealPositionMatchedPopulation N targetRoots
+      simpa [left, RootIndexed.selectedPopulationEndpointBelow] using hsubsetNSelectedBRWEvent
+    rcases hcoupled hsubsetNSelectedBRWWitness with ⟨q, hq, hqx⟩
+    have hsupersetNSelectedBRWEvent : ∃ q : RootIndexed.TreeNode Root α,
+        q ∈ RootIndexed.restartedRealPositionNSelectedBRWPopulation N supersetBRWRoots
           initialPosition id
-          (fun k field => RootIndexed.selectedPopulationTotalized N sourceRoots
+          (fun k field => RootIndexed.selectedPopulationTotalized N subsetBRWRoots
             initialPosition id id k (RootIndexed.StepField.left field)) n field ∧
         RootIndexed.position initialPosition id
-          (RootIndexed.restartedRealPositionMatchedField N targetRoots
+          (RootIndexed.restartedRealPositionNSelectedBRWField N supersetBRWRoots
             initialPosition id
-            (fun k field => RootIndexed.selectedPopulationTotalized N sourceRoots
+            (fun k field => RootIndexed.selectedPopulationTotalized N subsetBRWRoots
               initialPosition id id k (RootIndexed.StepField.left field)) n field)
           q.1 q.2 ≤ threshold := ⟨q, hq, hqx⟩
-    simpa [targetField, RootIndexed.restartedRealPositionMatchedPopulation,
-      RootIndexed.restartedRealPositionMatchedField,
-      RootIndexed.selectedPopulationEndpointBelow, hsourceEq] using htarget
-  have hmeasure : P (left ⁻¹'
+    simpa [supersetNSelectedBRWField, RootIndexed.restartedRealPositionNSelectedBRWPopulation,
+      RootIndexed.restartedRealPositionNSelectedBRWField,
+      RootIndexed.selectedPopulationEndpointBelow, hsubsetNSelectedBRWPopulationEq] using hsupersetNSelectedBRWEvent
+  have heventMeasureLe : P (left ⁻¹'
       RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α)
-        N sourceRoots initialPosition
+        N subsetBRWRoots initialPosition
         n threshold) ≤
-      P (targetField ⁻¹'
+      P (supersetNSelectedBRWField ⁻¹'
         RootIndexed.selectedPopulationEndpointBelow (Root := Root) (α := α)
-          N targetRoots initialPosition
+          N supersetBRWRoots initialPosition
           n threshold) := by
     exact measure_mono_ae hsubset
-  rw [hsourceMarginal, htargetMarginal] at hmeasure
-  simpa [μRoot] using hmeasure
+  rw [hsubsetNSelectedBRWMarginal, hsupersetNSelectedBRWMarginal] at heventMeasureLe
+  simpa [μRoot] using heventMeasureLe
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

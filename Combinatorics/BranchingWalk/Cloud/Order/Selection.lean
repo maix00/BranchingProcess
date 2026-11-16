@@ -22,44 +22,44 @@ identities.
 
 ## Public declarations
 
-Suppose \(C\) rankwise dominates \(D\), each retained slice \(R_t\) is a
-subset of \(C_t\) with at most \(N\) particles, and the observed values
-\(\phi(\operatorname{position}_C(p))\) and
-\(\phi(\operatorname{position}_D(q))\) are nondecreasing in their respective
-address orders. Write \(D_t^{[N]}\) for the first \(N\) addresses of \(D_t\)
-in its address order, and \(C_R\) for \(C\) restricted to \(R_t\). Then
-the retained cloud rankwise dominates this selected target cloud:
+Let \(C_{\mathrm{o}}\) and \(C_{\mathrm{p}}\) be the object and partner
+clouds. Suppose \(C_{\mathrm{o}}\) rankwise dominates \(C_{\mathrm{p}}\), each
+retained slice \(R_t\) is a subset of the object-cloud slice with at most
+\(N\) particles, and the observed positions are nondecreasing in the address
+order on both slices. Write \(C_{\mathrm{p},t}^{[N]}\) for the first \(N\)
+addresses of the partner-cloud slice and \(C_{\mathrm{o},R}\) for the object
+cloud restricted to \(R_t\). Then the retained object cloud rankwise
+dominates the selected partner cloud:
 
-\[C\succeq_{\mathrm{rank},\phi}D,\quad R_t\subseteq C_t,\quad |R_t|\le N,
-\quad \phi(\operatorname{position}_C(p))\le
-\phi(\operatorname{position}_C(p'))\ (p<p'\in C_t),\quad
-\phi(\operatorname{position}_D(q))\le
-\phi(\operatorname{position}_D(q'))\ (q<q'\in D_t)
-\Longrightarrow C_R\succeq_{\mathrm{rank},\phi}D^{[N]}.\]
+\[C_{\mathrm{o}}\succeq_{\mathrm{rank},\phi}C_{\mathrm{p}},\quad
+  R_t\subseteq C_{\mathrm{o},t},\quad |R_t|\le N
+  \quad\Longrightarrow\quad
+  C_{\mathrm{o},R}\succeq_{\mathrm{rank},\phi}C_{\mathrm{p},t}^{[N]}.\]
 
-In addition, if \(N>0\), every source particle has a selected target
-particle with no larger observed value:
+In addition, if \(N>0\), each object particle has a selected partner whose
+observed position is no larger:
 
-\[N>0,\quad p\in C_t
-\Longrightarrow\exists q\in D_t^{[N]},\quad
-  \phi(\operatorname{position}_D(q))
-  \le\phi(\operatorname{position}_C(p)).\]
+\[N>0,\quad p\in C_{\mathrm{o},t}
+  \quad\Longrightarrow\quad
+  \exists q\in C_{\mathrm{p},t}^{[N]},\quad
+  \phi(\operatorname{position}_{C_{\mathrm{p}}}(q))
+  \le\phi(\operatorname{position}_{C_{\mathrm{o}}}(p)).\]
 
 - `Cloud.rankwiseDominatesBy_leftmost_of_subset` proves
-  `(C.withFinsetParticles retained).RankwiseDominatesBy φ
-  (D.withFinsetParticles right) t`, where
-  `right t = selectFirstN N (hDfinite t).toFinset`, when each retained slice
-  is a subset of `C.particles t` of size at most `N`, `C` rankwise dominates
-  `D`, and `φ` is monotone along both index orders.
+  `(objectsToMatchCloud.withFinsetParticles retained).RankwiseDominatesBy φ
+  (availablePartnersCloud.withFinsetParticles selectedPartners) t`, where
+  `selectedPartners t = selectFirstN N (havailablePartnersFinite t).toFinset`, when each retained slice
+  is a subset of `objectsToMatchCloud.particles t` of size at most `N`, `objectsToMatchCloud` rankwise dominates
+  `availablePartnersCloud`, and `φ` is monotone along both index orders.
 - `Cloud.dominatesBy_leftmost_of_subset` gives the corresponding
   measure-level relation
-  `(C.withFinsetParticles retained).DominatesBy φ
-  (D.withFinsetParticles right)` when the particle type is countable and
+  `(objectsToMatchCloud.withFinsetParticles retained).DominatesBy φ
+  (availablePartnersCloud.withFinsetParticles selectedPartners)` when the particle type is countable and
   observed values have measurable singletons.
 - `Cloud.exists_leftmost_le_of_mem` proves
-  `∀ p ∈ C.particles t, ∃ q ∈ selectFirstN N (D.particles t),
-  φ (D.position q.1 q.2) ≤ φ (C.position p.1 p.2)` when `N > 0` and `C`
-  rankwise dominates `D` at `t`.
+  `∀ p ∈ objectsToMatchCloud.particles t, ∃ q ∈ selectFirstN N (availablePartnersCloud.particles t),
+  φ (availablePartnersCloud.position q.1 q.2) ≤ φ (objectsToMatchCloud.position p.1 p.2)` when `N > 0` and `objectsToMatchCloud`
+  rankwise dominates `availablePartnersCloud` at `t`.
 -/
 
 open Combinatorics.UlamHarris
@@ -74,106 +74,106 @@ set_option linter.style.haveILetI false
 
 variable {Time Root α Position Value : Type*}
 
-/-- A retained subpopulation of size at most `N` dominates the leftmost `N`
-population whenever its source candidate cloud dominates the other candidate
-cloud. This is the deterministic one-generation core of the killed-BRW
-coupling. -/
+/-- A retained object subpopulation of size at most `N` dominates the leftmost
+`N` partner population whenever the object candidate cloud dominates the
+partner candidate cloud. This is the deterministic one-generation core of
+the selected-BRW/n-selected-BRW coupling. -/
 theorem Cloud.rankwiseDominatesBy_leftmost_of_subset
     [LinearOrder (RootIndexed.TreeNode Root α)] [Preorder Value]
     (φ : Position → Value) (N : ℕ)
-    (C D : Cloud Time Root α Position)
+    (objectsToMatchCloud availablePartnersCloud : Cloud Time Root α Position)
     (retained : Time → Finset (RootIndexed.TreeNode Root α))
-    (hCfinite : ∀ t, (C.particles t).Finite)
-    (hDfinite : ∀ t, (D.particles t).Finite)
-    (hretained : ∀ t, ↑(retained t) ⊆ C.particles t)
+    (hobjectsToMatchFinite : ∀ t, (objectsToMatchCloud.particles t).Finite)
+    (havailablePartnersFinite : ∀ t, (availablePartnersCloud.particles t).Finite)
+    (hretained : ∀ t, ↑(retained t) ⊆ objectsToMatchCloud.particles t)
     (hcard : ∀ t, (retained t).card ≤ N)
-    (hCmono : ∀ t p, p ∈ C.particles t → ∀ q, q ∈ C.particles t →
-      p < q → φ (C.position p.1 p.2) ≤ φ (C.position q.1 q.2))
-    (hDmono : ∀ t p, p ∈ D.particles t → ∀ q, q ∈ D.particles t →
-      p < q → φ (D.position p.1 p.2) ≤ φ (D.position q.1 q.2))
-    (hdom : ∀ t, C.RankwiseDominatesBy φ D t) :
-    let right := fun t => Selection.NSelection.selectFirstN N (hDfinite t).toFinset
-    ∀ t, (C.withFinsetParticles retained).RankwiseDominatesBy φ
-      (D.withFinsetParticles right) t := by
+    (hobjectPositionMonotone : ∀ t p, p ∈ objectsToMatchCloud.particles t → ∀ q, q ∈ objectsToMatchCloud.particles t →
+      p < q → φ (objectsToMatchCloud.position p.1 p.2) ≤ φ (objectsToMatchCloud.position q.1 q.2))
+    (hpartnerPositionMonotone : ∀ t p, p ∈ availablePartnersCloud.particles t → ∀ q, q ∈ availablePartnersCloud.particles t →
+      p < q → φ (availablePartnersCloud.position p.1 p.2) ≤ φ (availablePartnersCloud.position q.1 q.2))
+    (hobjectCloudDominatesPartnerCloud : ∀ t, objectsToMatchCloud.RankwiseDominatesBy φ availablePartnersCloud t) :
+    let selectedPartners := fun t => Selection.NSelection.selectFirstN N (havailablePartnersFinite t).toFinset
+    ∀ t, (objectsToMatchCloud.withFinsetParticles retained).RankwiseDominatesBy φ
+      (availablePartnersCloud.withFinsetParticles selectedPartners) t := by
   classical
   dsimp only
   intro t
-  let source : Finset (RootIndexed.TreeNode Root α) := (hCfinite t).toFinset
-  let candidates : Finset (RootIndexed.TreeNode Root α) := (hDfinite t).toFinset
-  let leftCloud := (C.withFinsetParticles retained).mapPosition φ
-  let rightCloud :=
-    (D.withFinsetParticles (fun u =>
-      Selection.NSelection.selectFirstN N (hDfinite u).toFinset)).mapPosition φ
-  change leftCloud.RankwiseDominates rightCloud t
-  have hleftFinite : (leftCloud.particles t).Finite := by
-    simp [leftCloud]
-  have hrightFinite : (rightCloud.particles t).Finite := by
-    simp [rightCloud]
-  letI : Fintype (leftCloud.particles t) := hleftFinite.fintype
-  letI : Fintype (rightCloud.particles t) := hrightFinite.fintype
-  letI : Fintype ↑((C.mapPosition φ).particles t) :=
-    (show ((C.mapPosition φ).particles t).Finite by simpa using hCfinite t).fintype
-  letI : Fintype ↑((D.mapPosition φ).particles t) :=
-    (show ((D.mapPosition φ).particles t).Finite by simpa using hDfinite t).fintype
+  let objectsToMatch : Finset (RootIndexed.TreeNode Root α) := (hobjectsToMatchFinite t).toFinset
+  let availablePartners : Finset (RootIndexed.TreeNode Root α) := (havailablePartnersFinite t).toFinset
+  let retainedObjectCloud := (objectsToMatchCloud.withFinsetParticles retained).mapPosition φ
+  let selectedPartnerCloud :=
+    (availablePartnersCloud.withFinsetParticles (fun u =>
+      Selection.NSelection.selectFirstN N (havailablePartnersFinite u).toFinset)).mapPosition φ
+  change retainedObjectCloud.RankwiseDominates selectedPartnerCloud t
+  have hleftFinite : (retainedObjectCloud.particles t).Finite := by
+    simp [retainedObjectCloud]
+  have hrightFinite : (selectedPartnerCloud.particles t).Finite := by
+    simp [selectedPartnerCloud]
+  letI : Fintype (retainedObjectCloud.particles t) := hleftFinite.fintype
+  letI : Fintype (selectedPartnerCloud.particles t) := hrightFinite.fintype
+  letI : Fintype ↑((objectsToMatchCloud.mapPosition φ).particles t) :=
+    (show ((objectsToMatchCloud.mapPosition φ).particles t).Finite by simpa using hobjectsToMatchFinite t).fintype
+  letI : Fintype ↑((availablePartnersCloud.mapPosition φ).particles t) :=
+    (show ((availablePartnersCloud.mapPosition φ).particles t).Finite by simpa using havailablePartnersFinite t).fintype
   apply Cloud.rankwiseDominates_of_encard_Iic_le t
   · intro p hp q hq hpq
-    exact hCmono t p (hretained t hp) q (hretained t hq) hpq
+    exact hobjectPositionMonotone t p (hretained t hp) q (hretained t hq) hpq
   · intro p hp q hq hpq
-    have hp' : p ∈ Selection.NSelection.selectFirstN N candidates := by
-      simpa [rightCloud, candidates] using hp
-    have hq' : q ∈ Selection.NSelection.selectFirstN N candidates := by
-      simpa [rightCloud, candidates] using hq
-    have hpD : p ∈ D.particles t := ((hDfinite t).mem_toFinset).mp
-      (Selection.NSelection.selectFirstN_subset N candidates hp')
-    have hqD : q ∈ D.particles t := ((hDfinite t).mem_toFinset).mp
-      (Selection.NSelection.selectFirstN_subset N candidates hq')
-    exact hDmono t p hpD q hqD hpq
+    have hp' : p ∈ Selection.NSelection.selectFirstN N availablePartners := by
+      simpa [selectedPartnerCloud, availablePartners] using hp
+    have hq' : q ∈ Selection.NSelection.selectFirstN N availablePartners := by
+      simpa [selectedPartnerCloud, availablePartners] using hq
+    have hpD : p ∈ availablePartnersCloud.particles t := ((havailablePartnersFinite t).mem_toFinset).mp
+      (Selection.NSelection.selectFirstN_subset N availablePartners hp')
+    have hqD : q ∈ availablePartnersCloud.particles t := ((havailablePartnersFinite t).mem_toFinset).mp
+      (Selection.NSelection.selectFirstN_subset N availablePartners hq')
+    exact hpartnerPositionMonotone t p hpD q hqD hpq
   · intro a
     have hthreshold : ∀ b : Value,
-        (source.filter fun p => φ (C.position p.1 p.2) ≤ b).card ≤
-          (candidates.filter fun q => φ (D.position q.1 q.2) ≤ b).card := by
+        (objectsToMatch.filter fun p => φ (objectsToMatchCloud.position p.1 p.2) ≤ b).card ≤
+          (availablePartners.filter fun q => φ (availablePartnersCloud.position q.1 q.2) ≤ b).card := by
       intro b
-      have h := Cloud.rankwiseDominates_encard_Iic_le t (hdom t) b
+      have h := Cloud.rankwiseDominates_encard_Iic_le t (hobjectCloudDominatesPartnerCloud t) b
       have h' :
-          {p | p ∈ C.particles t ∧ φ (C.position p.1 p.2) ≤ b}.encard ≤
-            {q | q ∈ D.particles t ∧ φ (D.position q.1 q.2) ≤ b}.encard := by
+          {p | p ∈ objectsToMatchCloud.particles t ∧ φ (objectsToMatchCloud.position p.1 p.2) ≤ b}.encard ≤
+            {q | q ∈ availablePartnersCloud.particles t ∧ φ (availablePartnersCloud.position q.1 q.2) ≤ b}.encard := by
         simpa only [Cloud.mapPosition_particles, Cloud.mapPosition_position] using h
-      have hCs : {p | p ∈ C.particles t ∧ φ (C.position p.1 p.2) ≤ b} =
-          ↑(source.filter fun p => φ (C.position p.1 p.2) ≤ b) := by
+      have hobjectsToMatchSet : {p | p ∈ objectsToMatchCloud.particles t ∧ φ (objectsToMatchCloud.position p.1 p.2) ≤ b} =
+          ↑(objectsToMatch.filter fun p => φ (objectsToMatchCloud.position p.1 p.2) ≤ b) := by
         ext p
-        simp [source]
-      have hDs : {q | q ∈ D.particles t ∧ φ (D.position q.1 q.2) ≤ b} =
-          ↑(candidates.filter fun q => φ (D.position q.1 q.2) ≤ b) := by
+        simp [objectsToMatch]
+      have havailablePartnersSet : {q | q ∈ availablePartnersCloud.particles t ∧ φ (availablePartnersCloud.position q.1 q.2) ≤ b} =
+          ↑(availablePartners.filter fun q => φ (availablePartnersCloud.position q.1 q.2) ≤ b) := by
         ext q
-        simp [candidates]
-      rw [hCs, hDs, Set.encard_coe_eq_coe_finsetCard,
+        simp [availablePartners]
+      rw [hobjectsToMatchSet, havailablePartnersSet, Set.encard_coe_eq_coe_finsetCard,
         Set.encard_coe_eq_coe_finsetCard] at h'
       exact_mod_cast h'
     have hnat := Selection.NSelection.filter_card_le_filter_selectFirstN N
-      (fun p => φ (C.position p.1 p.2))
-      (fun q => φ (D.position q.1 q.2))
-      (retained t) source candidates
+      (fun p => φ (objectsToMatchCloud.position p.1 p.2))
+      (fun q => φ (availablePartnersCloud.position q.1 q.2))
+      (retained t) objectsToMatch availablePartners
       (by
         intro p hp
-        exact ((hCfinite t).mem_toFinset).mpr (hretained t hp))
+        exact ((hobjectsToMatchFinite t).mem_toFinset).mpr (hretained t hp))
       (hcard t) hthreshold
       (by
         intro p q hp hq hqp
         rcases eq_or_lt_of_le hqp with rfl | hqp'
         · exact le_rfl
-        · exact hDmono t q (((hDfinite t).mem_toFinset).mp hq) p
-            (((hDfinite t).mem_toFinset).mp hp) hqp') a
-    have hleft : {p | p ∈ leftCloud.particles t ∧
-        leftCloud.position p.1 p.2 ≤ a} =
-        ↑((retained t).filter fun p => φ (C.position p.1 p.2) ≤ a) := by
+        · exact hpartnerPositionMonotone t q (((havailablePartnersFinite t).mem_toFinset).mp hq) p
+            (((havailablePartnersFinite t).mem_toFinset).mp hp) hqp') a
+    have hleft : {p | p ∈ retainedObjectCloud.particles t ∧
+        retainedObjectCloud.position p.1 p.2 ≤ a} =
+        ↑((retained t).filter fun p => φ (objectsToMatchCloud.position p.1 p.2) ≤ a) := by
       ext p
-      simp [leftCloud]
-    have hright : {q | q ∈ rightCloud.particles t ∧
-        rightCloud.position q.1 q.2 ≤ a} =
-        ↑((Selection.NSelection.selectFirstN N candidates).filter fun q =>
-          φ (D.position q.1 q.2) ≤ a) := by
+      simp [retainedObjectCloud]
+    have hright : {q | q ∈ selectedPartnerCloud.particles t ∧
+        selectedPartnerCloud.position q.1 q.2 ≤ a} =
+        ↑((Selection.NSelection.selectFirstN N availablePartners).filter fun q =>
+          φ (availablePartnersCloud.position q.1 q.2) ≤ a) := by
       ext q
-      simp [rightCloud, candidates]
+      simp [selectedPartnerCloud, availablePartners]
     rw [hleft, hright, Set.encard_coe_eq_coe_finsetCard,
       Set.encard_coe_eq_coe_finsetCard]
     exact_mod_cast hnat
@@ -185,84 +185,84 @@ theorem Cloud.dominatesBy_leftmost_of_subset
     [Countable (RootIndexed.TreeNode Root α)]
     [MeasurableSpace Value] [MeasurableSingletonClass Value] [Preorder Value]
     (φ : Position → Value) (N : ℕ)
-    (C D : Cloud Time Root α Position)
+    (objectsToMatchCloud availablePartnersCloud : Cloud Time Root α Position)
     (retained : Time → Finset (RootIndexed.TreeNode Root α))
-    (hCfinite : ∀ t, (C.particles t).Finite)
-    (hDfinite : ∀ t, (D.particles t).Finite)
-    (hretained : ∀ t, ↑(retained t) ⊆ C.particles t)
+    (hobjectsToMatchFinite : ∀ t, (objectsToMatchCloud.particles t).Finite)
+    (havailablePartnersFinite : ∀ t, (availablePartnersCloud.particles t).Finite)
+    (hretained : ∀ t, ↑(retained t) ⊆ objectsToMatchCloud.particles t)
     (hcard : ∀ t, (retained t).card ≤ N)
-    (hCmono : ∀ t p, p ∈ C.particles t → ∀ q, q ∈ C.particles t →
-      p < q → φ (C.position p.1 p.2) ≤ φ (C.position q.1 q.2))
-    (hDmono : ∀ t p, p ∈ D.particles t → ∀ q, q ∈ D.particles t →
-      p < q → φ (D.position p.1 p.2) ≤ φ (D.position q.1 q.2))
-    (hdom : ∀ t, C.RankwiseDominatesBy φ D t) :
-    let right := fun t => Selection.NSelection.selectFirstN N (hDfinite t).toFinset
-    (C.withFinsetParticles retained).DominatesBy φ
-      (D.withFinsetParticles right) := by
+    (hobjectPositionMonotone : ∀ t p, p ∈ objectsToMatchCloud.particles t → ∀ q, q ∈ objectsToMatchCloud.particles t →
+      p < q → φ (objectsToMatchCloud.position p.1 p.2) ≤ φ (objectsToMatchCloud.position q.1 q.2))
+    (hpartnerPositionMonotone : ∀ t p, p ∈ availablePartnersCloud.particles t → ∀ q, q ∈ availablePartnersCloud.particles t →
+      p < q → φ (availablePartnersCloud.position p.1 p.2) ≤ φ (availablePartnersCloud.position q.1 q.2))
+    (hobjectCloudDominatesPartnerCloud : ∀ t, objectsToMatchCloud.RankwiseDominatesBy φ availablePartnersCloud t) :
+    let selectedPartners := fun t => Selection.NSelection.selectFirstN N (havailablePartnersFinite t).toFinset
+    (objectsToMatchCloud.withFinsetParticles retained).DominatesBy φ
+      (availablePartnersCloud.withFinsetParticles selectedPartners) := by
   dsimp only
   apply Cloud.dominatesBy_of_rankwiseDominatesBy_of_countable φ
   · intro t
     have hfinite :
-        (((C.withFinsetParticles retained).mapPosition φ).particles t).Finite := by
+        (((objectsToMatchCloud.withFinsetParticles retained).mapPosition φ).particles t).Finite := by
       simp
-    letI : Fintype ↑(((C.withFinsetParticles retained).mapPosition φ).particles t) :=
+    letI : Fintype ↑(((objectsToMatchCloud.withFinsetParticles retained).mapPosition φ).particles t) :=
       hfinite.fintype
     exact Cloud.sliceRank_injOn_of_finite
-      ((C.withFinsetParticles retained).mapPosition φ) t
-  · exact Cloud.rankwiseDominatesBy_leftmost_of_subset φ N C D retained
-      hCfinite hDfinite hretained hcard hCmono hDmono hdom
+      ((objectsToMatchCloud.withFinsetParticles retained).mapPosition φ) t
+  · exact Cloud.rankwiseDominatesBy_leftmost_of_subset φ N objectsToMatchCloud availablePartnersCloud retained
+      hobjectsToMatchFinite havailablePartnersFinite hretained hcard hobjectPositionMonotone hpartnerPositionMonotone hobjectCloudDominatesPartnerCloud
 
 /-- At an overflow slice full domination need not hold, but every retained
-source particle still has a particle in the leftmost `N` target population
+objectsToMatch particle still has a particle in the leftmost `N` partner population
 weakly to its left. In particular this applies to an attained left frontier. -/
 theorem Cloud.exists_leftmost_le_of_mem
     [LinearOrder (RootIndexed.TreeNode Root α)] [Preorder Value]
     (φ : Position → Value) (N : ℕ) (hN : 0 < N)
-    (C D : Cloud Time Root α Position) (t : Time)
-    (hCfinite : (C.particles t).Finite)
-    (hDfinite : (D.particles t).Finite)
-    (hDmono : ∀ p, p ∈ D.particles t → ∀ q, q ∈ D.particles t →
-      p < q → φ (D.position p.1 p.2) ≤ φ (D.position q.1 q.2))
-    (hdom : C.RankwiseDominatesBy φ D t)
-    {p : RootIndexed.TreeNode Root α} (hp : p ∈ C.particles t) :
-    ∃ q ∈ Selection.NSelection.selectFirstN N hDfinite.toFinset,
-      φ (D.position q.1 q.2) ≤ φ (C.position p.1 p.2) := by
+    (objectsToMatchCloud availablePartnersCloud : Cloud Time Root α Position) (t : Time)
+    (hobjectsToMatchFinite : (objectsToMatchCloud.particles t).Finite)
+    (havailablePartnersFinite : (availablePartnersCloud.particles t).Finite)
+    (hpartnerPositionMonotone : ∀ p, p ∈ availablePartnersCloud.particles t → ∀ q, q ∈ availablePartnersCloud.particles t →
+      p < q → φ (availablePartnersCloud.position p.1 p.2) ≤ φ (availablePartnersCloud.position q.1 q.2))
+    (hobjectCloudDominatesPartnerCloud : objectsToMatchCloud.RankwiseDominatesBy φ availablePartnersCloud t)
+    {p : RootIndexed.TreeNode Root α} (hp : p ∈ objectsToMatchCloud.particles t) :
+    ∃ q ∈ Selection.NSelection.selectFirstN N havailablePartnersFinite.toFinset,
+      φ (availablePartnersCloud.position q.1 q.2) ≤ φ (objectsToMatchCloud.position p.1 p.2) := by
   classical
-  let source : Finset (RootIndexed.TreeNode Root α) := hCfinite.toFinset
-  let candidates : Finset (RootIndexed.TreeNode Root α) := hDfinite.toFinset
-  letI : Fintype ↑((C.mapPosition φ).particles t) :=
-    (show ((C.mapPosition φ).particles t).Finite by simpa using hCfinite).fintype
-  letI : Fintype ↑((D.mapPosition φ).particles t) :=
-    (show ((D.mapPosition φ).particles t).Finite by simpa using hDfinite).fintype
+  let objectsToMatch : Finset (RootIndexed.TreeNode Root α) := hobjectsToMatchFinite.toFinset
+  let availablePartners : Finset (RootIndexed.TreeNode Root α) := havailablePartnersFinite.toFinset
+  letI : Fintype ↑((objectsToMatchCloud.mapPosition φ).particles t) :=
+    (show ((objectsToMatchCloud.mapPosition φ).particles t).Finite by simpa using hobjectsToMatchFinite).fintype
+  letI : Fintype ↑((availablePartnersCloud.mapPosition φ).particles t) :=
+    (show ((availablePartnersCloud.mapPosition φ).particles t).Finite by simpa using havailablePartnersFinite).fintype
   have hthreshold : ∀ b : Value,
-      (source.filter fun p => φ (C.position p.1 p.2) ≤ b).card ≤
-        (candidates.filter fun q => φ (D.position q.1 q.2) ≤ b).card := by
+      (objectsToMatch.filter fun p => φ (objectsToMatchCloud.position p.1 p.2) ≤ b).card ≤
+        (availablePartners.filter fun q => φ (availablePartnersCloud.position q.1 q.2) ≤ b).card := by
     intro b
-    have h := Cloud.rankwiseDominates_encard_Iic_le t hdom b
+    have h := Cloud.rankwiseDominates_encard_Iic_le t hobjectCloudDominatesPartnerCloud b
     have h' :
-        {p | p ∈ C.particles t ∧ φ (C.position p.1 p.2) ≤ b}.encard ≤
-          {q | q ∈ D.particles t ∧ φ (D.position q.1 q.2) ≤ b}.encard := by
+        {p | p ∈ objectsToMatchCloud.particles t ∧ φ (objectsToMatchCloud.position p.1 p.2) ≤ b}.encard ≤
+          {q | q ∈ availablePartnersCloud.particles t ∧ φ (availablePartnersCloud.position q.1 q.2) ≤ b}.encard := by
       simpa only [Cloud.mapPosition_particles, Cloud.mapPosition_position] using h
-    have hCs : {p | p ∈ C.particles t ∧ φ (C.position p.1 p.2) ≤ b} =
-        ↑(source.filter fun p => φ (C.position p.1 p.2) ≤ b) := by
+    have hobjectsToMatchSet : {p | p ∈ objectsToMatchCloud.particles t ∧ φ (objectsToMatchCloud.position p.1 p.2) ≤ b} =
+        ↑(objectsToMatch.filter fun p => φ (objectsToMatchCloud.position p.1 p.2) ≤ b) := by
       ext r
-      simp [source]
-    have hDs : {q | q ∈ D.particles t ∧ φ (D.position q.1 q.2) ≤ b} =
-        ↑(candidates.filter fun q => φ (D.position q.1 q.2) ≤ b) := by
+      simp [objectsToMatch]
+    have havailablePartnersSet : {q | q ∈ availablePartnersCloud.particles t ∧ φ (availablePartnersCloud.position q.1 q.2) ≤ b} =
+        ↑(availablePartners.filter fun q => φ (availablePartnersCloud.position q.1 q.2) ≤ b) := by
       ext r
-      simp [candidates]
-    rw [hCs, hDs, Set.encard_coe_eq_coe_finsetCard,
+      simp [availablePartners]
+    rw [hobjectsToMatchSet, havailablePartnersSet, Set.encard_coe_eq_coe_finsetCard,
       Set.encard_coe_eq_coe_finsetCard] at h'
     exact_mod_cast h'
   apply Selection.NSelection.exists_selectFirstN_le_of_mem N hN
-    (fun p => φ (C.position p.1 p.2))
-    (fun q => φ (D.position q.1 q.2)) source candidates hthreshold
+    (fun p => φ (objectsToMatchCloud.position p.1 p.2))
+    (fun q => φ (availablePartnersCloud.position q.1 q.2)) objectsToMatch availablePartners hthreshold
   · intro r s hr hs hsr
     rcases eq_or_lt_of_le hsr with rfl | hsr'
     · exact le_rfl
-    · exact hDmono s (hDfinite.mem_toFinset.mp hs) r
-        (hDfinite.mem_toFinset.mp hr) hsr'
-  · exact hCfinite.mem_toFinset.mpr hp
+    · exact hpartnerPositionMonotone s (havailablePartnersFinite.mem_toFinset.mp hs) r
+        (havailablePartnersFinite.mem_toFinset.mp hr) hsr'
+  · exact hobjectsToMatchFinite.mem_toFinset.mpr hp
 
 end Combinatorics.Branching
 

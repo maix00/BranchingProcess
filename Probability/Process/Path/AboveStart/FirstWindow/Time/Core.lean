@@ -199,7 +199,7 @@ theorem firstNonnegativeWindowStartUpTo_mono
       exact ⟨t, hts.trans hss', ht⟩
     simp only [firstNonnegativeWindowStartUpTo, dite_eq_left hfinite,
       dite_eq_left hfinite', WithTop.coe_le_coe]
-    apply le_csInf hfinite
+    apply le_csInf (show {t : ℝ≥0 | t + 1 ≤ s ∧ IsNonnegativeWindowStart f t}.Nonempty from hfinite)
     intro t ht
     exact csInf_le ⟨0, fun _ _ => bot_le⟩ ⟨ht.1.trans hss', ht.2⟩
   · simp [firstNonnegativeWindowStartUpTo, hfinite]
@@ -217,7 +217,7 @@ theorem firstNonnegativeWindowStart_le_upTo
       exact ⟨t, ht⟩
     simp only [firstNonnegativeWindowStart, firstNonnegativeWindowStartUpTo,
       dite_eq_left hnonempty, dite_eq_left hfinite, WithTop.coe_le_coe]
-    apply le_csInf hfinite
+    apply le_csInf (show {t : ℝ≥0 | t + 1 ≤ s ∧ IsNonnegativeWindowStart f t}.Nonempty from hfinite)
     intro t ht
     exact csInf_le ⟨0, fun _ _ => bot_le⟩ ht.2
   · simp [firstNonnegativeWindowStartUpTo, hfinite]

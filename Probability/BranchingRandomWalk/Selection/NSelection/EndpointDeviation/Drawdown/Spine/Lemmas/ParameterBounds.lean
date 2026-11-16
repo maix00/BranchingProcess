@@ -173,9 +173,10 @@ lemma exists_positiveAParameters
       _ ≤ -a + C * t + gap / 2 := by linarith [hδK]
       _ < -a + C * t + gap := by linarith [hgapPos]
       _ = zeta := hgapEq
-  · dsimp [b, v]
-    ring_nf
-    linarith [hδ]
+  · change 0 < a - (a - δ / 2) - 2 * (δ / 8)
+    calc
+      0 < δ / 4 := div_pos hδ (by norm_num)
+      _ = a - (a - δ / 2) - 2 * (δ / 8) := by ring
 
 /-- The drift at any time in the second tube is bounded by its terminal
 diffusive scale. -/

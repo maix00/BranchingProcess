@@ -52,7 +52,7 @@ open scoped Topology
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
-namespace StepSelection
+namespace Selection.Stepwise
 namespace SplitSchedule
 
 open Combinatorics.UlamHarris Combinatorics.Branching
@@ -138,7 +138,7 @@ theorem ae_exists_successful_root_of_positive
       (α := α) μ (successSet R duration target)) :
     ∀ᵐ ω ∂RootIndexed.stepFieldLaw (Root := Root) μ,
       ∃ k, target ≤
-        (RootIndexed.StepSelection.population R duration ω (root k)).card := by
+        (RootIndexed.Selection.Stepwise.population R duration ω (root k)).card := by
   filter_upwards [firstSuccess_ne_top_ae_of_positive R hR root hroot
     duration target μ hpositive] with ω hfinite
   obtain ⟨k, hk : (k : WithTop ℕ) = firstSuccess R root duration target ω⟩ :=
@@ -164,7 +164,7 @@ theorem roots_of_firstSuccess_ae_mem_successful_population
         ∀ i : Fin N,
           (roots N R root duration target fallback ω i).1 = root k ∧
           (roots N R root duration target fallback ω i).2 ∈
-            RootIndexed.StepSelection.population R duration ω (root k) := by
+            RootIndexed.Selection.Stepwise.population R duration ω (root k) := by
   filter_upwards [firstSuccess_ne_top_ae_of_positive R hR root hroot
     duration target μ hpositive] with ω hfinite
   obtain ⟨k, hk : (k : WithTop ℕ) = firstSuccess R root duration target ω⟩ :=
@@ -176,7 +176,7 @@ theorem roots_of_firstSuccess_ae_mem_successful_population
     fallback ω hfirst hNtarget i
 
 end SplitSchedule
-end StepSelection
+end Selection.Stepwise
 end RootIndexed
 end ProbabilityTheory.BranchingRandomWalk
 

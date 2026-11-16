@@ -47,7 +47,7 @@ i\ne j&\Longrightarrow\operatorname{roots}_N(i)\ne\operatorname{roots}_N(j).
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
-namespace StepSelection
+namespace Selection.Stepwise
 namespace SplitSchedule
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
@@ -76,7 +76,7 @@ noncomputable def roots
     Fin N → Root × TreeNode α :=
   (firstSuccess R root duration target ω).recTopCoe fallback fun k =>
     rootFamily N (root k) fallback
-      (RootIndexed.StepSelection.population R duration ω (root k))
+      (RootIndexed.Selection.Stepwise.population R duration ω (root k))
 
 theorem roots_of_firstSuccess_eq
     {Root α X : Type*} [LinearOrder (TreeNode α)]
@@ -85,15 +85,15 @@ theorem roots_of_firstSuccess_eq
     (fallback : Fin N → Root × TreeNode α)
     (ω : RootIndexed.StepField Root α X)
     (hk : firstSuccess R root duration target ω = k)
-    (hN : N ≤ (RootIndexed.StepSelection.population
+    (hN : N ≤ (RootIndexed.Selection.Stepwise.population
       R duration ω (root k)).card) :
     roots N R root duration target fallback ω =
       fun i => (root k,
-        (RootIndexed.StepSelection.population R duration ω (root k)
+        (RootIndexed.Selection.Stepwise.population R duration ω (root k)
           ).orderEmbOfCardLe hN i) := by
   rw [roots, hk]
   change rootFamily N (root k) fallback
-    (RootIndexed.StepSelection.population R duration ω (root k)) = _
+    (RootIndexed.Selection.Stepwise.population R duration ω (root k)) = _
   rw [rootFamily]
   rw [dite_eq_left hN]
 
@@ -130,7 +130,7 @@ theorem roots_depth
       rw [roots, hfirst, WithTop.recTopCoe_coe]
       rw [rootFamily]
       split_ifs with h
-      · exact RootIndexed.StepSelection.population_depth R ω
+      · exact RootIndexed.Selection.Stepwise.population_depth R ω
           (Finset.orderEmbOfCardLe_mem _ h i)
       · exact hfallback i
 
@@ -150,14 +150,14 @@ theorem roots_fiber_adapted
   have hpopulation : ∀ k, Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) duration]
       (fun ω : RootIndexed.StepField Root α X =>
-        RootIndexed.StepSelection.population R duration ω (root k)) := fun k =>
+        RootIndexed.Selection.Stepwise.population R duration ω (root k)) := fun k =>
     (measurable_pi_apply (root k)).comp
-      (RootIndexed.StepSelection.population_adapted R hR duration)
+      (RootIndexed.Selection.Stepwise.population_adapted R hR duration)
   have hchoose : ∀ k, MeasurableSet[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) duration]
       {ω : RootIndexed.StepField Root α X |
         rootFamily N (root k) fallback
-          (RootIndexed.StepSelection.population R duration ω (root k)) =
+          (RootIndexed.Selection.Stepwise.population R duration ω (root k)) =
             selected} := by
     intro k
     exact hpopulation k
@@ -169,7 +169,7 @@ theorem roots_fiber_adapted
         (Root := Root) (α := α) (X := X) duration]
         {ω : RootIndexed.StepField Root α X |
           j.recTopCoe fallback (fun k => rootFamily N (root k) fallback
-            (RootIndexed.StepSelection.population R duration ω (root k))) =
+            (RootIndexed.Selection.Stepwise.population R duration ω (root k))) =
               selected} := by
     intro j
     induction j using WithTop.recTopCoe with
@@ -179,7 +179,7 @@ theorem roots_fiber_adapted
           (Root := Root) (α := α) (X := X) duration]
           {ω : RootIndexed.StepField Root α X |
             rootFamily N (root k) fallback
-              (RootIndexed.StepSelection.population R duration ω (root k)) =
+              (RootIndexed.Selection.Stepwise.population R duration ω (root k)) =
                 selected}
         exact hchoose k
   have hset :
@@ -188,7 +188,7 @@ theorem roots_fiber_adapted
       ⋃ j : WithTop ℕ,
         {ω | firstSuccess R root duration target ω = j} ∩
           {ω | j.recTopCoe fallback (fun k => rootFamily N (root k) fallback
-            (RootIndexed.StepSelection.population R duration ω (root k))) =
+            (RootIndexed.Selection.Stepwise.population R duration ω (root k))) =
               selected} := by
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
@@ -237,7 +237,7 @@ theorem roots_range_countable
   | coe k =>
       right
       refine Set.mem_iUnion.2 ⟨k, ?_⟩
-      refine ⟨RootIndexed.StepSelection.population R duration ω (root k), ?_⟩
+      refine ⟨RootIndexed.Selection.Stepwise.population R duration ω (root k), ?_⟩
       rw [roots, hfirst]
       rfl
 
@@ -251,14 +251,14 @@ theorem roots_mem_population_of_firstSuccess_eq
     (hNtarget : N ≤ target) (i : Fin N) :
     (roots N R root duration target fallback ω i).1 = root k ∧
       (roots N R root duration target fallback ω i).2 ∈
-        RootIndexed.StepSelection.population R duration ω (root k) := by
+        RootIndexed.Selection.Stepwise.population R duration ω (root k) := by
   have hsuccess := (firstSuccess_eq_iff R root duration target k ω).mp hk |>.1
-  have hN : N ≤ (RootIndexed.StepSelection.population
+  have hN : N ≤ (RootIndexed.Selection.Stepwise.population
       R duration ω (root k)).card := hNtarget.trans hsuccess
   rw [roots_of_firstSuccess_eq N R root duration target k fallback ω hk hN]
   exact ⟨rfl, Finset.orderEmbOfCardLe_mem _ hN i⟩
 
 end SplitSchedule
-end StepSelection
+end Selection.Stepwise
 end RootIndexed
 end ProbabilityTheory.BranchingRandomWalk
