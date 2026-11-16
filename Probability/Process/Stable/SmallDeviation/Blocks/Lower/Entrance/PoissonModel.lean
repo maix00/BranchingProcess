@@ -288,7 +288,6 @@ private lemma IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero_of_poiss
           centerRationalPath (fun q => origR q ω) := by
         funext q
         simp [centerRationalPath, origR, RationalCoordinate.toNNReal_bot]
-      apply propext
       change centerRationalPath (fun q => origR q ω) ∈
           Skorokhod.rationalCoordinateCorridorReturnWithMargin
             (c - 1) (c + 1) (y - ε) (y + ε) ↔ _

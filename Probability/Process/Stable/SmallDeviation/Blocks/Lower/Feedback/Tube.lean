@@ -105,7 +105,6 @@ theorem IsStableLevyProcess.linearTube_probability_pos
         |X (unitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} := by
     filter_upwards [h.increments.ae_start_eq_zero] with ω hzero
     have hzero' : X 0 ω = 0 := by simpa using hzero
-    apply propext
     simp [hzero']
   rw [measure_congr heq]
   exact hrelative

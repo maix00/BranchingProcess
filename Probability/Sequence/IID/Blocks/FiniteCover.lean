@@ -72,10 +72,10 @@ theorem iidSequenceLaw_measure_mul_le_card_mul_of_finite_block_cover
         Combinatorics.Sequence.blockCoordinates prefixLength bridgeLength increment ∈ B i}
         ⊆ T) :
     c * iidSequenceLaw ν U ≤ (F.card : ENNReal) * iidSequenceLaw ν T := by
-  let prefixEvent : ι → Set (ℕ → E) := fun i increment =>
-    Combinatorics.Sequence.blockCoordinates 0 prefixLength increment ∈ A i
-  let bridgeEvent : ι → Set (ℕ → E) := fun i increment =>
-    Combinatorics.Sequence.blockCoordinates prefixLength bridgeLength increment ∈ B i
+  let prefixEvent : ι → Set (ℕ → E) := fun i =>
+    {increment | Combinatorics.Sequence.blockCoordinates 0 prefixLength increment ∈ A i}
+  let bridgeEvent : ι → Set (ℕ → E) := fun i =>
+    {increment | Combinatorics.Sequence.blockCoordinates prefixLength bridgeLength increment ∈ B i}
   have hfactor : ∀ i ∈ F,
       c * iidSequenceLaw ν (prefixEvent i) ≤
         iidSequenceLaw ν (prefixEvent i ∩ bridgeEvent i) := by

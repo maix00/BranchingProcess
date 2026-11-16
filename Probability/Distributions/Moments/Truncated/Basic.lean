@@ -78,7 +78,7 @@ theorem truncatedSecondMoment_mono (μ : Measure ℝ) [IsLocallyFiniteMeasure μ
   change (∫ x in s, x ^ 2 ∂μ) ≤ ∫ x in t, x ^ 2 ∂μ
   exact setIntegral_mono_set hint
     (ae_of_all _ fun x => sq_nonneg x)
-    (LE.le.eventuallyLE hsub)
+    (ae_of_all μ fun x hx => hsub hx)
 
 /-- Truncated second moments over expanding symmetric intervals converge to
 the full second moment whenever it is finite. -/
