@@ -27,6 +27,8 @@ public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Select
   `selectedPopulationTotalized_root_mem`, and
   `selectedPopulationTotalized_adapted`: successor, inclusion, generation,
   root, and domain-filtration measurability properties of the totalized process.
+- `selectedPopulationTotalized_surviveAlong`: every selected vertex has
+  a surviving ancestral path.
 - `selectedPopulation_succ_spec`, `selectedPopulation_succ_subset`,
   `selectedPopulation_adapted`, `selectedPopulation_adapted_of_countable`,
   `selectedPopulation_depth`, `selectedPopulation_succ_spec_offspringAddressSet`,
@@ -185,6 +187,27 @@ theorem selectedPopulationTotalized_root_mem
         (Combinatorics.Branching.Population.mem_childrenAtGeneration_iff n
           (selectedPopulationTotalized N roots initial d φ n ω) ω p).mp hchild
       exact ih q hq
+
+/-- Every selected vertex has a surviving ancestral path. -/
+theorem selectedPopulationTotalized_surviveAlong
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    [AddCommMonoid Position]
+    (N : ℕ) (roots : Finset Root) (initial : Root → Position)
+    (d : Mark → Position) (φ : Position → Value)
+    (n : ℕ) (ω : RootIndexed.StepField Root α Mark) (p : RootIndexed.TreeNode Root α)
+    (hp : p ∈ selectedPopulationTotalized N roots initial d φ n ω) :
+    surviveAlong (ω p.1) [] p.2 := by
+  induction n generalizing p with
+  | zero =>
+      obtain ⟨r, _, rfl⟩ := mem_initialPopulation_iff.mp hp
+      exact surviveAlong_nil _ []
+  | succ n ih =>
+      have hc := selectedPopulationTotalized_succ_subset N roots initial d φ n ω hp
+      obtain ⟨q, hq, _, i, hi, rfl⟩ :=
+        (Combinatorics.Branching.Population.mem_childrenAtGeneration_iff n
+          (selectedPopulationTotalized N roots initial d φ n ω) ω p).mp hc
+      exact (surviveAlong_append_singleton (ω q.1) [] q.2 i).2 ⟨ih q hq, hi⟩
 
 theorem selectedPopulationTotalized_adapted
     [MeasurableSpace (RootIndexed.TreeNode Root α)]

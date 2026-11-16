@@ -72,77 +72,77 @@ attribute [local instance] Classical.propDecidable Classical.decEq
 
 /-- The actual first-`N` selected population from `m` roots has reached
 capacity at generation `n`. -/
-def smallInitialPopulationAtCapacity (m N : ℕ)
+def smallInitialPopulationAtCapacity (m N : ℕ) (initialPosition : Fin m → ℝ)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] (n : ℕ) :
     Set (FiniteRootStepField m ℕ ℝ) :=
-  {field | (smallInitialPopulation m N n field).card = N}
+  {field | (smallInitialPopulation m N n initialPosition field).card = N}
 
 /-- The first generation at which the actual smaller-start selected
 population reaches capacity, or `⊤` if it never does. -/
-noncomputable def smallInitialPopulationCapacityTime (m N : ℕ)
+noncomputable def smallInitialPopulationCapacityTime (m N : ℕ) (initialPosition : Fin m → ℝ)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
     FiniteRootStepField m ℕ ℝ → WithTop ℕ :=
   ProbabilityTheory.firstDeclaredSuccess
-    (smallInitialPopulationAtCapacity m N)
+    (smallInitialPopulationAtCapacity m N initialPosition)
 
 theorem measurableSet_smallInitialPopulationAtCapacity
-    (m N n : ℕ) [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    (m N n : ℕ) (initialPosition : Fin m → ℝ) [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
     MeasurableSet[RootIndexed.stepFiltration
       (Root := Fin m) (α := ℕ) (X := ℝ) n]
-      (smallInitialPopulationAtCapacity m N n) := by
+      (smallInitialPopulationAtCapacity m N initialPosition n) := by
   let F := RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)
-  have hpopulation : Measurable[F n] (smallInitialPopulation m N n) := by
+  have hpopulation : Measurable[F n] (smallInitialPopulation m N n initialPosition) := by
     change Measurable[RootIndexed.stepFiltration
       (Root := Fin m) (α := ℕ) (X := ℝ) n]
-      (smallInitialPopulation m N n)
+      (smallInitialPopulation m N n initialPosition)
     exact RootIndexed.selectedPopulationTotalized_adapted
-        N (Finset.univ : Finset (Fin m)) (fun _ => (0 : ℝ)) id
+        N (Finset.univ : Finset (Fin m)) initialPosition id
         measurable_id id measurable_id n
   have hcard : Measurable[F n]
-      (fun field => (smallInitialPopulation m N n field).card) :=
+      (fun field => (smallInitialPopulation m N n initialPosition field).card) :=
     (measurable_of_countable fun s : Finset (RootIndexed.TreeNode (Fin m) ℕ) =>
       s.card).comp hpopulation
   change MeasurableSet[F n]
-    {field | (smallInitialPopulation m N n field).card = N}
+    {field | (smallInitialPopulation m N n initialPosition field).card = N}
   exact hcard (measurableSet_singleton N)
 
 theorem smallInitialPopulationCapacityTime_isStoppingTime
-    (m N : ℕ) [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    (m N : ℕ) (initialPosition : Fin m → ℝ) [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
     IsStoppingTime
       (RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ))
-      (smallInitialPopulationCapacityTime m N) := by
+      (smallInitialPopulationCapacityTime m N initialPosition) := by
   exact ProbabilityTheory.firstDeclaredSuccess_isStoppingTime
     (RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ))
-    (smallInitialPopulationAtCapacity m N)
-    (fun n => measurableSet_smallInitialPopulationAtCapacity m N n)
+    (smallInitialPopulationAtCapacity m N initialPosition)
+    (fun n => measurableSet_smallInitialPopulationAtCapacity m N n initialPosition)
 
 theorem smallInitialPopulationCapacityTime_eq_iff
-    (m N n : ℕ) [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
+    (m N n : ℕ) (initialPosition : Fin m → ℝ) [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : FiniteRootStepField m ℕ ℝ) :
-    smallInitialPopulationCapacityTime m N field = (n : WithTop ℕ) ↔
-      field ∈ smallInitialPopulationAtCapacity m N n ∧
-        ∀ j < n, field ∉ smallInitialPopulationAtCapacity m N j := by
+    smallInitialPopulationCapacityTime m N initialPosition field = (n : WithTop ℕ) ↔
+      field ∈ smallInitialPopulationAtCapacity m N initialPosition n ∧
+        ∀ j < n, field ∉ smallInitialPopulationAtCapacity m N initialPosition j := by
   exact ProbabilityTheory.firstDeclaredSuccess_eq_iff
-    (smallInitialPopulationAtCapacity m N) field n
+    (smallInitialPopulationAtCapacity m N initialPosition) field n
 
 theorem smallInitialPopulationCapacityTime_ne_top_iff
-    (m N : ℕ) [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
+    (m N : ℕ) (initialPosition : Fin m → ℝ) [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : FiniteRootStepField m ℕ ℝ) :
-    smallInitialPopulationCapacityTime m N field ≠ ⊤ ↔
-      ∃ n, field ∈ smallInitialPopulationAtCapacity m N n := by
+    smallInitialPopulationCapacityTime m N initialPosition field ≠ ⊤ ↔
+      ∃ n, field ∈ smallInitialPopulationAtCapacity m N initialPosition n := by
   constructor
   · intro hfinite
     obtain ⟨n, hn⟩ := WithTop.ne_top_iff_exists.mp hfinite
-    exact ⟨n, (smallInitialPopulationCapacityTime_eq_iff m N n field).1
+    exact ⟨n, (smallInitialPopulationCapacityTime_eq_iff m N n initialPosition field).1
       hn.symm |>.1⟩
   · rintro ⟨n, hn⟩ htop
-    have hle : smallInitialPopulationCapacityTime m N field ≤ n :=
+    have hle : smallInitialPopulationCapacityTime m N initialPosition field ≤ n :=
       (ProbabilityTheory.firstDeclaredSuccess_le_iff
-        (smallInitialPopulationAtCapacity m N) field n).2 ⟨n, le_rfl, hn⟩
+        (smallInitialPopulationAtCapacity m N initialPosition) field n).2 ⟨n, le_rfl, hn⟩
     rw [htop] at hle
     exact (WithTop.not_top_le_coe n) hle
 
@@ -160,101 +160,102 @@ noncomputable def smallInitialPopulationRootsOfFinset
 
 /-- The canonical enumeration at a deterministic generation. -/
 noncomputable def smallInitialPopulationRootsAt
-    (m N n : ℕ) (hm : 0 < m)
+    (m N n : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : FiniteRootStepField m ℕ ℝ) :
     Fin N → RootIndexed.TreeNode (Fin m) ℕ :=
   smallInitialPopulationRootsOfFinset m N hm
-    (smallInitialPopulation m N n field)
+    (smallInitialPopulation m N n initialPosition field)
 
 /-- Enumerate the selected roots at the first capacity-hitting generation.
 At `⊤` this is totalized by a fixed address. -/
 noncomputable def smallInitialPopulationHitRoots
-    (m N : ℕ) (hm : 0 < m)
+    (m N : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : FiniteRootStepField m ℕ ℝ) :
     Fin N → RootIndexed.TreeNode (Fin m) ℕ :=
-  match smallInitialPopulationCapacityTime m N field with
+  match smallInitialPopulationCapacityTime m N initialPosition field with
   | ⊤ => fun _ => ((⟨0, hm⟩ : Fin m), [])
-  | (n : ℕ) => smallInitialPopulationRootsAt m N n hm field
+  | (n : ℕ) => smallInitialPopulationRootsAt m N n initialPosition hm field
 
 theorem smallInitialPopulationRootsAt_mem
-    (m N n : ℕ) (hm : 0 < m)
+    (m N n : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : FiniteRootStepField m ℕ ℝ)
-    (hcapacity : field ∈ smallInitialPopulationAtCapacity m N n)
+    (hcapacity : field ∈ smallInitialPopulationAtCapacity m N initialPosition n)
     (i : Fin N) :
-    smallInitialPopulationRootsAt m N n hm field i ∈
-      smallInitialPopulation m N n field := by
+    smallInitialPopulationRootsAt m N n initialPosition hm field i ∈
+      smallInitialPopulation m N n initialPosition field := by
   classical
-  have hcard : (smallInitialPopulation m N n field).card = N := hcapacity
+  have hcard : (smallInitialPopulation m N n initialPosition field).card = N := hcapacity
   change smallInitialPopulationRootsOfFinset m N hm
-      (smallInitialPopulation m N n field) i ∈ _
+      (smallInitialPopulation m N n initialPosition field) i ∈ _
   simp [smallInitialPopulationRootsOfFinset, hcard]
 
 theorem smallInitialPopulationHitRoots_eq_at_time
-    (m N n : ℕ) (hm : 0 < m)
+    (m N n : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : FiniteRootStepField m ℕ ℝ)
-    (htime : smallInitialPopulationCapacityTime m N field = n) :
-    smallInitialPopulationHitRoots m N hm field =
-      smallInitialPopulationRootsAt m N n hm field := by
+    (htime : smallInitialPopulationCapacityTime m N initialPosition field = n) :
+    smallInitialPopulationHitRoots m N initialPosition hm field =
+      smallInitialPopulationRootsAt m N n initialPosition hm field := by
   simp [smallInitialPopulationHitRoots, htime]
 
 theorem smallInitialPopulationHitRoots_mem_at_time
-    (m N n : ℕ) (hm : 0 < m)
+    (m N n : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : FiniteRootStepField m ℕ ℝ)
-    (htime : smallInitialPopulationCapacityTime m N field = n)
+    (htime : smallInitialPopulationCapacityTime m N initialPosition field = n)
     (i : Fin N) :
-    smallInitialPopulationHitRoots m N hm field i ∈
-      smallInitialPopulation m N n field := by
-  have hcapacity : field ∈ smallInitialPopulationAtCapacity m N n :=
-    (smallInitialPopulationCapacityTime_eq_iff m N n field).1 htime |>.1
-  rw [smallInitialPopulationHitRoots_eq_at_time m N n hm field htime]
-  exact smallInitialPopulationRootsAt_mem m N n hm field hcapacity i
+    smallInitialPopulationHitRoots m N initialPosition hm field i ∈
+      smallInitialPopulation m N n initialPosition field := by
+  have hcapacity : field ∈ smallInitialPopulationAtCapacity m N initialPosition n :=
+    (smallInitialPopulationCapacityTime_eq_iff m N n initialPosition field).1 htime |>.1
+  rw [smallInitialPopulationHitRoots_eq_at_time m N n initialPosition hm field htime]
+  exact smallInitialPopulationRootsAt_mem m N n initialPosition hm field hcapacity i
 
 theorem smallInitialPopulationHitRoots_injective_at_time
-    (m N n : ℕ) (hm : 0 < m)
+    (m N n : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : FiniteRootStepField m ℕ ℝ)
-    (htime : smallInitialPopulationCapacityTime m N field = n) :
-    Function.Injective (smallInitialPopulationHitRoots m N hm field) := by
-  rw [smallInitialPopulationHitRoots_eq_at_time m N n hm field htime]
-  have hcapacity : field ∈ smallInitialPopulationAtCapacity m N n :=
-    (smallInitialPopulationCapacityTime_eq_iff m N n field).1 htime |>.1
-  have hcard : (smallInitialPopulation m N n field).card = N := hcapacity
+    (htime : smallInitialPopulationCapacityTime m N initialPosition field = n) :
+    Function.Injective (smallInitialPopulationHitRoots m N initialPosition hm field) := by
+  rw [smallInitialPopulationHitRoots_eq_at_time m N n initialPosition hm field htime]
+  have hcapacity : field ∈ smallInitialPopulationAtCapacity m N initialPosition n :=
+    (smallInitialPopulationCapacityTime_eq_iff m N n initialPosition field).1 htime |>.1
+  have hcard : (smallInitialPopulation m N n initialPosition field).card = N := hcapacity
   simp only [smallInitialPopulationRootsAt, smallInitialPopulationRootsOfFinset,
     dite_eq_left hcard]
-  exact (smallInitialPopulation m N n field).orderEmbOfFin hcard |>.injective
+  exact (smallInitialPopulation m N n initialPosition field).orderEmbOfFin hcard |>.injective
 
 theorem smallInitialPopulationHitRoots_depth_at_time
-    (m N n : ℕ) (hm : 0 < m)
+    (m N n : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m)
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (field : FiniteRootStepField m ℕ ℝ)
-    (htime : smallInitialPopulationCapacityTime m N field = n)
+    (htime : smallInitialPopulationCapacityTime m N initialPosition field = n)
     (i : Fin N) :
-    (smallInitialPopulationHitRoots m N hm field i).2.length = n := by
-  have hmem := smallInitialPopulationHitRoots_mem_at_time m N n hm field htime i
-  exact firstNSelectedPopulation_depth m N n field _ hmem
+    (smallInitialPopulationHitRoots m N initialPosition hm field i).2.length = n := by
+  have hmem := smallInitialPopulationHitRoots_mem_at_time m N n initialPosition hm field htime i
+  exact RootIndexed.selectedPopulationTotalized_depth N Finset.univ
+    initialPosition id id n field _ hmem
 
 theorem measurable_smallInitialPopulationRootsAt
-    (m N n : ℕ) (hm : 0 < m)
+    (m N n : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
     Measurable[RootIndexed.stepFiltration
       (Root := Fin m) (α := ℕ) (X := ℝ) n]
-      (smallInitialPopulationRootsAt m N n hm) := by
+      (smallInitialPopulationRootsAt m N n initialPosition hm) := by
   classical
   let F := RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)
-  have hpopulation : Measurable[F n] (smallInitialPopulation m N n) := by
+  have hpopulation : Measurable[F n] (smallInitialPopulation m N n initialPosition) := by
     change Measurable[RootIndexed.stepFiltration
       (Root := Fin m) (α := ℕ) (X := ℝ) n]
-      (smallInitialPopulation m N n)
+      (smallInitialPopulation m N n initialPosition)
     exact RootIndexed.selectedPopulationTotalized_adapted
-      N (Finset.univ : Finset (Fin m)) (fun _ => (0 : ℝ)) id
+      N (Finset.univ : Finset (Fin m)) initialPosition id
       measurable_id id measurable_id n
   exact (measurable_of_countable fun population :
       Finset (RootIndexed.TreeNode (Fin m) ℕ) =>
@@ -262,32 +263,32 @@ theorem measurable_smallInitialPopulationRootsAt
     hpopulation
 
 theorem countable_range_smallInitialPopulationHitRoots
-    (m N : ℕ) (hm : 0 < m)
+    (m N : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m)
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
-    (Set.range (smallInitialPopulationHitRoots m N hm)).Countable :=
+    (Set.range (smallInitialPopulationHitRoots m N initialPosition hm)).Countable :=
   Set.to_countable _
 
 theorem measurableSet_smallInitialPopulationHitRoots_fiber
-    (m N : ℕ) (hm : 0 < m)
+    (m N : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
     ∀ roots, MeasurableSet[
-      (smallInitialPopulationCapacityTime_isStoppingTime m N).measurableSpace]
-      {field | smallInitialPopulationHitRoots m N hm field = roots} := by
+      (smallInitialPopulationCapacityTime_isStoppingTime m N initialPosition).measurableSpace]
+      {field | smallInitialPopulationHitRoots m N initialPosition hm field = roots} := by
   classical
-  let τ := smallInitialPopulationCapacityTime m N
-  let hτ := smallInitialPopulationCapacityTime_isStoppingTime m N
+  let τ := smallInitialPopulationCapacityTime m N initialPosition
+  let hτ := smallInitialPopulationCapacityTime_isStoppingTime m N initialPosition
   let default : Fin N → RootIndexed.TreeNode (Fin m) ℕ :=
     fun _ => ((⟨0, hm⟩ : Fin m), [])
   intro roots
   have hdecomp : {field |
-      smallInitialPopulationHitRoots m N hm field = roots} =
+      smallInitialPopulationHitRoots m N initialPosition hm field = roots} =
       ({field | τ field = ⊤} ∩ {field | default = roots}) ∪
         ⋃ n : ℕ, {field | τ field = (n : WithTop ℕ)} ∩
-          {field | smallInitialPopulationRootsAt m N n hm field = roots} := by
+          {field | smallInitialPopulationRootsAt m N n initialPosition hm field = roots} := by
     ext field
     simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_inter_iff,
       Set.mem_iUnion]
@@ -337,23 +338,23 @@ theorem measurableSet_smallInitialPopulationHitRoots_fiber
     intro n
     have hroots : MeasurableSet[
         RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ) n]
-        {field | smallInitialPopulationRootsAt m N n hm field = roots} :=
-      measurable_smallInitialPopulationRootsAt m N n hm
+        {field | smallInitialPopulationRootsAt m N n initialPosition hm field = roots} :=
+      measurable_smallInitialPopulationRootsAt m N n initialPosition hm
         (measurableSet_singleton roots)
     have htime : MeasurableSet[
         RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ) n]
         {field | τ field = (n : WithTop ℕ)} := by
       change MeasurableSet[
         RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ) n]
-        {field | smallInitialPopulationCapacityTime m N field = n}
+        {field | smallInitialPopulationCapacityTime m N initialPosition field = n}
       exact hτ.measurableSet_eq n
     rw [Set.inter_comm]
     exact (hτ.measurableSet_inter_eq_iff
-      {field | smallInitialPopulationRootsAt m N n hm field = roots} n).2
+      {field | smallInitialPopulationRootsAt m N n initialPosition hm field = roots} n).2
         (hroots.inter htime)
 
 theorem smallInitialPopulationHitRoots_factorization_on_finite
-    (m N : ℕ) (hm : 0 < m)
+    (m N : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -362,38 +363,38 @@ theorem smallInitialPopulationHitRoots_factorization_on_finite
     (A : Set (FiniteRootStepField m ℕ ℝ))
     (B : Set (Fin N → TreeNode ℕ → Step ℕ ℝ))
     (hA : MeasurableSet[
-      (smallInitialPopulationCapacityTime_isStoppingTime m N).measurableSpace] A)
+      (smallInitialPopulationCapacityTime_isStoppingTime m N initialPosition).measurableSpace] A)
     (hB : MeasurableSet B) :
     finiteRootStepFieldLaw μ m
-      ((A ∩ {field | smallInitialPopulationCapacityTime m N field ≠ ⊤}) ∩
+      ((A ∩ {field | smallInitialPopulationCapacityTime m N initialPosition field ≠ ⊤}) ∩
         RootIndexed.selectedSubtreeStepFieldVector
-          (smallInitialPopulationHitRoots m N hm) ⁻¹' B) =
+          (smallInitialPopulationHitRoots m N initialPosition hm) ⁻¹' B) =
       finiteRootStepFieldLaw μ m
-        (A ∩ {field | smallInitialPopulationCapacityTime m N field ≠ ⊤}) *
+        (A ∩ {field | smallInitialPopulationCapacityTime m N initialPosition field ≠ ⊤}) *
         finiteRootStepFieldLaw μ N B := by
   have hdepth : ∀ field (n : ℕ),
-      smallInitialPopulationCapacityTime m N field = (n : WithTop ℕ) →
-        ∀ i, (smallInitialPopulationHitRoots m N hm field i).2.length = n := by
+      smallInitialPopulationCapacityTime m N initialPosition field = (n : WithTop ℕ) →
+        ∀ i, (smallInitialPopulationHitRoots m N initialPosition hm field i).2.length = n := by
     intro field n htime i
     exact smallInitialPopulationHitRoots_depth_at_time
-      m N n hm field htime i
+      m N n initialPosition hm field htime i
   have hinjective : ∀ field,
-      smallInitialPopulationCapacityTime m N field ≠ ⊤ →
-        Function.Injective (smallInitialPopulationHitRoots m N hm field) := by
+      smallInitialPopulationCapacityTime m N initialPosition field ≠ ⊤ →
+        Function.Injective (smallInitialPopulationHitRoots m N initialPosition hm field) := by
     intro field hfinite
     obtain ⟨n, htime⟩ := WithTop.ne_top_iff_exists.mp hfinite
     exact smallInitialPopulationHitRoots_injective_at_time
-      m N n hm field htime.symm
+      m N n initialPosition hm field htime.symm
   exact RootIndexed.stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
-    μ (smallInitialPopulationCapacityTime m N)
-    (smallInitialPopulationCapacityTime_isStoppingTime m N)
-    (smallInitialPopulationHitRoots m N hm)
-    (countable_range_smallInitialPopulationHitRoots m N hm)
-    (measurableSet_smallInitialPopulationHitRoots_fiber m N hm)
+    μ (smallInitialPopulationCapacityTime m N initialPosition)
+    (smallInitialPopulationCapacityTime_isStoppingTime m N initialPosition)
+    (smallInitialPopulationHitRoots m N initialPosition hm)
+    (countable_range_smallInitialPopulationHitRoots m N initialPosition hm)
+    (measurableSet_smallInitialPopulationHitRoots_fiber m N initialPosition hm)
     hdepth hinjective A B hA hB
 
 theorem ae_smallInitialPopulationCapacityTime_ne_top
-    (m N : ℕ) (hm : 0 < m) (hmN : m ≤ N)
+    (m N : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m) (hmN : m ≤ N)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -404,13 +405,13 @@ theorem ae_smallInitialPopulationCapacityTime_ne_top
     (hsupercritical : (1 : ℝ≥0∞) <
       ∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂μ) :
     ∀ᵐ field ∂finiteRootStepFieldLaw μ m,
-      smallInitialPopulationCapacityTime m N field ≠ ⊤ := by
+      smallInitialPopulationCapacityTime m N initialPosition field ≠ ⊤ := by
   filter_upwards [finiteRootStepFieldLaw_ae_smallInitialPopulation_hits_capacity
-    m N hm hmN μ hboundary hnonempty hsupercritical] with field hhit
-  exact (smallInitialPopulationCapacityTime_ne_top_iff m N field).2 hhit
+    m N initialPosition hm hmN μ hboundary hnonempty hsupercritical] with field hhit
+  exact (smallInitialPopulationCapacityTime_ne_top_iff m N initialPosition field).2 hhit
 
 theorem smallInitialPopulationHitRoots_freshField_law
-    (m N : ℕ) (hm : 0 < m) (hmN : m ≤ N)
+    (m N : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m) (hmN : m ≤ N)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -424,21 +425,21 @@ theorem smallInitialPopulationHitRoots_freshField_law
     (hB : MeasurableSet B) :
     finiteRootStepFieldLaw μ m
       (RootIndexed.selectedSubtreeStepFieldVector
-        (smallInitialPopulationHitRoots m N hm) ⁻¹' B) =
+        (smallInitialPopulationHitRoots m N initialPosition hm) ⁻¹' B) =
       finiteRootStepFieldLaw μ N B := by
   let P := finiteRootStepFieldLaw μ m
-  let τ := smallInitialPopulationCapacityTime m N
+  let τ := smallInitialPopulationCapacityTime m N initialPosition
   let finite : Set (FiniteRootStepField m ℕ ℝ) := {field | τ field ≠ ⊤}
   let fresh := RootIndexed.selectedSubtreeStepFieldVector
-    (smallInitialPopulationHitRoots m N hm)
+    (smallInitialPopulationHitRoots m N initialPosition hm)
   have hfiniteAE : ∀ᵐ field ∂P, field ∈ finite := by
     exact ae_smallInitialPopulationCapacityTime_ne_top
-      m N hm hmN μ hboundary hnonempty hsupercritical
+      m N initialPosition hm hmN μ hboundary hnonempty hsupercritical
   have htopZero : P {field | τ field = ⊤} = 0 := by
     have h := hfiniteAE
     rw [ae_iff] at h
     simpa [finite, τ] using h
-  have hτ := smallInitialPopulationCapacityTime_isStoppingTime m N
+  have hτ := smallInitialPopulationCapacityTime_isStoppingTime m N initialPosition
   have htopMeasStopped : MeasurableSet[hτ.measurableSpace]
       {field | τ field = ⊤} := by
     have hdecomp : {field | τ field = ⊤} =
@@ -458,7 +459,7 @@ theorem smallInitialPopulationHitRoots_freshField_law
       htopZero]
     simp
   have hfactor := smallInitialPopulationHitRoots_factorization_on_finite
-    m N hm μ Set.univ B MeasurableSet.univ hB
+    m N initialPosition hm μ Set.univ B MeasurableSet.univ hB
   have hfactor' : P (finite ∩ fresh ⁻¹' B) = P finite *
       finiteRootStepFieldLaw μ N B := by
     simpa [P, τ, finite, fresh, Set.univ_inter] using hfactor

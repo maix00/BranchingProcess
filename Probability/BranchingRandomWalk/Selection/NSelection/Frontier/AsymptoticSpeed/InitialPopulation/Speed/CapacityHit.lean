@@ -9,9 +9,7 @@ module
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Speed.Transport
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Field.Independence
 public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.Basic
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.Closure
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Lemmas.CapacityHit.Mark
-import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Lemmas.Lineage
 
 /-!
 # Endpoint speed after the first capacity hit
@@ -19,7 +17,7 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviatio
 ## Public declarations
 
 * `smallInitialPopulation_ae_hasAsymptoticSpeed_and_L1_of_stepLaw`: for
-  $0<m\le N$, started from $m\delta_0$, the actual leftmost position
+  $0<m\le N$, with any deterministic initial positions $(x_i)_{i<m}$, the actual leftmost position
   satisfies $M_n/n\to v_N$ almost surely and in $L^1$. The offspring law satisfies the
   boundary and leftmost first moment assumptions, has nonempty offspring,
   and has mean offspring count greater than one.
@@ -38,6 +36,7 @@ open scoped ENNReal Topology
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
 
 open Combinatorics.Branching Combinatorics.UlamHarris
+open _root_.Combinatorics.Selection.NSelection
 open EndpointDeviation
 open ProbabilityTheory.BranchingRandomWalk.RootIndexed
 
@@ -46,10 +45,10 @@ attribute [local instance] Classical.propDecidable Classical.decEq
 noncomputable local instance (k : ℕ) : LinearOrder (RootIndexed.TreeNode (Fin k) ℕ) :=
   RootIndexed.addressLinearOrder (Fin k) ℕ
 
-private theorem measurable_hitData (m N : ℕ) (hm : 0 < m) :
+private theorem measurable_hitData (m N : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m) :
     Measurable (fun field =>
-      (smallInitialPopulationHitInitialPosition m N hm field,
-        smallInitialPopulationHitSubtreeField m N hm field)) := by
+      (smallInitialPopulationHitInitialPosition m N initialPosition hm field,
+        smallInitialPopulationHitSubtreeField m N initialPosition hm field)) := by
   have hle : (⨆ t, (RootIndexed.stepFiltration
       (Root := Fin m) (α := ℕ) (X := ℝ)) t) ≤
         (inferInstance : MeasurableSpace (FiniteRootStepField m ℕ ℝ)) :=
@@ -57,10 +56,10 @@ private theorem measurable_hitData (m N : ℕ) (hm : 0 < m) :
   apply Measurable.prodMk
   · intro A hA
     exact hle _ (measurableSet_smallInitialPopulationHitInitialPosition_preimage
-      m N hm A hA).1
-  · let roots := smallInitialPopulationHitRoots m N hm
+      m N initialPosition hm A hA).1
+  · let roots := smallInitialPopulationHitRoots m N initialPosition hm
     have hroots : Measurable roots := measurable_to_countable' fun r =>
-      hle _ (measurableSet_smallInitialPopulationHitRoots_fiber m N hm r).1
+      hle _ (measurableSet_smallInitialPopulationHitRoots_fiber m N initialPosition hm r).1
     refine measurable_pi_iff.2 fun i => measurable_pi_iff.2 fun v => ?_
     have heval : Measurable (fun (p : FiniteRootStepField m ℕ ℝ ×
         RootIndexed.TreeNode (Fin m) ℕ) => p.1 p.2.1 (p.2.2 ++ v)) :=
@@ -68,57 +67,65 @@ private theorem measurable_hitData (m N : ℕ) (hm : 0 < m) :
         (measurable_pi_apply (r.2 ++ v)).comp (measurable_pi_apply r.1)
     exact heval.comp (measurable_id.prodMk (hroots.eval (a := i)))
 
-private theorem hitData_law (m N : ℕ) (hm : 0 < m) (hmN : m ≤ N)
+private theorem hitData_law (m N : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m) (hmN : m ≤ N)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ) (hnonempty : μ nonemptySupport = 1)
     (hsplit : (1 : ℝ≥0∞) < ∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂μ) :
     let P := finiteRootStepFieldLaw μ m
-    P.map (fun field => (smallInitialPopulationHitInitialPosition m N hm field,
-        smallInitialPopulationHitSubtreeField m N hm field)) =
-      (P.map (smallInitialPopulationHitInitialPosition m N hm)).prod
+    P.map (fun field => (smallInitialPopulationHitInitialPosition m N initialPosition hm field,
+        smallInitialPopulationHitSubtreeField m N initialPosition hm field)) =
+      (P.map (smallInitialPopulationHitInitialPosition m N initialPosition hm)).prod
         (finiteRootStepFieldLaw μ N) := by
   intro P
-  let h := measurable_hitData m N hm
+  let h := measurable_hitData m N initialPosition hm
   let _ : IsProbabilityMeasure
-      (P.map (fun field => (smallInitialPopulationHitInitialPosition m N hm field,
-        smallInitialPopulationHitSubtreeField m N hm field))) :=
+      (P.map (fun field => (smallInitialPopulationHitInitialPosition m N initialPosition hm field,
+        smallInitialPopulationHitSubtreeField m N initialPosition hm field))) :=
     (Measure.isProbabilityMeasure_map_iff h.aemeasurable).2 inferInstance
   apply Measure.ext_prod
   intro A B hA hB
-  have hinit : Measurable (smallInitialPopulationHitInitialPosition m N hm) :=
+  have hinit : Measurable (smallInitialPopulationHitInitialPosition m N initialPosition hm) :=
     measurable_fst.comp h
   rw [Measure.map_apply h (hA.prod hB), Measure.prod_prod, Measure.map_apply hinit hA]
   exact smallInitialPopulationHitInitialPosition_freshField_factorization
-    m N hm hmN μ hboundary hnonempty hsplit A hA B hB
+    m N initialPosition hm hmN μ hboundary hnonempty hsplit A hA B hB
 
-private theorem endpoint_eq_after_hit (m N n j : ℕ) (hm : 0 < m)
+private theorem endpoint_eq_after_hit (m N n j : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m)
     (field : FiniteRootStepField m ℕ ℝ)
-    (himage : (smallInitialPopulationHitSubtreePopulation m N hm field j).image
-        (smallInitialPopulationHitAddress m N hm field) =
-          smallInitialPopulation m N (n + j) field)
-    (hpop : (firstNSelectedPopulation m N (n + j) field).Nonempty) :
+    (himage : (smallInitialPopulationHitSubtreePopulation m N initialPosition hm field j).image
+        (smallInitialPopulationHitAddress m N initialPosition hm field) =
+          smallInitialPopulation m N (n + j) initialPosition field)
+    (hpop : (smallInitialPopulation m N (n + j) initialPosition field).Nonempty) :
     selectedPopulationEndpointTrajectoryWithParameter N
-        (smallInitialPopulationHitInitialPosition m N hm field,
-          smallInitialPopulationHitSubtreeField m N hm field) j =
-      firstNSelectedEndpointMinimum m N (n + j) field := by
-  let localPop := smallInitialPopulationHitSubtreePopulation m N hm field j
-  let address := smallInitialPopulationHitAddress m N hm field
-  have himage' : localPop.image address = firstNSelectedPopulation m N (n + j) field := himage
+        (smallInitialPopulationHitInitialPosition m N initialPosition hm field,
+          smallInitialPopulationHitSubtreeField m N initialPosition hm field) j =
+      RootIndexed.selectedPopulationEndpointWithParameter m N (n + j) (initialPosition, field) := by
+  let localPop := smallInitialPopulationHitSubtreePopulation m N initialPosition hm field j
+  let address := smallInitialPopulationHitAddress m N initialPosition hm field
+  have himage' : localPop.image address = smallInitialPopulation m N (n + j) initialPosition field := himage
   have hlocal : localPop.Nonempty := Finset.image_nonempty.mp (himage'.symm ▸ hpop)
-  let initial := smallInitialPopulationHitInitialPosition m N hm field
-  let fresh := smallInitialPopulationHitSubtreeField m N hm field
+  let initial := smallInitialPopulationHitInitialPosition m N initialPosition hm field
+  let fresh := smallInitialPopulationHitSubtreeField m N initialPosition hm field
   change (if h : localPop.Nonempty then localPop.inf' h
-    (RootIndexed.observedPositionAtGeneration initial id id j fresh) else 0) = _
-  rw [dite_eq_left hlocal, firstNSelectedEndpointMinimum_eq_inf'_of_nonempty _ _ _ _ hpop]
+    (RootIndexed.observedPositionAtGeneration initial id id j fresh) else 0) =
+    (if h : (smallInitialPopulation m N (n + j) initialPosition field).Nonempty then
+      (smallInitialPopulation m N (n + j) initialPosition field).inf' h
+        (RootIndexed.observedPositionAtGeneration initialPosition id id (n + j) field)
+      else 0)
+  rw [dite_eq_left hlocal, dite_eq_left hpop]
   have hpos (q : RootIndexed.TreeNode (Fin N) ℕ) (hq : q ∈ localPop) :
       RootIndexed.observedPositionAtGeneration initial id id j fresh q =
-      RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field
-        (address q).1 (address q).2 := by
+      RootIndexed.observedPositionAtGeneration initialPosition id id (n + j) field
+        (address q) := by
+    have hmem : address q ∈ smallInitialPopulation m N (n + j) initialPosition field :=
+      himage' ▸ Finset.mem_image_of_mem address hq
+    have hdepthOriginal := RootIndexed.selectedPopulationTotalized_depth N Finset.univ
+      initialPosition id id (n + j) field (address q) hmem
     have hdepth := RootIndexed.selectedPopulationTotalized_depth N Finset.univ
       initial id id j fresh q hq
     simp only [RootIndexed.observedPositionAtGeneration, RootIndexed.positionAtGeneration,
-      hdepth, ite_true, id_eq]
-    exact smallInitialPopulationHitSubtree_position m N hm field q.1 q.2
+      hdepth, hdepthOriginal, ite_true, id_eq]
+    exact smallInitialPopulationHitSubtree_position m N initialPosition hm field q.1 q.2
   apply le_antisymm
   · rw [Finset.le_inf'_iff]
     intro p hp
@@ -133,28 +140,98 @@ private theorem endpoint_eq_after_hit (m N n j : ℕ) (hm : 0 < m)
     rw [← himage']
     exact Finset.mem_image_of_mem address hq
 
+private theorem endpoint_succ_le_activeDisplacement_ae
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (m N : ℕ) (initial : Fin m → ℝ) (hm : 0 < m) (hN : 0 < N)
+    (L : StepLaw ι ℕ X) [IsProbabilityMeasure L.raw]
+    (hboundary : HasBoundaryNormalization L.potential L.raw)
+    (hnonempty : L.raw nonemptySupport = 1) :
+    ∀ᵐ field ∂finiteRootStepFieldLaw L.sortedPotentialImage m, ∀ n,
+      RootIndexed.selectedPopulationEndpointWithParameter m N (n + 1) (initial, field) ≤
+        RootIndexed.selectedPopulationEndpointWithParameter m N n (initial, field) +
+          |value' (smallInitialActiveMark m N n initial hm field) 0| := by
+  let μ := L.sortedPotentialImage
+  have hb := L.sortedPotentialImage_hasBoundaryNormalization hboundary
+  have hne : μ nonemptySupport = 1 := by
+    dsimp [μ]
+    rw [L.sortedPotentialImage_nonemptySupport, L.sorted_nonemptySupport, hnonempty]
+  have ho : μ (orderedBySteps realPotential) = 1 := by
+    dsimp [μ]
+    rw [L.sortedPotentialImage_orderedBy]
+    simp
+  filter_upwards [RootIndexed.selectedPopulationTotalized_succ_spec_ae μ hb N Finset.univ initial,
+    RootIndexed.selectedPopulationTotalized_nonempty_ae N Finset.univ
+        ⟨(⟨0, hm⟩ : Fin m), Finset.mem_univ _⟩ initial hN μ hb hne,
+    finiteRootStepFieldLaw_ae_all_of_measure_one
+      (orderedBySteps_measurable (ι := ℕ) realPotential) μ ho m,
+    finiteRootStepFieldLaw_ae_all_of_measure_one nonemptySupport_measurable μ hne m]
+    with field hspec hpop hordered hchildren n
+  let parents := smallInitialPopulation m N n initial field
+  let selected := smallInitialPopulation m N (n + 1) initial field
+  let value (k : ℕ) := RootIndexed.observedPositionAtGeneration initial id id k field
+  let p := smallInitialActiveAddress m N n initial hm field
+  obtain ⟨hp, hmin⟩ := smallInitialActiveAddress_mem_and_min m N n initial hm field (hpop n)
+  have hdepth := RootIndexed.selectedPopulationTotalized_depth N Finset.univ
+    initial id id n field p hp
+  obtain ⟨i, hi⟩ := hchildren p.1 p.2
+  have hzero : survive (field p.1 p.2) 0 := by
+    have horder : (field p.1 p.2).map realPotential ∈ orderedSteps := hordered p.1 p.2
+    exact (survive_map_iff realPotential _ _).1
+      (orderedSteps_survive_of_le _ horder (Nat.zero_le i)
+        ((survive_map_iff realPotential _ _).2 hi))
+  let q : RootIndexed.TreeNode (Fin m) ℕ := (p.1, p.2 ++ [0])
+  have hq := Combinatorics.Branching.Population.childAddress_mem_childrenAtGeneration
+    n parents field p hp hdepth 0 hzero
+  have hpop' : selected.Nonempty := hpop (n + 1)
+  have hparent : parents.Nonempty := hpop n
+  have hminEq : parents.inf' hparent (value n) = value n p := by
+    apply le_antisymm (Finset.inf'_le _ hp)
+    exact Finset.le_inf' hparent (value n) hmin
+  have hnext : selected.inf' hpop' (value (n + 1)) ≤ value (n + 1) q := by
+    obtain ⟨r, hr, hrmin⟩ := Finset.exists_mem_eq_inf' hpop' (value (n + 1))
+    by_contra! hlt
+    have hkey := valueKey_lt_of_value_lt (value (n + 1)) (hlt.trans_eq hrmin)
+    have hqSelected := (hspec n).lower r hr q hq hkey
+    exact (not_le_of_gt hlt) (Finset.inf'_le _ hqSelected)
+  have hqvalue : value (n + 1) q = value n p + value' (field p.1 p.2) 0 := by
+    simp only [value, RootIndexed.observedPositionAtGeneration, RootIndexed.positionAtGeneration,
+      q, List.length_append, List.length_singleton, hdepth, ite_true, id_eq]
+    simp [RootIndexed.position_append_singleton]
+  change (if h : selected.Nonempty then selected.inf' h (value (n + 1)) else 0) ≤
+    (if h : parents.Nonempty then parents.inf' h (value n) else 0) +
+      |value' (smallInitialActiveMark m N n initial hm field) 0|
+  rw [dite_eq_left hpop', dite_eq_left hparent, hminEq]
+  rw [hqvalue] at hnext
+  exact hnext.trans (add_le_add le_rfl (le_abs_self _))
+
 private theorem endpointNormalized_unifIntegrable
     {ι X : Type*} [Countable ι] [MeasurableSpace X]
-    (m N : ℕ) (hm : 0 < m) (hN : 0 < N)
+    (m N : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m) (hN : 0 < N)
     (L : StepLaw ι ℕ X) [IsProbabilityMeasure L.raw]
     (hboundary : HasBoundaryNormalization L.potential L.raw)
     (hnonempty : L.raw nonemptySupport = 1) (hfirst : HasLeftmostFirstMoment L) :
-    UnifIntegrable (fun (n : ℕ) field => (n : ℝ)⁻¹ * firstNSelectedEndpointMinimum m N n field)
-      1 (finiteRootStepFieldLaw L.sortedPotentialImage m) := by
+    let P := finiteRootStepFieldLaw L.sortedPotentialImage m
+    let normalized := fun (n : ℕ) field =>
+      (n : ℝ)⁻¹ * RootIndexed.selectedPopulationEndpointWithParameter m N n (initialPosition, field)
+    (∀ n, MemLp (normalized n) 1 P) ∧ UnifIntegrable normalized 1 P := by
+  intro P normalized
   let μ := L.sortedPotentialImage
-  let P := finiteRootStepFieldLaw μ m
-  let M (n : ℕ) := firstNSelectedEndpointMinimum m N n
-  let mark (n : ℕ) := smallInitialActiveMark m N n hm
+  let M (n : ℕ) (field : FiniteRootStepField m ℕ ℝ) :=
+    RootIndexed.selectedPopulationEndpointWithParameter m N n (initialPosition, field)
+  let W := ∑ i : Fin m, ENNReal.ofReal (Real.exp (-initialPosition i))
+  have hW : W ≠ ⊤ := ENNReal.sum_ne_top.mpr fun _ _ => ENNReal.ofReal_ne_top
+  let mark (n : ℕ) := smallInitialActiveMark m N n initialPosition hm
   let D (n : ℕ) (field : FiniteRootStepField m ℕ ℝ) := |value' (mark n field) 0|
   let G (n : ℕ) (field : FiniteRootStepField m ℕ ℝ) :=
     (∑ i ∈ Finset.range n, D i field) / (n : ℝ)
   let B (n : ℕ) (field : FiniteRootStepField m ℕ ℝ) := (n : ℝ)⁻¹ * max (-M n field) 0
   have hM (n : ℕ) : Measurable (M n) :=
-    measurable_firstNSelectedEndpointMinimum m N n
+    (measurable_selectedPopulationEndpointWithParameter m N n).comp
+      (measurable_const.prodMk measurable_id)
   have hmark (n : ℕ) : HasLaw (mark n) μ P := by
-    refine ⟨?_, (smallInitialActiveMark_independent_and_law m N n hm μ).2⟩
+    refine ⟨?_, (smallInitialActiveMark_independent_and_law m N n initialPosition hm μ).2⟩
     have h : Measurable (mark n) :=
-      (measurable_smallInitialActiveMark_at_succ m N n hm).mono
+      (measurable_smallInitialActiveMark_at_succ m N n initialPosition hm).mono
         ((RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)).le (n + 1)) le_rfl
     exact h.aemeasurable
   have hDmeas : Measurable (fun ξ : Step ℕ ℝ => |value' ξ 0|) :=
@@ -181,7 +258,7 @@ private theorem endpointNormalized_unifIntegrable
   have hnonemptyμ : μ nonemptySupport = 1 := by
     dsimp [μ]
     rw [L.sortedPotentialImage_nonemptySupport, L.sorted_nonemptySupport, hnonempty]
-  have hBbound (n : ℕ) : eLpNorm (B n) 1 P ≤ ENNReal.ofReal ((n : ℝ)⁻¹) * m := by
+  have hBbound (n : ℕ) : eLpNorm (B n) 1 P ≤ ENNReal.ofReal ((n : ℝ)⁻¹) * W := by
     rw [eLpNorm_one_eq_lintegral_eNorm (hBmeas n).aestronglyMeasurable]
     have hn : 0 ≤ (n : ℝ)⁻¹ := inv_nonneg.mpr (Nat.cast_nonneg _)
     calc
@@ -202,8 +279,8 @@ private theorem endpointNormalized_unifIntegrable
         rw [lintegral_const_mul _ he]
         gcongr
         simpa [M, P, ENNReal.ofReal_natCast] using
-          finiteRootStepFieldLaw_lintegral_exp_neg_firstNSelectedEndpointMinimum_le
-            m N n hm hN μ hboundaryμ hnonemptyμ
+          finiteRootStepFieldLaw_lintegral_exp_neg_selectedPopulationEndpoint_le
+            m N n initialPosition hm hN μ hboundaryμ hnonemptyμ
   have hBtendsto : Tendsto (fun n => eLpNorm (B n) 1 P) atTop (𝓝 0) := by
     have hinv : Tendsto (fun n : ℕ => (n : ℝ)⁻¹) atTop (𝓝 0) :=
       tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop
@@ -211,45 +288,76 @@ private theorem endpointNormalized_unifIntegrable
       simpa only [Function.comp_def, ENNReal.ofReal_zero] using
         ENNReal.continuous_ofReal.continuousAt.tendsto.comp hinv
     apply tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds
-      (show Tendsto (fun n : ℕ => ENNReal.ofReal ((n : ℝ)⁻¹) * (m : ℝ≥0∞)) atTop (𝓝 0) by
-        simpa only [zero_mul] using ENNReal.Tendsto.mul_const hreal (Or.inr (ENNReal.natCast_ne_top m)))
+      (show Tendsto (fun n : ℕ => ENNReal.ofReal ((n : ℝ)⁻¹) * W) atTop (𝓝 0) by
+        simpa only [zero_mul] using ENNReal.Tendsto.mul_const hreal (Or.inr hW))
       (fun _ => zero_le) hBbound
   have hBmem (n : ℕ) : MemLp (B n) 1 P :=
-    (hBbound n).trans_lt (ENNReal.mul_lt_top ENNReal.ofReal_lt_top (ENNReal.natCast_lt_top m))
+    (hBbound n).trans_lt (ENNReal.mul_lt_top ENNReal.ofReal_lt_top hW.lt_top)
   have hBui := unifIntegrable_of_tendsto_Lp_zero le_rfl ENNReal.one_ne_top hBmem hBtendsto
-  have hstep := finiteRootStepFieldLaw_endpointMinimum_succ_le_predictablePositiveSlotZero_ae
-    m N hm hN L hboundary hnonempty
-  have hupper : ∀ᵐ field ∂P, ∀ n, M n field ≤ ∑ k ∈ Finset.range n, D k field := by
+  let K := |initialPosition ⟨0, hm⟩|
+  have hK : 0 ≤ K := abs_nonneg _
+  have hstart (field : FiniteRootStepField m ℕ ℝ) : M 0 field ≤ K := by
+    let pop := RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m))
+    have hp : ((⟨0, hm⟩ : Fin m), []) ∈ pop :=
+      RootIndexed.mem_initialPopulation_iff.mpr ⟨_, Finset.mem_univ _, rfl⟩
+    have hpop : pop.Nonempty := ⟨_, hp⟩
+    let value := RootIndexed.observedPositionAtGeneration initialPosition id id 0 field
+    change (if h : pop.Nonempty then pop.inf' h value else 0) ≤ K
+    rw [dite_eq_left hpop]
+    apply (Finset.inf'_le value hp).trans
+    simpa [K, value, RootIndexed.observedPositionAtGeneration,
+      RootIndexed.positionAtGeneration, RootIndexed.position] using
+      le_abs_self (initialPosition ⟨0, hm⟩)
+  have hstep := endpoint_succ_le_activeDisplacement_ae m N initialPosition hm hN L
+    hboundary hnonempty
+  have hupper : ∀ᵐ field ∂P, ∀ n, M n field ≤ K + ∑ k ∈ Finset.range n, D k field := by
     filter_upwards [hstep] with field hstep n
     induction n with
-    | zero => simp [M, firstNSelectedEndpointMinimum_zero_eq m N hm]
+    | zero => simpa using hstart field
     | succ n ih =>
-      have hstep' : M (n + 1) field ≤ M n field + max (value' (mark n field) 0) 0 := by
-        simpa only [M, mark, smallInitialActiveMark, smallInitialActiveAddress,
-          firstNSelectedEndpointMinAddressAtDepth, dite_eq_ite] using hstep n
-      rw [Finset.sum_range_succ]
-      exact hstep'.trans (add_le_add ih (max_le (le_abs_self _) (abs_nonneg _)))
-  apply (hGui.unifIntegrable.add hBui).ae_mono
-    (fun n => (measurable_const.mul (hM n)).aestronglyMeasurable)
-  intro n
-  filter_upwards [hupper] with field hupper
-  have hn : 0 ≤ (n : ℝ)⁻¹ := inv_nonneg.mpr (Nat.cast_nonneg _)
-  have hsum : 0 ≤ ∑ i ∈ Finset.range n, D i field :=
-    Finset.sum_nonneg fun _ _ => abs_nonneg _
-  have hdom : |M n field| ≤ (∑ i ∈ Finset.range n, D i field) + max (-M n field) 0 := by
-    rw [abs_le]
-    constructor
-    · linarith [le_max_left (-M n field) (0 : ℝ)]
-    · linarith [hupper n, le_max_right (-M n field) (0 : ℝ)]
-  have hnonneg : 0 ≤ G n field + B n field :=
-    add_nonneg (div_nonneg hsum (Nat.cast_nonneg _)) (mul_nonneg hn (le_max_right _ _))
-  simp only [Pi.add_apply, Pi.mul_apply, Real.eNorm_eq_ofReal_abs, abs_of_nonneg hnonneg,
-    abs_mul, abs_of_nonneg hn]
-  apply ENNReal.ofReal_le_ofReal
-  simpa only [G, B, ← mul_add, div_eq_mul_inv, mul_comm _ ((n : ℝ)⁻¹)] using
-    mul_le_mul_of_nonneg_left hdom hn
+      rw [Finset.sum_range_succ, ← add_assoc]
+      exact (hstep n).trans (add_le_add ih le_rfl)
+  have hKui : UnifIntegrable (fun (_ : ℕ) (_ : FiniteRootStepField m ℕ ℝ) => K) 1 P :=
+    unifIntegrable_const le_rfl ENNReal.one_ne_top (memLp_const K)
+  have hmeasNormalized (n : ℕ) : AEStronglyMeasurable (normalized n) P :=
+    (measurable_const.mul (hM n)).aestronglyMeasurable
+  have hdomNormalized (n : ℕ) : ∀ᵐ field ∂P,
+      ‖normalized n field‖ₑ ≤ ‖(K + G n field) + B n field‖ₑ := by
+    filter_upwards [hupper] with field hupper
+    have hn : 0 ≤ (n : ℝ)⁻¹ := inv_nonneg.mpr (Nat.cast_nonneg _)
+    have hsum : 0 ≤ ∑ i ∈ Finset.range n, D i field :=
+      Finset.sum_nonneg fun _ _ => abs_nonneg _
+    have hdom : |M n field| ≤ K + (∑ i ∈ Finset.range n, D i field) +
+        max (-M n field) 0 := by
+      rw [abs_le]
+      constructor
+      · linarith [le_max_left (-M n field) (0 : ℝ)]
+      · linarith [hupper n, le_max_right (-M n field) (0 : ℝ)]
+    have hnonneg : 0 ≤ K + G n field + B n field :=
+      add_nonneg (add_nonneg hK (div_nonneg hsum (Nat.cast_nonneg _)))
+        (mul_nonneg hn (le_max_right _ _))
+    have hinv : (n : ℝ)⁻¹ ≤ 1 := by
+      by_cases h : n = 0
+      · simp [h]
+      · exact inv_le_one_of_one_le₀ (by exact_mod_cast Nat.one_le_iff_ne_zero.mpr h)
+    simp only [normalized, Real.eNorm_eq_ofReal_abs, abs_of_nonneg hnonneg,
+      abs_mul, abs_of_nonneg hn]
+    apply ENNReal.ofReal_le_ofReal
+    calc
+      _ ≤ (n : ℝ)⁻¹ * (K + (∑ i ∈ Finset.range n, D i field) + max (-M n field) 0) :=
+        mul_le_mul_of_nonneg_left hdom hn
+      _ ≤ _ := by
+        simp only [G, B, div_eq_mul_inv, mul_add, mul_comm _ ((n : ℝ)⁻¹)]
+        gcongr
+        exact mul_le_of_le_one_left hK hinv
+  refine ⟨fun n => ?_, ?_⟩
+  · have hend : MemLp (fun field => (K + G n field) + B n field) 1 P :=
+      ((memLp_const K).add (hGui.memLp n)).add (hBmem n)
+    exact hend.of_le_eNorm (hmeasNormalized n) (hdomNormalized n)
+  · exact ((hKui.add hGui.unifIntegrable).add hBui).ae_mono
+      hmeasNormalized hdomNormalized
 
-/-- From a nonempty population at the origin, the selected endpoint has
+/-- From a nonempty deterministic initial population, the selected endpoint has
 the full-capacity speed almost surely after the first capacity hit. -/
 theorem smallInitialPopulation_ae_hasAsymptoticSpeed_and_L1_of_stepLaw
     {ι X : Type*} [Countable ι] [MeasurableSpace X]
@@ -257,7 +365,7 @@ theorem smallInitialPopulation_ae_hasAsymptoticSpeed_and_L1_of_stepLaw
     (hboundary : HasBoundaryNormalization L.potential L.raw)
     (hnonempty : L.raw nonemptySupport = 1) (hfirst : HasLeftmostFirstMoment L)
     (hsplit : (1 : ℝ≥0∞) <
-      ∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂L.sortedPotentialImage) :
+      ∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂L.raw) :
     ∃ speed : ℝ,
       (∀ initial : Fin N → ℝ,
         (∀ᵐ field ∂finiteRootStepFieldLaw L.sortedPotentialImage N,
@@ -266,22 +374,27 @@ theorem smallInitialPopulation_ae_hasAsymptoticSpeed_and_L1_of_stepLaw
         Tendsto (fun n : ℕ => eLpNorm (fun field =>
           (n : ℝ)⁻¹ * selectedPopulationEndpointTrajectoryWithParameter N (initial, field) n -
             speed) 1 (finiteRootStepFieldLaw L.sortedPotentialImage N)) atTop (𝓝 0)) ∧
-      ∀ m : ℕ, 0 < m → m ≤ N →
-        ((∀ᵐ field ∂finiteRootStepFieldLaw L.sortedPotentialImage m,
-          HasAsymptoticSpeed (𝕜 := ℝ) (fun n => firstNSelectedEndpointMinimum m N n field) speed) ∧
+      ∀ (m : ℕ) (initialPosition : Fin m → ℝ), 0 < m → m ≤ N →
+        let P := finiteRootStepFieldLaw L.sortedPotentialImage m
+        let endpoint := fun field n =>
+          RootIndexed.selectedPopulationEndpointWithParameter m N n (initialPosition, field)
+        (∀ᵐ field ∂P, HasAsymptoticSpeed (𝕜 := ℝ) (endpoint field) speed) ∧
+          (∀ n : ℕ, MemLp (fun field => (n : ℝ)⁻¹ * endpoint field n) 1 P) ∧
           Tendsto (fun n : ℕ => eLpNorm (fun field =>
-            (n : ℝ)⁻¹ * firstNSelectedEndpointMinimum m N n field - speed)
-            1 (finiteRootStepFieldLaw L.sortedPotentialImage m)) atTop (𝓝 0)) := by
+            (n : ℝ)⁻¹ * endpoint field n - speed) 1 P) atTop (𝓝 0) := by
   obtain ⟨speed, hfull⟩ := selectedPopulationEndpointTrajectory_ae_hasAsymptoticSpeed_and_L1_of_stepLaw
     hN L hboundary hnonempty hfirst
   refine ⟨speed, hfull, ?_⟩
-  intro m hm hmN
+  intro m initialPosition hm hmN
   let μ := L.sortedPotentialImage
   let P := finiteRootStepFieldLaw μ m
   let Q := finiteRootStepFieldLaw μ N
   let data (field : FiniteRootStepField m ℕ ℝ) :=
-    (smallInitialPopulationHitInitialPosition m N hm field,
-      smallInitialPopulationHitSubtreeField m N hm field)
+    (smallInitialPopulationHitInitialPosition m N initialPosition hm field,
+      smallInitialPopulationHitSubtreeField m N initialPosition hm field)
+  have hsplitμ : (1 : ℝ≥0∞) < ∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂μ := by
+    dsimp [μ]
+    rwa [L.lintegral_childCount_sortedPotentialImage]
   have hboundaryμ := L.sortedPotentialImage_hasBoundaryNormalization hboundary
   have hnonemptyμ : μ nonemptySupport = 1 := by
     dsimp [μ]
@@ -297,17 +410,20 @@ theorem smallInitialPopulation_ae_hasAsymptoticSpeed_and_L1_of_stepLaw
     have hmap : ∀ᵐ p ∂P.map data, HasAsymptoticSpeed (𝕜 := ℝ)
         (selectedPopulationEndpointTrajectoryWithParameter N p) speed := by
       dsimp only [P, data]
-      exact hitData_law m N hm hmN μ hboundaryμ hnonemptyμ hsplit |>.symm ▸ hgood
-    exact ae_of_ae_map (measurable_hitData m N hm).aemeasurable hmap
+      exact hitData_law m N initialPosition hm hmN μ hboundaryμ hnonemptyμ hsplitμ |>.symm ▸ hgood
+    exact ae_of_ae_map (measurable_hitData m N initialPosition hm).aemeasurable hmap
   have hlim : ∀ᵐ field ∂P,
-      HasAsymptoticSpeed (𝕜 := ℝ) (fun n => firstNSelectedEndpointMinimum m N n field) speed := by
+      HasAsymptoticSpeed (𝕜 := ℝ) (fun n =>
+        RootIndexed.selectedPopulationEndpointWithParameter m N n (initialPosition, field))
+        speed := by
     filter_upwards [hdata, finiteRootStepFieldLaw_ae_smallInitialPopulationHitSubtreePopulation_image
-      m N hm hmN μ hboundaryμ hnonemptyμ hsplit,
-      finiteRootStepFieldLaw_firstNSelectedPopulation_nonempty_ae
-        m N hm hN μ hboundaryμ hnonemptyμ] with field hs hhit hpop
+      m N initialPosition hm hmN μ hboundaryμ hnonemptyμ hsplitμ,
+      RootIndexed.selectedPopulationTotalized_nonempty_ae N Finset.univ
+        ⟨(⟨0, hm⟩ : Fin m), Finset.mem_univ _⟩ initialPosition hN μ hboundaryμ hnonemptyμ]
+      with field hs hhit hpop
     obtain ⟨n, hn, hpath⟩ := hhit
     apply (hasAsymptoticSpeed_iff_nat_add _ _ n).2
-    have heq (j : ℕ) := endpoint_eq_after_hit m N n j hm field (hpath j) (hpop (n + j))
+    have heq (j : ℕ) := endpoint_eq_after_hit m N n j initialPosition hm field (hpath j) (hpop (n + j))
     have hinv : Tendsto (fun j : ℕ => (j : ℝ)⁻¹) atTop (𝓝 0) :=
       tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop
     have hratio : Tendsto (fun j : ℕ => (1 + (j : ℝ)⁻¹ * (n : ℝ))⁻¹) atTop (𝓝 1) := by
@@ -325,12 +441,14 @@ theorem smallInitialPopulation_ae_hasAsymptoticSpeed_and_L1_of_stepLaw
     have hj' : (j : ℝ) ≠ 0 := by exact_mod_cast hj.ne'
     have hsum : (n : ℝ) + (j : ℝ) ≠ 0 := by positivity
     field_simp; ring
-  refine ⟨hlim, ?_⟩
+  have ⟨hmem, hui⟩ :=
+    endpointNormalized_unifIntegrable m N initialPosition hm hN L hboundary hnonempty hfirst
+  refine ⟨hlim, hmem, ?_⟩
   exact tendsto_Lp_finite_of_tendsto_ae (μ := P) (p := (1 : ℝ≥0∞)) le_rfl ENNReal.one_ne_top
     (fun n => (measurable_const.mul
-      (measurable_firstNSelectedEndpointMinimum m N n)).aestronglyMeasurable)
-    (memLp_const speed) (endpointNormalized_unifIntegrable m N hm hN L hboundary hnonempty hfirst)
-    hlim
+      ((measurable_selectedPopulationEndpointWithParameter m N n).comp
+        (measurable_const.prodMk measurable_id))).aestronglyMeasurable)
+    (memLp_const speed) hui hlim
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
 

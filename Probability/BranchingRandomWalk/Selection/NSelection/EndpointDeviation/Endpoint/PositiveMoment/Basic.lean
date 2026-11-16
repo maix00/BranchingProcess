@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.FiniteExpectations
+public import Probability.BranchingRandomWalk.Population.Processes.Selected.ParameterizedRootIndexed
 public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
 public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Basic
 public import Probability.BranchingRandomWalk.Spine.ManyToOne.GenerationManyToOne
@@ -16,6 +17,10 @@ public import Probability.MeasureTheory.Moments.ExponentialMoment
 # Negative endpoint moments for finite-root N-selection
 
 ## Public declarations
+
+- `finiteRootStepFieldLaw_lintegral_exp_neg_selectedPopulationEndpoint_le`:
+  under boundary normalization and nonempty offspring, for arbitrary initial
+  positions $x_r$, the endpoint satisfies $\mathbb E[e^{-M_H}]\le\sum_r e^{-x_r}$.
 
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.finiteRootStepFieldLaw_lintegral_exp_neg_firstNSelectedEndpointMinimum_le`:
   under boundary normalization and nonempty offspring,
@@ -45,17 +50,79 @@ open Combinatorics.Branching
 open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-private lemma rootPosition_eq_pathPotential (m : ℕ)
-    (field : FiniteRootStepField m ℕ ℝ) (r : Fin m) (u : TreeNode ℕ) :
-    RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field r u =
-      Spine.pathPotential realPotential (field r) u := by
-  simp [RootIndexed.position, RootIndexed.displace, Spine.pathPotential,
-    displaceWith, Spine.pathPotential, realPotential]
+/-- The expected exponential weight of the leftmost selected particle is
+bounded by the sum of the initial particles' exponential weights. -/
+theorem finiteRootStepFieldLaw_lintegral_exp_neg_selectedPopulationEndpoint_le
+    (m N H : ℕ) (initial : Fin m → ℝ) (hm : 0 < m) (hN : 0 < N)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (hnonempty : μ nonemptySupport = 1) :
+    (∫⁻ field, ENNReal.ofReal (Real.exp
+      (-RootIndexed.selectedPopulationEndpointWithParameter m N H (initial, field)))
+      ∂finiteRootStepFieldLaw μ m) ≤
+      ∑ r : Fin m, ENNReal.ofReal (Real.exp (-initial r)) := by
+  classical
+  let weight (r : Fin m) := ENNReal.ofReal (Real.exp (-initial r))
+  let rootWeight (r : Fin m) (tree : StepField ℕ ℝ) :=
+    weight r * Spine.weightedGenerationEndpoint realPotential H (fun _ => 1) 0 tree
+  have hrootMeas (r : Fin m) : Measurable (rootWeight r) :=
+    measurable_const.mul (Spine.weightedGenerationEndpoint_measurable realPotential H
+      (f := fun _ => (1 : ℝ≥0∞)) measurable_const 0)
+  have hsingle :
+      (∫⁻ ξ, Spine.weightedGenerationEndpoint realPotential H (fun _ => 1) 0 ξ
+        ∂offspringFieldLaw μ) = 1 := by
+    have hmany := Spine.weightedGenerationManyToOne
+      (d := id) measurable_id realPotential μ hboundary
+      (f := fun _ => (1 : ℝ≥0∞)) measurable_const H 0
+    letI := Spine.tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
+    simpa [Potential.comp] using hmany
+  calc
+    _ ≤ ∫⁻ field, ∑ r : Fin m, rootWeight r (field r) ∂finiteRootStepFieldLaw μ m := by
+      apply lintegral_mono_ae
+      filter_upwards [RootIndexed.selectedPopulationTotalized_nonempty_ae N Finset.univ
+        ⟨(⟨0, hm⟩ : Fin m), Finset.mem_univ _⟩ initial hN μ hboundary hnonempty] with field hpop
+      let pop := RootIndexed.selectedPopulationWithParameter m N H (initial, field)
+      let value := RootIndexed.observedPositionAtGeneration initial id id H field
+      have hnonemptyPop : pop.Nonempty := hpop H
+      obtain ⟨p, hp, hmin⟩ := Finset.exists_mem_eq_inf' hnonemptyPop value
+      have hend : RootIndexed.selectedPopulationEndpointWithParameter m N H (initial, field) =
+          value p := by
+        unfold RootIndexed.selectedPopulationEndpointWithParameter
+        change (if h : pop.Nonempty then pop.inf' h value else 0) = _
+        rw [dite_eq_left hnonemptyPop]
+        exact hmin
+      have hdepth := RootIndexed.selectedPopulationTotalized_depth N Finset.univ initial
+        id id H field p hp
+      have hsurv := RootIndexed.selectedPopulationTotalized_surviveAlong N Finset.univ initial
+        id id H field p hp
+      have hvalue : value p =
+          initial p.1 + Spine.pathPotential realPotential (field p.1) p.2 := by
+        simp [value, RootIndexed.observedPositionAtGeneration,
+          RootIndexed.positionAtGeneration, RootIndexed.position, RootIndexed.displace,
+          Spine.pathPotential, displaceWith, realPotential, hdepth]
+      have hterm : ENNReal.ofReal (Real.exp (-value p)) = weight p.1 *
+          Spine.weightedGenerationTerm realPotential H (fun _ => 1) 0 p.2 (field p.1) := by
+        rw [hvalue, neg_add, Real.exp_add, ENNReal.ofReal_mul (Real.exp_nonneg _)]
+        simp [Spine.weightedGenerationTerm, hdepth, hsurv, weight]
+      rw [hend, hterm]
+      apply le_trans ?_ (Finset.single_le_sum (f := fun r => rootWeight r (field r))
+        (fun _ _ => bot_le) (Finset.mem_univ p.1))
+      change weight p.1 * _ ≤ weight p.1 * _
+      gcongr
+      exact le_tsum (f := fun u : TreeNode ℕ =>
+        Spine.weightedGenerationTerm realPotential H (fun _ => 1) 0 u (field p.1)) p.2
+    _ = _ := by
+      rw [RootIndexed.lintegral_finset_root_observables μ Finset.univ rootWeight
+        (fun r _ => hrootMeas r)]
+      apply Finset.sum_congr rfl
+      intro r _
+      unfold rootWeight
+      rw [lintegral_const_mul _ (Spine.weightedGenerationEndpoint_measurable realPotential H
+        (f := fun _ => (1 : ℝ≥0∞)) measurable_const 0), hsingle, mul_one]
 
-/-- The negative exponential moment of the totalized selected endpoint is at
-most the number of initial roots.  The empty-population value is irrelevant:
-under the nonempty-offspring hypothesis, the selected population is
-nonempty almost surely at every fixed generation. -/
 theorem finiteRootStepFieldLaw_lintegral_exp_neg_firstNSelectedEndpointMinimum_le
     (m N H : ℕ) (hm : 0 < m) (hN : 0 < N)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -67,99 +134,27 @@ theorem finiteRootStepFieldLaw_lintegral_exp_neg_firstNSelectedEndpointMinimum_l
     (∫⁻ field, ENNReal.ofReal
       (Real.exp (-firstNSelectedEndpointMinimum m N H field))
       ∂finiteRootStepFieldLaw μ m) ≤ ENNReal.ofReal (m : ℝ) := by
-  classical
-  let endpointWeight : Fin m → FiniteRootStepField m ℕ ℝ → ℝ≥0∞ := fun r field =>
-    Spine.weightedGenerationEndpoint realPotential H (fun _ => 1) 0 (field r)
-  have hweightMeas (r : Fin m) : Measurable (endpointWeight r) := by
-    dsimp [endpointWeight]
-    exact (Spine.weightedGenerationEndpoint_measurable realPotential H
-      (f := fun _ => (1 : ℝ≥0∞)) measurable_const 0).comp
-        (measurable_pi_apply r)
-  have hrootSumMeas : Measurable (fun field => ∑ r : Fin m,
-      endpointWeight r field) := by
-    exact Finset.measurable_sum Finset.univ (fun r hr => hweightMeas r)
-  have hpointwise_ae : ∀ᵐ field ∂finiteRootStepFieldLaw μ m,
-      ENNReal.ofReal
-          (Real.exp (-firstNSelectedEndpointMinimum m N H field)) ≤
-        ∑ r : Fin m, endpointWeight r field := by
-    filter_upwards [finiteRootStepFieldLaw_firstNSelectedPopulation_nonempty_ae
-      m N hm hN μ hboundary hnonempty] with field hpop
-    have hpopulation : (firstNSelectedPopulation m N H field).Nonempty := by
-      simpa [firstNSelectedPopulation] using hpop H
-    let g : RootIndexed.TreeNode (Fin m) ℕ → ℝ := fun p =>
-      RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field p.1 p.2
-    obtain ⟨p, hp, hmin⟩ := Finset.exists_mem_eq_inf'
-      hpopulation g
-    have hminimum : firstNSelectedEndpointMinimum m N H field = g p := by
-      rw [firstNSelectedEndpointMinimum_eq_inf'_of_nonempty
-        m N H field hpopulation]
-      exact hmin
-    have hpdepth : p.2.length = H :=
-      firstNSelectedPopulation_depth m N H field p hp
-    have hpsurvive : surviveAlong (field p.1) [] p.2 :=
-      firstNSelectedPopulation_surviveAlong m N H field p hp
-    have hterm :
-        Spine.weightedGenerationTerm realPotential H (fun _ => 1) 0
-            p.2 (field p.1) =
-          ENNReal.ofReal (Real.exp (-g p)) := by
-      simp [Spine.weightedGenerationTerm, hpdepth, hpsurvive, g,
-        rootPosition_eq_pathPotential]
-    have hroot :
-        ENNReal.ofReal (Real.exp (-firstNSelectedEndpointMinimum m N H field)) ≤
-          endpointWeight p.1 field := by
-      calc
-        ENNReal.ofReal
-            (Real.exp (-firstNSelectedEndpointMinimum m N H field)) =
-          Spine.weightedGenerationTerm realPotential H (fun _ => 1) 0
-            p.2 (field p.1) := by rw [hminimum, hterm]
-        _ ≤ Spine.weightedGenerationEndpoint realPotential H
-            (fun _ => 1) 0 (field p.1) := by
-          rw [Spine.weightedGenerationEndpoint]
-          exact ENNReal.le_tsum
-            (f := fun u : TreeNode ℕ =>
-              Spine.weightedGenerationTerm realPotential H (fun _ => 1) 0 u
-                (field p.1)) p.2
-    have hsum : endpointWeight p.1 field ≤ ∑ r : Fin m, endpointWeight r field :=
-      Finset.single_le_sum
-        (f := fun r : Fin m => endpointWeight r field)
-        (fun r hr => bot_le) (Finset.mem_univ p.1)
-    exact hroot.trans hsum
-  have hrootIntegral :
-      (∫⁻ field, ∑ r : Fin m, endpointWeight r field
-        ∂finiteRootStepFieldLaw μ m) =
-        ∑ r : Fin m, ∫⁻ ξ,
-          Spine.weightedGenerationEndpoint realPotential H (fun _ => 1) 0 ξ
-          ∂offspringFieldLaw μ := by
-    simpa [finiteRootStepFieldLaw, endpointWeight, Finset.sum_const,
-      nsmul_eq_mul] using
-      RootIndexed.lintegral_finset_root_observable
-        (Root := Fin m) (α := ℕ) (X := ℝ) μ Finset.univ
-        (Spine.weightedGenerationEndpoint realPotential H (fun _ => 1) 0)
-        (Spine.weightedGenerationEndpoint_measurable realPotential H
-          (f := fun _ => (1 : ℝ≥0∞)) measurable_const 0)
-  have hsingle :
-      (∫⁻ ξ, Spine.weightedGenerationEndpoint realPotential H (fun _ => 1) 0 ξ
-        ∂offspringFieldLaw μ) = 1 := by
-    have hmany := Spine.weightedGenerationManyToOne
-      (d := id) measurable_id realPotential μ hboundary
-      (f := fun _ => (1 : ℝ≥0∞)) measurable_const H 0
-    have htilted : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) :=
-      Spine.tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
-    letI := htilted
-    simpa [Potential.comp] using hmany
-  have hsumIntegral :
-      (∫⁻ field, ∑ r : Fin m, endpointWeight r field
-        ∂finiteRootStepFieldLaw μ m) = ENNReal.ofReal (m : ℝ) := by
-    rw [hrootIntegral]
-    simp [hsingle]
-  calc
-    (∫⁻ field, ENNReal.ofReal
-        (Real.exp (-firstNSelectedEndpointMinimum m N H field))
-        ∂finiteRootStepFieldLaw μ m) ≤
-      ∫⁻ field, ∑ r : Fin m, endpointWeight r field
-        ∂finiteRootStepFieldLaw μ m :=
-          lintegral_mono_ae hpointwise_ae
-    _ = ENNReal.ofReal (m : ℝ) := hsumIntegral
+  have h := finiteRootStepFieldLaw_lintegral_exp_neg_selectedPopulationEndpoint_le
+    m N H (fun _ => 0) hm hN μ hboundary hnonempty
+  have heq (field : FiniteRootStepField m ℕ ℝ) :
+      RootIndexed.selectedPopulationEndpointWithParameter m N H ((fun _ => 0), field) =
+        firstNSelectedEndpointMinimum m N H field := by
+    classical
+    let pop := firstNSelectedPopulation m N H field
+    change (if h : pop.Nonempty then pop.inf' h
+        (RootIndexed.observedPositionAtGeneration (fun _ : Fin m => (0 : ℝ)) id id H field)
+        else 0) =
+      (if h : pop.Nonempty then pop.inf' h
+        (fun q => RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field q.1 q.2)
+        else 0)
+    split
+    · rename_i hpop
+      apply Finset.inf'_congr hpop rfl
+      intro q hq
+      have hdepth := firstNSelectedPopulation_depth m N H field q hq
+      simp [RootIndexed.observedPositionAtGeneration, RootIndexed.positionAtGeneration, hdepth]
+    · rfl
+  simpa [heq] using h
 
 /-- The selected endpoint's negative part has a logarithmic fourth-moment
 bound. This is the negative-side moment estimate needed by the

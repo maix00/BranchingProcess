@@ -13,7 +13,6 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.En
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Population
-import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Lemmas.CapacityHit.Mark
 /-!
 # Cardinality growth of the selected population
 
@@ -151,7 +150,7 @@ lemma smallInitialFirstN_card_ge
     exact hcapacity
 
 lemma smallInitialFirstN_card_gt_of_split
-    (N n : ℕ) (hm : 0 < m)
+    (N n : ℕ)
     (parents : Finset (RootIndexed.TreeNode (Fin m) ℕ))
     (field : FiniteRootStepField m ℕ ℝ)
     (value : RootIndexed.TreeNode (Fin m) ℕ → ℝ)
@@ -162,14 +161,11 @@ lemma smallInitialFirstN_card_gt_of_split
     (hdepth : ∀ p ∈ parents, p.2.length = n)
     (hchildren : ∀ p ∈ parents,
       ∃ i : ℕ, survive (field p.1 p.2) i)
-    (hchosen : smallInitialActiveAddress m N n hm field ∈ parents)
-    (hsplit : 2 ≤ Step.childCount
-      (field (smallInitialActiveAddress m N n hm field).1
-        (smallInitialActiveAddress m N n hm field).2))
+    (chosen : RootIndexed.TreeNode (Fin m) ℕ) (hchosen : chosen ∈ parents)
+    (hsplit : 2 ≤ Step.childCount (field chosen.1 chosen.2))
     (hcapacity : parents.card < N) :
     parents.card < selected.card := by
   classical
-  let chosen := smallInitialActiveAddress m N n hm field
   have hsplitSet : field chosen.1 chosen.2 ∈ offspringSplitSet := hsplit
   rw [offspringSplitSet_eq_nontrivialSupport] at hsplitSet
   change ∃ i j, i ≠ j ∧ survive (field chosen.1 chosen.2) i ∧
