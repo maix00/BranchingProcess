@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Continuation
+import all Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Stopping
 import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.EndpointOrder
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.FixedHorizon
 
@@ -17,9 +18,13 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.Asympto
 
 * `measure_stoppedEndpointAtLeast_le_on_cell`: on a stopped generation-$n$
   cell $A$ with a fixed set of occupied addresses and at least $m$ positions
-  bounded above by $c$, the actual endpoint upper-tail probability satisfies
+  bounded above by an observable $c$, the centered actual endpoint upper-tail probability satisfies
   $\mathbb P(A,M_{n+k}\ge x+c)\le\mathbb P(A)\mathbb P(M^{(m)}_k\ge x)$.
   Here the comparison process starts with $m$ particles at zero.
+* `measure_stoppedEndpointAtLeast_le_reset_on_cell`: if the reset roots
+  are fixed on the stopped cell $A$, the same upper-tail inequality compares
+  the actual continuation with the continuation using those roots on the
+  original marked tree, translated by the observed $c$.
 * `measure_stoppedEndpointAtLeast_le_of_remainingHorizon`: summing the
   same comparison over the finite stopping window and the occupied
   address sets gives $\mathbb P(M_H\ge x+c,\tau\le T,\mathrm{good})\le b$
@@ -29,7 +34,7 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.Asympto
 This is the stopped branching, initial-population comparison, and spatial
 translation in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk
 with Infinite Offspring* (Fudan University, 2026), Chapter 4, Theorem 1.1
-for $a=0$.
+for $a=0$, and Theorem 1.2 for the endpoint at the reset location.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -89,7 +94,7 @@ lemma measure_stoppedEndpointAtLeast_le_on_cell
     (hdepth : ∀ i, (roots i).2.length = n) (hinj : Function.Injective roots)
     (horder : ∀ p q : RootIndexed.TreeNode (Fin s) ℕ, @LT.lt _ sOrder.toLT p q ↔
       ((roots p.1).1, (roots p.1).2 ++ p.2) < ((roots q.1).1, (roots q.1).2 ++ q.2))
-    (E : Set Ωf) (hE : MeasurableSet[𝔽 n] E) (x c : ℝ) :
+    (E : Set Ωf) (hE : MeasurableSet[𝔽 n] E) (x : ℝ) (c : Ωf → ℝ) (hc : Measurable[𝔽 n] c) :
     let installed := RootIndexed.stoppedRankInstalledTrajectoryField N initialRoots initialPosition hP τ hτ
     let stage := RootIndexed.restartedRealPositionNSelectedBRWField N initialRoots
       initialPosition id hP.toFinset n
@@ -97,28 +102,59 @@ lemma measure_stoppedEndpointAtLeast_le_on_cell
       initialPosition id id n (stage ω) = Finset.univ.image roots}
     let X := fun ω => RootIndexed.subtreeInitialPosition initialPosition id (stage ω) roots
     let law := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
-    (∀ ω ∈ A, ∃ e : Fin m ↪ Fin s, ∀ i, X ω (e i) ≤ c) →
-    law (A ∩ installed ⁻¹' RootIndexed.selectedPopulationEndpointAtLeast
-      N initialRoots initialPosition (n + k) (x + c)) ≤
+    (∀ ω ∈ A, ∃ e : Fin m ↪ Fin s, ∀ i, X ω (e i) ≤ c ω) →
+    law (A ∩ {ω | installed ω ∈ RootIndexed.selectedPopulationEndpointAtLeast
+      N initialRoots initialPosition (n + k) (x + c ω)}) ≤
       law A * RootIndexed.stepFieldLaw (Root := Fin m) μ
         (RootIndexed.selectedPopulationEndpointAtLeast N Finset.univ (fun _ => 0) k x) := by
   intro installed stage A X law hgood
-  obtain ⟨hA, hX, hmeas, hlaw, hpop⟩ :=
+  obtain ⟨hA, hX, _, _, hpop⟩ :=
     RootIndexed.stoppedRankInstalledTrajectoryField_continuation_on_cell μ N initialRoots
       initialPosition hP τ hτ n roots hdepth hinj horder E hE
   have hAfull : MeasurableSet A := ((𝔽).le n) _ hA
-  have hXfull : Measurable X := hX.mono ((𝔽).le n) le_rfl
   let V := fun ω => RootIndexed.subtreeStepFieldVector roots (installed ω)
-  let outcome := fun ω => (X ω, V ω)
+  let Y := fun ω i => X ω i - c ω
+  have hYpast : Measurable[𝔽 n] Y := by
+    let _ : MeasurableSpace Ωf := 𝔽 n
+    exact measurable_pi_iff.mpr fun i => ((measurable_pi_apply i).comp hX).sub hc
+  have hY : Measurable Y := hYpast.mono ((𝔽).le n) le_rfl
+  let outcome := fun ω => (Y ω, V ω)
+  let Q := RootIndexed.stepFieldLaw (Root := Fin s) μ
   let B := {z : (Fin s → ℝ) × RootIndexed.StepField (Fin s) ℕ ℝ |
-    z.2 ∈ RootIndexed.selectedPopulationEndpointAtLeast N Finset.univ z.1 k (x + c)}
-  have hB : MeasurableSet B := measurableSet_jointInitialEndpoint N k (x + c)
+    z.2 ∈ RootIndexed.selectedPopulationEndpointAtLeast N Finset.univ z.1 k x}
+  have hB : MeasurableSet B := measurableSet_jointInitialEndpoint N k x
+  have hV : Measurable V := (RootIndexed.subtreeStepFieldVector_measurable roots).comp
+    (RootIndexed.stoppedRankInstalledTrajectoryField_measurable_law
+      μ N initialRoots initialPosition hP τ hτ).1
+  have hmeas : Measurable outcome := hY.prodMk hV
+  have hlaw : (law.restrict A).map outcome = ((law.restrict A).map Y).prod Q := by
+    apply Measure.ext_prod
+    intro S U hS hU
+    rw [Measure.map_apply hmeas (hS.prod hU), Measure.prod_prod, Measure.map_apply hY hS,
+      Measure.restrict_apply (hY hS), Measure.restrict_apply (hmeas (hS.prod hU))]
+    have hfactor := RootIndexed.stoppedRankInstalledTrajectoryField_subtrees_factorization
+      μ N initialRoots initialPosition hP τ hτ roots hdepth hinj (A ∩ Y ⁻¹' S)
+      (hA.inter (hYpast hS)) (fun ω hω => hω.1.2.1) U hU
+    simpa only [outcome, V, Q, law, installed, Set.inter_assoc, Set.inter_left_comm, Set.inter_comm,
+      show (fun ω => (Y ω, V ω)) ⁻¹' (S ×ˢ U) = Y ⁻¹' S ∩ V ⁻¹' U from rfl] using hfactor
   have hcompare :
-      A ∩ installed ⁻¹' RootIndexed.selectedPopulationEndpointAtLeast
-        N initialRoots initialPosition (n + k) (x + c) = A ∩ outcome ⁻¹' B := by
+      A ∩ {ω | installed ω ∈ RootIndexed.selectedPopulationEndpointAtLeast
+        N initialRoots initialPosition (n + k) (x + c ω)} = A ∩ outcome ⁻¹' B := by
     ext ω
     simp only [Set.mem_inter_iff, Set.mem_preimage]
     refine and_congr_right fun hω => ?_
+    have htranslate :
+        RootIndexed.selectedPopulationEndpointAtLeast (α := ℕ) N Finset.univ (X ω) k (x + c ω) =
+          RootIndexed.selectedPopulationEndpointAtLeast (α := ℕ) N Finset.univ (Y ω) k x := by
+      have heq : (fun i => Y ω i + c ω) = X ω := by
+        funext i
+        exact sub_add_cancel _ _
+      rw [← RootIndexed.selectedPopulationEndpointAtLeast_add_initial (α := ℕ) N Finset.univ (Y ω)
+        k x (c ω), heq]
+    change (installed ω ∈ RootIndexed.selectedPopulationEndpointAtLeast N initialRoots
+      initialPosition (n + k) (x + c ω)) ↔
+        V ω ∈ RootIndexed.selectedPopulationEndpointAtLeast (α := ℕ) N Finset.univ (Y ω) k x
+    rw [← htranslate]
     have hpositions (p : RootIndexed.TreeNode (Fin s) ℕ) :
         RootIndexed.position (X ω) id (V ω) p.1 p.2 =
           RootIndexed.position initialPosition id (installed ω)
@@ -129,11 +165,11 @@ lemma measure_stoppedEndpointAtLeast_le_on_cell
       dsimp only [X, V]
       rw [hstage]
       exact RootIndexed.position_subtreeStepFieldVector initialPosition id (stage ω) roots p.1 p.2
-    simp only [RootIndexed.selectedPopulationEndpointAtLeast, B, outcome, Set.mem_ofPred_eq]
+    simp only [RootIndexed.selectedPopulationEndpointAtLeast, Set.mem_ofPred_eq]
     change (∀ p ∈ RootIndexed.selectedPopulationTotalized N initialRoots initialPosition
-        id id (n + k) (installed ω), x + c ≤ RootIndexed.position initialPosition id (installed ω) p.1 p.2) ↔
+        id id (n + k) (installed ω), x + c ω ≤ RootIndexed.position initialPosition id (installed ω) p.1 p.2) ↔
       ∀ p ∈ RootIndexed.selectedPopulationTotalized N Finset.univ (X ω) id id k (V ω),
-        x + c ≤ RootIndexed.position (X ω) id (V ω) p.1 p.2
+        x + c ω ≤ RootIndexed.position (X ω) id (V ω) p.1 p.2
     rw [hpop ω hω k]
     constructor
     · intro h p hp
@@ -142,27 +178,75 @@ lemma measure_stoppedEndpointAtLeast_le_on_cell
     · intro h p hp
       obtain ⟨q, hq, rfl⟩ := Finset.mem_image.mp hp
       exact (hpositions q) ▸ h q hq
-  let Q := RootIndexed.stepFieldLaw (Root := Fin s) μ
   let b := RootIndexed.stepFieldLaw (Root := Fin m) μ
     (RootIndexed.selectedPopulationEndpointAtLeast N Finset.univ (fun _ => 0) k x)
-  let ν := (law.restrict A).map X
+  let ν := (law.restrict A).map Y
   have htest : ∀ᵐ y ∂ν, Q (Prod.mk y ⁻¹' B) ≤ b := by
-    apply (ae_map_iff hXfull.aemeasurable
+    apply (ae_map_iff hY.aemeasurable
       (measurableSet_le (measurable_measure_prodMk_left (ν := Q) hB) measurable_const)).mpr
     filter_upwards [ae_restrict_mem hAfull] with ω hω
     obtain ⟨e, he⟩ := hgood ω hω
-    have h := RootIndexed.measure_selectedPopulationEndpointAtLeast_le_of_cloudEmbedding
-      μ hnorm N hN (by simpa using hm) (fun _ : Fin m => 0 + c) (X ω) e
-      (by simpa using he) k (x + c)
-    rwa [RootIndexed.selectedPopulationEndpointAtLeast_add_initial] at h
+    exact RootIndexed.measure_selectedPopulationEndpointAtLeast_le_of_cloudEmbedding
+      μ hnorm N hN (by simpa using hm) (fun _ : Fin m => 0) (Y ω) e
+      (fun i => sub_nonpos.mpr (he i)) k x
   rw [hcompare, Set.inter_comm, ← Measure.restrict_apply' hAfull,
-    ← Measure.map_apply_of_aemeasurable hmeas hB, hlaw, Measure.prod_apply hB]
+    ← Measure.map_apply_of_aemeasurable hmeas.aemeasurable hB, hlaw, Measure.prod_apply hB]
   change (∫⁻ y, Q (Prod.mk y ⁻¹' B) ∂ν) ≤ law A * b
   calc
     _ ≤ ∫⁻ _, b ∂ν := lintegral_mono_ae htest
     _ = _ := by
-      rw [lintegral_const, Measure.map_apply hXfull MeasurableSet.univ, Set.preimage_univ,
+      rw [lintegral_const, Measure.map_apply hY MeasurableSet.univ, Set.preimage_univ,
         Measure.restrict_apply_univ, mul_comm]
+
+/-- Compare both continuations on the same stopped cell. The reset uses
+the pre-sampled descendants of its original roots. Conditioning on the cell
+gives the same fresh offspring law as in the initial-population comparison. -/
+lemma measure_stoppedEndpointAtLeast_le_reset_on_cell
+    {m s : ℕ} [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
+    [sOrder : LinearOrder (RootIndexed.TreeNode (Fin s) ℕ)]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hnorm : HasBoundaryNormalization realPotential μ)
+    (N : ℕ) (hN : 0 < N) (hm : m ≤ N)
+    (initialRoots : Finset Root) (initialPosition : Root → ℝ)
+    {P : RootIndexed.CausalPopulation Ωf Root ℕ ℝ 𝔽 RootIndexed.StepField.left}
+    (hP : P.FiniteSlices) (τ : Ωf → WithTop ℕ) (hτ : IsStoppingTime 𝔽 τ)
+    (n k : ℕ) (roots : Fin s → RootIndexed.TreeNode Root ℕ)
+    (hdepth : ∀ i, (roots i).2.length = n) (hinj : Function.Injective roots)
+    (horder : ∀ p q : RootIndexed.TreeNode (Fin s) ℕ, @LT.lt _ sOrder.toLT p q ↔
+      ((roots p.1).1, (roots p.1).2 ++ p.2) < ((roots q.1).1, (roots q.1).2 ++ q.2))
+    (resetRoots : Fin m → RootIndexed.TreeNode (Root ⊕ Root) ℕ)
+    (hresetDepth : ∀ i, (resetRoots i).2.length = n) (hresetInj : Function.Injective resetRoots)
+    (E : Set Ωf) (hE : MeasurableSet[𝔽 n] E) (x : ℝ) (c : Ωf → ℝ) (hc : Measurable[𝔽 n] c) :
+    let installed := RootIndexed.stoppedRankInstalledTrajectoryField N initialRoots initialPosition hP τ hτ
+    let stage := RootIndexed.restartedRealPositionNSelectedBRWField N initialRoots
+      initialPosition id hP.toFinset n
+    let A := E ∩ {ω | τ ω = n ∧ RootIndexed.selectedPopulationTotalized N initialRoots
+      initialPosition id id n (stage ω) = Finset.univ.image roots}
+    let X := fun ω => RootIndexed.subtreeInitialPosition initialPosition id (stage ω) roots
+    let law := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
+    (∀ ω ∈ A, ∃ e : Fin m ↪ Fin s, ∀ i, X ω (e i) ≤ c ω) →
+    law (A ∩ {ω | installed ω ∈ RootIndexed.selectedPopulationEndpointAtLeast
+      N initialRoots initialPosition (n + k) (x + c ω)}) ≤
+      law (A ∩ {ω | RootIndexed.subtreeStepFieldVector resetRoots ω ∈
+        RootIndexed.selectedPopulationEndpointAtLeast N Finset.univ (fun _ => c ω) k (x + c ω)}) := by
+  intro installed stage A X law hgood
+  have hA : MeasurableSet[𝔽 n] A :=
+    (RootIndexed.stoppedRankInstalledTrajectoryField_continuation_on_cell μ N initialRoots
+      initialPosition hP τ hτ n roots hdepth hinj horder E hE).1
+  let B := RootIndexed.selectedPopulationEndpointAtLeast (α := ℕ) N (Finset.univ : Finset (Fin m))
+    (fun _ => 0) k x
+  have hB : MeasurableSet B := RootIndexed.measurableSet_selectedPopulationEndpointAtLeast _ _ _ _ _
+  have hshift (ω : Ωf) :
+      RootIndexed.selectedPopulationEndpointAtLeast (α := ℕ) N (Finset.univ : Finset (Fin m))
+        (fun _ => c ω) k (x + c ω) = B := by
+    simpa only [zero_add] using
+      RootIndexed.selectedPopulationEndpointAtLeast_add_initial (α := ℕ) N
+        (Finset.univ : Finset (Fin m)) (fun _ => 0) k x (c ω)
+  simp_rw [hshift]
+  change _ ≤ law (A ∩ RootIndexed.subtreeStepFieldVector resetRoots ⁻¹' B)
+  rw [RootIndexed.subtreeStepFieldVector_event_factorization μ resetRoots hresetDepth hresetInj A B hA hB]
+  exact measure_stoppedEndpointAtLeast_le_on_cell μ hnorm N hN hm initialRoots initialPosition
+    hP τ hτ n k roots hdepth hinj horder E hE x c hc hgood
 
 lemma measure_stoppedEndpointAtLeast_le_of_remainingHorizon
     {m : ℕ} [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -249,7 +333,7 @@ lemma measure_stoppedEndpointAtLeast_le_of_remainingHorizon
       have hnT := Nat.le_of_lt_succ n.isLt
       have h := @measure_stoppedEndpointAtLeast_le_on_cell Root _ _ _ m S.card _ o
         μ _ hnorm N hN hm initialRoots initialPosition P hP τ hτ n.val (H - n.val)
-        roots hdepth roots.injective (fun _ _ => Iff.rfl) (E n.val) (hE n.val) x c
+        roots hdepth roots.injective (fun _ _ => Iff.rfl) (E n.val) (hE n.val) x (fun _ => c) measurable_const
       have hc : n.val + (H - n.val) = H := Nat.add_sub_of_le (hnT.trans hT)
       have hAeq : A (n, S) =
           E n.val ∩ {ω | τ ω = n.val ∧ Pop n.val ω = Finset.univ.image roots} := by
