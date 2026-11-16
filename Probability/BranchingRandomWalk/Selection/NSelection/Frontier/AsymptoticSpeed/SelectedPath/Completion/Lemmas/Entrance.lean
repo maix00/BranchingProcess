@@ -5,6 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Basic
+import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.TrialPosition
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Coupling.Population
 import Probability.BranchingRandomWalk.Spine.GenerationBranching.Decomposition
 
@@ -24,6 +25,8 @@ import Probability.BranchingRandomWalk.Spine.GenerationBranching.Decomposition
 * `position_endpointNodesByRank_le_of_entrance_count`: once the actual population
   at $\tau$ contains at least $m$ particles at positions at most $x$, all $m$
   endpoint coordinates selected for the continuation are at positions at most $x$.
+* `firstSuccess_rankedEntrance_le_ae`: the $m$ ranked roots at $\tau$ have
+  positions at most $V(v_\kappa)+Md$, with $v_\kappa$ indexed by trial order.
 
 This is the bounded-growth contribution to the entrance estimate in Wang
 Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
@@ -269,5 +272,55 @@ lemma position_endpointNodesByRank_le_of_entrance_count
     rw [rankBy_eq_card_filter]
     exact hcount.trans (Finset.card_le_card hsub)
   exact (i.isLt.not_ge (hrank ▸ hle))
+
+lemma firstSuccess_rankedEntrance_le_ae
+    {Root : Type} [MeasurableSpace Root] [MeasurableSingletonClass Root]
+    [MeasurableSpace (RootIndexed.TreeNode Root ℕ)]
+    [MeasurableSingletonClass (RootIndexed.TreeNode Root ℕ)]
+    [Countable (RootIndexed.TreeNode Root ℕ)] [LinearOrder (RootIndexed.TreeNode Root ℕ)]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hnorm : HasBoundaryNormalization realPotential μ)
+    (N : ℕ) (R growth : Step.FiniteSelection ℕ ℝ)
+    (hR : Measurable R.select) (hgrowth : Measurable growth.select)
+    (lower upper duration : ℕ) (hupper : 1 ≤ upper)
+    (hbounded : growth.IsBoundedBy 2) (hcapacity : 1 + (duration + 1) * (2 * upper) ≤ N)
+    (M : ℝ) (hcutoff : ∀ ξ j, j ∈ growth ξ → ξ.potentialValue' realPotential j ≤ M)
+    (r : Root) :
+    let trials := SelectedPath.Population.leftBRWFamily_finiteSlices R growth hR hgrowth
+      upper duration r
+    let selectedField (n : ℕ) := RootIndexed.restartedRealPositionNSelectedBRWField N {r}
+      (fun _ => 0) id trials.toFinset n
+    let G := growthTrialSuccess growth lower upper duration
+    ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ,
+      let left := RootIndexed.StepField.left field
+      (∀ u, (R (left r u)).Nonempty) →
+      ∀ t : ℕ, Completion.time R growth hR hgrowth lower upper duration r field = t →
+        ∃ k : ℕ, (splitCycle R (splitWaitingDisplacement R) G k (left r)).2 ∧
+          (∀ j < k, ¬ (splitCycle R (splitWaitingDisplacement R) G j (left r)).2) ∧
+          ∀ i : Fin lower,
+            let p := Completion.endpointNodesByRank N (fun _ => 0) R growth hR hgrowth
+              lower upper duration r field i
+            RootIndexed.position (fun _ => 0) id (selectedField t field) p.1 p.2 ≤
+              Spine.pathPotential realPotential (left r) (trialGrowthRoot R k (left r)) +
+                M * duration := by
+  have hentrance := entrance_count_le_at_firstSuccessfulCompletion_ae μ hnorm N R growth hR
+    hgrowth lower upper duration hupper hbounded hcapacity M hcutoff r
+  filter_upwards [hentrance] with field henter
+  dsimp only
+  let left := RootIndexed.StepField.left field
+  intro hne t ht
+  have ht' : firstSuccessfulCompletion R growth hR lower upper duration r left = t := ht
+  obtain ⟨n, hn, _, hsuccess, hbefore, hroot⟩ :=
+    splitCycle_first_success_at_completion R growth hR lower upper duration r left hne t ht'
+  obtain ⟨j, hj, _, hcount⟩ := henter t ht'
+  have hnj : j = n := by omega
+  subst j
+  let u := growthTrialRootAt (lineages R hR) R r PUnit.unit (n + 1) left
+  have hu : u.1 = r := growthTrialRootAt_root (lineages R hR) R r PUnit.unit (n + 1) left
+  change trialGrowthRoot R (splitCount R r n left) (left r) = u.2 at hroot
+  refine ⟨splitCount R r n left, hsuccess, hbefore, ?_⟩
+  rw [hroot, ← hu]
+  exact position_endpointNodesByRank_le_of_entrance_count N R growth hR hgrowth
+    lower upper duration r field t ht _ hcount
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas
