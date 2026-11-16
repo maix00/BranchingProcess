@@ -13,6 +13,7 @@ public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.Asym
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.InfiniteOffspring.Kingman.Lemmas.ArrayStructure
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.InfiniteOffspring.Kingman.Lemmas.ArrayBounds
 public import Probability.Ergodic.Kingman.Theorem
+import Probability.Ergodic.Kingman.Fekete
 public import Mathlib.MeasureTheory.Function.UniformIntegrable
 public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
@@ -35,6 +36,9 @@ Write \(A_\omega(n)=A_\omega(0,n)\) for the repaired array at start time zero.
   the boundary, nonempty-support, ordered-support, and leftmost first-moment
   assumptions, the same almost-sure limit holds and
   \(\|n^{-1}A_\omega(n)-c\|_{L^1}\to0\).
+- `le_normalizedIntegral_repairedInfiniteSelectionSubadditiveArray`:
+  the normalized array limit $c$ satisfies $cle mathbb E[A_omega(H)]/H$
+  for every $H>0$.
 - `infiniteSelection_tendsto_constant`: on almost every environment whose
   batches are valid, the original array also satisfies
   \(n^{-1}A^{\mathrm{orig}}_\omega(n)\to c\) almost surely.
@@ -242,6 +246,56 @@ theorem repairedInfiniteSelection_tendsto_constant_L1_of_leftmostMoment
   refine ⟨c, ?_, ?_⟩
   · simpa only [f] using hconv
   · simpa only [f] using hL1
+
+/-- The repeated full-capacity block comparison in Wang Yiyang, Theorem 1.2.
+The array records the negative endpoint, so each normalized block mean
+bounds its asymptotic mean from above. -/
+theorem le_normalizedIntegral_repairedInfiniteSelectionSubadditiveArray
+    {N : ℕ} (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (hnonempty : μ nonemptySupport = 1)
+    (hordered : μ (orderedBySteps realPotential) = 1)
+    (hslot : Integrable (fun ξ : Step ℕ ℝ => |value' ξ 0|) μ)
+    {c : ℝ}
+    (hL1 : Tendsto (fun n : ℕ => eLpNorm
+      (fun ω => (n : ℝ)⁻¹ * repairedInfiniteSelectionSubadditiveArray hN ω 0 n - c)
+      1 (generationEnvironmentLaw μ N)) atTop (𝓝 0))
+    {H : ℕ} (hH : 0 < H) :
+    c ≤ (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 H
+      ∂generationEnvironmentLaw μ N) / H := by
+  let ν := generationEnvironmentLaw μ N
+  let _ : IsProbabilityMeasure ν := generationEnvironmentLaw_isProbability μ N
+  let A (n : ℕ) (ω : GenerationEnvironment N) :=
+    repairedInfiniteSelectionSubadditiveArray hN ω 0 n
+  let u (n : ℕ) := ∫ ω, A n ω ∂ν
+  have hint (n : ℕ) : Integrable (A n) ν :=
+    repairedInfiniteSelectionSubadditiveArray_integrable_of_leftmostMoment
+      hN μ hboundary hnonempty hordered hslot n
+  have hsub : Subadditive u :=
+    Kingman.integral_subadditive (generationEnvironmentLaw_shift_measurePreserving μ N)
+      (repairedInfiniteSelection_isSubadditiveCocycle hN) hint
+  have hbdd := repairedInfiniteSelection_normalizedIntegral_bddBelow_of_leftmostMoment
+    hN μ hboundary hnonempty hordered hslot
+  obtain ⟨lb, hlb⟩ := hbdd
+  have hbounded : BddBelow (Set.range fun n => u n / (n : ℝ)) := by
+    refine ⟨min lb 0, ?_⟩
+    rintro _ ⟨n, rfl⟩
+    cases n with
+    | zero => simp
+    | succ n =>
+      apply (min_le_left lb 0).trans
+      have h := hlb (Set.mem_range_self n)
+      simpa [u, A, ν, Nat.cast_succ] using h
+  have hscaled (n : ℕ) : Integrable (fun ω => (n : ℝ)⁻¹ * A n ω) ν :=
+    (hint n).const_mul _
+  have hmean : Tendsto (fun n => u n / (n : ℝ)) atTop (𝓝 c) := by
+    have h := tendsto_integral_of_L1' (μ := ν) (fun _ => c)
+      (Eventually.of_forall hscaled) hL1
+    simpa only [integral_const, probReal_univ, one_smul, integral_const_mul,
+      div_eq_inv_mul, u] using h
+  have hc := tendsto_nhds_unique hmean (hsub.tendsto_lim hbounded)
+  rw [hc]
+  exact hsub.lim_le_div hbounded hH.ne'
 
 /-- On an environment whose every generation is a valid transition, repairing
 the environment leaves the deterministic selection array unchanged. -/

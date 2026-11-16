@@ -11,6 +11,8 @@ public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.Asym
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.RunBridge
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.InfiniteOffspring.Repair
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.InfiniteOffspring.Speed
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.InfiniteOffspring.Kingman.Lemmas.ArrayStructure
+import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.InfiniteOffspring.Kingman.Limit
 public import Mathlib.MeasureTheory.Measure.Prod
 public import Mathlib.MeasureTheory.MeasurableSpace.MeasurablyGenerated
 /-!
@@ -34,6 +36,9 @@ public import Mathlib.MeasureTheory.MeasurableSpace.MeasurablyGenerated
 - `selectedPopulationEndpointTrajectory_ae_hasAsymptoticSpeed_and_L1_of_stepLaw`:
   under the same assumptions, each deterministic full-capacity start has
   $M_n/n\to v_N$ almost surely and in $L^1$ on the root-field law.
+
+- `integral_fullCapacityEndpoint_div_le_speed`: from $N$ zero-position
+  particles, $mathbb E[M_H]/Hle v_N$ at every positive horizon $H$.
 
 Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
 Offspring* (Fudan University, 2026), Chapter 3, Corollary 3.13, gives the
@@ -535,6 +540,99 @@ theorem ae_selectedPopulationEndpointTrajectoryWithParameter_prod_of_stepLaw
       HasAsymptoticSpeed (fun n =>
         selectedPopulationEndpointTrajectoryWithParameter N p n) speed
   simpa [fieldLaw, μ] using hjoint
+
+/-- The full-capacity block bound in Wang Yiyang, Theorem 1.2, transported
+from the independent generation batches to the selected population law. -/
+theorem integral_fullCapacityEndpoint_div_le_speed
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    {N : ℕ} (hN : 0 < N) (L : StepLaw ι ℕ X)
+    [IsProbabilityMeasure L.raw]
+    (hboundary : HasBoundaryNormalization L.potential L.raw)
+    (hnonempty : L.raw nonemptySupport = 1)
+    (hfirst : HasLeftmostFirstMoment L)
+    [LinearOrder (RootIndexed.TreeNode (Fin N) ℕ)]
+    [MeasurableSpace (RootIndexed.TreeNode (Fin N) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin N) ℕ)]
+    [MeasurableSingletonClass (RootIndexed.TreeNode (Fin N) ℕ)]
+    [MeasurableSingletonClass (Fin N × RootIndexed.TreeNode (Fin N) ℕ)]
+    [MeasurableSingletonClass (Fin N → Fin N × RootIndexed.TreeNode (Fin N) ℕ)]
+    {speed : ℝ}
+    (hL1 : Tendsto (fun n : ℕ => eLpNorm (fun field =>
+      (n : ℝ)⁻¹ * selectedPopulationEndpointTrajectoryWithParameter N
+        ((fun _ => 0), field) n - speed) 1
+      (finiteRootStepFieldLaw L.sortedPotentialImage N)) atTop (𝓝 0))
+    {H : ℕ} (hH : 0 < H) :
+    (∫ field, selectedPopulationEndpointTrajectoryWithParameter N ((fun _ => 0), field) H
+      ∂finiteRootStepFieldLaw L.sortedPotentialImage N) / H ≤ speed := by
+  classical
+  let μ := L.sortedPotentialImage
+  let P := finiteRootStepFieldLaw μ N
+  let Q := generationEnvironmentLaw μ N
+  let x : Fin N → ℝ := fun _ => 0
+  let A (n : ℕ) (ω : GenerationEnvironment N) :=
+    repairedInfiniteSelectionSubadditiveArray hN ω 0 n
+  let rows (field : RootIndexed.StepField (Fin N) ℕ ℝ) : GenerationEnvironment N :=
+    fun n => selectedRootBatch (selectedPopulationRankRoots N x) n field
+  have hrow : HasLaw rows Q P := selectedPopulationRankBatch_hasLaw_generationEnvironment N x μ
+  have hb := L.sortedPotentialImage_hasBoundaryNormalization hboundary
+  have hn : μ nonemptySupport = 1 := by
+    dsimp [μ]
+    rw [L.sortedPotentialImage_nonemptySupport, L.sorted_nonemptySupport, hnonempty]
+  have ho : μ (orderedBySteps realPotential) = 1 := by
+    simp [μ, L.sortedPotentialImage_orderedBy]
+  have hs := L.integrable_sortedPotentialImage_firstSlot_abs hboundary hfirst
+  have hgoodEnv : ∀ᵐ ω ∂Q, ∀ n, IsGoodInfiniteOffspringBatch (ω n) :=
+    generationEnvironmentLaw_ae_allGood μ hb hn N
+  have heq (n : ℕ) : ∀ᵐ field ∂P, A n (rows field) =
+      -selectedPopulationEndpointTrajectoryWithParameter N (x, field) n := by
+    have hgoodRaw : ∀ᵐ field ∂P, ∀ t, IsGoodInfiniteOffspringBatch (rows field t) :=
+      ae_of_ae_map hrow.aemeasurable (hrow.map_eq.symm ▸ hgoodEnv)
+    filter_upwards [hgoodRaw] with field hgood
+    have hmin := selectedPopulationEndpointWithParameter_eq_rankZero N n hN x field
+      (selectedPopulationTotalized_card_eq_of_rankedBatches_good N x field hgood n)
+    have htraj := congrFun
+      (selectedPopulationRankPosition_eq_infiniteOffspringRun N x field hgood n) ⟨0, hN⟩
+    have hinit : selectedPopulationRankPosition N 0 x field = x := by
+      funext i
+      unfold selectedPopulationRankPosition RootIndexed.observedPositionAtGeneration
+        RootIndexed.positionAtGeneration
+      split
+      · rename_i hlength
+        have hnil := List.length_eq_zero_iff.mp hlength
+        simp [hnil, x, RootIndexed.position, RootIndexed.displace,
+          Combinatorics.Branching.displaceWith]
+      · rfl
+    change A n (rows field) = -RootIndexed.selectedPopulationEndpointWithParameter N N n (x, field)
+    rw [hmin, htraj, hinit]
+    rw [show A n (rows field) = repairedInfiniteSelectionSubadditiveArray hN
+      (rows field) 0 n from rfl, repairedInfiniteSelectionSubadditiveArray_eq_of_allGood
+      hN (rows field) hgood 0 n]
+    simp only [infiniteSelectionSubadditiveArray, infiniteSelectionBlockMinimum, zero_add, neg_inj]
+    rfl
+  have hmeas (n : ℕ) : Measurable (A n) :=
+    measurable_repairedInfiniteSelectionSubadditiveArray hN 0 n
+  have harray : Tendsto (fun n : ℕ => eLpNorm
+      (fun ω => (n : ℝ)⁻¹ * A n ω - (-speed)) 1 Q) atTop (𝓝 0) := by
+    refine hL1.congr fun n => ?_
+    have hg : Measurable (fun ω => (n : ℝ)⁻¹ * A n ω - (-speed)) :=
+      (measurable_const.mul (hmeas n)).sub_const _
+    rw [← hrow.map_eq, eLpNorm_map_measure hg.aestronglyMeasurable hrow.aemeasurable]
+    rw [← eLpNorm_neg]
+    apply eLpNorm_congr_ae
+    filter_upwards [heq n] with field hf
+    change -((n : ℝ)⁻¹ * selectedPopulationEndpointTrajectoryWithParameter N (x, field) n -
+      speed) = (n : ℝ)⁻¹ * A n (rows field) - (-speed)
+    rw [hf]
+    ring
+  have hbound := le_normalizedIntegral_repairedInfiniteSelectionSubadditiveArray
+    hN μ hb hn ho hs harray hH
+  have hmean : (∫ ω, A H ω ∂Q) =
+      -(∫ field, selectedPopulationEndpointTrajectoryWithParameter N (x, field) H ∂P) := by
+    rw [← hrow.map_eq, integral_map hrow.aemeasurable (hmeas H).aestronglyMeasurable]
+    rw [integral_congr_ae (heq H), integral_neg]
+  change -speed ≤ (∫ ω, A H ω ∂Q) / H at hbound
+  rw [hmean, neg_div] at hbound
+  exact neg_le_neg_iff.mp hbound
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
 
