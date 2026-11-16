@@ -78,7 +78,7 @@ theorem RootIndexed.rankInstalledField_stepSelection_law
       RootIndexed.observedPositionAtGeneration initial d φ k field
     let selectedBRWPopulation := fun k
         (field : RootIndexed.StepField (Root ⊕ Root) α Mark) =>
-      RootIndexed.StepSelection.labelledPopulationOn R selectedBRWRoots k
+      RootIndexed.Selection.Stepwise.labelledPopulationOn R selectedBRWRoots k
         (field.reindex Sum.inl)
     let nSelectedBRWPopulation := fun k
         (_ : RootIndexed.StepField (Root ⊕ Root) α Mark)
@@ -96,11 +96,11 @@ theorem RootIndexed.rankInstalledField_stepSelection_law
       (field.reindex Sum.inl)
   let selectedBRWPopulation := fun k
       (field : RootIndexed.StepField (Root ⊕ Root) α Mark) =>
-    RootIndexed.StepSelection.labelledPopulationOn R selectedBRWRoots k
+    RootIndexed.Selection.Stepwise.labelledPopulationOn R selectedBRWRoots k
       (field.reindex Sum.inl)
   have hselectedBRWPopulationMeasurable (k : ℕ) : Measurable[RootIndexed.stepFiltration
       (Root := Root ⊕ Root) (α := α) (X := Mark) k] (selectedBRWPopulation k) := by
-    exact (RootIndexed.StepSelection.labelledPopulationOn_adapted
+    exact (RootIndexed.Selection.Stepwise.labelledPopulationOn_adapted
       R hR selectedBRWRoots k).comp
         (RootIndexed.StepField.reindex_filtration_measurable Sum.inl k)
   have hselectedBRWPopulationFiber (k : ℕ) (s : Finset (RootIndexed.TreeNode Root α)) :
@@ -127,7 +127,7 @@ theorem RootIndexed.rankInstalledField_stepSelection_law
         (RootIndexed.StepField.reindex_filtration_measurable Sum.inl k))
   have hselectedBRWPopulationDepth : ∀ k field p, p ∈ selectedBRWPopulation k field → p.2.length = k := by
     intro k field p hp
-    exact RootIndexed.StepSelection.labelledPopulationOn_depth
+    exact RootIndexed.Selection.Stepwise.labelledPopulationOn_depth
       R selectedBRWRoots k (field.reindex Sum.inl) hp
   exact fun n =>
     (RootIndexed.rankInstalledField_totalizedSelectedPopulation_measurable_law

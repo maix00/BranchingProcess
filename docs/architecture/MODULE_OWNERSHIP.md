@@ -1068,8 +1068,8 @@ the [official measurable-space constructions documentation](https://leanprover-c
 
 The selected-path growth-trial construction is specific to the endpoint-deviation
 argument. Its root module,
-`Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPath/Path.lean`,
-defines `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.selectedPath`.
+`Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/SelectedPath/Path.lean`,
+defines `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.selectedPath`.
 At a split, the first selected child starts a growth trial and the second
 selected child continues the path. `SelectedPath/Splits.lean` proves the
 continuation-subtree identities; `SelectedPath/GrowthTrial/` defines trial
@@ -1124,7 +1124,7 @@ relative-window constraints.
 
 ## Finite-slot population coupling
 
-`Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPath/GrowthTrial/FiniteSlot/Coupling.lean`
+`Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/SelectedPath/GrowthTrial/FiniteSlot/Coupling.lean`
 owns the coded active-label set, the generation's offspring row and its product
 law, and the pathwise and conditional first-moment recursions. Its principal
 objects are
@@ -1136,7 +1136,7 @@ objects are
 The finite address, encode/decode, and level-root arguments that identify the
 binary labels with the selected source population are proof support specific
 to this coupling. They are grouped in
-`Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPath/GrowthTrial/FiniteSlot/Lemmas/Coding.lean`.
+`Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/SelectedPath/GrowthTrial/FiniteSlot/Lemmas/Coding.lean`.
 The general selected-path predicate and its equivalence with membership in a
 finite step-selected generation belong to
 `Population/Processes/StepSelection/SelectedPath.lean`; they do not depend on

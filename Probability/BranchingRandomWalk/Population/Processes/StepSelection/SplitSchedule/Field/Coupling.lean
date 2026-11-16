@@ -35,7 +35,7 @@ corresponding original-field population and preserves the potential values:
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
-namespace StepSelection
+namespace Selection.Stepwise
 namespace SplitSchedule
 
 open Combinatorics.UlamHarris Combinatorics.Branching
@@ -51,7 +51,7 @@ noncomputable def activePopulation
     (additionalRoots : AdditionalRoot → Fin N ⊕ AdditionalRoot) (stem : TreeNode α)
     (j n : ℕ) (step : RootIndexed.StepField (Fin N ⊕ AdditionalRoot) α X) :
     Finset (RootIndexed.TreeNode (Fin N ⊕ AdditionalRoot) α) :=
-  RootIndexed.StepSelection.labelledPopulationOn R (activeRoots N) n
+  RootIndexed.Selection.Stepwise.labelledPopulationOn R (activeRoots N) n
     (iteratedPoolField N R trial duration target fallback additionalRoots stem j step)
 
 /-- Couple the finite active population of an iterated split pool to its
@@ -194,6 +194,6 @@ theorem iteratedPopulation_injectivelyDominatesBy_original
     population
 
 end SplitSchedule
-end StepSelection
+end Selection.Stepwise
 end RootIndexed
 end ProbabilityTheory.BranchingRandomWalk

@@ -17,21 +17,29 @@ than the application that first needs it.
 | `Probability` | Laws, filtrations, independence, random processes, and almost-everywhere statements | IID sequences, random walks, Lévy and stable processes |
 | `Probability/BranchingRandomWalk` | Random branching models and their bridges to general process and measure interfaces | offspring fields, spines, selection and coupling |
 
-The selected-path construction for the endpoint-deviation argument is owned by
-`Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPath/`.
+The selected-path construction used for the asymptotic speed of the frontier is owned by
+`Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/SelectedPath/`.
 Its root `selectedPath` follows the second selected child at each split while
 the first selected child starts a growth trial. Trial populations, completion,
 and coupling are grouped beneath `SelectedPath/GrowthTrial/`,
 `SelectedPath/Completion/`, and `SelectedPath/Coupling/`; one-use steps for the
-endpoint-deviation proof are under the sibling `EndpointDeviation/Lemmas/`.
+construction are under the sibling `AsymptoticSpeed/Lemmas/`.
+
+The deterministic rule assigning a child slot to the continuation path is in
+`Combinatorics.Branching.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath`.
+The generic first and second slot operations are methods of `Step.FiniteSelection`.
+`Asymptotics.HasAsymptoticSpeed` describes a limit of position sequences, and
+`Combinatorics.Branching.Selection.NSelection.Walk.Frontier` applies it to the
+least and greatest position paths of a deterministic selected walk.
 
 The first observable split of a selected population is a reusable process fact
-owned by `Probability/BranchingRandomWalk/Population/Processes/StepSelection/SplitTime/`.
+owned by the `BranchingRandomWalk.Selection.Stepwise.SplitTime` namespace. Its
+files are under `Probability/BranchingRandomWalk/Population/Processes/StepSelection/SplitTime/`.
 The fixed-root time shift belongs beside it in `RootIndexed.lean`. The
 almost-sure finite completion is in `SplitTime/Finite.lean`, with its proof
 helpers in `SplitTime/Lemmas/FiniteCompletion.lean`. The
-two-sibling stopped subtree factorization used by endpoint deviation remains in
-`EndpointDeviation/Lemmas/FirstSplit/`. Generic selected-subtree integration is
+two-sibling stopped subtree factorization used by the selected-path construction is in
+`AsymptoticSpeed/Lemmas/FirstSplit/`. Generic selected-subtree integration is
 owned by `Genealogy/Exploration/IndependentSubtreeIntegration.lean`, and the
 independent eventwise integral bound is at
 `Probability/Independence/Integration/IndependentUpperBound.lean`.
@@ -41,7 +49,7 @@ endpoint law to transfer the expectation of a terminal payoff on finite
 completion to a fresh descendant field and the stopped endpoint data.
 
 Generic process interfaces stay separate by role: observable candidate
-completion and success belong under `Probability/Process/HittingTime/`, while
+completion and success are in the `ProbabilityTheory.Trial` namespace under `Probability/Process/HittingTime/`, while
 i.i.d. geometric reward belongs under `Probability/Sequence/IID/GeometricReward/`.
 These cover distinct trial protocols, so no umbrella `Probability/Process/Restart/`
 module is introduced. `Probability/Process/Path/Restart/` retains its own
@@ -197,7 +205,7 @@ Selection modules are placed by the data they take as input:
   measurability theorem belongs to
   `MeasureTheory/BranchingWalk/Step/Selection/FiniteSlot.lean`, and the
   pushforward offspring law and supercriticality criterion belong to
-  `Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SelectedPath/GrowthTrial/FiniteSlot/Offspring.lean`.
+  `Probability/BranchingRandomWalk/Step/Selection/BinaryOffspringLaw.lean`.
 - `MeasureTheory/Selection/` owns measurable selector realizations and their
   measurability results. Measurability results whose input is a branching step
   belong to `MeasureTheory/BranchingWalk/Step/Selection/`. The generation

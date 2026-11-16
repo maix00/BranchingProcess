@@ -275,12 +275,12 @@ theorem RootIndexed.PreSampledLineages.first_success_within_isStoppingTime
     IsStoppingTime (RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X))
     (firstDeclaredSuccess
-        (candidateDeclarationWithin
+        (ProbabilityTheory.Trial.candidateDeclarationWithin
           (fun p => lineages.sigma splitMark p.1 p.2)
-          (fun p => successAtCompletion
+          (fun p => ProbabilityTheory.Trial.successAtCompletion
             (lineages.sigma splitMark p.1 p.2) (test p.1 p.2))
           candidates)) := by
-  exact @first_successful_candidate_within_isStoppingTime
+  exact @ProbabilityTheory.Trial.first_successful_candidate_within_isStoppingTime
     (RootIndexed.StepField Root α X) _ (Root × Trial)
     (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
     (fun p => lineages.sigma splitMark p.1 p.2)
@@ -301,17 +301,17 @@ theorem RootIndexed.PreSampledLineages.successfulWithin_measurable
     (T : ℕ) :
     MeasurableSet[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) T]
-      (successfulCandidateWithin
+      (ProbabilityTheory.Trial.successfulCandidateWithin
         (fun p => lineages.sigma splitMark p.1 p.2)
-        (fun p => successAtCompletion
+        (fun p => ProbabilityTheory.Trial.successAtCompletion
           (lineages.sigma splitMark p.1 p.2) (test p.1 p.2))
         candidates T) :=
-  successfulCandidateWithin_measurable
+  ProbabilityTheory.Trial.successfulCandidateWithin_measurable
     (F := RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
     (completion := fun p => lineages.sigma splitMark p.1 p.2)
-    (success := fun (p : Root × Trial) => successAtCompletion
+    (success := fun (p : Root × Trial) => ProbabilityTheory.Trial.successAtCompletion
       (lineages.sigma splitMark p.1 p.2) (fun n => test p.1 p.2 n))
-    (h := successAtCompletion_observable
+    (h := ProbabilityTheory.Trial.successAtCompletion_observable
       (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
       (fun p => lineages.sigma splitMark p.1 p.2)
       (fun (p : Root × Trial) n => test p.1 p.2 n)
@@ -332,9 +332,9 @@ theorem RootIndexed.PreSampledLineages.failureWithin_measurable
     (T : ℕ) :
     MeasurableSet[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) T]
-      (successfulCandidateWithin
+      (ProbabilityTheory.Trial.successfulCandidateWithin
         (fun p => lineages.sigma splitMark p.1 p.2)
-        (fun p => successAtCompletion
+        (fun p => ProbabilityTheory.Trial.successAtCompletion
           (lineages.sigma splitMark p.1 p.2) (test p.1 p.2))
         candidates T)ᶜ :=
   (lineages.successfulWithin_measurable splitMark hsplit test htest
