@@ -10,7 +10,7 @@ public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDevia
 public import Probability.BranchingRandomWalk.Assumptions.CrossWeight
 public import Probability.Distributions.Moments.Real
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.Critical.Survival
-import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.Asymptotics
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Lemmas.Scales
 
 /-!
 # Terminal survival in the second-stage critical corridor
@@ -75,12 +75,8 @@ theorem eventually_measure_positiveASelectedBRWTerminalEmpty_le_exp_neg_power
   have hNr : Tendsto (fun n => (N n : ℝ)) atTop atTop := tendsto_natCast_atTop_atTop.comp hN
   have hL : Tendsto L atTop atTop := Real.tendsto_log_atTop.comp hNr
   have hcutoff := tendsto_positiveAFirstStageCutoff_div_logCube hN
-  have horderH : ∀ᶠ n in atTop, ell n ≤ H n := by
-    have hlt := hcutoff.eventually (Iio_mem_nhds (show (0 : ℝ) < t / 2 by positivity))
-    have hgt := hH.eventually (Ioi_mem_nhds (show t / 2 < t by linarith))
-    filter_upwards [hlt, hgt, hL.eventually_gt_atTop 0] with n hl hg hLn
-    apply Nat.le_of_lt
-    exact_mod_cast (div_lt_div_iff_of_pos_right (pow_pos hLn 3)).mp (hl.trans hg)
+  have horderH := (eventually_positiveAFirstStageCutoff_lt_of_logCubeLimit hN ht hH).mono
+    (fun _ h => h.le)
   have hscale : Tendsto (fun n => (D n : ℝ) / L n ^ 3) atTop (𝓝 t) :=
     tendsto_positiveASpan_cubicRatio_of_stageRatios hL hcutoff hH horderH
   have hD : Tendsto (fun n => (D n : ℝ)) atTop atTop :=

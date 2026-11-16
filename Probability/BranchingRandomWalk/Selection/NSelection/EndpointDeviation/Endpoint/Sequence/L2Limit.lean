@@ -7,11 +7,18 @@ Authors: WANG Yiyang
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.FiniteVariance
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.Sequence
 import Probability.MeasureTheory.Convergence.SecondMoment.FromPolynomialTails
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.PositiveInitialExponent
 
 /-!
 # Endpoint convergence from the upper-tail estimate
 
 ## Public declarations
+
+* `tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub_of_initialExponent`:
+  for the initial population $m_n=\lfloor N_n^a\rfloor$ at $0<a<1$, the
+  model's centered-spine, cross-weight, and leftmost fourth-moment
+  assumptions give $\left\|M_n/\log N_n-c\right\|_{L^2}\to0$ with
+  $c=-a+\frac{\pi^2}{2}\sigma^2t$.
 
 * `tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub_of_upperTail`:
   write $c=-a+\frac{\pi^2}{2}\sigma^2t$ and $M_n$ for the selected minimum
@@ -143,5 +150,48 @@ theorem tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub_of_upperTail
       _ ≤ 2 / (N n : ℝ) ^ p := by
         have h := add_le_add (hexp p₂ (min_le_right _ _)) (hexp p₁ (min_le_left _ _))
         exact h.trans_eq (by ring)
+
+/-- The case $0<a<1$ of Theorem 1.1, Chapter 4 of Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(Fudan University, 2026). The normalization is on the common root-field law. -/
+theorem tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub_of_initialExponent
+    (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
+    (hboundary : HasBoundaryNormalization L.potential L.raw)
+    (hnonempty : L.raw nonemptySupport = 1)
+    (hcross : HasFiniteCrossWeight realPotential L.sortedPotentialImage)
+    (hfour : HasLeftmostFourthMoment L)
+    {sigma a t : ℝ} (hsigma : 0 < sigma)
+    (hspine : IsCenteredSecondMoment
+      (tiltedPotentialLaw realPotential (-1) L.sortedPotentialImage) (sigma ^ 2))
+    (ha : 0 < a) (ha1 : a < 1) (ht : 0 < t)
+    {N H : ℕ → ℕ} (hcapacity : ∀ n, 0 < N n)
+    (hN : Tendsto N atTop atTop)
+    (hH : Tendsto (fun n => (H n : ℝ) / Real.log (N n : ℝ) ^ 3) atTop (𝓝 t))
+    (horder : ∀ n, LinearOrder (RootIndexed.TreeNode (Fin (Nat.floor ((N n : ℝ) ^ a))) ℕ)) :
+    let P := RootIndexed.stepFieldLaw (Root := ℕ) L.sortedPotentialImage
+    let c := -a + (Real.pi ^ 2 / 2) * sigma ^ 2 * t
+    Tendsto (fun n => eLpNorm (fun field =>
+      @countableRootEndpointMinimum (Nat.floor ((N n : ℝ) ^ a)) (N n) (H n) (horder n) field /
+        Real.log (N n : ℝ) - c) 2 P) atTop (𝓝 0) := by
+  intro P c
+  let m (n : ℕ) := Nat.floor ((N n : ℝ) ^ a)
+  have hone (n : ℕ) : (1 : ℝ) ≤ (N n : ℝ) := by
+    exact_mod_cast hcapacity n
+  have hm (n : ℕ) : 0 < m n := by
+    apply Nat.floor_pos.mpr
+    exact Real.one_le_rpow (hone n) ha.le
+  have hma (n : ℕ) : (m n : ℝ) ≤ (N n : ℝ) ^ a :=
+    Nat.floor_le (Real.rpow_nonneg (Nat.cast_nonneg _) _)
+  have hmN (n : ℕ) : m n ≤ N n := by
+    have hle := Real.rpow_le_rpow_of_exponent_le (hone n) ha1.le
+    rw [Real.rpow_one] at hle
+    exact_mod_cast (hma n).trans hle
+  apply tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub_of_upperTail
+    L hboundary hnonempty hfour hsigma hspine ha.le ht horder hm hcapacity
+    (Eventually.of_forall hmN) (Eventually.of_forall hma) hN hH
+  intro ε hε
+  exact eventually_countableRootEndpointMinimum_ge_le_polynomial_of_initialExponent hN
+    L.sortedPotentialImage (L.sortedPotentialImage_hasBoundaryNormalization hboundary) hcross
+    hsigma hspine ha ha1 ht (show c < c + ε by linarith) hH horder
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

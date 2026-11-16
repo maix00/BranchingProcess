@@ -10,14 +10,12 @@ import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Spin
 import Probability.Process.RandomWalk.Path.Restart.FirstMoment
 import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 import Probability.Process.RandomWalk.Path.Restart.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Theorems
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.LogarithmicScales
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Cutoff
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.RestartedWindow
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 
-import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.ParameterBounds
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Lemmas.Parameters
 /-!
 # Window-event inclusions and capacity Markov bounds
 
@@ -36,7 +34,7 @@ modules outside this directory.
 
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveARestartedWindow_zero_mem` gives the zero-start condition required to identify the initial restarted-window event.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_positiveASelectedBRW_capacityEvent_compl_le` bounds the capacity-failure probability by the weighted sum $\frac{m}{N+1}\sum_{k=0}^{\ell_N}e^{u_k}p_k$ of restarted-window probabilities.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds` and `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfDrawdownBounds` successively substitute generation-wise and drawdown path bounds into that estimate.
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds` substitutes generation-wise path bounds into that estimate.
 -/
 
 open Filter MeasureTheory
@@ -118,8 +116,7 @@ lemma measure_positiveASelectedBRW_capacityEvent_compl_le
       (fun _ _ => Set.mem_univ _) hbound N ellN
 
 /-- Generation-dependent bounds can be summed directly in the selected-population capacity
-estimate. This retains the shorter-prefix drawdown probabilities instead of
-replacing all of them by the full-horizon probability. -/
+estimate. This retains the probability for the actual prefix at each generation. -/
 lemma measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds
     (m ell ellN N : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -233,71 +230,5 @@ lemma measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfGenerationPa
       apply ENNReal.div_le_div_right
       exact mul_le_mul_of_nonneg_left hsum (by positivity)
     _ = _ := by simp [upper]
-
-/-- The generation-dependent capacity bound accepts per-prefix random-walk
-drawdown estimates directly. The endpoint threshold and the corridor width
-are kept at the full planned scale, while the drawdown horizon is the actual
-observed prefix length. -/
-lemma measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfDrawdownBounds
-    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
-    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
-    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
-    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
-    (hell : 0 < ell) (hellN : ell < ellN)
-    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
-    (hc : 0 < c) (hvc : v ≤ c)
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
-    (hboundary : HasBoundaryNormalization realPotential μ)
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
-    (pFirst : ℕ → ℝ≥0∞) (pSecond : ℕ → ℝ≥0∞)
-    (hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
-      RandomWalk.restartedWindowProbability
-        (tiltedIncrementFieldLaw realPotential μ) ell
-        (positiveARestartedWindow ell ellN logN b v c κ)
-        (k : ℕ) 0 ≤ pFirst (k : ℕ))
-    (hdrawdown : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
-      iidSequenceLaw ν
-        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
-          ((k : ℕ) - ell)
-          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
-          (positiveADrift ell ellN κ c ((k : ℕ) - ell) +
-            c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) ≤ pSecond (k : ℕ)) :
-    let window := positiveARestartedWindow ell ellN logN b v c κ
-    let upper := positiveAWindowUpper ell ellN logN b v c κ
-    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
-      (fun _ : Fin m => (0 : ℝ)) id measurable_id
-      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
-      (by
-        intro q hq
-        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
-        simp) ell window
-      (measurableSet_positiveARestartedWindow ell ellN logN b v c κ)
-      upper (positiveARestartedWindow_subset_Iic_upper
-        ell ellN logN b v c κ)
-    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
-      (m : ℝ≥0∞) *
-        (∑ k : Fin (ellN + 1),
-          if (k : ℕ) ≤ ell then pFirst (k : ℕ) else
-            ENNReal.ofReal (Real.exp
-              (positiveAWindowUpper ell ellN logN b v c κ ell +
-                positiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
-              pSecond (k : ℕ)) /
-          (N + 1 : ℕ) := by
-  have hsecondPath : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
-      RandomWalk.restartedWindowProbability
-        (tiltedIncrementFieldLaw realPotential μ) ell
-        (positiveARestartedWindow ell ellN logN b v c κ)
-        (k : ℕ) 0 ≤ pSecond (k : ℕ) := by
-    intro k hk
-    rw [show tiltedIncrementFieldLaw realPotential μ = iidSequenceLaw ν by
-      rw [hν]
-      rfl]
-    exact (iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown
-      ν ell ellN (k : ℕ) logN b v c κ hk (by omega) hκ hc hvc)
-      |>.trans (hdrawdown k hk)
-  exact measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds
-    m ell ellN N logN b v c κ hell hellN hb hlog hvb μ hboundary
-    pFirst pSecond hfirstPath hsecondPath
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

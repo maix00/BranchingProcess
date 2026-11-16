@@ -9,7 +9,6 @@ module
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.RestartedWindow
 import Probability.Process.RandomWalk.Path.Restart.Basic
 import Probability.Process.Path.Restart.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
 
 /-!
 # Internal tube events for the restarted second stage
@@ -27,9 +26,6 @@ $d_j=(\kappa/c^2)D^{-2/3}j$.
   in those windows through a specified prefix.
 - `positiveASecondStageTubePrefixEvent_subset_fixedTube` places this event
   inside the fixed-width corridor when $0\leq\kappa$, $0<c$, and $v\leq c$.
-- `positiveASecondStageTubePrefixEvent_subset_drawdownEvent` compares a
-  prefix tube event with the corresponding generic drawdown event; the full
-  horizon is the specialization with `d = ellN - ell`.
 - `positiveARestartedWindow_event_subset_shiftedSecondStageTubePrefix` shows
   that after shifting increments by $\ell$, membership in the restarted
   window through generation $k$ implies membership in the tube prefix of
@@ -120,42 +116,6 @@ lemma positiveASecondStageTubePrefixEvent_subset_fixedTube
         linarith [hterminal]
       exact ⟨hmember'.1,
         hmember'.2.trans (by simpa [D, width] using hupper)⟩
-
-/-- A second-stage prefix of length `d` is contained in a drawdown event at
-that same horizon. The corridor scale still uses the full planned horizon
-`ellN - ell`. -/
-lemma positiveASecondStageTubePrefixEvent_subset_drawdownEvent
-    (ell ellN d : ℕ) (κ c v : ℝ)
-    (hellN : ell < ellN) (hd : d ≤ ellN - ell)
-    (hκ : 0 ≤ κ) (hc : 0 < c) (hvc : v ≤ c) :
-    positiveASecondStageTubePrefixEvent ell ellN d κ c v ⊆
-      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
-        d
-        (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
-        (positiveADrift ell ellN κ c d +
-          c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) := by
-  let D := ellN - ell
-  let drift : ℕ → ℝ := positiveADrift ell ellN κ c
-  let width : ℝ := c * (((D : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
-  have hDpos : 0 < D := by dsimp [D]; exact Nat.sub_pos_of_lt hellN
-  have hDreal : 0 < (D : ℝ) := by exact_mod_cast hDpos
-  have hcoef : 0 ≤ κ / c ^ 2 * (D : ℝ) ^ ((-2 : ℝ) / 3) := by
-    positivity
-  have hmono : Monotone drift := by
-    intro i j hij
-    dsimp [drift, positiveADrift]
-    exact mul_le_mul_of_nonneg_left (by exact_mod_cast hij) hcoef
-  have hcontained := positiveASecondStageTubePrefixEvent_subset_fixedTube
-    ell ellN d κ c v hellN hd hc.le hvc
-  intro increment hpath
-  have hpositions : ∀ j : Fin (d + 1),
-      AdditivePath.displacement (j : ℕ) increment ∈
-        Set.Icc (drift (j : ℕ)) (drift (j : ℕ) + width) := by
-    simpa [D, drift, width] using hcontained hpath
-  have hdrawdown :=
-    ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.additivePath_mem_noLargeDropEndpointBelowEvent_of_monotoneCorridor
-    d drift width hmono increment hpositions
-  simpa [D, drift, width] using hdrawdown
 
 /-- After the restart time, membership in the original window schedule
 forces the corresponding shifted increments to stay in the second-stage

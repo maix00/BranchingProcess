@@ -9,222 +9,36 @@ module
 import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Spine
 import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 import Probability.Process.RandomWalk.Path.Restart.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Theorems
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.LogarithmicScales
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Cutoff
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.RestartedWindow
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 import Analysis.Asymptotics.Sequence.ExponentialSum
 
-import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.Asymptotics
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Lemmas.Scales
 /-!
-# Capacity probability combinations
-
-This module contains non-reusable intermediate statements in the proof of
-the positive-initial-mass capacity estimate, Proposition 3.1, equation
-(4.15), of Elie Aïdékon and Yueyun Hu, *Average-weight percolation on the
-complete graph*, arXiv:2512.23266 (2025). The preceding module in the
-`Lemmas/` chain supplies the definitions and estimates used here.
-
-The declarations are theorem-specific reductions: they pass from the
-restarted tube data to the estimates needed by the next stage of the proof.
-Reusable path-event and measure inequalities remain in their semantic
-modules outside this directory.
+# Polynomial decay of the capacity overflow probability
 
 ## Internal proof declarations
 
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput_of_uniformAH` gives a polynomial capacity-failure bound from the uniform Aïdékon--Hu input.
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_probability_le_polynomial_of_canceledAH_capacity_bound` converts the canceled estimate into the eventual bound $\mathbb P(\text{capacity failure})\leq N^{-p}$.
+* `eventually_capacityFailure_le_polynomial_of_twoPhaseMomentBound` turns
+  a two-phase first-moment bound with exponent margin $a+q<1$ into the
+  eventual bound $\mathbb P(\exists j\le H_n,\#P_j>N_n)\le N_n^{-p}$
+  for some $p>0$.
+
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* (Fudan University, 2026), Chapter 4, Theorem 1.1, case $0<a<1$.
 -/
 
-open Filter MeasureTheory
-open scoped ENNReal BigOperators Topology
+open Filter
+open scoped ENNReal Topology
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
-open Combinatorics.Branching
-open Combinatorics.UlamHarris
-open ProbabilityTheory.BranchingRandomWalk
-open ProbabilityTheory.BranchingRandomWalk.Spine
-open ProbabilityTheory.RandomWalk
-
-/-- The polynomial selected-population capacity estimate with an externally supplied
-uniform Aïdékon--Hu threshold.  Keeping the threshold explicit lets the
-logarithmic-scale argument use one value for every sample size. -/
-lemma measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfAHPolynomialInput_of_uniformAH
-    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
-    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
-    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
-    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
-    (hell : 0 < ell) (hellN : ell < ellN)
-    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
-    (hc : 0 < c) (hvc : v ≤ c)
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
-    (hboundary : HasBoundaryNormalization realPotential μ)
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
-    {sigma : ℝ} (target p : ℝ) (hκrate : κ = target * sigma ^ 2)
-    (delta0 : ℝ)
-    (hAH : ∀ ell' ellN' d : ℕ, ell' < ellN' → d ≤ ellN' - ell' →
-      delta0 ≤ c * (((ellN' - ell' : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) →
-      (c * (((ellN' - ell' : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ (2 + p) ≤ (d : ℝ) →
-      iidSequenceLaw ν
-        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
-          d (c * (((ellN' - ell' : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
-          (positiveADrift ell' ellN' κ c d +
-            c * (((ellN' - ell' : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) ≤
-        ENNReal.ofReal (Real.exp
-          (-target * sigma ^ 2 * (d : ℝ) /
-            (c * (((ellN' - ell' : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) ^ 2)))
-    (hscale : delta0 ≤ c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
-    :
-    let window := positiveARestartedWindow ell ellN logN b v c κ
-    let upper := positiveAWindowUpper ell ellN logN b v c κ
-    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
-      (fun _ : Fin m => (0 : ℝ)) id measurable_id
-      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
-      (by
-        intro q hq
-        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
-        simp) ell window
-      (measurableSet_positiveARestartedWindow ell ellN logN b v c κ)
-      upper (positiveARestartedWindow_subset_Iic_upper
-        ell ellN logN b v c κ)
-    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
-      (m : ℝ≥0∞) *
-        (((ell + 1 : ℕ) : ℝ≥0∞) +
-          ((ellN - ell : ℕ) : ℝ≥0∞) *
-            ENNReal.ofReal (Real.exp
-              ((-b + v) * logN +
-                c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
-                κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3))))) /
-          (N + 1 : ℕ) := by
-  let width : ℝ := c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
-  have htilted : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) :=
-    tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
-  have hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
-      RandomWalk.restartedWindowProbability
-        (tiltedIncrementFieldLaw realPotential μ) ell
-        (positiveARestartedWindow ell ellN logN b v c κ)
-        (k : ℕ) 0 ≤ 1 := by
-    intro k _hk
-    calc
-      _ ≤ (tiltedIncrementFieldLaw realPotential μ) Set.univ := by
-        unfold RandomWalk.restartedWindowProbability
-        exact measure_mono (Set.subset_univ _)
-      _ = 1 := htilted.measure_univ
-  let pSecond : ℕ → ℝ≥0∞ := fun k =>
-    if width ^ (2 + p) ≤ ((k - ell : ℕ) : ℝ) then
-      ENNReal.ofReal (Real.exp
-        (-target * sigma ^ 2 * ((k - ell : ℕ) : ℝ) / width ^ 2))
-    else 1
-  have hdrawdown : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
-      iidSequenceLaw ν
-        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
-          ((k : ℕ) - ell) width
-          (positiveADrift ell ellN κ c ((k : ℕ) - ell) + width)) ≤
-        pSecond (k : ℕ) := by
-    intro k hk
-    have hkN : (k : ℕ) ≤ ellN := by omega
-    have hd : (k : ℕ) - ell ≤ ellN - ell := by omega
-    by_cases hlong : width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ)
-    · have hbound := hAH ell ellN ((k : ℕ) - ell) hellN hd
-        (by simpa [width] using hscale) (by simpa [width] using hlong)
-      simpa [pSecond, width, hlong] using hbound
-    · have hprob : iidSequenceLaw ν
-          (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
-            ((k : ℕ) - ell) width
-            (positiveADrift ell ellN κ c ((k : ℕ) - ell) + width)) ≤ 1 := by
-        calc
-          _ ≤ iidSequenceLaw ν Set.univ := measure_mono (Set.subset_univ _)
-          _ = 1 := measure_univ
-      simpa [pSecond, width, hlong] using hprob
-  have hcapacity :=
-    measure_positiveASelectedBRW_capacityEvent_compl_le_twoPhaseOfDrawdownBounds
-      m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb hc hvc μ hboundary
-      ν hν (fun _ : ℕ => 1) pSecond hfirstPath hdrawdown
-  have hsum :
-      (∑ k : Fin (ellN + 1),
-        if (k : ℕ) ≤ ell then 1 else
-          ENNReal.ofReal (Real.exp
-            (positiveAWindowUpper ell ellN logN b v c κ ell +
-              positiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
-            (if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
-              ENNReal.ofReal (Real.exp
-                (-target * sigma ^ 2 * (((k : ℕ) - ell : ℕ) : ℝ) / width ^ 2))
-            else 1)) ≤
-      ((ell + 1 : ℕ) : ℝ≥0∞) +
-        ((ellN - ell : ℕ) : ℝ≥0∞) *
-          ENNReal.ofReal (Real.exp
-            ((-b + v) * logN + width +
-              κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3)))) := by
-    calc
-      _ ≤ ∑ k : Fin (ellN + 1),
-          if (k : ℕ) ≤ ell then 1 else
-            if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
-              ENNReal.ofReal (Real.exp ((-b + v) * logN + width))
-            else ENNReal.ofReal (Real.exp
-              (positiveAWindowUpper ell ellN logN b v c κ ell +
-                positiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) := by
-        apply Finset.sum_le_sum
-        intro k _hk
-        by_cases hkle : (k : ℕ) ≤ ell
-        · simp [hkle]
-        · have hk : ell < (k : ℕ) := Nat.lt_of_not_ge hkle
-          by_cases hlong : width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ)
-          · have hcancel := positiveAWindowWeightedAH_le
-              ell ellN (k : ℕ) logN b v c κ target sigma hellN hvc hc hk
-              (by omega) hκrate
-            simpa [width, Nat.not_le_of_gt hk, hlong] using hcancel
-          · have hd : (((k : ℕ) - ell : ℕ) : ℝ) ≤ width ^ (2 + p) :=
-              le_of_not_ge hlong
-            have hdrift := positiveADrift_le_shortPrefix_power
-              ell ellN ((k : ℕ) - ell) κ c p hellN hκ hc
-                (by simpa [width] using hd)
-            have hupper := positiveAWindowUpper_le_generationDrift_add_width
-              ell ellN (k : ℕ) logN b v c κ hellN hvc hk (by omega)
-            have hcutoff := positiveAWindowUpper_at_cutoff
-              ell ellN logN b v c κ
-            have hexponent :
-                positiveAWindowUpper ell ellN logN b v c κ ell +
-                  positiveAWindowUpper ell ellN logN b v c κ (k : ℕ) ≤
-                (-b + v) * logN + width +
-                  κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3)) := by
-              rw [hcutoff]
-              dsimp [width]
-              linarith
-            simp [hkle, hlong, width]
-      _ ≤ _ := by
-        simpa [width] using positiveA_canceledAH_sum_le
-          ell ellN logN b v c κ p hellN hκ hc hvc
-  calc
-    _ ≤ (m : ℝ≥0∞) *
-        (∑ k : Fin (ellN + 1),
-          if (k : ℕ) ≤ ell then 1 else
-            ENNReal.ofReal (Real.exp
-              (positiveAWindowUpper ell ellN logN b v c κ ell +
-                positiveAWindowUpper ell ellN logN b v c κ (k : ℕ))) *
-              (if width ^ (2 + p) ≤ (((k : ℕ) - ell : ℕ) : ℝ) then
-                ENNReal.ofReal (Real.exp
-                  (-target * sigma ^ 2 * (((k : ℕ) - ell : ℕ) : ℝ) / width ^ 2))
-              else 1)) / (N + 1 : ℕ) := by
-          simpa [pSecond, width] using hcapacity
-    _ ≤ (m : ℝ≥0∞) *
-        (((ell + 1 : ℕ) : ℝ≥0∞) +
-          ((ellN - ell : ℕ) : ℝ≥0∞) *
-            ENNReal.ofReal (Real.exp
-              ((-b + v) * logN + width +
-                κ * c ^ p * (((ellN - ell : ℕ) : ℝ) ^ (p / 3))))) /
-          (N + 1 : ℕ) := by
-          apply ENNReal.div_le_div_right
-          exact mul_le_mul_of_nonneg_left hsum (by positivity)
-    _ = _ := by simp [width]
-
-/-- The finite-scale canceled-AH capacity estimate has polynomial decay when
+/-- The two-phase capacity estimate has polynomial decay when
 the initial root count has exponent `a`, the two multiplicity factors have
 subexponential size, and the combined exponent `a + q` is below one. -/
-lemma eventually_probability_le_polynomial_of_canceledAH_capacity_bound
+lemma eventually_capacityFailure_le_polynomial_of_twoPhaseMomentBound
     {P : ℕ → ℝ≥0∞} {m ell ellN N : ℕ → ℕ} {E : ℕ → ℝ} {a q : ℝ}
     (hN : Tendsto N atTop atTop)
     (horder : ∀ᶠ n : ℕ in atTop, ell n ≤ ellN n)
