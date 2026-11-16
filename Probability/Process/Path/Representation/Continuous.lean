@@ -77,7 +77,8 @@ theorem exists_measurable_continuousPathVersion
     measurable_pi_iff.mpr fun t => hXmeas t
   let f₀ : C(Time, State) := Classical.choice ‹Nonempty C(Time, State)›
   obtain ⟨g, hgMeas, hgContinuous, hrawEq⟩ :=
-    hraw.aemeasurable.exists_ae_eq_range_subset hXcont
+    hraw.aemeasurable.exists_ae_eq_range_subset
+      (t := { f : Time → State | Continuous f }) hXcont
       ⟨f₀, f₀.continuous⟩
   let gContinuous : Ω → {f : Time → State // Continuous f} :=
     fun ω => ⟨g ω, hgContinuous (Set.mem_range_self ω)⟩

@@ -294,10 +294,11 @@ previous generation's endpoint-minimizing address. The law conditions are
 the boundary normalization and nonempty-offspring assumptions.
 -/
 lemma finiteRootStepFieldLaw_endpointMinimum_succ_le_predictablePositiveSlotZero_ae
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
     (m N : ℕ) (hm : 0 < m) (hN : 0 < N)
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
     [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
-    (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
+    (L : StepLaw ι ℕ X) [IsProbabilityMeasure L.raw]
     (hboundary : HasBoundaryNormalization L.potential L.raw)
     (hnonempty : L.raw nonemptySupport = 1) :
     ∀ᵐ field ∂finiteRootStepFieldLaw L.sortedPotentialImage m,

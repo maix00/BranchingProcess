@@ -56,7 +56,6 @@ theorem ProbabilityMeasure.tendsto_map_of_tendsto_of_continuousAt_ae
   have hUopen : IsOpen U := isOpen_interior
   have hUV : V =ᵐ[(μ : Measure Ω)] U := by
     filter_upwards [hcont] with x hx
-    apply propext
     constructor
     · intro hxG
       rw [mem_interior_iff_mem_nhds]

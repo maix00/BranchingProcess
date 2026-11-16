@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Brownian.PathLaw.Skorokhod
-public import Probability.Process.Brownian.PathLaw.ContinuousModification
+public import BrownianMotion.Gaussian.BrownianMotion
 public import Mathlib.MeasureTheory.Measure.Prod
 
 /-!
@@ -103,10 +103,10 @@ noncomputable def pathLaw {Ω : Type*} [MeasurableSpace Ω]
 using the measurable continuous version determined by its coordinate laws. -/
 noncomputable def pathLawOfBrownian {Ω : Type*} [MeasurableSpace Ω]
     {P : Measure Ω} [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
-    (hB : IsBrownianReal B P) (hBmeasurable : ∀ t, Measurable (B t)) :
+    (hB : IsBrownianReal B P) :
     Measure (CadlagPath unitInterval ℝ) :=
-  pathLaw P (hB.continuousModification hBmeasurable)
-    (hB.continuous_continuousModification hBmeasurable)
+  pathLaw P (hB.toIsPreBrownianReal.mk B)
+    (hB.toIsPreBrownianReal.continuous_mk)
 
 theorem isProbabilityMeasure_pathLaw {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P]
@@ -122,12 +122,12 @@ Brownian process is a probability measure. -/
 theorem isProbabilityMeasure_pathLawOfBrownian
     {Ω : Type*} [MeasurableSpace Ω]
     {P : Measure Ω} [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
-    (hB : IsBrownianReal B P) (hBmeasurable : ∀ t, Measurable (B t)) :
-    IsProbabilityMeasure (pathLawOfBrownian hB hBmeasurable) := by
+    (hB : IsBrownianReal B P) :
+    IsProbabilityMeasure (pathLawOfBrownian hB) := by
   exact isProbabilityMeasure_pathLaw P
-    (hB.continuousModification hBmeasurable)
-    (hB.continuous_continuousModification hBmeasurable)
-    (fun t => hB.measurable_continuousModification hBmeasurable t)
+    (hB.toIsPreBrownianReal.mk B)
+    (hB.toIsPreBrownianReal.continuous_mk)
+    (hB.toIsPreBrownianReal.measurable_mk)
 
 end ProbabilityTheory.BrownianBessel3
 
