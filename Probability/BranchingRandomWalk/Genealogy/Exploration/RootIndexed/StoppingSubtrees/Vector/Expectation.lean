@@ -16,7 +16,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 * `RootIndexed.integral_stopped_selectedSubtreeStepFieldVector`: if
   $A\in\mathcal F_\tau$, the selected roots are distinct at generation $\tau$,
-  and the fresh test $g_i$ is integrable for every $i\le T$, then
+  and the fresh test $g_i$ is integrable for every $i\le T$, the stopped
+  payoff is integrable on $A\cap\{\tau\le T\}$ and
   $\int_{A\cap\{\tau\le T\}}g_\tau(\Phi)\,dP
     =\sum_{i=0}^T P(A\cap\{\tau=i\})\int g_i\,dQ$.
   Here $\Phi$ is the vector of selected descendant fields and $Q$ is the
@@ -54,6 +55,8 @@ theorem RootIndexed.integral_stopped_selectedSubtreeStepFieldVector
     (hi : ∀ i ≤ T, Integrable (g i) (RootIndexed.stepFieldLaw μ)) :
     let P := RootIndexed.stepFieldLaw (Root := Root) μ
     let Q := RootIndexed.stepFieldLaw (Root := κ) μ
+    IntegrableOn (fun ω => g ((τ ω).untopD 0)
+      (RootIndexed.selectedSubtreeStepFieldVector roots ω)) (A ∩ {ω | τ ω ≤ (T : WithTop ℕ)}) P ∧
     (∫ ω in A ∩ {ω | τ ω ≤ (T : WithTop ℕ)}, g ((τ ω).untopD 0)
       (RootIndexed.selectedSubtreeStepFieldVector roots ω) ∂P) =
       ∑ i ∈ Finset.range (T + 1), P.real (A ∩ {ω | τ ω = (i : WithTop ℕ)}) *
@@ -120,6 +123,16 @@ theorem RootIndexed.integral_stopped_selectedSubtreeStepFieldVector
     intro i _ j _ hij
     exact Set.disjoint_left.mpr fun _ hi hj =>
       hij (WithTop.coe_injective (hi.2.symm.trans hj.2))
+  refine ⟨?_, ?_⟩
+  · change IntegrableOn F _ P
+    rw [hsum]
+    generalize Finset.range (T + 1) = J at hint ⊢
+    induction J using Finset.induction_on with
+    | empty => simp
+    | @insert i J hi ih =>
+      rw [Finset.set_biUnion_insert]
+      exact (hint i (Finset.mem_insert_self _ _)).union
+        (ih fun j hj => hint j (Finset.mem_insert_of_mem hj))
   change (∫ ω in _, F ω ∂P) = _
   rw [hsum, integral_biUnion_finset _ (fun i _ => hCfull i) hdisj hint]
   apply Finset.sum_congr rfl
@@ -150,19 +163,23 @@ theorem RootIndexed.integral_stopped_selectedSubtreeStepFieldVector_le
     (hi : ∀ i ≤ T, Integrable (g i) (RootIndexed.stepFieldLaw μ))
     (b : ℝ) (hb : ∀ i ≤ T, (∫ f, g i f ∂RootIndexed.stepFieldLaw μ) ≤ b) :
     let P := RootIndexed.stepFieldLaw (Root := Root) μ
+    IntegrableOn (fun ω => g ((τ ω).untopD 0)
+      (RootIndexed.selectedSubtreeStepFieldVector roots ω)) (A ∩ {ω | τ ω ≤ (T : WithTop ℕ)}) P ∧
     (∫ ω in A ∩ {ω | τ ω ≤ (T : WithTop ℕ)}, g ((τ ω).untopD 0)
       (RootIndexed.selectedSubtreeStepFieldVector roots ω) ∂P) ≤
       P.real (A ∩ {ω | τ ω ≤ (T : WithTop ℕ)}) * b := by
   intro P
+  obtain ⟨hint, hintFormula⟩ := RootIndexed.integral_stopped_selectedSubtreeStepFieldVector
+    μ τ hτ roots hcount hfiber hdepth hinj A hA T g hg hi
+  refine ⟨hint, ?_⟩
   let weight i := P.real (A ∩ {ω | τ ω = (i : WithTop ℕ)})
   have hmass : ∑ i ∈ Finset.range (T + 1), weight i =
       P.real (A ∩ {ω | τ ω ≤ (T : WithTop ℕ)}) := by
     have h := RootIndexed.integral_stopped_selectedSubtreeStepFieldVector μ τ hτ roots hcount
       hfiber hdepth hinj A hA T (fun _ _ => (1 : ℝ))
       (fun _ => measurable_const) (fun _ _ => integrable_const _)
-    simpa [weight, integral_const, Measure.restrict_apply_univ] using h.symm
-  rw [RootIndexed.integral_stopped_selectedSubtreeStepFieldVector μ τ hτ roots hcount
-    hfiber hdepth hinj A hA T g hg hi]
+    simpa [weight, integral_const, Measure.restrict_apply_univ] using h.2.symm
+  rw [hintFormula]
   change (∑ i ∈ Finset.range (T + 1), weight i * ∫ f, g i f ∂RootIndexed.stepFieldLaw μ) ≤ _
   rw [← hmass, Finset.sum_mul]
   exact Finset.sum_le_sum fun i hi' => mul_le_mul_of_nonneg_left
