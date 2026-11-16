@@ -42,7 +42,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.measure_recursiveFailure_eq_pow",
         "ProbabilityTheory.BranchingRandomWalk.Step.Selection.exists_positive_selectedSplit",
         "ProbabilityTheory.BranchingRandomWalk.Step.Selection.exists_nat_cutoff_positive_boundedSelectedSplit",
-        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.FirstSplit.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos",
         "concrete_firstOrBelowPotential_split_completion_ae_finite",
     ),
     Path("BranchingProcessTest/Branching/Selection/NSelection/Frontier/AsymptoticSpeed/SelectedPath/Coupling/Population.lean"): (
@@ -479,7 +479,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.candidatesWithin_measurable",
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.integral_selectedSubtree_abs_on_growthTrialFailure_le",
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.PreSampledLineages.sigma_eq_tau_add_one",
-        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.Failure.RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.Failure.RootIndexed.integral_disjointRootFamily_abs_on_candidateFailure_le",
         "ProbabilityTheory.Process.HittingTime.Examples.lookahead_time_not_stopping",
         "ProbabilityTheory.Process.HittingTime.Examples.lookahead_completion_isStoppingTime",
         "ProbabilityTheory.Process.HittingTime.Examples.delayed_lookahead_completion_not_stopping",
