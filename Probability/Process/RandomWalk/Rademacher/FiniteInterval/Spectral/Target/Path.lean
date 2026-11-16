@@ -193,6 +193,7 @@ private lemma measurableSet_intervalRademacherPathTarget
       InClosedInterval 1 interiorCount n (intervalSite start) increment ∧
         intervalSite start + AdditivePath.displacement n increment ∈
           intervalSite '' (target : Set (Fin interiorCount))} := by
+  rw [Set.ofPred_and]
   apply (measurableSet_inClosedInterval 1 interiorCount n
     (intervalSite start)).inter
   have hfinite : (intervalSite '' (target : Set (Fin interiorCount))).Finite :=
