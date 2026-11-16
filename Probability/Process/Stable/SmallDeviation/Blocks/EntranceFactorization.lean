@@ -123,11 +123,11 @@ theorem IsStableLevyProcess.measure_fullEntrance_inter_continuation
     filter_upwards [h.ae_cadlag] with ω hω
     have hiff := mem_fullSegmentCorridorReturnEvent_iff_rational
       X 0 cut lower upper coreLower coreUpper ω hω
-    simpa [A, zero_add] using propext hiff.symm
+    simpa [A, zero_add] using hiff.symm
   have haeB : B =ᵐ[P]
       fullSegmentCorridorEvent X cut remaining nextLower nextUpper := by
     filter_upwards [h.ae_cadlag] with ω hω
-    exact propext (mem_fullSegmentCorridorEvent_iff_rational
+    exact (mem_fullSegmentCorridorEvent_iff_rational
       X cut remaining nextLower nextUpper ω hω).symm
   have haeInter : A ∩ B =ᵐ[P]
       fullSegmentCorridorReturnEvent X 0 cut
@@ -175,11 +175,11 @@ theorem IsStableLevyProcess.measure_fullReturn_inter_return
     filter_upwards [h.ae_cadlag] with ω hω
     have hiff := mem_fullSegmentCorridorReturnEvent_iff_rational
       X 0 cut lower upper firstLower firstUpper ω hω
-    simpa [A, zero_add] using propext hiff.symm
+    simpa [A, zero_add] using hiff.symm
   have haeB : B =ᵐ[P] fullSegmentCorridorReturnEvent X cut remaining
       nextLower nextUpper secondLower secondUpper := by
     filter_upwards [h.ae_cadlag] with ω hω
-    exact propext (mem_fullSegmentCorridorReturnEvent_iff_rational
+    exact (mem_fullSegmentCorridorReturnEvent_iff_rational
       X cut remaining nextLower nextUpper secondLower secondUpper ω hω).symm
   have haeInter : A ∩ B =ᵐ[P]
       fullSegmentCorridorReturnEvent X 0 cut

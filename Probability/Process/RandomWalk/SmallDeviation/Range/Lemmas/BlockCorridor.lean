@@ -60,8 +60,7 @@ open Skorokhod.PathClass.StepCorridor
 initial value zero. -/
 lemma blockOscillationEvent_partialSum_abs_le
     {n : ℕ} (hn : 0 < n) {width : ℝ} (increment : ℕ → ℝ)
-    (hosc : blockOscillationEvent width (n - 1)
-      (Combinatorics.Sequence.blockCoordinates 0 (n - 1) increment))
+    (hosc : (Combinatorics.Sequence.blockCoordinates 0 (n - 1) increment) ∈ blockOscillationEvent width (n - 1))
     (k : Fin n) :
     |AdditivePath.displacement (k : ℕ) increment| ≤ width := by
   have hosc' : Metric.OscillationBounded
@@ -89,8 +88,7 @@ lemma blockOscillationEvent_subset_enlargedSourceCorridor
     {n : ℕ} (hn : 0 < n) {width factor : ℝ}
     (hwidth : 0 < width) (hfactor : 2 < factor)
     (increment : ℕ → ℝ) :
-    blockOscillationEvent width (n - 1)
-      (Combinatorics.Sequence.blockCoordinates 0 (n - 1) increment) →
+    (Combinatorics.Sequence.blockCoordinates 0 (n - 1) increment) ∈ blockOscillationEvent width (n - 1) →
     terminalLeftNormalizedStepCadlagPathIcc (fun _ => factor * width) n increment ∈
       relativeContinuousBoundaryCorridorSet
         (ContinuousMap.const unitInterval (-(1 / 2 : ℝ)))
@@ -148,8 +146,7 @@ lemma blockOscillationEvent_subset_sourceRangeTube
     (hwidth : 0 < width) (hfactor : 1 < factor)
     (scale : ℕ → ℝ) (hscale : scale n = factor * width / 2)
     (increment : ℕ → ℝ)
-    (hosc : blockOscillationEvent width (n - 1)
-      (Combinatorics.Sequence.blockCoordinates 0 (n - 1) increment)) :
+    (hosc : (Combinatorics.Sequence.blockCoordinates 0 (n - 1) increment) ∈ blockOscillationEvent width (n - 1)) :
     terminalLeftNormalizedStepCadlagPathIcc scale n increment ∈
       Skorokhod.rangeTubeStartingAtZero 1 := by
   have hscalePos : 0 < scale n := by rw [hscale]; positivity
