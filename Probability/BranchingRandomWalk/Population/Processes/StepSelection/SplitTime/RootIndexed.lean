@@ -30,7 +30,7 @@ completion in the global generation domain is the local completion shifted by
 This completion is a stopping time for the root-indexed generation domain
 flow.
 
-* `ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime.RootIndexed.fixedSubtree_splitCompletion_isStoppingTime`
+* `ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime.RootIndexed.fixedSubtree_splitCompletion_isStoppingTime`
   states that for a fixed address of depth `start`, the global completion
   time of its first selected-population split is the local completion time
   shifted by `start`, and is a stopping time for the root-indexed generation
@@ -41,10 +41,10 @@ open MeasureTheory ProbabilityTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime.RootIndexed
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime.RootIndexed
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
-open ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime
+open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 
 /-- The first selected-population split in a fixed descendant subtree, timed
 in the ambient generation filtration.  The root is at global depth `start`,
@@ -136,6 +136,6 @@ theorem fixedSubtree_splitCompletion_isStoppingTime
     exact (RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n).measurableSet_empty
 
-end ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime.RootIndexed
+end ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime.RootIndexed
 
 end

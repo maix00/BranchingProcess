@@ -33,7 +33,7 @@ surely:
   \Longrightarrow
   \mathbb P_{\mathrm{field}}(\tau_R<\infty)=1.\]
 
-* `ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos`
+* `ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime.selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos`
   gives the stated finite-completion conclusion for a measurable finite
   selection under the nonemptiness and positive-split hypotheses.
 -/
@@ -46,9 +46,9 @@ open scoped ENNReal
 
 section
 
-namespace ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 
-open ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime.Lemmas
+open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime.Lemmas
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
@@ -170,9 +170,9 @@ theorem selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
           have hdecl := (firstDeclaredSuccess_eq_iff
             (selectedPopulationSplitDeclaration R) ω k).mp hτ
           have hno := hprefix (k + 1) k (Nat.lt_succ_self k)
-          have hsplit : 2 ≤ (StepSelection.population R (k + 1) ω).card := by
+          have hsplit : 2 ≤ (Selection.Stepwise.population R (k + 1) ω).card := by
             simpa [selectedPopulationSplitDeclaration] using hdecl.1
-          have hnot : (StepSelection.population R (k + 1) ω).card < 2 := by
+          have hnot : (Selection.Stepwise.population R (k + 1) ω).card < 2 := by
             simpa [selectedPopulationNoSplitPrefix] using hno
           omega
       change selectedPopulationSplitCompletion R ω = ⊤
@@ -188,7 +188,7 @@ theorem selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
         change selectedPopulationRawSplitTime R ω ≤ k at hle
         rw [hraw] at hle
         simp at hle
-      have hcard : (StepSelection.population R (k + 1) ω).card < 2 := by
+      have hcard : (Selection.Stepwise.population R (k + 1) ω).card < 2 := by
         simpa [selectedPopulationSplitDeclaration] using hnot
       exact hcard
   have hmeasureForever : ν forever = 0 := by
@@ -205,6 +205,6 @@ theorem selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
       hmeasureForever
   simpa using hae
 
-end ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime
+end ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 
 end

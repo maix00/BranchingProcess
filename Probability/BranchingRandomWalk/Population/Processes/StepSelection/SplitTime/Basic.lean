@@ -33,7 +33,7 @@ has two distinct selected children in \(P_{n+1}\).
 * `selectedPopulationSplitDeclaration`, `selectedPopulationRawSplitTime`, and
   `selectedPopulationSplitCompletion` define the first-split event and its raw
   and observable times. In terms of
-  `Zₙ(ω) = (StepSelection.population R n ω).card`, the declaration is
+  `Zₙ(ω) = (Selection.Stepwise.population R n ω).card`, the declaration is
   `Dₙ = {ω | 2 ≤ Zₙ₊₁(ω)}`. Writing `τ` and `σ` for the raw and observable
   times, `selectedPopulationSplitCompletion_eq_raw_add_one` states
   `σ = τ + 1`; `selectedPopulationSplitCompletion_ne_zero`,
@@ -64,7 +64,7 @@ open MeasureTheory ProbabilityTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 
 open Combinatorics.Branching Combinatorics.UlamHarris MeasureTheory
 open Combinatorics.Branching.Step.FiniteSelection
@@ -75,7 +75,7 @@ variable {α X : Type*}
 generation `n + 1` has at least two particles. -/
 def selectedPopulationSplitDeclaration (R : Step.FiniteSelection α X) :
     ℕ → Set (Mark α (Step α X)) :=
-  fun n => {ω | 2 ≤ (StepSelection.population R (n + 1) ω).card}
+  fun n => {ω | 2 ≤ (Selection.Stepwise.population R (n + 1) ω).card}
 
 /-- The raw first split index.  It inspects the next generation, so it is not
 the observable stopping time used by the branching property. -/
@@ -146,11 +146,11 @@ theorem selectedPopulationSplitCompletion_isStoppingTime
       exact (generationSpace (M := Step α X) 0).measurableSet_empty
   | succ n =>
       change MeasurableSet[generationFiltration (M := Step α X) (n + 1)]
-        {ω | 2 ≤ (StepSelection.population R (n + 1) ω).card}
+        {ω | 2 ≤ (Selection.Stepwise.population R (n + 1) ω).card}
       have hcard : Measurable[generationFiltration (M := Step α X) (n + 1)]
-          (fun ω => (StepSelection.population R (n + 1) ω).card) :=
+          (fun ω => (Selection.Stepwise.population R (n + 1) ω).card) :=
         (measurable_of_countable fun s : Finset (TreeNode α) => s.card).comp
-          (StepSelection.population_adapted R hR (n + 1))
+          (Selection.Stepwise.population_adapted R hR (n + 1))
       exact hcard measurableSet_Ici
 
 /-- If the first-generation split event has probability strictly between zero
@@ -197,21 +197,21 @@ particle.  Extinction remains allowed on samples with no later split. -/
 theorem selectedPopulation_firstSplit_parent_card_eq_one
     (R : Step.FiniteSelection α X) (ω : Mark α (Step α X)) (n : ℕ)
     (hfirst : selectedPopulationRawSplitTime R ω = n) :
-    (StepSelection.population R n ω).card = 1 := by
+    (Selection.Stepwise.population R n ω).card = 1 := by
   have hdeclaration := (firstDeclaredSuccess_eq_iff
     (selectedPopulationSplitDeclaration R) ω n).mp hfirst
-  have hnextCard : 2 ≤ (StepSelection.population R (n + 1) ω).card := by
+  have hnextCard : 2 ≤ (Selection.Stepwise.population R (n + 1) ω).card := by
     simpa [selectedPopulationSplitDeclaration] using hdeclaration.1
-  have hnext : (StepSelection.population R (n + 1) ω).Nonempty :=
+  have hnext : (Selection.Stepwise.population R (n + 1) ω).Nonempty :=
     Finset.card_pos.mp (by omega)
-  have hparent : (StepSelection.population R n ω).Nonempty :=
-    StepSelection.population_nonempty_of_succ_nonempty R ω n hnext
-  have hcardLE : (StepSelection.population R n ω).card ≤ 1 := by
+  have hparent : (Selection.Stepwise.population R n ω).Nonempty :=
+    Selection.Stepwise.population_nonempty_of_succ_nonempty R ω n hnext
+  have hcardLE : (Selection.Stepwise.population R n ω).card ≤ 1 := by
     by_cases hn : n = 0
     · subst n
       simp
     · have hnot := hdeclaration.2 (n - 1) (by omega)
-      have hsmall : ¬ 2 ≤ (StepSelection.population R n ω).card := by
+      have hsmall : ¬ 2 ≤ (Selection.Stepwise.population R n ω).card := by
         simpa [selectedPopulationSplitDeclaration, Nat.sub_add_cancel
           (Nat.one_le_iff_ne_zero.mpr hn)] using hnot
       omega
@@ -224,26 +224,26 @@ theorem selectedPopulation_firstSplit_has_sibling_pair
     (R : Step.FiniteSelection α X) (ω : Mark α (Step α X)) (n : ℕ)
     (hfirst : selectedPopulationRawSplitTime R ω = n) :
     ∃ p q₁ q₂ i₁ i₂,
-      (StepSelection.population R n ω) = {p} ∧
-      q₁ ∈ StepSelection.population R (n + 1) ω ∧
-      q₂ ∈ StepSelection.population R (n + 1) ω ∧
+      (Selection.Stepwise.population R n ω) = {p} ∧
+      q₁ ∈ Selection.Stepwise.population R (n + 1) ω ∧
+      q₂ ∈ Selection.Stepwise.population R (n + 1) ω ∧
       q₁ ≠ q₂ ∧
       i₁ ∈ R (ω p) ∧ i₂ ∈ R (ω p) ∧
       q₁ = p ++ [i₁] ∧ q₂ = p ++ [i₂] ∧ i₁ ≠ i₂ := by
   have hfirstDecl := (firstDeclaredSuccess_eq_iff
     (selectedPopulationSplitDeclaration R) ω n).mp hfirst
-  have hcard : 2 ≤ (StepSelection.population R (n + 1) ω).card := by
+  have hcard : 2 ≤ (Selection.Stepwise.population R (n + 1) ω).card := by
     simpa [selectedPopulationSplitDeclaration] using hfirstDecl.1
-  have hsingleton : (StepSelection.population R n ω).card = 1 :=
+  have hsingleton : (Selection.Stepwise.population R n ω).card = 1 :=
     selectedPopulation_firstSplit_parent_card_eq_one R ω n hfirst
   obtain ⟨p, hp⟩ := Finset.card_eq_one.mp hsingleton
   have htwo := Finset.one_lt_card_iff.mp (by omega :
-    1 < (StepSelection.population R (n + 1) ω).card)
+    1 < (Selection.Stepwise.population R (n + 1) ω).card)
   obtain ⟨q₁, q₂, hq₁, hq₂, hneq⟩ := htwo
   obtain ⟨p₁, hp₁, i₁, hi₁, hq₁eq⟩ :=
-    StepSelection.population_succ_selectedParent R ω n q₁ hq₁
+    Selection.Stepwise.population_succ_selectedParent R ω n q₁ hq₁
   obtain ⟨p₂, hp₂, i₂, hi₂, hq₂eq⟩ :=
-    StepSelection.population_succ_selectedParent R ω n q₂ hq₂
+    Selection.Stepwise.population_succ_selectedParent R ω n q₂ hq₂
   have hp₁eq : p₁ = p := by
     have : p₁ ∈ ({p} : Finset (TreeNode α)) := by simpa [← hp] using hp₁
     simpa using this
@@ -285,7 +285,7 @@ noncomputable def selectedChildrenAtFirstSplit
     (R : Step.FiniteSelection α X) (n : ℕ)
     (ω : Mark α (Step α X)) : Fin 2 → TreeNode α := by
   classical
-  let population := StepSelection.population R n ω
+  let population := Selection.Stepwise.population R n ω
   let parent := if h : population.Nonempty then
       population.toList.head h.toList_ne_nil else []
   let ξ := ω parent
@@ -301,15 +301,15 @@ theorem selectedChildrenAtFirstSplit_measurable
       (selectedChildrenAtFirstSplit R n) := by
   classical
   let parent : Mark α (Step α X) → TreeNode α := fun ω =>
-    finitePopulationRepresentative (StepSelection.population R n ω)
+    finitePopulationRepresentative (Selection.Stepwise.population R n ω)
   have hparent : Measurable[generationFiltration (M := Step α X) n] parent :=
     (measurable_of_countable fun s : Finset (TreeNode α) =>
       finitePopulationRepresentative s).comp
-        (StepSelection.population_adapted R hR n)
+        (Selection.Stepwise.population_adapted R hR n)
   have hparentDepth (ω : Mark α (Step α X)) : (parent ω).length ≤ n := by
-    by_cases hpop : (StepSelection.population R n ω).Nonempty
+    by_cases hpop : (Selection.Stepwise.population R n ω).Nonempty
     · have hmem := finitePopulationRepresentative_mem _ hpop
-      rw [StepSelection.population_depth R ω n (parent ω) hmem]
+      rw [Selection.Stepwise.population_depth R ω n (parent ω) hmem]
     · simp [parent, finitePopulationRepresentative, hpop]
   have hparent' : Measurable[generationFiltration (M := Step α X) (n + 1)] parent :=
     hparent.mono (generationFiltration (M := Step α X) |>.mono (Nat.le_succ n)) le_rfl
@@ -346,27 +346,27 @@ theorem selectedChildrenAtFirstSplit_valid_at_first_split
     (R : Step.FiniteSelection α X) (ω : Mark α (Step α X)) (n : ℕ)
     (hfirst : selectedPopulationRawSplitTime R ω = n) :
     let roots := selectedChildrenAtFirstSplit R n ω
-    roots 0 ∈ StepSelection.population R (n + 1) ω ∧
-      roots 1 ∈ StepSelection.population R (n + 1) ω ∧
+    roots 0 ∈ Selection.Stepwise.population R (n + 1) ω ∧
+      roots 1 ∈ Selection.Stepwise.population R (n + 1) ω ∧
       roots 0 ≠ roots 1 ∧
       (roots 0).length = n + 1 ∧ (roots 1).length = n + 1 := by
   classical
   obtain ⟨p, q₁, q₂, i₁, i₂, hpop, hq₁, hq₂, hqneq,
       hi₁, hi₂, hq₁eq, hq₂eq, hi12⟩ :=
     selectedPopulation_firstSplit_has_sibling_pair R ω n hfirst
-  have hp : p ∈ StepSelection.population R n ω := by
+  have hp : p ∈ Selection.Stepwise.population R n ω := by
     rw [hpop]
     simp
-  have hdepth : p.length = n := StepSelection.population_depth R ω n p hp
+  have hdepth : p.length = n := Selection.Stepwise.population_depth R ω n p hp
   have hparent : finitePopulationRepresentative
-      (StepSelection.population R n ω) = p := by
+      (Selection.Stepwise.population R n ω) = p := by
     have hrep := finitePopulationRepresentative_mem
-      (StepSelection.population R n ω)
-      (by rw [hpop]; simp : (StepSelection.population R n ω).Nonempty)
+      (Selection.Stepwise.population R n ω)
+      (by rw [hpop]; simp : (Selection.Stepwise.population R n ω).Nonempty)
     simpa [hpop] using hrep
   have hparentInline :
-      (if h : (StepSelection.population R n ω).Nonempty then
-        (StepSelection.population R n ω).toList.head h.toList_ne_nil else []) = p := by
+      (if h : (Selection.Stepwise.population R n ω).Nonempty then
+        (Selection.Stepwise.population R n ω).toList.head h.toList_ne_nil else []) = p := by
     simpa [finitePopulationRepresentative] using hparent
   have hslots : 2 ≤ (R (ω p)).card := by
     have h := Finset.one_lt_card_iff.mpr ⟨i₁, i₂, hi₁, hi₂, hi12⟩
@@ -384,8 +384,8 @@ theorem selectedChildrenAtFirstSplit_valid_at_first_split
   have hfrontier : frontierMarks n ω p = ω p := by
     simp [frontierMarks, hdepth]
   have hchild (i : α) (hi : i ∈ R (ω p)) :
-      p ++ [i] ∈ StepSelection.population R (n + 1) ω := by
-    rw [StepSelection.population_succ, StepSelection.mem_grow_iff]
+      p ++ [i] ∈ Selection.Stepwise.population R (n + 1) ω := by
+    rw [Selection.Stepwise.population_succ, Selection.Stepwise.mem_grow_iff]
     exact ⟨p, hp, i, hfrontier ▸ hi, rfl⟩
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · rw [hroot0]
@@ -603,6 +603,6 @@ theorem selectedPopulationFirstSplitRoots_injective_of_finite
       · exact (hne hij.symm).elim
       · rfl
 
-end ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime
+end ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 
 end

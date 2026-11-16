@@ -133,8 +133,8 @@ theorem PreSampledLineages.first_success_isStoppingTime
     IsStoppingTime (generationFiltration (M := M))
       (firstDeclaredSuccess fun n =>
         {ω | ∃ i, r.sigma splitMark i ω = n ∧
-          ω ∈ successAtCompletion (r.sigma splitMark i) (test i)}) :=
-  first_successful_candidate_isStoppingTime
+          ω ∈ ProbabilityTheory.Trial.successAtCompletion (r.sigma splitMark i) (test i)}) :=
+  ProbabilityTheory.Trial.first_successful_candidate_isStoppingTime
     (generationFiltration (M := M)) (r.sigma splitMark) test
     (r.all_sigma_isStoppingTime splitMark hsplit) htest
 
@@ -150,10 +150,10 @@ theorem PreSampledLineages.first_success_within_isStoppingTime
     (trials : Set Trial) (htrials : trials.Countable) :
     IsStoppingTime (generationFiltration (M := M))
       (firstDeclaredSuccess
-        (candidateDeclarationWithin (r.sigma splitMark)
-          (fun i => successAtCompletion (r.sigma splitMark i) (test i))
+        (ProbabilityTheory.Trial.candidateDeclarationWithin (r.sigma splitMark)
+          (fun i => ProbabilityTheory.Trial.successAtCompletion (r.sigma splitMark i) (test i))
           trials)) :=
-  first_successful_candidate_within_isStoppingTime
+  ProbabilityTheory.Trial.first_successful_candidate_within_isStoppingTime
     (generationFiltration (M := M)) (r.sigma splitMark) test
     (r.all_sigma_isStoppingTime splitMark hsplit) htest trials htrials
 
@@ -168,13 +168,13 @@ theorem PreSampledLineages.successfulWithin_measurable
       MeasurableSet[generationFiltration (M := M) n] (test i n))
     (trials : Set Trial) (htrials : trials.Countable) (T : ℕ) :
     MeasurableSet[generationFiltration (M := M) T]
-      (successfulCandidateWithin (r.sigma splitMark)
-        (fun i => successAtCompletion (r.sigma splitMark i) (test i))
+      (ProbabilityTheory.Trial.successfulCandidateWithin (r.sigma splitMark)
+        (fun i => ProbabilityTheory.Trial.successAtCompletion (r.sigma splitMark i) (test i))
         trials T) :=
-  successfulCandidateWithin_measurable
+  ProbabilityTheory.Trial.successfulCandidateWithin_measurable
     (generationFiltration (M := M)) (r.sigma splitMark)
-      (fun i => successAtCompletion (r.sigma splitMark i) (test i))
-      (successAtCompletion_observable
+      (fun i => ProbabilityTheory.Trial.successAtCompletion (r.sigma splitMark i) (test i))
+      (ProbabilityTheory.Trial.successAtCompletion_observable
         (generationFiltration (M := M)) (r.sigma splitMark) test
         (r.all_sigma_isStoppingTime splitMark hsplit) htest)
       trials htrials T
@@ -188,8 +188,8 @@ theorem PreSampledLineages.failureWithin_measurable
       MeasurableSet[generationFiltration (M := M) n] (test i n))
     (trials : Set Trial) (htrials : trials.Countable) (T : ℕ) :
     MeasurableSet[generationFiltration (M := M) T]
-      (successfulCandidateWithin (r.sigma splitMark)
-        (fun i => successAtCompletion (r.sigma splitMark i) (test i))
+      (ProbabilityTheory.Trial.successfulCandidateWithin (r.sigma splitMark)
+        (fun i => ProbabilityTheory.Trial.successAtCompletion (r.sigma splitMark i) (test i))
         trials T)ᶜ :=
   (r.successfulWithin_measurable splitMark hsplit test htest
     trials htrials T).compl

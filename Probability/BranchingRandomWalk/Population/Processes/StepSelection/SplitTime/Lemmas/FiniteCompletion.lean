@@ -47,7 +47,7 @@ open scoped ENNReal
 
 section
 
-namespace ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime.Lemmas
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime.Lemmas
 
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
@@ -58,7 +58,7 @@ variable {α X : Type*}
 /-- No selected split is visible among the first `n` generated populations. -/
 def selectedPopulationNoSplitPrefix (R : Step.FiniteSelection α X) (n : ℕ) :
     Set (Mark α (Step α X)) :=
-  {ω | ∀ k < n, (StepSelection.population R (k + 1) ω).card < 2}
+  {ω | ∀ k < n, (Selection.Stepwise.population R (k + 1) ω).card < 2}
 
 /-- A total depth-`n` representative of the selected population.  The dummy
 address is used only when that population is empty; it still has depth `n`,
@@ -69,16 +69,16 @@ noncomputable def selectedPopulationDepthRepresentative
     (R : Step.FiniteSelection α X) (n : ℕ) :
     Mark α (Step α X) → TreeNode α := fun ω => by
   classical
-  let p := StepSelection.population R n ω
+  let p := Selection.Stepwise.population R n ω
   exact if h : p.Nonempty then p.toList.head h.toList_ne_nil
     else List.replicate n ⊥
 
 lemma selectedPopulationDepthRepresentative_mem
     [LinearOrder α] [OrderBot α]
     (R : Step.FiniteSelection α X) (n : ℕ) (ω : Mark α (Step α X))
-    (hne : (StepSelection.population R n ω).Nonempty) :
+    (hne : (Selection.Stepwise.population R n ω).Nonempty) :
     selectedPopulationDepthRepresentative R n ω ∈
-      StepSelection.population R n ω := by
+      Selection.Stepwise.population R n ω := by
   classical
   simp only [selectedPopulationDepthRepresentative, dite_eq_left hne]
   exact Finset.mem_toList.mp (List.head_mem hne.toList_ne_nil)
@@ -88,9 +88,9 @@ lemma selectedPopulationDepthRepresentative_length
     (R : Step.FiniteSelection α X) (n : ℕ) (ω : Mark α (Step α X)) :
     (selectedPopulationDepthRepresentative R n ω).length = n := by
   classical
-  by_cases hne : (StepSelection.population R n ω).Nonempty
+  by_cases hne : (Selection.Stepwise.population R n ω).Nonempty
   · have hmem := selectedPopulationDepthRepresentative_mem R n ω hne
-    exact StepSelection.population_depth R ω n _ hmem
+    exact Selection.Stepwise.population_depth R ω n _ hmem
   · simp [selectedPopulationDepthRepresentative, hne]
 
 lemma selectedPopulationDepthRepresentative_measurable
@@ -104,11 +104,11 @@ lemma selectedPopulationDepthRepresentative_measurable
     if h : p.Nonempty then p.toList.head h.toList_ne_nil else List.replicate n ⊥
   have hf : Measurable f := measurable_of_countable f
   have hEq : selectedPopulationDepthRepresentative R n =
-      f ∘ StepSelection.population R n := by
+      f ∘ Selection.Stepwise.population R n := by
     funext ω
     rfl
   rw [hEq]
-  exact hf.comp (StepSelection.population_adapted R hR n)
+  exact hf.comp (Selection.Stepwise.population_adapted R hR n)
 
 lemma selectedPopulationNoSplitPrefix_measurable
     [Countable α] [MeasurableSpace α] [MeasurableSingletonClass α]
@@ -119,7 +119,7 @@ lemma selectedPopulationNoSplitPrefix_measurable
   classical
   rw [show selectedPopulationNoSplitPrefix R n =
       ⋂ k : ℕ, if k < n then
-        {ω | (StepSelection.population R (k + 1) ω).card < 2}
+        {ω | (Selection.Stepwise.population R (k + 1) ω).card < 2}
       else Set.univ by
         ext ω
         simp [selectedPopulationNoSplitPrefix, Set.mem_iInter]]
@@ -127,11 +127,11 @@ lemma selectedPopulationNoSplitPrefix_measurable
   intro k
   by_cases hk : k < n
   · have hcard : Measurable[generationFiltration (M := Step α X) (k + 1)]
-        (fun ω => (StepSelection.population R (k + 1) ω).card) :=
+        (fun ω => (Selection.Stepwise.population R (k + 1) ω).card) :=
       (measurable_of_countable fun s : Finset (TreeNode α) => s.card).comp
-        (StepSelection.population_adapted R hR (k + 1))
+        (Selection.Stepwise.population_adapted R hR (k + 1))
     have hset : MeasurableSet[generationFiltration (M := Step α X) (k + 1)]
-        {ω | (StepSelection.population R (k + 1) ω).card < 2} :=
+        {ω | (Selection.Stepwise.population R (k + 1) ω).card < 2} :=
       hcard measurableSet_Iio
     have hle : k + 1 ≤ n := Nat.succ_le_iff.mpr hk
     simpa [hk] using (generationFiltration (M := Step α X)).mono hle _ hset
@@ -141,10 +141,10 @@ set_option linter.style.haveILetI false in
 private lemma selectedChildren_card_eq
     [LinearOrder α]
     (R : Step.FiniteSelection α X) (ω : Mark α (Step α X)) (p : TreeNode α) :
-    (StepSelection.children R ω p).card = (R (ω p)).card := by
+    (Selection.Stepwise.children R ω p).card = (R (ω p)).card := by
   classical
   letI : DecidableEq α := Classical.decEq α
-  rw [StepSelection.children]
+  rw [Selection.Stepwise.children]
   exact Finset.card_image_of_injective (R (ω p)) (fun i j hij => by
     have hsingleton : [i] = [j] := List.append_cancel_left hij
     simpa using hsingleton)
@@ -152,7 +152,7 @@ private lemma selectedChildren_card_eq
 private lemma selectedPopulationNoSplitPrefix_succ_iff
     [DecidableEq α] [LinearOrder α] [OrderBot α]
     (R : Step.FiniteSelection α X) (n : ℕ) (ω : Mark α (Step α X))
-    (hnonempty : ∀ k, (StepSelection.population R k ω).Nonempty) :
+    (hnonempty : ∀ k, (Selection.Stepwise.population R k ω).Nonempty) :
     ω ∈ selectedPopulationNoSplitPrefix R (n + 1) ↔
     ω ∈ selectedPopulationNoSplitPrefix R n ∧
       selectedSubtreeStepField (selectedPopulationDepthRepresentative R n) ω ∈
@@ -165,19 +165,19 @@ private lemma selectedPopulationNoSplitPrefix_succ_iff
       exact h k (by omega)
     refine ⟨hprev, ?_⟩
     have hnext := h n (Nat.lt_succ_self n)
-    change (StepSelection.population R (n + 1) ω).card < 2 at hnext
-    have hpCard : (StepSelection.population R n ω).card = 1 := by
+    change (Selection.Stepwise.population R (n + 1) ω).card < 2 at hnext
+    have hpCard : (Selection.Stepwise.population R n ω).card = 1 := by
       by_cases hn : n = 0
       · subst n
         simp
       · have hlt := hprev (n - 1) (by omega)
-        have hlt' : (StepSelection.population R n ω).card < 2 := by
+        have hlt' : (Selection.Stepwise.population R n ω).card < 2 := by
           simpa [Nat.sub_add_cancel (Nat.one_le_iff_ne_zero.mpr hn)] using hlt
-        have hpos : 0 < (StepSelection.population R n ω).card :=
+        have hpos : 0 < (Selection.Stepwise.population R n ω).card :=
           Finset.card_pos.mpr (hnonempty n)
         omega
     let p := selectedPopulationDepthRepresentative R n ω
-    have hpMem : p ∈ StepSelection.population R n ω :=
+    have hpMem : p ∈ Selection.Stepwise.population R n ω :=
       selectedPopulationDepthRepresentative_mem R n ω (hnonempty n)
     obtain ⟨q, hq⟩ := Finset.card_eq_one.mp (by simpa [p] using hpCard)
     have hpq : p = q := by
@@ -186,13 +186,13 @@ private lemma selectedPopulationNoSplitPrefix_succ_iff
         exact hpMem
       simpa using hmem
     subst q
-    have hpEq : StepSelection.population R n ω = {p} := hq
+    have hpEq : Selection.Stepwise.population R n ω = {p} := hq
     have hpDepth : p.length = n :=
       selectedPopulationDepthRepresentative_length R n ω
-    have hnextCard : (StepSelection.population R (n + 1) ω).card =
+    have hnextCard : (Selection.Stepwise.population R (n + 1) ω).card =
         (R (ω p)).card := by
-      rw [StepSelection.population_succ, hpEq]
-      simp only [StepSelection.grow, Finset.singleton_biUnion]
+      rw [Selection.Stepwise.population_succ, hpEq]
+      simp only [Selection.Stepwise.grow, Finset.singleton_biUnion]
       rw [selectedChildren_card_eq]
       simp [frontierMarks, hpDepth]
     have hnext' := hnext
@@ -201,18 +201,18 @@ private lemma selectedPopulationNoSplitPrefix_succ_iff
   · rintro ⟨hprev, hroot⟩ k hk
     by_cases hkn : k = n
     · subst k
-      have hpCard : (StepSelection.population R n ω).card = 1 := by
+      have hpCard : (Selection.Stepwise.population R n ω).card = 1 := by
         by_cases hn : n = 0
         · subst n
           simp
         · have hlt := hprev (n - 1) (by omega)
-          have hlt' : (StepSelection.population R n ω).card < 2 := by
+          have hlt' : (Selection.Stepwise.population R n ω).card < 2 := by
             simpa [Nat.sub_add_cancel (Nat.one_le_iff_ne_zero.mpr hn)] using hlt
-          have hpos : 0 < (StepSelection.population R n ω).card :=
+          have hpos : 0 < (Selection.Stepwise.population R n ω).card :=
             Finset.card_pos.mpr (hnonempty n)
           omega
       let p := selectedPopulationDepthRepresentative R n ω
-      have hpMem : p ∈ StepSelection.population R n ω :=
+      have hpMem : p ∈ Selection.Stepwise.population R n ω :=
         selectedPopulationDepthRepresentative_mem R n ω (hnonempty n)
       obtain ⟨q, hq⟩ := Finset.card_eq_one.mp (by simpa [p] using hpCard)
       have hpq : p = q := by
@@ -221,13 +221,13 @@ private lemma selectedPopulationNoSplitPrefix_succ_iff
           exact hpMem
         simpa using hmem
       subst q
-      have hpEq : StepSelection.population R n ω = {p} := hq
+      have hpEq : Selection.Stepwise.population R n ω = {p} := hq
       have hpDepth : p.length = n :=
         selectedPopulationDepthRepresentative_length R n ω
-      have hnextCard : (StepSelection.population R (n + 1) ω).card =
+      have hnextCard : (Selection.Stepwise.population R (n + 1) ω).card =
           (R (ω p)).card := by
-        rw [StepSelection.population_succ, hpEq]
-        simp only [StepSelection.grow, Finset.singleton_biUnion]
+        rw [Selection.Stepwise.population_succ, hpEq]
+        simp only [Selection.Stepwise.grow, Finset.singleton_biUnion]
         rw [selectedChildren_card_eq]
         simp [frontierMarks, hpDepth]
       have hroot' : (R (ω p)).card < 2 := by
@@ -243,7 +243,7 @@ private lemma selectedPopulation_all_nonempty_ae
     (R : Step.FiniteSelection α X)
     (hnonempty : μ {ξ | (R ξ).Nonempty} = 1)
     (hmeas : MeasurableSet {ξ : Step α X | (R ξ).Nonempty}) :
-    ∀ᵐ ω ∂offspringFieldLaw μ, ∀ n, (StepSelection.population R n ω).Nonempty := by
+    ∀ᵐ ω ∂offspringFieldLaw μ, ∀ n, (Selection.Stepwise.population R n ω).Nonempty := by
   have hcoordinate (u : TreeNode α) :
       ∀ᵐ ω ∂offspringFieldLaw μ, (R (ω u)).Nonempty := by
     let eval : Mark α (Step α X) → Step α X := fun ω => ω u
@@ -267,19 +267,19 @@ private lemma selectedPopulation_all_nonempty_ae
   filter_upwards [hall] with ω hω
   intro n
   induction n with
-  | zero => simp [StepSelection.population]
+  | zero => simp [Selection.Stepwise.population]
   | succ n ih =>
       obtain ⟨p, hp⟩ := ih
-      have hdepth := StepSelection.population_depth R ω n p hp
+      have hdepth := Selection.Stepwise.population_depth R ω n p hp
       obtain ⟨i, hi⟩ := hω p
       refine ⟨p ++ [i], ?_⟩
-      rw [StepSelection.population_succ]
-      apply (StepSelection.mem_grow_iff R
-        (StepSelection.population R n ω) (frontierMarks n ω) (p ++ [i])).2
+      rw [Selection.Stepwise.population_succ]
+      apply (Selection.Stepwise.mem_grow_iff R
+        (Selection.Stepwise.population R n ω) (frontierMarks n ω) (p ++ [i])).2
       refine ⟨p, hp, i, ?_, rfl⟩
       simpa [frontierMarks, hdepth] using hi
 
 
-end ProbabilityTheory.BranchingRandomWalk.StepSelection.SplitTime.Lemmas
+end ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime.Lemmas
 
 end
