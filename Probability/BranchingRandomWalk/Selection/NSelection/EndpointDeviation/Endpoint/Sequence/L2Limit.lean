@@ -17,6 +17,12 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.En
 
 ## Public declarations
 
+* `tendsto_eLpNorm_two_selectedPopulationEndpoint_div_sub` gives Theorem 1.1
+  on the actual selected-population law. With $m_N=\lfloor N^a\rfloor$ at
+  the zero vector, $H_N/\log^3N\to t>0$, and $0\le a\le1$,
+  $\|M_{H_N}/\log N+a-\pi^2\sigma^2t/2\|_{L^2}\to0$ under the branching,
+  variance, cross-weight and moment assumptions below.
+
 * `tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub` is the
   trajectory limit in Wang Yiyang's Theorem 1.1. With $a\in[0,1]$,
   $m_N=\lfloor N^a\rfloor$, and $H_N/\log^3N\to t>0$, the limit is
@@ -434,5 +440,52 @@ theorem tendsto_integral_countableRootEndpointMinimum_div
     have hpreserving := RootIndexed.StepField.measurePreserving_first L.sortedPotentialImage (m n)
     exact (hpreserving.integrable_comp_of_integrable hfinite).div_const _
   simpa using tendsto_integral_of_L1' (fun _ => c) (Eventually.of_forall hF) hL1
+
+/-- Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* (Fudan University, 2026), Theorem 1.1 on the finite-root law of
+the selected population started at the zero vector. -/
+theorem tendsto_eLpNorm_two_selectedPopulationEndpoint_div_sub
+    (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
+    (hsuper : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.IsSupercritical
+      (⟨L.raw, inferInstance⟩ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ℕ ℝ))
+    (hnonempty : L.raw nonemptySupport = 1)
+    (hboundary : HasBoundaryNormalization L.potential L.raw)
+    (hcross : HasFiniteCrossWeight L.potential L.raw)
+    (hfour : HasLeftmostFourthMoment L)
+    {sigma a t : ℝ} (hsigma : 0 < sigma)
+    (hspine : IsCenteredSecondMoment
+      (tiltedPotentialLaw realPotential (-1) L.sortedPotentialImage) (sigma ^ 2))
+    (ha : a ∈ Set.Icc (0 : ℝ) 1) (ht : 0 < t)
+    (hexp : a = 0 → HasLeftmostPositiveExponentialMoment L)
+    {N H : ℕ → ℕ} (hcapacity : ∀ n, 0 < N n)
+    (hN : Tendsto N atTop atTop)
+    (hH : Tendsto (fun n => (H n : ℝ) / Real.log (N n : ℝ) ^ 3) atTop (𝓝 t)) :
+    let m n := ⌊(N n : ℝ) ^ a⌋₊
+    let c := -a + (Real.pi ^ 2 / 2) * sigma ^ 2 * t
+    let endpoint n (field : FiniteRootStepField (m n) ℕ ℝ) :=
+      letI := RootIndexed.addressLinearOrder (Fin (m n)) ℕ
+      RootIndexed.selectedPopulationEndpointWithParameter (m n) (N n) (H n)
+        ((fun _ => 0), field)
+    Tendsto (fun n => eLpNorm (fun field => endpoint n field / Real.log (N n : ℝ) - c)
+      2 (finiteRootStepFieldLaw L.sortedPotentialImage (m n))) atTop (𝓝 0) := by
+  intro m c endpoint
+  refine (tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub L hsuper hnonempty
+    hboundary hcross hfour hsigma hspine ha ht hexp hcapacity hN hH).congr fun n => ?_
+  let _ := RootIndexed.addressLinearOrder (Fin (m n)) ℕ
+  let F (field : FiniteRootStepField (m n) ℕ ℝ) :=
+    firstNSelectedEndpointMinimum (m n) (N n) (H n) field / Real.log (N n : ℝ) - c
+  have hF : Measurable F :=
+    ((measurable_firstNSelectedEndpointMinimum (m n) (N n) (H n)).div_const _).sub_const _
+  have hpres := RootIndexed.StepField.measurePreserving_first L.sortedPotentialImage (m n)
+  change eLpNorm (F ∘ RootIndexed.StepField.first (m n)) 2 _ = _
+  calc
+    _ = eLpNorm F 2 (finiteRootStepFieldLaw L.sortedPotentialImage (m n)) := by
+      rw [← hpres.map_eq, eLpNorm_map_measure hF.aestronglyMeasurable hpres.aemeasurable]
+    _ = _ := by
+      congr 1
+      funext field
+      dsimp only [F, endpoint]
+      rw [firstNSelectedEndpointMinimum_eq_endpointWithParameter_zero]
+
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
