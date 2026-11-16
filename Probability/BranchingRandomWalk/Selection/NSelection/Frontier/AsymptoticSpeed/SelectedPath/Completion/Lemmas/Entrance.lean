@@ -31,6 +31,9 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.Asympto
 * `trialRestartPopulationBeforeReset` gives the selected-path particle before
   the successful trial is born, and the descendants in that trial between its
   birth and its completion $\tau$.
+* `trialRestart_beforeReset_and_shift_le`: for generation $H$, the positive
+  positions before the reset and the positive reset location on $\{\tau\le H\}$
+  are bounded by $MH+\sum_{j<H}(Y_j)_+$.
 * `trialRestartPopulationBeforeReset_positionWitness_ae`: up to $\tau$,
   each particle at position $x$ has an actual selected counterpart at the
   same generation at position at most $x$, when the selected path is alive.
@@ -902,5 +905,97 @@ lemma trialRestartPopulationBeforeReset_positionWitness_ae
       have h := hgrowthField k (H - (k + 1)) hage (htime.trans hk.symm) q hmem
       simpa only [hHage] using h
     · simp [trialRestartPopulationBeforeReset, htime, hbefore, hH] at hq
+
+set_option maxHeartbeats 600000 in
+/-- The same positive displacement envelope bounds the slice before the
+reset and the maximum at which the original growth trial is reset. -/
+lemma trialRestart_beforeReset_and_shift_le
+    (B growth : Step.FiniteSelection ℕ ℝ) (hB : B.IsBoundedBy 2)
+    (hBmeas : Measurable B.select) (M : ℝ) (hM : 0 ≤ M)
+    (hcutoff : ∀ ξ j, j ∈ growth ξ → ξ.potentialValue' realPotential j ≤ M)
+    (lower upper duration r H : ℕ) (ω : RootIndexed.StepField ℕ ℕ ℝ) :
+    let R := firstOrBelowPotential B realPotential M
+    let hR := firstOrBelowPotential_measurable B hBmeas realPotential M
+    let τ := firstSuccessfulCompletion R growth hR lower upper duration r
+    let mark j := ω r (selectedPath R r j ω)
+    let envelope := M * H + ∑ j ∈ Finset.range H,
+      firstSelectedSlotPositivePotential B realPotential (mark j)
+    (∀ j, (mark j).IsOrderedBy realPotential) →
+    (∀ j, (B (mark j)).Nonempty) →
+    (∀ q ∈ trialRestartPopulationBeforeReset R growth hR lower upper duration r H ω,
+      max 0 (RootIndexed.position (fun _ => 0) id ω q.1 q.2) ≤ envelope) ∧
+    ∀ n ≤ H, τ ω = (n : WithTop ℕ) →
+      max 0 (trialResetPositionAtGeneration R growth hR upper duration r n ω) ≤ envelope := by
+  intro R hR τ mark envelope hordered hne
+  have hnonneg (j : ℕ) : 0 ≤ firstSelectedSlotPositivePotential B realPotential (mark j) :=
+    le_max_left _ _
+  have hmono {n : ℕ} (hn : n ≤ H) : (∑ j ∈ Finset.range n,
+      firstSelectedSlotPositivePotential B realPotential (mark j)) ≤
+      ∑ j ∈ Finset.range H, firstSelectedSlotPositivePotential B realPotential (mark j) :=
+    Finset.sum_le_sum_of_subset_of_nonneg (Finset.range_subset_range.mpr hn) (fun j _ _ => hnonneg j)
+  have hpos (q : RootIndexed.TreeNode ℕ ℕ) :
+      RootIndexed.position (fun _ => 0) id ω q.1 q.2 =
+        Spine.pathPotential realPotential (ω q.1) q.2 := by
+    simp [RootIndexed.position, RootIndexed.displace, Spine.pathPotential, realPotential]
+  have hpath : max 0 (RootIndexed.position (fun _ => 0) id ω r (selectedPath R r H ω)) ≤
+      envelope := by
+    rw [hpos (r, selectedPath R r H ω)]
+    exact positivePart_le_cutoff_add_firstSelectedChildSum B hB realPotential M hM r H ω
+      (fun j _ => hordered j) (fun j _ => hne j)
+  let declared : ℕ → Set (RootIndexed.StepField ℕ ℕ ℝ) := fun n =>
+    {field | ∃ k, ((k + 1 + duration : ℕ) : WithTop ℕ) = n ∧
+      field ∈ successEvent R growth hR lower upper duration r k}
+  have hsplit {n : ℕ} (ht : τ ω = (n : WithTop ℕ)) :
+      ∃ k, n = k + 1 + duration ∧ splitEvent R r k ω := by
+    change firstDeclaredSuccess declared ω = (n : WithTop ℕ) at ht
+    obtain ⟨k, hk, hs⟩ := ((firstDeclaredSuccess_eq_iff declared ω n).mp ht).1
+    exact ⟨k, (WithTop.coe_injective hk).symm, hs.2.1⟩
+  have hgrow (k age : ℕ) (hH : k + 1 + age ≤ H) (hs : splitEvent R r k ω)
+      (q : RootIndexed.TreeNode ℕ ℕ)
+      (hq : q ∈ capStoppedCandidate (lineages R hR) R growth upper r PUnit.unit (k + 1) age ω) :
+      max 0 (RootIndexed.position (fun _ => 0) id ω q.1 q.2) ≤ envelope := by
+    rw [hpos]
+    have hb := growthTrial_position_le_cutoff_add_selectedMarkSum B growth hB M hM
+      hcutoff r k age upper ω hBmeas (fun j _ => hordered j) (fun j _ => hne j) hs q hq
+    exact hb.trans (add_le_add (mul_le_mul_of_nonneg_left (by exact_mod_cast hH) hM)
+      (hmono (show k ≤ H by omega)))
+  constructor
+  · intro q hq
+    change q ∈ trialRestartPopulationBeforeReset R growth hR lower upper duration r H ω at hq
+    cases ht : firstSuccessfulCompletion R growth hR lower upper duration r ω with
+    | top =>
+      have heq : q = (r, selectedPath R r H ω) := by
+        simpa only [trialRestartPopulationBeforeReset, ht, Finset.mem_singleton] using hq
+      simpa only [heq] using hpath
+    | coe n =>
+      by_cases hw : H < n - duration
+      · have heq : q = (r, selectedPath R r H ω) := by
+          simpa only [trialRestartPopulationBeforeReset, ht, ite_eq_left hw,
+            Finset.mem_singleton] using hq
+        simpa only [heq] using hpath
+      by_cases hn : H ≤ n
+      · obtain ⟨k, hk, hs⟩ := hsplit ht
+        have hbirth : n - duration = k + 1 := by omega
+        have hborn : ¬ H < k + 1 := by omega
+        apply hgrow k (H - (k + 1)) (by omega) hs q
+        simpa only [trialRestartPopulationBeforeReset, ht, hbirth, ite_eq_right hborn, ite_eq_left hn]
+          using hq
+      · simp [trialRestartPopulationBeforeReset, ht, hw, hn] at hq
+  · intro n hn ht
+    obtain ⟨k, rfl, hs⟩ := hsplit ht
+    let s := capStoppedCandidate (lineages R hR) R growth upper r PUnit.unit (k + 1) duration ω
+    unfold trialResetPositionAtGeneration
+    simp only [Nat.add_sub_cancel]
+    change max 0 (if h : s.Nonempty then s.sup' h _ else _) ≤ envelope
+    by_cases hnonempty : s.Nonempty
+    · rw [dite_eq_left hnonempty, max_le_iff, Finset.sup'_le_iff]
+      refine ⟨(le_max_left _ _).trans hpath, fun q hq => ?_⟩
+      have hdepth := rootedCapStoppedPopulation_node_depth growth upper ω
+        (growthTrialRootAt (lineages R hR) R r PUnit.unit (k + 1) ω) q duration hq
+      rw [growthTrialRootAt_depth] at hdepth
+      rw [RootIndexed.positionAtGeneration, ite_eq_left hdepth]
+      exact (le_max_right _ _).trans (hgrow k duration hn hs q hq)
+    · rw [dite_eq_right hnonempty]
+      exact max_le ((le_max_left _ _).trans hpath) ((le_max_left _ _).trans hpath)
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas
