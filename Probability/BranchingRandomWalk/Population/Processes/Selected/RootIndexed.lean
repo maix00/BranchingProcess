@@ -415,8 +415,8 @@ theorem selectedPopulation_succ_spec_offspringAddressSet
     exact selectedPopulation_depth N roots initial d φ hadmits n ω p hp
 
 /-- Successor selection expressed with the actual position function of the
-branching walk bundled from the pre-sampled field. This is the exact target
-premise of the pathwise multi-root coupling theorem. -/
+branching walk bundled from the pre-sampled field. This is the exact first-\(N\) admissibility premise required by the pathwise
+multi-root coupling theorem. -/
 theorem selectedPopulation_succ_spec_position
     [DecidableEq (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]

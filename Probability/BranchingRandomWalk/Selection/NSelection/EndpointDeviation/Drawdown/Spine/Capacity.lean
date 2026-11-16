@@ -12,7 +12,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
 public import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 
 /-!
-# First-stage killed-population count bound
+# First-stage selected-BRW-population count bound
 
 ## Public declarations
 

@@ -14,7 +14,7 @@ import all Topology.Algebra.InfiniteSum.ENNReal.PairPartition
 /-!
 # Branching decomposition of ancestral-path observables
 
-The first child slot is quantified over.  No slot is distinguished in the
+The first selected child slot is quantified over.  No slot is distinguished in the
 model.  The remaining history is evaluated in the corresponding descendant
 field and then prefixed with the initial position.
 

@@ -297,7 +297,7 @@ lemma iidSequenceLaw_measure_ge_mul_of_finiteMovingEntrance_downwardBridge
   let bridge : Set (Fin bridgeLength → ℝ) :=
     {block | FiniteInClosedIntervalEndsIn bridgeLower bridgeUpper
       bridgeEndpointLower bridgeEndpointUpper 0 block}
-  let target : Set (ℕ → ℝ) :=
+  let fullHorizonCorridorEvent : Set (ℕ → ℝ) :=
     {increment | RandomWalk.history horizon 0 increment ∈
       affineCorridorThrough horizon 0 drift width
         (drift * (horizon : ℝ) + terminalExtra)}
@@ -322,7 +322,7 @@ lemma iidSequenceLaw_measure_ge_mul_of_finiteMovingEntrance_downwardBridge
       {increment : ℕ → ℝ |
         Combinatorics.Sequence.blockCoordinates 0 prefixLength increment ∈ entrance ∧
           Combinatorics.Sequence.blockCoordinates prefixLength bridgeLength
-            increment ∈ bridge} ⊆ target := by
+            increment ∈ bridge} ⊆ fullHorizonCorridorEvent := by
     intro increment hevent
     exact finiteMovingEntrance_and_downwardBridge_mem_affineCorridorThrough
       horizon prefixLength bridgeLength hpartition entranceScale drift width
@@ -342,7 +342,7 @@ lemma iidSequenceLaw_measure_ge_mul_of_finiteMovingEntrance_downwardBridge
           Combinatorics.Sequence.blockCoordinates 0 prefixLength increment ∈ entrance ∧
             Combinatorics.Sequence.blockCoordinates prefixLength bridgeLength
               increment ∈ bridge} := hfactor.symm
-    _ ≤ iidSequenceLaw ν target := measure_mono hsubset
+    _ ≤ iidSequenceLaw ν fullHorizonCorridorEvent := measure_mono hsubset
     _ = _ := rfl
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
