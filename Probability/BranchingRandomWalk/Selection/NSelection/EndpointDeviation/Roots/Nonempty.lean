@@ -58,41 +58,9 @@ theorem finiteRootStepFieldLaw_firstNSelectedPopulation_nonempty_ae
     (hnonempty : μ nonemptySupport = 1) :
     ∀ᵐ field ∂finiteRootStepFieldLaw μ m,
       ∀ n, (RootIndexed.selectedPopulationTotalized N
-        (Finset.univ : Finset (Fin m)) (fun _ => (0 : ℝ)) id id n field).Nonempty := by
-  have hspec := RootIndexed.selectedPopulationTotalized_succ_spec_ae
-    μ hboundary N (Finset.univ : Finset (Fin m)) (fun _ => (0 : ℝ))
-  have hchildren := finiteRootStepFieldLaw_ae_all_of_measure_one
-    nonemptySupport_measurable μ hnonempty m
-  filter_upwards [hspec, hchildren] with field hspec hchildren
-  intro n
-  induction n with
-  | zero =>
-      change (RootIndexed.initialPopulation (Finset.univ : Finset (Fin m))).Nonempty
-      apply Finset.card_pos.mp
-      rw [RootIndexed.initialPopulation_card]
-      simpa using hm
-  | succ n ih =>
-      let parents := RootIndexed.selectedPopulationTotalized N
-        (Finset.univ : Finset (Fin m)) (fun _ => (0 : ℝ)) id id n field
-      have hdepth : ∀ p ∈ parents, p.2.length = n := by
-        intro p hp
-        exact RootIndexed.selectedPopulationTotalized_depth N Finset.univ
-          (fun _ => (0 : ℝ)) id id n field p hp
-      have hcandidates : (Combinatorics.Branching.Population.childrenAtGeneration n parents field).Nonempty := by
-        rcases ih with ⟨p, hp⟩
-        obtain ⟨i, hi⟩ := hchildren p.1 p.2
-        exact ⟨(p.1, p.2 ++ [i]),
-          Combinatorics.Branching.Population.childAddress_mem_childrenAtGeneration n parents field
-            p hp (hdepth p hp) i hi⟩
-      have hselected : IsFirstNBy N
-          (RootIndexed.observedPositionAtGeneration (fun _ : Fin m => (0 : ℝ))
-            id id (n + 1) field)
-          (Combinatorics.Branching.Population.childrenAtGeneration n parents field)
-          (RootIndexed.selectedPopulationTotalized N
-            (Finset.univ : Finset (Fin m)) (fun _ => (0 : ℝ)) id id
-            (n + 1) field) := by
-        simpa [parents] using hspec n
-      exact hselected.nonempty_of_nonempty_candidates hN hcandidates
+        (Finset.univ : Finset (Fin m)) (fun _ => (0 : ℝ)) id id n field).Nonempty :=
+  RootIndexed.selectedPopulationTotalized_nonempty_ae N Finset.univ
+    ⟨(⟨0, hm⟩ : Fin m), Finset.mem_univ _⟩ (fun _ : Fin m => 0) hN μ hboundary hnonempty
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 

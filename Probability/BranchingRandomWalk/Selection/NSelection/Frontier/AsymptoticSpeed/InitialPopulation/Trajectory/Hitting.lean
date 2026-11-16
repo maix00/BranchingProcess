@@ -12,6 +12,7 @@ public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDevia
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Population
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Lemmas.CapacityHit.Growth
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Lemmas.CapacityHit.Mark
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.Basic
 public import Combinatorics.BranchingWalk.Step.Basic
 
@@ -99,7 +100,7 @@ surely. The only offspring assumptions are supercriticality and almost-sure
 nonemptiness; boundary normalization is the existing admissibility hypothesis
 for the selected process. -/
 theorem finiteRootStepFieldLaw_ae_smallInitialPopulation_hits_capacity
-    (m N : ℕ) (hm : 0 < m) (hmN : m ≤ N)
+    (m N : ℕ) (initialPosition : Fin m → ℝ) (hm : 0 < m) (hmN : m ≤ N)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -110,22 +111,22 @@ theorem finiteRootStepFieldLaw_ae_smallInitialPopulation_hits_capacity
     (hsupercritical : (1 : ℝ≥0∞) <
       ∫⁻ ξ, (Step.childCount ξ : ℝ≥0∞) ∂μ) :
     ∀ᵐ field ∂finiteRootStepFieldLaw μ m,
-      ∃ n, (smallInitialPopulation m N n field).card = N := by
+      ∃ n, (smallInitialPopulation m N n initialPosition field).card = N := by
   have hN : 0 < N := lt_of_lt_of_le hm hmN
   have hgoodAE := RootIndexed.selectedPopulationTotalized_succ_spec_ae
-    μ hboundary N Finset.univ (fun _ : Fin m => (0 : ℝ))
-  have hpopulationAE := finiteRootStepFieldLaw_firstNSelectedPopulation_nonempty_ae
-    m N hm hN μ hboundary hnonempty
+    μ hboundary N Finset.univ initialPosition
+  have hpopulationAE := RootIndexed.selectedPopulationTotalized_nonempty_ae N Finset.univ
+        ⟨(⟨0, hm⟩ : Fin m), Finset.mem_univ _⟩ initialPosition hN μ hboundary hnonempty
   have hmarksAE := finiteRootStepFieldLaw_ae_all_of_measure_one
     nonemptySupport_measurable μ hnonempty m
   have hsplitAE := ae_frequently_smallInitialActiveSplitEvent
-    m N hm μ hsupercritical
+    m N initialPosition hm μ hsupercritical
   filter_upwards [hgoodAE, hpopulationAE, hmarksAE, hsplitAE]
     with field hgood hpopulation hmarks hsplit
   let populationSize : ℕ → ℕ := fun n =>
-    (smallInitialPopulation m N n field).card
+    (smallInitialPopulation m N n initialPosition field).card
   let split : ℕ → Prop := fun n =>
-    field ∈ smallInitialActiveSplitEvent m N n hm
+    field ∈ smallInitialActiveSplitEvent m N n initialPosition hm
   have hinitial : 0 < populationSize 0 := by
     simp [populationSize, smallInitialPopulation,
       RootIndexed.selectedPopulationTotalized,
@@ -143,25 +144,24 @@ theorem finiteRootStepFieldLaw_ae_smallInitialPopulation_hits_capacity
       have hfirst := hgood k
       change IsFirstNBy N
         (RootIndexed.observedPositionAtGeneration
-          (fun _ : Fin m => (0 : ℝ)) id id (k + 1) field)
+          initialPosition id id (k + 1) field)
         (Combinatorics.Branching.Population.childrenAtGeneration k
-          (smallInitialPopulation m N k field) field)
-        (smallInitialPopulation m N (k + 1) field) at hfirst
+          (smallInitialPopulation m N k initialPosition field) field)
+        (smallInitialPopulation m N (k + 1) initialPosition field) at hfirst
       simpa [populationSize, smallInitialPopulation] using hfirst.card_le
   have hmonotone : ∀ n, populationSize n ≤ populationSize (n + 1) := by
     intro n
-    let parents := smallInitialPopulation m N n field
-    let selected := smallInitialPopulation m N (n + 1) field
+    let parents := smallInitialPopulation m N n initialPosition field
+    let selected := smallInitialPopulation m N (n + 1) initialPosition field
     let value := RootIndexed.observedPositionAtGeneration
-      (fun _ : Fin m => (0 : ℝ)) id id (n + 1) field
+      initialPosition id id (n + 1) field
     have hfirst : IsFirstNBy N value
         (Combinatorics.Branching.Population.childrenAtGeneration n parents field) selected := by
       simpa [parents, selected, value, smallInitialPopulation] using hgood n
     have hdepth : ∀ p ∈ parents, p.2.length = n := by
       intro p hp
-      exact firstNSelectedPopulation_depth m N n field p
-        (by simpa [parents, smallInitialPopulation,
-          firstNSelectedPopulation] using hp)
+      exact RootIndexed.selectedPopulationTotalized_depth N Finset.univ
+        initialPosition id id n field p hp
     have hchildren : ∀ p ∈ parents,
         ∃ i : ℕ, survive (field p.1 p.2) i := by
       intro p hp
@@ -174,44 +174,34 @@ theorem finiteRootStepFieldLaw_ae_smallInitialPopulation_hits_capacity
   have hgrowth : ∀ n, 0 < populationSize n → populationSize n < N →
       split n → populationSize n < populationSize (n + 1) := by
     intro n hpositive hsmall hsplitn
-    let parents := smallInitialPopulation m N n field
-    let selected := smallInitialPopulation m N (n + 1) field
+    let parents := smallInitialPopulation m N n initialPosition field
+    let selected := smallInitialPopulation m N (n + 1) initialPosition field
     let value := RootIndexed.observedPositionAtGeneration
-      (fun _ : Fin m => (0 : ℝ)) id id (n + 1) field
+      initialPosition id id (n + 1) field
     have hfirst : IsFirstNBy N value
         (Combinatorics.Branching.Population.childrenAtGeneration n parents field) selected := by
       simpa [parents, selected, value, smallInitialPopulation] using hgood n
     have hdepth : ∀ p ∈ parents, p.2.length = n := by
       intro p hp
-      exact firstNSelectedPopulation_depth m N n field p
-        (by simpa [parents, smallInitialPopulation,
-          firstNSelectedPopulation] using hp)
+      exact RootIndexed.selectedPopulationTotalized_depth N Finset.univ
+        initialPosition id id n field p hp
     have hchildren : ∀ p ∈ parents,
         ∃ i : ℕ, survive (field p.1 p.2) i := by
       intro p hp
       exact hmarks p.1 p.2
-    have hchosen : smallInitialActiveAddress m N n hm field ∈ parents := by
-      have hnonempty := hpopulation n
-      have hnonempty' : (firstNSelectedPopulation m N n field).Nonempty := by
-        simpa [firstNSelectedPopulation] using hnonempty
-      have hmem : smallInitialActiveAddress m N n hm field ∈
-          firstNSelectedPopulation m N n field := by
-        dsimp [smallInitialActiveAddress]
-        rw [ite_eq_left hnonempty']
-        exact (firstNSelectedEndpointMinAddress_mem_and_min m N n hm field
-          hnonempty').1
-      simpa [parents, smallInitialPopulation,
-        firstNSelectedPopulation] using hmem
+    have hchosen : smallInitialActiveAddress m N n initialPosition hm field ∈ parents := by
+      exact (smallInitialActiveAddress_mem_and_min m N n initialPosition hm field
+        (hpopulation n)).1
     have hsplit' : 2 ≤ Step.childCount
-        (field (smallInitialActiveAddress m N n hm field).1
-          (smallInitialActiveAddress m N n hm field).2) := by
-      change field ∈ smallInitialActiveSplitEvent m N n hm at hsplitn
+        (field (smallInitialActiveAddress m N n initialPosition hm field).1
+          (smallInitialActiveAddress m N n initialPosition hm field).2) := by
+      change field ∈ smallInitialActiveSplitEvent m N n initialPosition hm at hsplitn
       simpa [smallInitialActiveSplitEvent, smallInitialActiveMark,
         offspringSplitSet] using hsplitn
     have hparentsSmall : parents.card < N := by
       simpa [parents, populationSize] using hsmall
-    have hlt := smallInitialFirstN_card_gt_of_split N n hm parents field
-      value selected hfirst hdepth hchildren hchosen hsplit' hparentsSmall
+    have hlt := smallInitialFirstN_card_gt_of_split N n parents field
+      value selected hfirst hdepth hchildren _ hchosen hsplit' hparentsSmall
     simpa [parents, selected, populationSize] using hlt
   have hfrequently : ∃ᶠ n in atTop, split n := by
     simpa [split] using hsplit

@@ -66,7 +66,7 @@ theorem selectedPopulationEndpointWithParameter_eq_rankZero
     (field : RootIndexed.StepField (Fin N) ℕ ℝ)
     (hcard : (RootIndexed.selectedPopulationTotalized N Finset.univ
       initial id id n field).card = N) :
-    selectedPopulationEndpointWithParameter N n (initial, field) =
+    selectedPopulationEndpointWithParameter N N n (initial, field) =
       selectedPopulationRankPosition N n initial field ⟨0, hN⟩ := by
   letI : Preorder (RootIndexed.TreeNode (Fin N) ℕ) := treeOrder.toPreorder
   let population := RootIndexed.selectedPopulationTotalized N Finset.univ
@@ -118,7 +118,7 @@ theorem selectedPopulationEndpointWithParameter_eq_rankZero
     · apply Finset.le_inf'
       intro q hq
       exact hminimum q hq
-  have hendpoint : selectedPopulationEndpointWithParameter N n (initial, field) =
+  have hendpoint : selectedPopulationEndpointWithParameter N N n (initial, field) =
       population.inf' hpop value := by
     change (if h : population.Nonempty then population.inf' h value else 0) = _
     rw [dite_eq_left hpop]
@@ -132,7 +132,7 @@ noncomputable def selectedPopulationEndpointTrajectoryWithParameter
     (N : ℕ) [DecidableEq (RootIndexed.TreeNode (Fin N) ℕ)]
     [LinearOrder (RootIndexed.TreeNode (Fin N) ℕ)]
     (p : (Fin N → ℝ) × RootIndexed.StepField (Fin N) ℕ ℝ) :
-    ℕ → ℝ := fun n => selectedPopulationEndpointWithParameter N n p
+    ℕ → ℝ := fun n => selectedPopulationEndpointWithParameter N N n p
 
 theorem measurable_selectedPopulationEndpointTrajectoryWithParameter
     (N n : ℕ)
@@ -143,7 +143,7 @@ theorem measurable_selectedPopulationEndpointTrajectoryWithParameter
     Measurable (fun p : (Fin N → ℝ) × RootIndexed.StepField (Fin N) ℕ ℝ =>
       selectedPopulationEndpointTrajectoryWithParameter N p n) := by
   simpa [selectedPopulationEndpointTrajectoryWithParameter] using
-    measurable_selectedPopulationEndpointWithParameter N n
+    measurable_selectedPopulationEndpointWithParameter N N n
 
 private lemma ae_selectedPopulationEndpointTrajectoryWithParameter_sections
     {N : ℕ} (hN : 0 < N)
@@ -242,7 +242,7 @@ private lemma ae_selectedPopulationEndpointTrajectoryWithParameter_sections
   have hcards := selectedPopulationTotalized_card_eq_of_rankedBatches_good
     N initial field hgood
   have hendpoint (n : ℕ) :
-      selectedPopulationEndpointWithParameter N n (initial, field) =
+      selectedPopulationEndpointWithParameter N N n (initial, field) =
         selectedPopulationRankPosition N n initial field ⟨0, hN⟩ := by
     apply selectedPopulationEndpointWithParameter_eq_rankZero N n hN initial field
     have hcardN :
@@ -415,7 +415,7 @@ theorem selectedPopulationEndpointTrajectory_ae_hasAsymptoticSpeed_and_L1_of_ste
         infiniteOffspringRun (rows field) hgood (fun _ => 0) n i₀| ≤ K := by
       rw [abs_le]
       exact ⟨by linarith, by linarith⟩
-    change |(n : ℝ)⁻¹ * selectedPopulationEndpointWithParameter N n (initial, field) -
+    change |(n : ℝ)⁻¹ * selectedPopulationEndpointWithParameter N N n (initial, field) -
         speed| ≤ |(n : ℝ)⁻¹ * originPosition n (rows field) - speed| + (n : ℝ)⁻¹ * K
     rw [hmin, htraj, hzero]
     let scale : ℝ := (n : ℝ)⁻¹

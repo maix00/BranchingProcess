@@ -39,6 +39,8 @@ variables are read only after applying this code.
   probability through the ordered law. The real-valued image satisfies
   `sortedPotentialImage_nonemptySupport` and
   `sortedPotentialImage_orderedBy`.
+* `StepLaw.lintegral_childCount_sortedPotentialImage`: the mean offspring
+  count $\mathbb E[\#\Xi]$ is unchanged by ordering and projection.
 * `Step.totalPotentialWeight_map` commutes the total exponential potential
   weight with mapping the child marks through the potential.
   `StepLaw.pointMeasureFunctional_ordering`,
@@ -52,6 +54,7 @@ variables are read only after applying this code.
 -/
 
 open MeasureTheory
+open scoped ENNReal
 
 @[expose] public section
 
@@ -130,6 +133,30 @@ theorem StepLaw.sorted_pointMeasure
     (L : StepLaw ι κ X) (ξ : Combinatorics.Branching.Step ι X) :
     stepPointMeasure (L.ordering ξ) = stepPointMeasure ξ :=
   L.ordering.pointMeasure_ordered ξ
+
+private theorem measurable_ennreal_childCount
+    {α Y : Type*} [Countable α] [MeasurableSpace Y] :
+    Measurable (fun ξ : Step α Y => (ξ.childCount : ℝ≥0∞)) :=
+  (measurable_of_countable fun n : ℕ∞ => (n : ℝ≥0∞)).comp Step.childCount_measurable
+
+/-- The expected number of children is a property of the point measure and
+is invariant under ordering and projection of the marks. -/
+theorem StepLaw.lintegral_childCount_sortedPotentialImage
+    {ι κ X : Type*} [MeasurableSpace X] [Countable ι] [Countable κ] [LT κ]
+    (L : StepLaw ι κ X) :
+    (∫⁻ ξ, (ξ.childCount : ℝ≥0∞) ∂L.sortedPotentialImage) =
+      ∫⁻ ξ, (ξ.childCount : ℝ≥0∞) ∂L.raw := by
+  unfold StepLaw.sortedPotentialImage
+  rw [lintegral_map (f := fun ξ : Step κ ℝ => (ξ.childCount : ℝ≥0∞))
+    (g := fun ξ : Step κ X => ξ.map L.potential) measurable_ennreal_childCount
+    (Step.map_measurable L.potential.measurable_toFun)]
+  simp only [Step.childCount_map]
+  rw [StepLaw.sorted, lintegral_map
+    (f := fun ξ : Step κ X => (ξ.childCount : ℝ≥0∞)) measurable_ennreal_childCount
+    L.ordering.measurable_ordered]
+  apply lintegral_congr
+  intro ξ
+  rw [← stepPointMeasure_univ, L.sorted_pointMeasure ξ, stepPointMeasure_univ]
 
 theorem StepLaw.nonempty_ordering_iff
     {ι κ X : Type*} [MeasurableSpace X] [LT κ]
