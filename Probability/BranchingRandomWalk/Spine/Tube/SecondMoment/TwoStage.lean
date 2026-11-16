@@ -202,7 +202,7 @@ theorem measure_twoStageTubeEvent_eq_mul
   let next : Set (StepField ℕ X) :=
     {ω | hasPotentialChildIn φ J (ω [])}
   let cell (i : ℕ) : Set (StepField ℕ X) :=
-    {ω | first i (ω []) ∧ next (subtreeStepField [i] ω)}
+    {ω | ω [] ∈ first i ∧ subtreeStepField [i] ω ∈ next}
   have hcell_meas (i : ℕ) : MeasurableSet (cell i) := by
     change MeasurableSet
       ({ω : StepField ℕ X | firstPotentialChildIn φ I i (ω [])} ∩
@@ -223,9 +223,6 @@ theorem measure_twoStageTubeEvent_eq_mul
     ext ω
     simp only [twoStageTubeEvent, Set.mem_ofPred_eq, Set.mem_iUnion,
       cell, first, next]
-    apply exists_congr
-    intro i
-    rfl
   have hpair (i : ℕ) :
       (offspringFieldLaw μ) (cell i) = μ (first i) * (offspringFieldLaw μ) next := by
     let pairMap : StepField ℕ X → Step ℕ X × StepField ℕ X :=

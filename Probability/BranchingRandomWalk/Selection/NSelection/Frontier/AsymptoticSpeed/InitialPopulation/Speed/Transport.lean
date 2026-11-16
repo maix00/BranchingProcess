@@ -33,14 +33,13 @@ This file connects the measurable endpoint of a selected population with the
 rank-zero trajectory used by the exact-capacity speed theorem.
 -/
 
-open MeasureTheory Filter
+open Asymptotics MeasureTheory Filter
 open scoped Topology
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
 
 open Combinatorics.Branching
 open _root_.Combinatorics.Selection.NSelection
-open Combinatorics.Branching.Selection.NSelection
 open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.RootIndexed
