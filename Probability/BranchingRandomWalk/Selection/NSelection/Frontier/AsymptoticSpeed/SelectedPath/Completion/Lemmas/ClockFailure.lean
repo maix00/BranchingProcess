@@ -6,7 +6,10 @@ Authors: WANG Yiyang
 
 module
 
-import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.Entrance
+import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Basic
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.WaitingTime
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.TrialIndependence
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Lemmas.RecursiveClock
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.EntranceScales
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Success
 
@@ -15,12 +18,18 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticS
 
 ## Internal proof declarations
 
+* `eventually_measure_completionLate_or_trialFailure_le`: for a uniform
+  one-trial success probability $p_1>0$ and the geometric-moment condition
+  on $\gamma$ below, $\mathbb P(\{\kappa\le K_N,\ \tau\le T_N\}^c)
+  \le N^{-b}$ eventually for some $b>0$.
 * `exists_logarithmicTrialClock_failure_le_polynomial`: with the binary cutoff
   rule and $d_N=\lfloor\alpha\log N/\log\rho\rfloor+2$, a fixed positive
   success bound holds at target $\lceil N^\alpha\rceil$. On the original
   candidate tree the good-event complement is $O(N^{-b})$ for
   $T_N=\lfloor\gamma\log N\rfloor$ and $K_N=\lfloor\delta\log N\rfloor$,
-  provided $\gamma>4\delta/p_0+\alpha/\log\rho$.
+  provided $\gamma>\delta+\alpha/\log\rho+
+  \delta\log(\mathbb E e^{\theta G_1})/\theta$ for a positive
+  $\theta$ with $e^\theta(1-p_0)<1$.
 
 This is the exceptional-event probability in Wang Yiyang, *Asymptotic
 Speed of the N-Branching Random Walk with Infinite Offspring*
@@ -41,26 +50,28 @@ open ProbabilityTheory.BranchingRandomWalk.Step.Selection
 open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 open ProbabilityTheory.BranchingProcess.GaltonWatson
 
-private lemma eventually_measure_completionLate_or_trialFailure_le
+lemma eventually_measure_completionLate_or_trialFailure_le
     {Root : Type} [MeasurableSpace Root] [MeasurableSingletonClass Root]
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (R growth : Step.FiniteSelection ℕ ℝ)
     (hR : Measurable R.select) (hgrowth : Measurable growth.select)
     (hRne : μ {ξ | (R ξ).Nonempty} = 1) (hsplit : 0 < μ (splitBy R))
     (r : Root) {N : ℕ → ℕ} (hN : Tendsto N atTop atTop)
-    (K clock duration lower upper : ℕ → ℕ) {δ p₁ : ℝ} (hδ : 0 < δ) (hp₁ : 0 < p₁)
-    (hclock : ∀ᶠ i in atTop, 0 < clock i)
+    (K duration lower upper : ℕ → ℕ) {δ p₁ A θ γ : ℝ}
+    (hδ : 0 < δ) (hp₁ : 0 < p₁) (hθ : 0 < θ)
     (hK : ∀ᶠ i in atTop,
-      δ * Real.log (N i : ℝ) / 2 ≤ (K i : ℝ) ∧
-      (K i : ℝ) ≤ δ * Real.log (N i : ℝ) ∧
-      (K i : ℝ) ≤ (clock i : ℝ) * (μ (splitBy R)).toReal / 4)
+      δ * Real.log (N i : ℝ) / 2 ≤ (K i : ℝ) ∧ (K i : ℝ) ≤ δ * Real.log (N i : ℝ))
+    (hduration : ∀ i, (duration i : ℝ) ≤ A * Real.log (N i : ℝ) + 2)
+    (hratio : ENNReal.ofReal (Real.exp θ) * (1 - μ (splitBy R)) < 1)
+    (hγ : δ + A + δ / θ *
+      Real.log (μ (splitBy R) / (1 - ENNReal.ofReal (Real.exp θ) * (1 - μ (splitBy R)))).toReal < γ)
     (hsuccess : ∀ᶠ i in atTop,
       p₁ ≤ (offspringFieldLaw μ).real
         {ω | growthTrialSuccess growth (lower i) (upper i) (duration i) ω}) :
     let P := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
     ∃ b : ℝ, 0 < b ∧ ∀ᶠ i in atTop,
       let τ := Completion.time R growth hR hgrowth (lower i) (upper i) (duration i) r
-      let T := clock i + duration i
+      let T := ⌊γ * Real.log (N i : ℝ)⌋₊
       let E := {field | splitCount R r ((τ field).untopD 0 - (duration i + 1))
         (RootIndexed.StepField.left field) < K i} ∩ {field | τ field ≤ (T : WithTop ℕ)}
       P Eᶜ ≤ ENNReal.ofReal (Real.exp (-b * Real.log (N i : ℝ))) := by
@@ -69,43 +80,61 @@ private lemma eventually_measure_completionLate_or_trialFailure_le
   let ν := offspringFieldLaw μ
   have hL : Tendsto L atTop atTop :=
     Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop.comp hN)
-  let q := max (1 / 2) (1 - p₁)
-  have hq : 0 < q := (show (0 : ℝ) < 1 / 2 by norm_num).trans_le (le_max_left _ _)
-  have hq1 : q < 1 := max_lt (by norm_num) (by linarith)
-  obtain ⟨b, hb, hscale⟩ :=
-    eventually_geometric_and_exponential_entrance_bound hδ hq hq1 (le_refl (1 : ℝ))
-      (by simp : (1 : ℝ) * 1 = Real.log 1 + 1) hL K clock hK
-  have habsorb : ∀ᶠ i in atTop, 3 ≤ Real.exp (b / 2 * L i) :=
-    (Real.tendsto_exp_atTop.comp (hL.const_mul_atTop (by positivity))).eventually_ge_atTop 3
+  let B := μ (splitBy R) / (1 - ENNReal.ofReal (Real.exp θ) * (1 - μ (splitBy R)))
+  let gap := θ * (γ - δ - A) - δ * Real.log B.toReal
+  have hBfinite : B ≠ ∞ :=
+    (ENNReal.div_lt_top (measure_ne_top _ _) (ne_of_gt (tsub_pos_of_lt hratio))).ne
+  have hB : 1 ≤ B.toReal :=
+    one_le_splitWaitingTime_expMoment μ R hR hRne hsplit hθ.le hratio
+  have hBLog : 0 ≤ Real.log B.toReal := Real.log_nonneg hB
+  have hgap : 0 < gap := by
+    have heq : θ * (δ / θ) = δ := by field_simp
+    dsimp [gap]
+    change δ + A + δ / θ * Real.log B.toReal < γ at hγ
+    have hm := mul_lt_mul_of_pos_left hγ hθ
+    rw [mul_add, ← mul_assoc, heq] at hm
+    linarith
+  let b := min (gap / 2) (p₁ * δ / 2)
+  have hb : 0 < b := lt_min (div_pos hgap two_pos) (by positivity)
+  have hblog : b ≤ p₁ * δ / 2 := min_le_right _ _
+  have hbgap : b ≤ gap / 2 := min_le_left _ _
+  have habsorb : ∀ᶠ i in atTop, 2 ≤ Real.exp (b / 2 * L i) :=
+    (Real.tendsto_exp_atTop.comp (hL.const_mul_atTop (by positivity))).eventually_ge_atTop 2
   refine ⟨b / 2, by positivity, ?_⟩
-  filter_upwards [hclock, hK, hsuccess, hscale, habsorb] with i hc hk hs hscale hab
+  filter_upwards [hK, hsuccess, habsorb, hL.eventually_ge_atTop 0,
+    hL.eventually_ge_atTop (4 * θ / gap)] with i hk hs hab hLog hmargin
   dsimp only
   let G := growthTrialSuccess growth (lower i) (upper i) (duration i)
   let w := Real.exp (-b * L i)
   have hG : MeasurableSet {ω | G ω} :=
     (generationFiltration (M := Step ℕ ℝ)).le (duration i) _
       (growthTrialSuccess_measurable growth hgrowth (lower i) (upper i) (duration i))
-  have hqbound : ν {ω | ¬ G ω} ≤ ENNReal.ofReal q := by
-    change ν {ω | G ω}ᶜ ≤ ENNReal.ofReal q
+  have hqbound : ν {ω | ¬ G ω} ≤ ENNReal.ofReal (Real.exp (-p₁)) := by
+    change ν {ω | G ω}ᶜ ≤ ENNReal.ofReal (Real.exp (-p₁))
     rw [prob_compl_eq_one_sub hG]
     have hle : ν {ω | G ω} ≤ 1 := (measure_mono (Set.subset_univ _)).trans_eq measure_univ
     have hfinite : 1 - ν {ω | G ω} ≠ ∞ := (tsub_le_self.trans_lt ENNReal.one_lt_top).ne
     rw [← ENNReal.ofReal_toReal hfinite, ENNReal.toReal_sub_of_le hle ENNReal.one_ne_top,
       ENNReal.toReal_one]
-    exact ENNReal.ofReal_le_ofReal ((sub_le_sub_left hs 1).trans (le_max_right _ _))
+    apply ENNReal.ofReal_le_ofReal
+    exact (sub_le_sub_left hs 1).trans (by linarith [Real.add_one_le_exp (-p₁)])
   have hpow : (ν {ω | ¬ G ω}) ^ K i ≤ ENNReal.ofReal w :=
     (pow_le_pow_left₀ zero_le hqbound _).trans <| by
-      rw [← ENNReal.ofReal_pow hq.le]
-      exact ENNReal.ofReal_le_ofReal hscale.2.1
-  obtain ⟨hlate, hfailed⟩ := measure_completionLate_and_trialFailure_le
-    μ R growth hR hgrowth hRne hsplit (lower i) (upper i) (duration i) r
-    (clock i) (K i) hc hk.2.2
+      rw [← ENNReal.ofReal_pow (Real.exp_nonneg _), ← Real.exp_nat_mul]
+      apply ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr ?_)
+      have ha := mul_le_mul_of_nonpos_right hk.1 (neg_nonpos.mpr hp₁.le)
+      have hb' := mul_le_mul_of_nonneg_right hblog hLog
+      linarith only [ha, hb',
+        show (δ * L i / 2) * (-p₁) = -(p₁ * δ / 2) * L i by ring]
   let τ := Completion.time R growth hR hgrowth (lower i) (upper i) (duration i) r
-  let T := clock i + duration i
+  let T := ⌊γ * L i⌋₊
   let left : RootIndexed.StepField (Root ⊕ Root) ℕ ℝ → RootIndexed.StepField Root ℕ ℝ :=
     RootIndexed.StepField.left
   let f := fun field => left field r
-  let late := {field | (T : WithTop ℕ) < τ field}
+  let x := γ * L i - (K i : ℝ) - (duration i : ℝ)
+  let lateCycle : Set (Mark ℕ (Step ℕ ℝ)) := {ω | x ≤ ∑ j ∈ Finset.range (K i),
+    ((splitCycle R (splitWaitingTime R) (fun _ => PUnit.unit.{1}) j ω).1 : ℝ)}
+  let late := f ⁻¹' lateCycle
   let failed := f ⁻¹' recursiveFailure R growth (duration i) (lower i) (upper i) (K i)
   have hleft : Measurable left := measurable_pi_iff.mpr fun i => measurable_pi_apply (Sum.inl i)
   have hleftlaw : P.map left = RootIndexed.stepFieldLaw (Root := Root) μ :=
@@ -115,6 +144,47 @@ private lemma eventually_measure_completionLate_or_trialFailure_le
     change P.map ((fun ω : RootIndexed.StepField Root ℕ ℝ => ω r) ∘ left) = ν
     rw [← Measure.map_map (measurable_pi_apply r) hleft, hleftlaw,
       RootIndexed.stepFieldLaw_root_marginal μ r]
+  have hlateMeas : MeasurableSet lateCycle := by
+    have hwait := (splitWaitingTime_measurable R hR).mono
+      (selectedPopulationSplitCompletion_isStoppingTime R hR).measurableSpace_le le_rfl
+    have hsum : Measurable (fun ω => ∑ j ∈ Finset.range (K i),
+        ((splitCycle R (splitWaitingTime R) (fun _ => PUnit.unit.{1}) j ω).1 : ℝ)) :=
+      Finset.measurable_sum _ fun j _ =>
+        (measurable_of_countable fun k : ℕ => (k : ℝ)).comp
+          (measurable_fst.comp (measurable_splitCycle R hR _ hwait _ measurable_const j))
+    exact hsum measurableSet_Ici
+  have hlate : P late ≤ ENNReal.ofReal w := by
+    change P (f ⁻¹' lateCycle) ≤ _
+    rw [← Measure.map_apply hf hlateMeas, hflaw]
+    refine (measure_splitWaitingTime_sum_ge_le μ R hR hRne hsplit θ x hθ (K i)).trans ?_
+    change ENNReal.ofReal (Real.exp (-θ * x)) * B ^ K i ≤ _
+    rw [← ENNReal.ofReal_toReal hBfinite, ← ENNReal.ofReal_pow ENNReal.toReal_nonneg,
+      ← ENNReal.ofReal_mul (Real.exp_nonneg _)]
+    apply ENNReal.ofReal_le_ofReal
+    rw [← Real.exp_log (lt_of_lt_of_le zero_lt_one hB), ← Real.exp_nat_mul, ← Real.exp_add]
+    apply Real.exp_le_exp.mpr
+    have hKlog := mul_le_mul_of_nonneg_right hk.2 hBLog
+    have hgapL := (div_le_iff₀ hgap).mp hmargin
+    have hbL := mul_le_mul_of_nonneg_right hbgap hLog
+    have hx : (δ + A - γ) * L i + 2 ≥ -x := by
+      dsimp [x]
+      linarith only [hk.2, hduration i,
+        show (δ + A - γ) * L i = δ * L i + A * L i - γ * L i by ring]
+    have hxθ := mul_le_mul_of_nonneg_left hx hθ.le
+    change -θ * x + (K i : ℝ) * Real.log B.toReal ≤ -b * L i
+    have he : θ * ((δ + A - γ) * L i + 2) + δ * L i * Real.log B.toReal =
+        -(gap * L i) + 2 * θ := by dsimp [gap]; ring
+    linarith only [hKlog, hgapL, hbL, hxθ, he,
+      show -θ * x = θ * (-x) by ring, mul_comm (L i) gap]
+  have hfinite := selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
+    μ R hR hRne (splitBy_measurable R hR) hsplit
+  have hfailed : P failed ≤ ENNReal.ofReal w := by
+    change P (f ⁻¹' recursiveFailure R growth (duration i) (lower i) (upper i) (K i)) ≤ _
+    rw [← Measure.map_apply hf (recursiveFailure_measurable R growth hR hgrowth _ _ _ _),
+      hflaw, measure_recursiveFailure_eq_pow μ R growth hR hgrowth _ _ _ hfinite]
+    exact hpow
+  have hwait := ae_of_ae_map hf.aemeasurable
+    (by rw [hflaw]; exact splitCount_at_waitingTime_sum_ae μ R hR hRne hsplit (K i))
   have hRmeas : MeasurableSet {ξ | (R ξ).Nonempty} := by
     rw [show {ξ | (R ξ).Nonempty} = (fun ξ => (R ξ).card) ⁻¹' Set.Ioi 0 by
       ext ξ
@@ -134,7 +204,7 @@ private lemma eventually_measure_completionLate_or_trialFailure_le
   have hsub : ({field | splitCount R r ((τ field).untopD 0 - (duration i + 1))
       (RootIndexed.StepField.left field) < K i} ∩ {field | τ field ≤ (T : WithTop ℕ)})ᶜ
       ≤ᵐ[P] late ∪ failed := by
-    filter_upwards [hall] with field hmarks hbad
+    filter_upwards [hall, hwait] with field hmarks hwaitField hbad
     by_cases htime : τ field ≤ (T : WithTop ℕ)
     · obtain ⟨n, hn⟩ := WithTop.ne_top_iff_exists.mp
         (ne_top_of_le_ne_top WithTop.coe_ne_top htime)
@@ -164,19 +234,36 @@ private lemma eventually_measure_completionLate_or_trialFailure_le
       rw [hfirst] at hearly
       have hle : n ≤ k + 1 + duration i := WithTop.coe_le_coe.mp hearly
       omega
-    · exact Or.inl (lt_of_not_ge htime)
-  refine (measure_mono_ae hsub).trans ?_
-  refine (measure_union_le _ _).trans (add_le_add hlate hfailed |>.trans ?_)
-  refine (add_le_add (add_le_add (ENNReal.ofReal_le_ofReal hscale.1) hpow) hpow).trans ?_
-  have hm : 3 * w ≤ Real.exp (-(b / 2) * L i) := by
+    · by_cases hLate : field ∈ late
+      · exact Or.inl hLate
+      let n := K i + ∑ j ∈ Finset.range (K i),
+        (splitCycle R (splitWaitingTime R) (fun _ => PUnit.unit.{1}) j (f field)).1
+      have hnT : n + duration i ≤ T := by
+        apply Nat.le_floor
+        change ¬ x ≤ ∑ j ∈ Finset.range (K i),
+          ((splitCycle R (splitWaitingTime R) (fun _ => PUnit.unit.{1}) j (f field)).1 : ℝ) at hLate
+        have hsum := lt_of_not_ge hLate
+        push_cast
+        dsimp [n, x] at *
+        push_cast
+        linarith
+      refine Or.inr (mem_recursiveFailure_of_no_success R growth hR (lower i) (upper i)
+        (duration i) (K i) r (left field) hmarks n
+        (hwaitField Root r (left field) rfl).ge ?_)
+      intro k hk hs'
+      apply htime
+      change firstSuccessfulCompletion R growth hR (lower i) (upper i) (duration i) r
+        (left field) ≤ (T : WithTop ℕ)
+      exact (firstDeclaredSuccess_le_iff _ _ T).2
+        ⟨k + 1 + duration i, by omega, k, rfl, hs'⟩
+  refine (measure_mono_ae hsub).trans ((measure_union_le _ _).trans
+    ((add_le_add hlate hfailed).trans ?_))
+  have hm : 2 * w ≤ Real.exp (-(b / 2) * L i) := by
     calc
       _ ≤ Real.exp (b / 2 * L i) * w := mul_le_mul_of_nonneg_right hab (by positivity)
       _ = _ := by rw [show w = Real.exp (-b * L i) from rfl, ← Real.exp_add]; congr 1; ring
-  rw [← ENNReal.ofReal_add (by positivity : 0 ≤ w) (by positivity : 0 ≤ w),
-    ← ENNReal.ofReal_add (by positivity) (by positivity : 0 ≤ w)]
-  apply ENNReal.ofReal_le_ofReal
-  change w + w + w ≤ Real.exp (-(b / 2) * L i)
-  linarith only [hm]
+  rw [← ENNReal.ofReal_add (by positivity : 0 ≤ w) (by positivity : 0 ≤ w)]
+  exact ENNReal.ofReal_le_ofReal (by linarith only [hm])
 
 /-- The success and clock estimates for the original pre-sampled growth
 trial, with the integer target corresponding to population at least
@@ -198,14 +285,17 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
       let growth := B.belowPotential realPotential (M : ℝ)
       let hR := firstOrBelowPotential_measurable B firstTwoBySlotOrder_measurable realPotential M
       let hgrowth := B.belowPotential_measurable firstTwoBySlotOrder_measurable realPotential M
-      let p₀ := (μ (splitBy R)).toReal
       let d i := ⌊α * Real.log (N i : ℝ) / Real.log ρ⌋₊ + 2
       let lower i := ⌈(N i : ℝ) ^ α⌉₊
       let upper i := 2 ^ d i
       let τ i := Completion.time R growth hR hgrowth (lower i) (upper i) (d i) (0 : ℕ)
       (∀ᶠ i in atTop, p₁ ≤ (offspringFieldLaw μ).real
         {ω | growthTrialSuccess growth (lower i) (upper i) (d i) ω}) ∧
-      ∀ δ γ : ℝ, 0 < δ → 4 * δ / p₀ + α / Real.log ρ < γ →
+      ∀ δ θ γ : ℝ, 0 < δ → 0 < θ →
+        ENNReal.ofReal (Real.exp θ) * (1 - μ (splitBy R)) < 1 →
+        δ + α / Real.log ρ + δ / θ *
+          Real.log (μ (splitBy R) / (1 - ENNReal.ofReal (Real.exp θ) *
+            (1 - μ (splitBy R)))).toReal < γ →
         let K i := ⌊δ * Real.log (N i : ℝ)⌋₊
         let T i := ⌊γ * Real.log (N i : ℝ)⌋₊
         let E i := {field | splitCount R 0 ((τ i field).untopD 0 - (d i + 1))
@@ -227,9 +317,7 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
   let ρ := finiteSlotOffspringMeanReal law
   let p₁ := ((ρ - 1) / ρ) ^ 2 / normalizedSecondMomentConstant ρ
     (finiteSlotOffspringSecondMomentReal law - ρ ^ 2)
-  let p₀ := (μ (splitBy R)).toReal
   have hρlog : 0 < Real.log ρ := Real.log_pos hρ
-  have hp₀ : 0 < p₀ := ENNReal.toReal_pos (ne_of_gt hsplit) (measure_ne_top _ _)
   let α := min (ε / 2) (min (1 / 2) (Real.log ρ / (4 * Real.log 2)))
   have ha : 0 < α := lt_min (by positivity) (lt_min (by norm_num) (by positivity))
   have ha1 : α < 1 := ((min_le_right _ _).trans (min_le_left _ _)).trans_lt (by norm_num)
@@ -253,9 +341,8 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
       (rpow_mul_mean_le_pow_trialDuration hρ (N i) α hi)
       (Nat.ceil_pos.mpr (Real.rpow_pos_of_pos hNpos α)) le_rfl
   refine ⟨M, α, ρ, p₁, ha, ha1, haε, hρ, hp₁, hsuccess', ?_⟩
-  intro δ γ hδ hγ
+  intro δ θ γ hδ hθ hratio hγ
   let K i := ⌊δ * Real.log (N i : ℝ)⌋₊
-  let clock i := ⌈(4 * δ / p₀) * Real.log (N i : ℝ)⌉₊
   let η := (0 + (M : ℝ)) * δ + (M : ℝ) * (α / Real.log ρ) + 1
   have hbudget : (0 + (M : ℝ)) * δ + (M : ℝ) * (α / Real.log ρ) < η :=
     lt_add_of_pos_right _ zero_lt_one
@@ -264,11 +351,8 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
       ring]
     exact trialDuration_le hρ ha.le (N i)
   have hscale := logarithmicEntrance_scales
-    hρ hp₀ ha hδ (Nat.cast_nonneg M) hsmall hbudget hN d
+    hρ ha hδ (Nat.cast_nonneg M) hsmall hbudget hN d
     (fun i => trialDuration_le hρ ha.le (N i))
-  obtain ⟨hdom, hT, hTH⟩ :=
-    logarithmicEntrance_deadline (by positivity : 0 ≤ 4 * δ / p₀)
-      (by positivity : 0 ≤ α / Real.log ρ) hγ hN ht hH d hd
   have hμne : μ nonemptySupport = 1 := by
     change L.sortedPotentialImage nonemptySupport = 1
     rw [L.sortedPotentialImage_nonemptySupport, L.sorted_nonemptySupport]
@@ -286,15 +370,19 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
   have hRne : μ {ξ | (R ξ).Nonempty} = 1 := by
     have hset := (ae_mem_iff_measure_eq hRset.nullMeasurableSet).1 hRneAE
     simpa only [measure_univ] using hset
-  refine ⟨hT, hTH.mp (hscale.mono fun i hs hTHi => ⟨hTHi, hs.2.2.2.2.1⟩), ?_⟩
+  have hB : 1 ≤ (μ (splitBy R) /
+      (1 - ENNReal.ofReal (Real.exp θ) * (1 - μ (splitBy R)))).toReal :=
+    one_le_splitWaitingTime_expMoment μ R hR hRne hsplit hθ.le hratio
+  have hγ' : 0 < γ :=
+    (div_nonneg ha.le hρlog.le).trans_lt <|
+    lt_of_le_of_lt (by nlinarith [mul_nonneg (div_nonneg hδ.le hθ.le) (Real.log_nonneg hB)]) hγ
+  obtain ⟨hT, hTH⟩ := logarithmicEntrance_deadline hγ' hN ht hH
+  refine ⟨hT, hTH.mp (hscale.mono fun i hs hTHi => ⟨hTHi, hs.2.2.1⟩), ?_⟩
   obtain ⟨b, hb, hbad⟩ := eventually_measure_completionLate_or_trialFailure_le
-    μ R growth hR hgrowth hRne hsplit 0 hN K clock d lower upper hδ hp₁
-    (hscale.mono fun _ h => h.1)
-    (hscale.mono fun _ h => ⟨h.2.2.1, h.2.2.2.1, h.2.1⟩) hsuccess'
-  refine ⟨b, hb, (hbad.and hdom).mono fun i ⟨hi, hdi⟩ => ?_⟩
-  refine (ENNReal.toReal_mono ENNReal.ofReal_ne_top ?_).trans_eq
+    μ R growth hR hgrowth hRne hsplit 0 hN K d lower upper hδ hp₁ hθ
+    (hscale.mono fun _ h => ⟨h.1, h.2.1⟩) hd hratio hγ hsuccess'
+  refine ⟨b, hb, hbad.mono fun i hi => ?_⟩
+  exact (ENNReal.toReal_mono ENNReal.ofReal_ne_top hi).trans_eq
     (ENNReal.toReal_ofReal (Real.exp_nonneg _))
-  refine (measure_mono (Set.compl_subset_compl.mpr ?_)).trans hi
-  exact fun _ hw => ⟨hw.1, hw.2.trans (WithTop.coe_le_coe.mpr hdi)⟩
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas

@@ -20,6 +20,10 @@ import Mathlib.MeasureTheory.Integral.Prod
 * `splitCycle` iterates the second-child continuation and records the pair $Z_k=(F_k,G_k)$.
 * `splitCycle_prefix_map_eq_pi`: the successive pairs $Z_i=(F_i,G_i)$,
   $i<n$, have joint law $\rho^{\otimes n}$ for their common law $\rho$.
+* `measurable_splitCycle`: the observation in the $j$th split cycle is measurable.
+* `lintegral_exp_splitCycle_sum`: for the first $K$ split cycles, the
+  exponential transform of $\sum_{j<K}F_j$ equals $(\mathbb E e^{\lambda F})^K$
+  when $F$ is measurable at the first completed split.
 * `integral_splitCycle_positiveDisplacement_through_success`: if $kappa$
   is the first successful growth trial and $p$ its single-trial probability,
   $mathbb E[sum_{jlekappa}(X_j)_+]=mathbb E[(X_1)_+]/p$.
@@ -124,7 +128,7 @@ noncomputable def splitCycle
   | 0, ω => (F ω, G (selectedPopulationFirstSplitSubtrees R ω 0))
   | n + 1, ω => splitCycle R F G n (selectedPopulationFirstSplitSubtrees R ω 1)
 
-private lemma measurable_splitCycle
+lemma measurable_splitCycle
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (F : Mark α (Step α X) → D) (hF : Measurable F)
     (G : Mark α (Step α X) → E) (hG : Measurable G) (n : ℕ) :
@@ -213,25 +217,22 @@ lemma splitCycle_prefix_map_eq_pi
   intro i _
   simp [B, i.isLt, ρ, ν]
 
-private lemma measure_splitCycle_partialSum_ge_le
+lemma lintegral_exp_splitCycle_sum
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (hfinite : ∀ᵐ ω ∂offspringFieldLaw μ, selectedPopulationSplitCompletion R ω ≠ ⊤)
     (F : Mark α (Step α X) → ℝ)
     (hF : Measurable[(selectedPopulationSplitCompletion_isStoppingTime R hR).measurableSpace] F)
     (G : Mark α (Step α X) → E) (hG : Measurable G)
-    (lam x : ℝ) (hlam : 0 < lam) (K : ℕ) :
+    (lam : ℝ) (K : ℕ) :
     let ν := offspringFieldLaw μ
     let m := ∫⁻ ω, ENNReal.ofReal (Real.exp (lam * F ω)) ∂ν
-    ENNReal.ofReal (Real.exp (lam * x)) *
-      ν {ω | ∃ k < K, x ≤
-        ∑ j ∈ Finset.range (k + 1), (splitCycle R F G j ω).1} ≤
-      ∑ k ∈ Finset.range K, m ^ (k + 1) := by
+    (∫⁻ ω, ENNReal.ofReal (Real.exp (lam *
+      ∑ j ∈ Finset.range K, (splitCycle R F G j ω).1)) ∂ν) = m ^ K := by
   classical
   intro ν m
   let ρ := (ν.map F).prod (ν.map G)
   let w (z : ℝ × E) := ENNReal.ofReal (Real.exp (lam * z.1))
-  let q := ENNReal.ofReal (Real.exp (lam * x))
   let S (k : ℕ) (ω : Mark α (Step α X)) :=
     ∑ j ∈ Finset.range k, (splitCycle R F G j ω).1
   have hF' := hF.mono (selectedPopulationSplitCompletion_isStoppingTime R hR).measurableSpace_le le_rfl
@@ -276,6 +277,31 @@ private lemma measure_splitCycle_partialSum_ge_le
       rw [← lintegral_map hw (measurable_pi_apply i),
         (measurePreserving_eval (fun _ : Fin k => ρ) i).map_eq, hm]
     simp only [hcoord, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+  exact hmoment K
+
+private lemma measure_splitCycle_partialSum_ge_le
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (R : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (hfinite : ∀ᵐ ω ∂offspringFieldLaw μ, selectedPopulationSplitCompletion R ω ≠ ⊤)
+    (F : Mark α (Step α X) → ℝ)
+    (hF : Measurable[(selectedPopulationSplitCompletion_isStoppingTime R hR).measurableSpace] F)
+    (G : Mark α (Step α X) → E) (hG : Measurable G)
+    (lam x : ℝ) (hlam : 0 < lam) (K : ℕ) :
+    let ν := offspringFieldLaw μ
+    let m := ∫⁻ ω, ENNReal.ofReal (Real.exp (lam * F ω)) ∂ν
+    ENNReal.ofReal (Real.exp (lam * x)) *
+      ν {ω | ∃ k < K, x ≤
+        ∑ j ∈ Finset.range (k + 1), (splitCycle R F G j ω).1} ≤
+      ∑ k ∈ Finset.range K, m ^ (k + 1) := by
+  classical
+  intro ν m
+  let q := ENNReal.ofReal (Real.exp (lam * x))
+  let S (k : ℕ) (ω : Mark α (Step α X)) :=
+    ∑ j ∈ Finset.range k, (splitCycle R F G j ω).1
+  have hF' := hF.mono (selectedPopulationSplitCompletion_isStoppingTime R hR).measurableSpace_le le_rfl
+  have hmoment (k : ℕ) :
+      (∫⁻ ω, ENNReal.ofReal (Real.exp (lam * S k ω)) ∂ν) = m ^ k :=
+    lintegral_exp_splitCycle_sum μ R hR hfinite F hF G hG lam k
   let event (k : ℕ) := {ω | x ≤ S (k + 1) ω}
   have htail (k : ℕ) : q * ν (event k) ≤ m ^ (k + 1) := by
     have hs : Measurable (S (k + 1)) := Finset.measurable_sum _ (fun j _ =>
