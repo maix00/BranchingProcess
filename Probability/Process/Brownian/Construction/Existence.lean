@@ -16,7 +16,7 @@ public import Probability.Process.Stable.Brownian.Basic
 public import Topology.Cadlag.Skorokhod.Topology
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-import Probability.Process.Brownian.Construction.PreBrownianModification
+import BrownianMotion.Gaussian.BrownianMotion
 
 /-!
 # A pre-Brownian process from the Gaussian random-walk path limit
@@ -81,7 +81,7 @@ theorem exists_preBrownianReal_cadlag :
     Q.property
   exact ⟨Q, B, hB.isPreBrownianReal_of_standardGaussian, hB⟩
 
-/-- The Gaussian random-walk limit followed by the fourth-moment
+/-- The Gaussian random-walk limit followed by BrownianMotion's
 Kolmogorov–Chentsov construction supplies a genuine Brownian process. -/
 theorem exists_brownianReal :
     ∃ (Q : ProbabilityMeasure (ℕ → CadlagPath unitInterval ℝ))
@@ -89,12 +89,8 @@ theorem exists_brownianReal :
       IsBrownianReal B (Q : Measure _) ∧
       (∀ t, Measurable (B t)) ∧ ∀ ω, Continuous (B · ω) := by
   obtain ⟨Q, B, hB, _⟩ := exists_preBrownianReal_cadlag
-  obtain ⟨Y, hYmeas, hYmod, hYcont⟩ :=
-    hB.exists_continuous_modification_fourthMoment
-  have hY : IsBrownianReal Y (Q : Measure _) :=
-    ⟨hB.congr (fun t => (hYmod t).symm),
-      Filter.Eventually.of_forall hYcont⟩
-  exact ⟨Q, Y, hY, hYmeas, hYcont⟩
+  let Y := hB.mk B
+  exact ⟨Q, Y, hB.isBrownianReal_mk, hB.measurable_mk, hB.continuous_mk⟩
 
 end ProbabilityTheory
 

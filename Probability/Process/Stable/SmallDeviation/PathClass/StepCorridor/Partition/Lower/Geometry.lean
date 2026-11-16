@@ -51,7 +51,7 @@ open Skorokhod.PathClass.StepCorridor
 /-- On one cell, the increment corridor is contracted by the incoming core;
 the return window is centered at the displacement between adjacent core
 centers and has half the increase in core radius. -/
-def commonPartitionCellCoreReturnEvent
+noncomputable def commonPartitionCellCoreReturnEvent
     {α : ℝ} (scale : ℝ) (upper lower : StepBoundary)
     (center radius : Fin (StepBoundary.commonKnots upper lower).card → ℝ)
     (innerLower innerUpper :

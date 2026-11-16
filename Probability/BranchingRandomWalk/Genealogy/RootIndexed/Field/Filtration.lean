@@ -142,8 +142,7 @@ theorem RootIndexed.stepGenerationSpace_eq_coordinate_iSup
 
 /-- Restricting a root-indexed field to one fixed root preserves the
 generation domain flow.  This needs no countability assumption on either the
-root labels or the child slots: every generator in the target observes one
-fixed coordinate. -/
+root labels or the child slots: each generator reads one fixed coordinate. -/
 theorem RootIndexed.field_measurable
     {Root α X : Type*} [MeasurableSpace X] (r : Root) (n : ℕ) :
     @Measurable

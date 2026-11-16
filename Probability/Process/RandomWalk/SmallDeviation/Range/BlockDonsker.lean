@@ -113,8 +113,7 @@ private theorem blockOscillationEvent_subset_normalizedPath_rangeOscillation
     {length : ℕ} (hlength : 0 < length) {width scale : ℝ}
     (hscale : 0 < scale) :
     {increment : ℕ → ℝ |
-      blockOscillationEvent width length
-        (Combinatorics.Sequence.blockCoordinates 0 length increment)} ⊆
+      (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationEvent width length} ⊆
       (normalizedLinearContinuousPathIcc (fun _ => scale) length) ⁻¹'
         ContinuousMap.rangeOscillationSet (width / scale) := by
   intro increment hosc
@@ -145,8 +144,7 @@ private theorem iidSequenceLaw_blockOscillation_le_normalizedPathLaw
     {length : ℕ} (hlength : 0 < length) {width scale : ℝ}
     (hscale : 0 < scale) :
     iidSequenceLaw ν {increment : ℕ → ℝ |
-      blockOscillationEvent width length
-        (Combinatorics.Sequence.blockCoordinates 0 length increment)} ≤
+      (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationEvent width length} ≤
       ProbabilityTheory.RandomWalk.normalizedLinearPathLaw ν
         (fun _ => scale) length
         (ContinuousMap.rangeOscillationSet (width / scale)) := by
@@ -175,8 +173,7 @@ theorem limsup_iidSequenceLaw_blockOscillation_le_brownianRangeOscillationMass
     (hwidth : ∀ᶠ n : ℕ in atTop,
       blockWidth n / Real.sqrt (length n) ≤ width) :
     atTop.limsup (fun n => iidSequenceLaw ν {increment : ℕ → ℝ |
-      blockOscillationEvent (blockWidth n) (length n)
-        (Combinatorics.Sequence.blockCoordinates 0 (length n) increment)}) ≤
+      (Combinatorics.Sequence.blockCoordinates 0 (length n) increment) ∈ blockOscillationEvent (blockWidth n) (length n)}) ≤
       rangeOscillationMass (P := P) hcontinuous width := by
   let hDonsker := RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_brownian
     ν hcentered hsecondMoment hB hcontinuous hmeasurable
@@ -198,8 +195,7 @@ theorem limsup_iidSequenceLaw_blockOscillation_le_brownianRangeOscillationMass
     · rfl
   have hblock : ∀ᶠ n : ℕ in atTop,
       iidSequenceLaw ν {increment : ℕ → ℝ |
-        blockOscillationEvent (blockWidth n) (length n)
-          (Combinatorics.Sequence.blockCoordinates 0 (length n) increment)} ≤
+        (Combinatorics.Sequence.blockCoordinates 0 (length n) increment) ∈ blockOscillationEvent (blockWidth n) (length n)} ≤
       ProbabilityTheory.RandomWalk.normalizedLinearPathLaw ν
         (fun _ => Real.sqrt (length n)) (length n) event := by
     filter_upwards [hwidth, hlength.eventually_gt_atTop 0] with n hnwidth hnlength
