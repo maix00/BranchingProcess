@@ -504,7 +504,7 @@ private lemma measure_gap_set_eq_zero [IsFiniteMeasure μ]
     simp only [Function.comp] at hLx hUx
     simp only [Set.mem_preimage, hBαdef, Set.mem_ofPred_eq, hLx, hUx]
   obtain ⟨E, hEm, hEeq, hEinv⟩ :=
-    hT.quasiMeasurePreserving.exists_preimage_eq_of_preimage_ae hBαnull hBαinv
+    hT.quasiMeasurePreserving.exists_preimage_eq_of_preimage_ae hT.measurable hBαnull hBαinv
   have hμEB : μ E = μ Bα := measure_congr hEeq
   rw [← hμEB]
   -- `T^[M]`-invariance of `E`.

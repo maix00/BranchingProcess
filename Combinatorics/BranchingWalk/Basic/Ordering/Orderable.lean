@@ -32,7 +32,7 @@ its steps are, and a root-indexed walk when all of its step fields are.
 
 Neither notion is about `ℕ`: a field or a walk is orderable whenever its steps are, on any slot type, so the
 classes below are polymorphic and only raise the step-level property to the whole field or walk. Finiteness
-of the support is an assumption about the steps and has no source in the slot type, so a field and a walk
+of the support is an assumption about the steps and does not arise from the slot type, so a field and a walk
 carry their own classes for it as well. What is specific to `ℕ` is the instance that turns finite support
 into orderability, because the relabelling proving it labels the children of a step by the ranks
 `0, …, k - 1`, and the surviving slots of that relabelling are the slots below `k`.
