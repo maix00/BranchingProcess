@@ -6,24 +6,24 @@ Authors: WANG Yiyang
 
 module
 
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Horizon
+import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Basic
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.StoppedComparison
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.HorizonWindow
 
 /-!
-# Upper tail of the reset continuation at a successful entrance
+# Remaining-horizon bound after a successful entrance
 
 ## Internal proof declarations
 
-* `eventually_measure_stoppedResetEndpoint_ge_le_polynomial`: for
-  $m_N=\lfloor N^a\rfloor$, $0<a<1$, $H_N/\log^3 N\to t>0$,
-  $T_N/\log^3 N\to0$ and $\zeta>-a+\pi^2\sigma^2t/2$,
-  $\mathbb P(\tau_N\le T_N,M^{\mathrm{reset}}_{H_N-\tau_N}
-  \ge\zeta\log N)\le N^{-p}$ eventually, for some $p>0$.
+* `eventually_measure_actualEndpoint_ge_le_badEntrance_add_polynomial`:
+  write $G_N$ for $\{\tau_N\le T_N\}$ with at least $m_N=\lfloor N^a\rfloor$
+  actual particles at or below $c_N$ at entrance. Then
+  $\mathbb P(M_{H_N}\ge c_N+\zeta\log N)\le\mathbb P(G_N^c)+N^{-p}$
+  eventually for some $p>0$. Here $0<a<1$, $H_N/\log^3 N\to t>0$,
+  $T_N/\log^3 N\to0$, and $\zeta>-a+\pi^2\sigma^2t/2$.
 
-Translating all starting positions by the same real number adds that number
-to the endpoint. The estimate applies the stopped branching product law
-before testing the remaining horizon, as in Wang Yiyang, *Asymptotic Speed of
-the N-Branching Random Walk with Infinite Offspring* (Fudan University, 2026),
+This is the remaining-time step in Wang Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring* (Fudan University, 2026),
 Chapter 4, Theorem 1.1 for $a=0$.
 -/
 
@@ -36,126 +36,24 @@ open Combinatorics.Branching Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
-private lemma measure_stoppedResetEndpoint_ge_le
-    {Root : Type*} (lower : ℕ) [Countable α] [MeasurableSpace α]
-    [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
-    [MeasurableSpace Root] [MeasurableSingletonClass Root]
-    [MeasurableSingletonClass (Root ⊕ Root)]
-    [MeasurableSpace (RootIndexed.TreeNode Root ℕ)]
-    [MeasurableSingletonClass (RootIndexed.TreeNode Root ℕ)]
-    [Countable (RootIndexed.TreeNode Root ℕ)]
-    [LinearOrder (RootIndexed.TreeNode Root ℕ)]
-    [MeasurableSpace (RootIndexed.TreeNode (Fin lower) ℕ)]
-    [MeasurableSingletonClass (RootIndexed.TreeNode (Fin lower) ℕ)]
-    [Countable (RootIndexed.TreeNode (Fin lower) ℕ)]
-    [DecidableEq (RootIndexed.TreeNode (Fin lower) ℕ)]
-    [LinearOrder (RootIndexed.TreeNode (Fin lower) ℕ)]
-    (hnodePath : Measurable
-      (fun p : RootIndexed.TreeNode Root ℕ => p.2))
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
-    (hnorm : HasBoundaryNormalization realPotential μ)
-    (N : ℕ) (initialPosition : Root → ℝ)
-    (R growth : Step.FiniteSelection ℕ ℝ) (hR : Measurable R.select)
-    (hgrowth : Measurable growth.select) (upper duration : ℕ)
-    (hupper : 1 ≤ upper) (hbounded : growth.IsBoundedBy 2)
-    (hcapacity : 1 + (duration + 1) * (2 * upper) ≤ N) (r : Root)
-    (H T : ℕ) (x : ℝ) (b : ℝ≥0∞)
-    (hbound : ∀ i ≤ T, RootIndexed.stepFieldLaw (Root := Fin lower) μ
-      {f | x ≤ firstNSelectedEndpointMinimum lower N (H - i) f} ≤ b) :
-    let τ := Completion.time R growth hR hgrowth lower upper duration r
-    let hτ := Completion.time_isStoppingTime R growth hR hgrowth lower upper duration r
-    let trials := SelectedPath.Population.leftBRWFamily_finiteSlices R growth hR hgrowth
-      upper duration r
-    let installed := RootIndexed.stoppedRankInstalledTrajectoryField N {r} initialPosition trials τ hτ
-    let P := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
-    let roots := fun field (i : Fin lower) =>
-      (r, (Completion.endpointNodesByRank N initialPosition R growth hR hgrowth
-        lower upper duration r field i).2)
-    P {field | ∃ i ≤ T, τ field = (i : WithTop ℕ) ∧
-      x ≤ firstNSelectedEndpointMinimum lower N (H - i)
-        (RootIndexed.subtreeStepFieldVector (roots field) (installed field))} ≤ b := by
-  classical
-  intro τ hτ trials installed P roots
-  let Q := RootIndexed.stepFieldLaw (Root := Fin lower) μ
-  let E := {field | τ field ≠ ⊤}
-  let data := fun field => (τ field, fun _ : Fin lower => (0 : ℝ))
-  let outcome := fun field => (data field, RootIndexed.subtreeStepFieldVector (roots field) (installed field))
-  let A : Set ((WithTop ℕ × (Fin lower → ℝ)) × (RootIndexed.StepField (Fin lower) ℕ ℝ)) :=
-    {z | ∃ i ≤ T, z.1.1 = (i : WithTop ℕ) ∧
-      x ≤ firstNSelectedEndpointMinimum lower N (H - i) z.2}
-  have hA : MeasurableSet A := by
-    rw [show A = ⋃ i : Fin (T + 1), {z | z.1.1 = ((i.val : ℕ) : WithTop ℕ) ∧
-      x ≤ firstNSelectedEndpointMinimum lower N (H - i.val) z.2} by
-        ext z
-        simp only [A, Set.mem_ofPred_eq, Set.mem_iUnion, Fin.exists_iff]
-        exact exists_congr fun i => by
-          simp only [Nat.lt_succ_iff, exists_prop]]
-    apply MeasurableSet.iUnion
-    intro i
-    exact ((measurable_fst.comp measurable_fst) (measurableSet_singleton _)).inter
-      (((measurable_firstNSelectedEndpointMinimum lower N (H - i.val)).comp measurable_snd)
-        measurableSet_Ici)
-  obtain ⟨hmeas, hlaw⟩ := Completion.timePositionStoppedEntrance_jointLaw_on_finite
-    lower hnodePath μ hnorm N initialPosition R growth hR hgrowth upper duration hupper
-    hbounded hcapacity r (fun _ _ => 0) measurable_const
-  change AEMeasurable outcome (P.restrict E) at hmeas
-  change (P.restrict E).map outcome = ((P.restrict E).map data).prod Q at hlaw
-  change P (outcome ⁻¹' A) ≤ b
-  have hsubset : outcome ⁻¹' A ⊆ E := by
-    rintro field ⟨i, _, hi, _⟩
-    change τ field = (i : WithTop ℕ) at hi
-    change τ field ≠ ⊤
-    rw [hi]
-    exact WithTop.coe_ne_top
-  have hE : MeasurableSet E :=
-    hτ.measurableSpace_le _ (hτ.measurable (measurableSet_singleton (⊤ : WithTop ℕ))).compl
-  have hrestrict : (P.restrict E) (outcome ⁻¹' A) = P (outcome ⁻¹' A) := by
-    rw [Measure.restrict_apply' hE, Set.inter_eq_left.mpr hsubset]
-  rw [← hrestrict, ← Measure.map_apply_of_aemeasurable hmeas hA, hlaw, Measure.prod_apply hA]
-  calc
-    _ ≤ ∫⁻ _ , b ∂((P.restrict E).map data) := by
-      apply lintegral_mono
-      intro y
-      by_cases hy : ∃ i ≤ T, y.1 = (i : WithTop ℕ)
-      · obtain ⟨i, hi, htime⟩ := hy
-        have hsec : (Prod.mk y) ⁻¹' A =
-            {f | x ≤ firstNSelectedEndpointMinimum lower N (H - i) f} := by
-          ext f
-          constructor
-          · rintro ⟨j, _, hj, hx⟩
-            have hji : j = i := WithTop.coe_injective (hj.symm.trans htime)
-            exact hji ▸ hx
-          · exact fun hf => ⟨i, hi, htime, hf⟩
-        simpa only [hsec] using hbound i hi
-      · have hsec : (Prod.mk y) ⁻¹' A = ∅ := by
-          apply Set.eq_empty_iff_forall_notMem.mpr
-          rintro f ⟨i, hi, htime, _⟩
-          exact hy ⟨i, hi, htime⟩
-        simp [hsec]
-    _ ≤ b := by
-      rw [lintegral_const]
-      have hmass : ((P.restrict E).map data) Set.univ ≤ 1 := by
-        have hd : Measurable data := (hτ.measurable.mono hτ.measurableSpace_le le_rfl).prodMk
-          measurable_const
-        rw [Measure.map_apply hd MeasurableSet.univ, Set.preimage_univ, Measure.restrict_apply_univ]
-        calc
-          P E ≤ P Set.univ := measure_mono (Set.subset_univ E)
-          _ = 1 := measure_univ
-      simpa using mul_le_mul_of_nonneg_left hmass (show 0 ≤ b from zero_le)
+local instance (priority := high) addressDecidableEq
+    {κ : Type*} [LinearOrder (RootIndexed.TreeNode κ ℕ)] :
+    DecidableEq (RootIndexed.TreeNode κ ℕ) :=
+  LinearOrder.toDecidableEq
 
-/-- Apply the positive-exponent estimate uniformly on the short stopping
-window of the $a=0$ proof, for the zero-reset descendants of the ranked entrance. -/
-lemma eventually_measure_stoppedResetEndpoint_ge_le_polynomial
+/-- Compare the actual continuation to the zero-start positive-exponent
+continuation on the event of a short entrance with sufficiently many
+selected particles below the entrance position bound. -/
+lemma eventually_measure_actualEndpoint_ge_le_badEntrance_add_polynomial
     {Root : Type*} [MeasurableSpace Root] [MeasurableSingletonClass Root]
-    [MeasurableSingletonClass (Root ⊕ Root)]
     [MeasurableSpace (RootIndexed.TreeNode Root ℕ)]
     [MeasurableSingletonClass (RootIndexed.TreeNode Root ℕ)]
     [Countable (RootIndexed.TreeNode Root ℕ)]
     [LinearOrder (RootIndexed.TreeNode Root ℕ)]
-    (hnodePath : Measurable (fun p : RootIndexed.TreeNode Root ℕ => p.2))
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hnorm : HasBoundaryNormalization realPotential μ)
     (hcross : HasFiniteCrossWeight realPotential μ)
+    (hne : μ nonemptySupport = 1)
     {N H T : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     {sigma a t ζ : ℝ} (hsigma : 0 < sigma)
     (hcentered : IsCenteredSecondMoment (tiltedPotentialLaw realPotential (-1) μ) (sigma ^ 2))
@@ -163,50 +61,119 @@ lemma eventually_measure_stoppedResetEndpoint_ge_le_polynomial
     (hgap : -a + (Real.pi ^ 2 / 2) * sigma ^ 2 * t < ζ)
     (hH : Tendsto (fun n => (H n : ℝ) / Real.log (N n : ℝ) ^ 3) atTop (𝓝 t))
     (hT : Tendsto (fun n => (T n : ℝ) / Real.log (N n : ℝ) ^ 3) atTop (𝓝 0))
+    (hTH : ∀ᶠ n in atTop, T n ≤ H n)
     (horder : ∀ n, LinearOrder (RootIndexed.TreeNode (Fin (Nat.floor ((N n : ℝ) ^ a))) ℕ))
-    (initialPosition : Root → ℝ) (r : Root)
-    (R : Step.FiniteSelection ℕ ℝ) (hR : Measurable R.select)
-    (growth : ℕ → Step.FiniteSelection ℕ ℝ) (hgrowth : ∀ n, Measurable (growth n).select)
-    (upper duration : ℕ → ℕ)
-    (htrials : ∀ᶠ n in atTop, 1 ≤ upper n ∧ (growth n).IsBoundedBy 2 ∧
-      1 + (duration n + 1) * (2 * upper n) ≤ N n) :
+    (r : Root)
+    (R growth : Step.FiniteSelection ℕ ℝ) (hR : Measurable R.select)
+    (hgrowth : Measurable growth.select)
+    (upper duration : ℕ → ℕ) (c : ℕ → ℝ) :
     let lower := fun n => Nat.floor ((N n : ℝ) ^ a)
-    let τ := fun n => Completion.time R (growth n) hR (hgrowth n)
+    let τ := fun n => Completion.time R growth hR hgrowth (lower n) (upper n) (duration n) r
+    let hτ := fun n => Completion.time_isStoppingTime R growth hR hgrowth
       (lower n) (upper n) (duration n) r
-    let hτ := fun n => Completion.time_isStoppingTime R (growth n) hR (hgrowth n)
-      (lower n) (upper n) (duration n) r
-    let trials := fun n => SelectedPath.Population.leftBRWFamily_finiteSlices R (growth n)
-      hR (hgrowth n) (upper n) (duration n) r
+    let trials := fun n => SelectedPath.Population.leftBRWFamily_finiteSlices R growth
+      hR hgrowth (upper n) (duration n) r
     let installed := fun n => RootIndexed.stoppedRankInstalledTrajectoryField (N n) {r}
-      initialPosition (trials n) (τ n) (hτ n)
-    let roots := fun n field (i : Fin (lower n)) =>
-      (r, (Completion.endpointNodesByRank (N n) initialPosition R (growth n) hR (hgrowth n)
-        (lower n) (upper n) (duration n) r field i).2)
+      (fun _ => 0) (trials n) (τ n) (hτ n)
+    let stage := fun n => RootIndexed.restartedRealPositionNSelectedBRWField (N n) {r}
+      (fun _ => 0) id (trials n).toFinset
+    let Pop := fun n i => RootIndexed.restartedRealPositionNSelectedBRWPopulation (N n) {r}
+      (fun _ => 0) id (trials n).toFinset i
+    let good := fun n i => {field | ∃ e : Fin (lower n) ↪ RootIndexed.TreeNode Root ℕ,
+      ∀ j, e j ∈ Pop n i field ∧
+        RootIndexed.position (fun _ => 0) id (stage n i field) (e j).1 (e j).2 ≤ c n}
     let P := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
     ∃ p : ℝ, 0 < p ∧ ∀ᶠ n in atTop,
-      P {field | ∃ i ≤ T n, τ n field = (i : WithTop ℕ) ∧
-        ζ * Real.log (N n : ℝ) ≤ @firstNSelectedEndpointMinimum (lower n) (N n) (H n - i) (horder n)
-          (RootIndexed.subtreeStepFieldVector (roots n field) (installed n field))} ≤
-        ENNReal.ofReal (Real.exp (-p * Real.log (N n : ℝ))) := by
-  intro lower τ hτ trials installed roots P
+      P (installed n ⁻¹' RootIndexed.selectedPopulationEndpointAtLeast (N n) {r}
+          (fun _ => 0) (H n) (ζ * Real.log (N n : ℝ) + c n)) ≤
+        P {field | ¬ ∃ i ≤ T n, field ∈ good n i ∧ τ n field = i} +
+          ENNReal.ofReal (Real.exp (-p * Real.log (N n : ℝ))) := by
+  intro lower τ hτ trials installed stage Pop good P
   obtain ⟨p, hp, hwindow⟩ :=
     eventually_countableRootEndpointMinimum_ge_le_polynomial_sub_horizon hN μ hnorm
       hcross hsigma hcentered ha ha1 ht hgap hH hT horder
   refine ⟨p, hp, ?_⟩
-  filter_upwards [hwindow, htrials] with n hn htrial
+  filter_upwards [hwindow, hTH, hN.eventually_ge_atTop 1] with n hn hTHn hNn
   let _ := horder n
-  classical
-  refine measure_stoppedResetEndpoint_ge_le (Root := Root) (α := ℕ) (lower n) hnodePath
-    μ hnorm (N n) initialPosition R (growth n) hR (hgrowth n) (upper n) (duration n)
-    htrial.1 htrial.2.1 htrial.2.2 r (H n) (T n) _ _ ?_
-  intro i hi
-  let x := ζ * Real.log (N n : ℝ)
-  have hmap := congrArg (fun law : Measure ℝ => law (Set.Ici x))
-    (countableRootEndpointMinimum_map_eq μ (lower n) (N n) (H n - i))
-  rw [Measure.map_apply (measurable_countableRootEndpointMinimum (lower n) (N n) (H n - i))
-      measurableSet_Ici,
-    Measure.map_apply (measurable_firstNSelectedEndpointMinimum (lower n) (N n) (H n - i))
-      measurableSet_Ici] at hmap
-  exact hmap.ge.trans (hn i hi)
+  have hNreal : (1 : ℝ) ≤ N n := by exact_mod_cast hNn
+  have hpositive : 0 < lower n := Nat.floor_pos.mpr (Real.one_le_rpow hNreal ha.le)
+  have hNpos : 0 < N n := hNn
+  have hmN : lower n ≤ N n := by
+    apply Nat.floor_le_of_le
+    simpa using Real.rpow_le_rpow_of_exponent_le hNreal ha1.le
+  let F := RootIndexed.stepFiltration (Root := Root ⊕ Root) (α := ℕ) (X := ℝ)
+  have hgood (i : ℕ) : MeasurableSet[F i] (good n i) := by
+    let _ : Countable (Fin (lower n) ↪ RootIndexed.TreeNode Root ℕ) :=
+      (show Function.Injective (fun e : Fin (lower n) ↪ RootIndexed.TreeNode Root ℕ =>
+        (e : Fin (lower n) → RootIndexed.TreeNode Root ℕ)) from
+          fun _ _ h => Function.Embedding.ext fun i => congrFun h i).countable
+    have hstage := RootIndexed.restartedRealPositionNSelectedBRWField_filtration_measurable
+      (N n) {r} (fun _ => 0) (trials n) i
+    have hPop : Measurable[F i] (Pop n i) :=
+      (RootIndexed.selectedPopulationTotalized_adapted (N n) {r} (fun _ => 0)
+        id measurable_id id measurable_id i).comp hstage
+    rw [show good n i = ⋃ e : Fin (lower n) ↪ RootIndexed.TreeNode Root ℕ,
+      ⋂ j, {field | e j ∈ Pop n i field ∧
+        RootIndexed.observedPositionAtGeneration (fun _ => 0) id id i (stage n i field) (e j) ≤ c n} by
+          ext field
+          simp only [good, Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_iInter]
+          apply exists_congr
+          intro e
+          apply forall_congr'
+          intro j
+          refine and_congr_right fun hj => ?_
+          have hd := RootIndexed.selectedPopulationTotalized_depth (N n) {r} (fun _ => 0)
+            id id i (stage n i field) (e j) hj
+          rw [RootIndexed.observedPositionAtGeneration_eq _ _ _ _ _ _ hd]
+          rfl]
+    refine MeasurableSet.iUnion fun e => MeasurableSet.iInter fun j => ?_
+    have hpos : Measurable[F i] (fun field =>
+        RootIndexed.observedPositionAtGeneration (fun _ => 0) id id i (stage n i field) (e j)) :=
+      (RootIndexed.positionAtGeneration_measurable (fun _ => 0) id measurable_id
+        i (e j).1 (e j).2).comp hstage
+    exact (hPop (measurableSet_mem_finset (e j))).inter (hpos measurableSet_Iic)
+  let G := {field | ∃ i ≤ T n, field ∈ good n i ∧ τ n field = i}
+  let B := installed n ⁻¹' RootIndexed.selectedPopulationEndpointAtLeast (N n) {r}
+    (fun _ => 0) (H n) (ζ * Real.log (N n : ℝ) + c n)
+  let bound := ENNReal.ofReal (Real.exp (-p * Real.log (N n : ℝ)))
+  have hgoodBound : P (G ∩ B) ≤ bound := by
+    refine measure_stoppedEndpointAtLeast_le_of_remainingHorizon μ hnorm (N n) hNpos hmN
+      {r} (fun _ => 0) (trials n) (τ n) (hτ n) (H n) (T n) hTHn (good n) hgood _ _ _ ?_
+      (fun field i hi _ => hi)
+    intro i hi
+    let x := ζ * Real.log (N n : ℝ)
+    have hmap := congrArg (fun law : Measure ℝ => law (Set.Ici x))
+      (countableRootEndpointMinimum_map_eq μ (lower n) (N n) (H n - i))
+    rw [Measure.map_apply (measurable_countableRootEndpointMinimum (lower n) (N n) (H n - i))
+        measurableSet_Ici,
+      Measure.map_apply (measurable_firstNSelectedEndpointMinimum (lower n) (N n) (H n - i))
+        measurableSet_Ici] at hmap
+    have hsame :
+        RootIndexed.selectedPopulationEndpointAtLeast (N n) Finset.univ
+          (fun _ : Fin (lower n) => 0) (H n - i) x =ᵐ[finiteRootStepFieldLaw μ (lower n)]
+          {field | x ≤ firstNSelectedEndpointMinimum (lower n) (N n) (H n - i) field} := by
+      filter_upwards [firstNSelectedEndpointMinimum_eq_population_inf'_ae
+        (lower n) (N n) (H n - i) hpositive hNpos μ hnorm hne] with field hfield
+      obtain ⟨hne, hmin⟩ := hfield
+      rw [hmin, Finset.le_inf'_iff]
+      have hpop : firstNSelectedPopulation (lower n) (N n) (H n - i) field =
+          RootIndexed.selectedPopulationTotalized (N n) Finset.univ
+            (fun _ : Fin (lower n) => (0 : ℝ)) id id (H n - i) field := by
+        unfold firstNSelectedPopulation
+        congr 1
+        exact Subsingleton.elim _ _
+      rw [hpop]
+      rfl
+    exact (measure_congr hsame).le.trans (hmap.ge.trans (hn i hi))
+  change P B ≤ P Gᶜ + bound
+  have hsubset : B ⊆ Gᶜ ∪ (G ∩ B) := by
+    intro ω hω
+    by_cases h : ω ∈ G
+    · exact Or.inr ⟨h, hω⟩
+    · exact Or.inl h
+  calc
+    P B ≤ P (Gᶜ ∪ (G ∩ B)) := measure_mono hsubset
+    _ ≤ P Gᶜ + P (G ∩ B) := measure_union_le _ _
+    _ ≤ P Gᶜ + bound := add_le_add_right hgoodBound _
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas

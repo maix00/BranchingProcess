@@ -40,6 +40,9 @@ the upper threshold:
   nonempty selected families, `growthTrialSuccess_of_population_ge_lower`
   derives this event from `lower ≤ (Selection.Stepwise.population R duration ω).card`
   and `2 ^ duration ≤ upper`.
+* `growthTrialSuccess_of_positive_terminal_population`: if offspring
+  counts are at most two, $0<m\le |P_d|$, and $2^d\le U$, then
+  $0<|P_j|<U$ for $0<j<d$ and $|P_d|\le U$.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -110,21 +113,15 @@ theorem growthTrialSuccess_measurable {α X : Type*} [Countable α]
     exact hpos.inter hcap
   exact hendlo.inter (hendhi.inter hinter)
 
-/-- If every one-step selected family is nonempty and reproduction is binary,
-then an endpoint lower bound makes the entire finite growth trial successful.
--/
-theorem growthTrialSuccess_of_population_ge_lower
+private lemma growthTrialSuccess_of_nonempty_generations
     {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
     [OrderBot α] [NoMaxOrder α]
     (S : Step.FiniteSelection α X) (hcapacity : ∀ ξ, (S ξ).card ≤ 2)
     (ω : Mark α (Step α X))
-    (hmarks : ∀ u : TreeNode α, (S (ω u)).Nonempty)
     (lower duration upper : ℕ) (hupper : 2 ^ duration ≤ upper)
+    (hpop : ∀ n ≤ duration, (Selection.Stepwise.population S n ω).Nonempty)
     (hlower : lower ≤ (Selection.Stepwise.population S duration ω).card) :
     growthTrialSuccess S lower upper duration ω := by
-  classical
-  have hpop : ∀ n, (Selection.Stepwise.population S n ω).Nonempty :=
-    Selection.Stepwise.population_nonempty_of_all_selected_marks_nonempty S ω hmarks
   have hcardBound : ∀ n, (Selection.Stepwise.population S n ω).card ≤ 2 ^ n := by
     intro n
     exact Selection.Stepwise.population_card_le S 2 hcapacity ω n
@@ -139,7 +136,48 @@ theorem growthTrialSuccess_of_population_ge_lower
   have hsmall :
       (Selection.Stepwise.population S (k.val + 1) ω).card < upper := by
     exact (hcardBound (k.val + 1)).trans_lt (hpow.trans_le hupper)
-  exact ⟨Finset.card_pos.mpr (hpop (k.val + 1)), hsmall⟩
+  exact ⟨Finset.card_pos.mpr (hpop _ hage.le), hsmall⟩
+
+/-- If every one-step selected family is nonempty and reproduction is binary,
+then an endpoint lower bound makes the entire finite growth trial successful.
+-/
+theorem growthTrialSuccess_of_population_ge_lower
+    {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
+    [OrderBot α] [NoMaxOrder α]
+    (S : Step.FiniteSelection α X) (hcapacity : ∀ ξ, (S ξ).card ≤ 2)
+    (ω : Mark α (Step α X))
+    (hmarks : ∀ u : TreeNode α, (S (ω u)).Nonempty)
+    (lower duration upper : ℕ) (hupper : 2 ^ duration ≤ upper)
+    (hlower : lower ≤ (Selection.Stepwise.population S duration ω).card) :
+    growthTrialSuccess S lower upper duration ω := by
+  exact growthTrialSuccess_of_nonempty_generations S hcapacity ω lower duration upper hupper
+    (fun _ _ => Selection.Stepwise.population_nonempty_of_all_selected_marks_nonempty S ω hmarks _)
+    hlower
+
+/-- Reaching a positive terminal population implies nonextinction at all
+earlier ages, including for selectors that may have zero offspring. -/
+theorem growthTrialSuccess_of_positive_terminal_population
+    {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α]
+    [OrderBot α] [NoMaxOrder α]
+    (S : Step.FiniteSelection α X) (hcapacity : ∀ ξ, (S ξ).card ≤ 2)
+    (ω : Mark α (Step α X)) (lower duration upper : ℕ)
+    (hlower : 0 < lower) (hupper : 2 ^ duration ≤ upper)
+    (hterminal : lower ≤ (Selection.Stepwise.population S duration ω).card) :
+    growthTrialSuccess S lower upper duration ω := by
+  apply growthTrialSuccess_of_nonempty_generations S hcapacity ω lower duration upper hupper
+    _ hterminal
+  intro n hn
+  have hfinal := Finset.card_pos.mp (hlower.trans_le hterminal)
+  have hback (k : ℕ) :
+      (Selection.Stepwise.population S (n + k) ω).Nonempty →
+        (Selection.Stepwise.population S n ω).Nonempty := by
+    induction k with
+    | zero => simpa
+    | succ k ih =>
+      intro hk
+      exact ih (Selection.Stepwise.population_nonempty_of_succ_nonempty S ω (n + k) hk)
+  apply hback (duration - n)
+  simpa only [Nat.add_sub_of_le hn] using hfinal
 
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial

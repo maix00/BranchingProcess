@@ -14,6 +14,9 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Selecte
 
 ## Public declarations
 
+* `RootIndexed.restartedRealPositionNSelectedBRWField_filtration_measurable`:
+  the stage-$n$ installed field is measurable from the joint generation-$n$
+  past to the selected field's generation-$n$ past.
 * `RootIndexed.stoppedRankInstalledTrajectoryField`: the coherent rank-installed field with installation
   at generation $j$ only on $\{j<\tau\}$.
 * `RootIndexed.stoppedRankInstalledTrajectoryField_eq_stage`: on $\{\tau=n\}$ the resulting full field
@@ -152,6 +155,31 @@ variable {Root α : Type*}
 
 local notation "Ωf" => RootIndexed.StepField (Root ⊕ Root) α ℝ
 local notation "𝔽" => RootIndexed.stepFiltration (Root := Root ⊕ Root) (α := α) (X := ℝ)
+
+/-- The first-`N` stage field is adapted to the joint past of the coupling. -/
+lemma RootIndexed.restartedRealPositionNSelectedBRWField_filtration_measurable
+    (N : ℕ) (roots : Finset Root) (initialPosition : Root → ℝ)
+    {P : RootIndexed.CausalPopulation Ωf Root α ℝ 𝔽 RootIndexed.StepField.left}
+    (hP : P.FiniteSlices) (n : ℕ) :
+    @Measurable Ωf (RootIndexed.StepField Root α ℝ) (𝔽 n)
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := ℝ) n)
+      (RootIndexed.restartedRealPositionNSelectedBRWField N roots initialPosition id hP.toFinset n) := by
+  apply RootIndexed.rankInstalledField_totalizedSelectedPopulation_filtration_measurable
+    N roots initialPosition id measurable_id id measurable_id
+    (fun k field p => RootIndexed.observedPositionAtGeneration initialPosition id id k
+      (RootIndexed.StepField.left field) p) hP.toFinset
+  · intro k field p hp
+    exact P.depth k field p ((hP.mem_toFinset k field p).mp hp)
+  · intro k s
+    exact hP.measurable_toFinset k (measurableSet_singleton s)
+  · intro k
+    exact Set.to_countable _
+  · intro k p q
+    let _ : MeasurableSpace Ωf := 𝔽 k
+    apply measurable_valueKey_lt
+    intro z
+    exact (RootIndexed.positionAtGeneration_measurable initialPosition id measurable_id
+      k z.1 z.2).comp (RootIndexed.StepField.reindex_filtration_measurable Sum.inl k)
 
 /-- Install ranks from the causal population at precisely the generations strictly before `τ`. -/
 noncomputable def RootIndexed.stoppedRankInstalledTrajectoryField
