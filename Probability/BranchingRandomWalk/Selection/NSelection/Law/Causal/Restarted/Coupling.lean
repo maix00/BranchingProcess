@@ -8,6 +8,7 @@ module
 
 public import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Basic
 import all Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Lemmas.Coupling
+import all Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Lemmas.FirstNSpec
 import Probability.BranchingRandomWalk.Coupling.Field.Position
 
 /-!
@@ -76,12 +77,8 @@ noncomputable def RootIndexed.restartedRealPositionCoupling
     (RootIndexed.restartedRealPositionSelectedBRWPopulation_finiteSlices initialPosition d hd
       initial hinitialDepth cutoff window hwindow upper hupper) n
 
-/-- For a real-valued offspring law with boundary normalization, the
-rank-installed first-`N` population satisfies the first-`N` specification
-almost surely. Consequently the restarted selected-population injection is
-available almost surely on the capacity event. Raw fields with infinitely many
-low-position children, are handled by the totalized selector and lie in the
-null exceptional set supplied by `Admissible.Real`. -/
+/-- A finite-stage injection on the event that each positive-generation
+retained slice through that stage lies within capacity. -/
 theorem RootIndexed.restartedRealPositionCoupledInjection_ae
     {Root α : Type*} [Countable α]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
@@ -120,56 +117,8 @@ theorem RootIndexed.restartedRealPositionCoupledInjection_ae
                 initialPosition id (hselectedBRWPopulationFiniteSlices.toFinset) n field))
             (RootIndexed.restartedRealPositionNSelectedBRWPopulation N roots
               initialPosition id (hselectedBRWPopulationFiniteSlices.toFinset) n field)) ()) := by
-  let P := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
-  have hspec := RootIndexed.selectedPopulationTotalized_succ_spec_ae
-    μ hnorm N roots initialPosition
-  have hspecField : ∀ᵐ field ∂P, ∀ k,
-      IsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initialPosition id id (k + 1)
-          (RootIndexed.restartedRealPositionNSelectedBRWField N roots initialPosition id
-            (hselectedBRWPopulationFiniteSlices.toFinset) (k + 1) field))
-        (Combinatorics.Branching.Population.childrenAtGeneration k
-          (RootIndexed.selectedPopulationTotalized N roots initialPosition id id k
-            (RootIndexed.restartedRealPositionNSelectedBRWField N roots initialPosition id
-              (hselectedBRWPopulationFiniteSlices.toFinset) (k + 1) field))
-          (RootIndexed.restartedRealPositionNSelectedBRWField N roots initialPosition id
-            (hselectedBRWPopulationFiniteSlices.toFinset) (k + 1) field))
-        (RootIndexed.selectedPopulationTotalized N roots initialPosition id id
-          (k + 1) (RootIndexed.restartedRealPositionNSelectedBRWField N roots
-            initialPosition id (hselectedBRWPopulationFiniteSlices.toFinset) (k + 1) field)) := by
-    apply ae_all_iff.2
-    intro k
-    let nSelectedBRWField := RootIndexed.restartedRealPositionNSelectedBRWField N roots
-      initialPosition id (hselectedBRWPopulationFiniteSlices.toFinset) (k + 1)
-    have hleft : RootIndexed.StepField.left =
-        (RootIndexed.StepField.reindex Sum.inl :
-          RootIndexed.StepField (Root ⊕ Root) α ℝ →
-            RootIndexed.StepField Root α ℝ) := rfl
-    have hnSelectedBRWFieldLaw : Measurable nSelectedBRWField ∧
-        P.map nSelectedBRWField = RootIndexed.stepFieldLaw (Root := Root) μ := by
-      change Measurable
-          (RootIndexed.restartedRealPositionNSelectedBRWField N roots initialPosition id
-            (hselectedBRWPopulationFiniteSlices.toFinset) (k + 1)) ∧
-        P.map (RootIndexed.restartedRealPositionNSelectedBRWField N roots initialPosition id
-          (hselectedBRWPopulationFiniteSlices.toFinset) (k + 1)) = RootIndexed.stepFieldLaw (Root := Root) μ
-      simpa only [P, RootIndexed.restartedRealPositionNSelectedBRWField, hleft] using
-        (RootIndexed.rankInstalledField_causalPopulation_measurable_law
-          μ N roots initialPosition id measurable_id id measurable_id selectedBRWPopulation
-          hselectedBRWPopulationFiniteSlices (k + 1))
-    have hspecMap : ∀ᵐ sample ∂P.map nSelectedBRWField,
-        ∀ j, IsFirstNBy N
-          (RootIndexed.observedPositionAtGeneration initialPosition id id (j + 1) sample)
-          (Combinatorics.Branching.Population.childrenAtGeneration j
-            (RootIndexed.selectedPopulationTotalized N roots initialPosition id id j sample)
-            sample)
-          (RootIndexed.selectedPopulationTotalized N roots initialPosition id id
-            (j + 1) sample) := by
-      rw [hnSelectedBRWFieldLaw.2]
-      exact hspec
-    have hspecFieldAtStage :=
-      MeasureTheory.ae_of_ae_map hnSelectedBRWFieldLaw.1.aemeasurable hspecMap
-    filter_upwards [hspecFieldAtStage] with field hstage
-    exact hstage k
+  have hspecField := installedFirstN_spec_ae μ hnorm N roots initialPosition
+    selectedBRWPopulation hselectedBRWPopulationFiniteSlices
   filter_upwards [hspecField] with field hspecField
   intro hselectedBRWPopulationCapacity
   have hnSelectedBRWPopulationFirstN : ∀ k < n,
