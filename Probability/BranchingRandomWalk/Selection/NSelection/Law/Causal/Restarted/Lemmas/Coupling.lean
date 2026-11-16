@@ -31,6 +31,9 @@ restarted-coupling conclusions. Its declarations are imported by
 - `RootIndexed.restartedRealPositionNSelectedBRWPopulation_stage_stable` identifies
   the population at generation `n` using matched fields through stages `n` and
   `n + 1`.
+- `RootIndexed.restartedRealPositionCoupledSuccessorInjection` matches a subset
+  (B\subseteq P_{n+1}) with (|B|\le N) into the installed first-(N) slice
+  given a matching of the parents and the successor first-(N) specification.
 - `RootIndexed.restartedRealPositionCoupledInjectionOfTotalizedSpecs` proves
   the finite-stage slice injection by induction, assuming the first-`N`
   specification along the actual first-`N` stages and capacity bounds for the
@@ -106,6 +109,235 @@ lemma RootIndexed.restartedRealPositionNSelectedBRWPopulation_stage_stable
   exact (RootIndexed.selectedPopulationTotalized_updateGeneration_of_le
     N roots initialPosition d id n n le_rfl _ _).symm
 
+/-- Match a chosen subset of the retained children using the same installed
+parent marks. A singleton can be matched even at the overflow generation. -/
+noncomputable def RootIndexed.restartedRealPositionCoupledSuccessorInjection
+    {Root α Mark : Type*}
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)]
+    [MeasurableSpace Mark]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    (N : ℕ) (roots : Finset Root) (initialPosition : Root → ℝ)
+    (d : Mark → ℝ)
+    (selectedBRWPopulation : RootIndexed.CausalPopulation
+      (RootIndexed.StepField (Root ⊕ Root) α Mark) Root α Mark
+      (RootIndexed.stepFiltration
+        (Root := Root ⊕ Root) (α := α) (X := Mark))
+      RootIndexed.StepField.left)
+    (hselectedBRWPopulationFiniteSlices : selectedBRWPopulation.FiniteSlices)
+    (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α Mark)
+    (children : Finset (RootIndexed.TreeNode Root α))
+    (hchildren : children ⊆ hselectedBRWPopulationFiniteSlices.toFinset (n + 1) field)
+    (hcardChildren : children.card ≤ N)
+    (hnSelectedBRWPopulationFirstN :
+      IsFirstNBy N
+        (RootIndexed.observedPositionAtGeneration initialPosition d id (n + 1)
+          (RootIndexed.restartedRealPositionNSelectedBRWField N roots
+            initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) (n + 1) field))
+        (Combinatorics.Branching.Population.childrenAtGeneration n
+          (RootIndexed.restartedRealPositionNSelectedBRWPopulation N roots
+            initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) n field)
+          (RootIndexed.restartedRealPositionNSelectedBRWField N roots
+            initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) (n + 1) field))
+        (RootIndexed.restartedRealPositionNSelectedBRWPopulation N roots
+          initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) (n + 1) field))
+    (hinj : Cloud.SliceDominatingMap id
+      (Combinatorics.Branching.Selection.Coupling.populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initialPosition
+          (RootIndexed.StepField.left field))
+        (hselectedBRWPopulationFiniteSlices.toFinset n field))
+      (Combinatorics.Branching.Selection.Coupling.populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initialPosition
+          (RootIndexed.restartedRealPositionNSelectedBRWField N roots
+            initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) n field))
+        (RootIndexed.restartedRealPositionNSelectedBRWPopulation N roots
+          initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) n field)) ()) :
+    Cloud.SliceDominatingMap id
+      (Combinatorics.Branching.Selection.Coupling.populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initialPosition
+          (RootIndexed.StepField.left field))
+        children)
+      (Combinatorics.Branching.Selection.Coupling.populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initialPosition
+          (RootIndexed.restartedRealPositionNSelectedBRWField N roots
+            initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) (n + 1) field))
+        (RootIndexed.restartedRealPositionNSelectedBRWPopulation N roots
+          initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) (n + 1) field)) () := by
+  classical
+  let selectedBRW := RootIndexed.BranchingWalk.ofStepField initialPosition
+    (RootIndexed.StepField.left field)
+  let priorField := RootIndexed.restartedRealPositionNSelectedBRWField N roots
+    initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) n field
+  let nextField := RootIndexed.restartedRealPositionNSelectedBRWField N roots
+    initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) (n + 1) field
+  let selectedBRWPopulationParents := hselectedBRWPopulationFiniteSlices.toFinset n field
+  let nSelectedBRWPopulationParents := RootIndexed.restartedRealPositionNSelectedBRWPopulation N roots
+    initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) n field
+  let canonical :=
+    Combinatorics.Branching.Selection.Coupling.canonicalInjection id d selectedBRW
+      (RootIndexed.BranchingWalk.ofStepField initialPosition priorField)
+      selectedBRWPopulationParents nSelectedBRWPopulationParents hinj
+  have hcard : selectedBRWPopulationParents.card ≤ nSelectedBRWPopulationParents.card :=
+    Combinatorics.Branching.Selection.Coupling.population_card_le_of_injection
+      id d selectedBRW
+      (RootIndexed.BranchingWalk.ofStepField initialPosition priorField)
+      selectedBRWPopulationParents nSelectedBRWPopulationParents hinj
+  have hnSelectedBRWPopulationParentsDepth : ∀ q ∈ nSelectedBRWPopulationParents, q.2.length = n := by
+    intro q hq
+    exact RootIndexed.selectedPopulationTotalized_depth N roots initialPosition
+      d id n priorField q (by
+        simpa [nSelectedBRWPopulationParents, priorField,
+          RootIndexed.restartedRealPositionNSelectedBRWPopulation] using hq)
+  have hcanonical {p : RootIndexed.TreeNode Root α} (hp : p ∈ selectedBRWPopulationParents) :
+      canonical p = Combinatorics.Selection.NSelection.matchByRankOrSelf
+        (RootIndexed.observedPositionAtGeneration initialPosition d id n
+          (RootIndexed.StepField.left field))
+        (RootIndexed.observedPositionAtGeneration initialPosition d id n priorField)
+        selectedBRWPopulationParents nSelectedBRWPopulationParents hcard p := by
+    have hselectedBRWPopulationOrderKey : ∀ q ∈ selectedBRWPopulationParents,
+        id (selectedBRW.position d q.1 q.2) =
+          RootIndexed.observedPositionAtGeneration initialPosition d id n
+            (RootIndexed.StepField.left field) q := by
+      intro q hq
+      exact (RootIndexed.observedPositionAtGeneration_eq initialPosition d id n
+        (RootIndexed.StepField.left field) q
+        (selectedBRWPopulation.depth n field q
+          ((hselectedBRWPopulationFiniteSlices.mem_toFinset n field q).mp hq))).symm
+    have hnSelectedPopulationOrderKey : ∀ q ∈ nSelectedBRWPopulationParents,
+        id ((RootIndexed.BranchingWalk.ofStepField initialPosition
+          priorField).position d q.1 q.2) =
+          RootIndexed.observedPositionAtGeneration initialPosition d id n
+            priorField q := by
+      intro q hq
+      exact (RootIndexed.observedPositionAtGeneration_eq initialPosition d id n
+        priorField q (hnSelectedBRWPopulationParentsDepth q hq)).symm
+    rw [Combinatorics.Branching.Selection.Coupling.canonicalInjection_apply]
+    exact Combinatorics.Selection.NSelection.matchByRankOrSelf_congr_of_eqOn
+      selectedBRWPopulationParents nSelectedBRWPopulationParents hcard hp hselectedBRWPopulationOrderKey hnSelectedPopulationOrderKey
+  let hparents : Cloud.SliceDominatingMap id
+      (Combinatorics.Branching.Selection.Coupling.populationCloud d
+        selectedBRW selectedBRWPopulationParents)
+      (Combinatorics.Branching.Selection.Coupling.populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initialPosition nextField)
+        nSelectedBRWPopulationParents) () := {
+    toFun := canonical
+    mapsTo := canonical.mapsTo
+    injOn := canonical.injOn
+    dominates := by
+      intro p hp
+      change (RootIndexed.BranchingWalk.ofStepField initialPosition
+          nextField).position d (canonical p).1 (canonical p).2 ≤
+        selectedBRW.position d p.1 p.2
+      have hdepth : (canonical p).2.length = n := by
+        apply RootIndexed.selectedPopulationTotalized_depth N roots
+          initialPosition d id n priorField (canonical p)
+        simpa [nSelectedBRWPopulationParents, priorField,
+          RootIndexed.restartedRealPositionNSelectedBRWPopulation,
+          Combinatorics.Branching.Selection.Coupling.populationCloud] using
+          canonical.mapsTo hp
+      have hpos : (RootIndexed.BranchingWalk.ofStepField initialPosition
+          nextField).position d (canonical p).1 (canonical p).2 =
+        (RootIndexed.BranchingWalk.ofStepField initialPosition
+          priorField).position d (canonical p).1 (canonical p).2 := by
+        change (RootIndexed.BranchingWalk.ofStepField initialPosition
+            (RootIndexed.StepField.updateGeneration n _ priorField)).position
+              d (canonical p).1 (canonical p).2 = _
+        exact Combinatorics.Branching.RootIndexed.BranchingWalk.position_updateGeneration_of_le
+          d n initialPosition _ priorField
+            (canonical p).1 (canonical p).2 (by omega)
+      rw [hpos]
+      exact canonical.dominates p hp }
+  have hstep {p : RootIndexed.TreeNode Root α} (hp : p ∈ selectedBRWPopulationParents) :
+      nextField (canonical p).1 (canonical p).2 =
+        RootIndexed.StepField.left field p.1 p.2 := by
+    change RootIndexed.rankInstalledField
+      (fun k sample q => RootIndexed.observedPositionAtGeneration
+        initialPosition d id k (RootIndexed.StepField.left sample) q)
+      (fun k _ β q => RootIndexed.observedPositionAtGeneration
+        initialPosition d id k β q)
+      (hselectedBRWPopulationFiniteSlices.toFinset)
+      (fun k _ β => RootIndexed.selectedPopulationTotalized N roots
+        initialPosition d id k β)
+      RootIndexed.StepField.left RootIndexed.StepField.right (n + 1) field
+      (canonical p).1 (canonical p).2 = _
+    rw [hcanonical hp]
+    exact RootIndexed.rankInstalledField_succ_apply_matchByRankOrSelf
+      (fun k sample q => RootIndexed.observedPositionAtGeneration
+        initialPosition d id k (RootIndexed.StepField.left sample) q)
+      (fun k _ β q => RootIndexed.observedPositionAtGeneration
+        initialPosition d id k β q)
+      (hselectedBRWPopulationFiniteSlices.toFinset)
+      (fun k _ β => RootIndexed.selectedPopulationTotalized N roots
+        initialPosition d id k β)
+      RootIndexed.StepField.left RootIndexed.StepField.right n field hcard
+      hnSelectedBRWPopulationParentsDepth
+      hp
+  have hselected : IsFirstNBy N
+      (fun q => ((RootIndexed.BranchingWalk.ofStepField initialPosition
+        nextField).position d q.1 q.2))
+      (Combinatorics.Branching.Population.offspringAddressSet
+        (↑nSelectedBRWPopulationParents)
+        (fun p => {i | survive (nextField p.1 p.2) i}))
+      (RootIndexed.restartedRealPositionNSelectedBRWPopulation N roots
+        initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) (n + 1) field) := by
+    have hspec := hnSelectedBRWPopulationFirstN
+    have hchildren := Combinatorics.Branching.Population.childrenAtGeneration_eq_offspringAddressSet
+      n nSelectedBRWPopulationParents nextField hnSelectedBRWPopulationParentsDepth
+    have hvalue : Set.EqOn
+        (RootIndexed.observedPositionAtGeneration initialPosition d id
+          (n + 1) nextField)
+        (fun q => (RootIndexed.BranchingWalk.ofStepField initialPosition
+          nextField).position d q.1 q.2)
+        (Combinatorics.Branching.Population.childrenAtGeneration n
+          nSelectedBRWPopulationParents nextField) := by
+      intro q hq
+      exact RootIndexed.observedPositionAtGeneration_eq initialPosition d id
+        (n + 1) nextField q
+        (Combinatorics.Branching.Population.childrenAtGeneration_depth n nSelectedBRWPopulationParents nextField q hq)
+    have hspec' := hspec.congr_value hvalue
+    rw [hchildren] at hspec'
+    simpa only [nextField, nSelectedBRWPopulationParents,
+      RootIndexed.restartedRealPositionNSelectedBRWPopulation] using hspec'
+  have hretained : ↑(hselectedBRWPopulationFiniteSlices.toFinset (n + 1) field) ⊆
+      Combinatorics.Branching.Population.offspringAddressSet
+        (↑(hselectedBRWPopulationFiniteSlices.toFinset n field))
+        (fun p => Combinatorics.Branching.support
+          (RootIndexed.StepField.left field p.1 p.2)) := by
+    simpa only [RootIndexed.CausalPopulation.FiniteSlices.coe_toFinset] using
+      selectedBRWPopulation.successor n field
+  have hselectedBRWPopulationChildSlots_subset_survival : ∀ p ∈ selectedBRWPopulationParents,
+      Combinatorics.Branching.support
+          (RootIndexed.StepField.left field p.1 p.2) ⊆
+        {i | survive (nextField (canonical p).1 (canonical p).2) i} := by
+    intro p hp i hi
+    have hsame := hstep hp
+    rw [hsame]
+    simpa [Combinatorics.Branching.support] using hi
+  have hmatchedBRWParents_sharedIncrement : ∀ p ∈ selectedBRWPopulationParents, ∀ i ∈
+      Combinatorics.Branching.support
+        (RootIndexed.StepField.left field p.1 p.2),
+      value' (((RootIndexed.BranchingWalk.ofStepField initialPosition
+        nextField).step (canonical p).1 (canonical p).2).map d) i =
+      value' ((selectedBRW.step p.1 p.2).map d) i := by
+    intro p hp i hi
+    have hsame := hstep hp
+    change value' ((nextField (canonical p).1 (canonical p).2).map d) i =
+      value' ((RootIndexed.StepField.left field p.1 p.2).map d) i
+    rw [hsame]
+  exact Combinatorics.Branching.Selection.Coupling.nextGenerationInjection_of_isFirstNBy
+    id d N selectedBRW
+    (RootIndexed.BranchingWalk.ofStepField initialPosition nextField)
+    selectedBRWPopulationParents nSelectedBRWPopulationParents
+    (fun p => Combinatorics.Branching.support
+      (RootIndexed.StepField.left field p.1 p.2))
+    (fun p => {i | survive (nextField p.1 p.2) i})
+    children
+    (RootIndexed.restartedRealPositionNSelectedBRWPopulation N roots
+      initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) (n + 1) field)
+    (fun _ hp => hretained (hchildren hp)) hcardChildren hselected hparents
+    hselectedBRWPopulationChildSlots_subset_survival hmatchedBRWParents_sharedIncrement
+    (fun _ _ z hle => by simpa using add_le_add_right hle z)
+
 /-- The finite-stage restarted rank installation gives a pathwise injection
 whenever the first-`N` specification holds on the actual first-`N` BRW stages used by
 the recursion. The premise is local to this sample and these stages; it does
@@ -170,179 +402,10 @@ noncomputable def RootIndexed.restartedRealPositionCoupledInjectionOfTotalizedSp
       have hinj := ih
         (fun k hk => hnSelectedBRWPopulationFirstN k (Nat.lt_succ_of_lt hk))
         (fun k hk => hselectedBRWPopulationCapacity k (Nat.lt_succ_of_lt hk))
-      let selectedBRW := RootIndexed.BranchingWalk.ofStepField initialPosition
-        (RootIndexed.StepField.left field)
-      let priorField := RootIndexed.restartedRealPositionNSelectedBRWField N roots
-        initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) n field
-      let nextField := RootIndexed.restartedRealPositionNSelectedBRWField N roots
-        initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) (n + 1) field
-      let selectedBRWPopulationParents := hselectedBRWPopulationFiniteSlices.toFinset n field
-      let nSelectedBRWPopulationParents := RootIndexed.restartedRealPositionNSelectedBRWPopulation N roots
-        initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) n field
-      let canonical :=
-        Combinatorics.Branching.Selection.Coupling.canonicalInjection id d selectedBRW
-          (RootIndexed.BranchingWalk.ofStepField initialPosition priorField)
-          selectedBRWPopulationParents nSelectedBRWPopulationParents hinj
-      have hcard : selectedBRWPopulationParents.card ≤ nSelectedBRWPopulationParents.card :=
-        Combinatorics.Branching.Selection.Coupling.population_card_le_of_injection
-          id d selectedBRW
-          (RootIndexed.BranchingWalk.ofStepField initialPosition priorField)
-          selectedBRWPopulationParents nSelectedBRWPopulationParents hinj
-      have hnSelectedBRWPopulationParentsDepth : ∀ q ∈ nSelectedBRWPopulationParents, q.2.length = n := by
-        intro q hq
-        exact RootIndexed.selectedPopulationTotalized_depth N roots initialPosition
-          d id n priorField q (by
-            simpa [nSelectedBRWPopulationParents, priorField,
-              RootIndexed.restartedRealPositionNSelectedBRWPopulation] using hq)
-      have hcanonical {p : RootIndexed.TreeNode Root α} (hp : p ∈ selectedBRWPopulationParents) :
-          canonical p = Combinatorics.Selection.NSelection.matchByRankOrSelf
-            (RootIndexed.observedPositionAtGeneration initialPosition d id n
-              (RootIndexed.StepField.left field))
-            (RootIndexed.observedPositionAtGeneration initialPosition d id n priorField)
-            selectedBRWPopulationParents nSelectedBRWPopulationParents hcard p := by
-        have hselectedBRWPopulationOrderKey : ∀ q ∈ selectedBRWPopulationParents,
-            id (selectedBRW.position d q.1 q.2) =
-              RootIndexed.observedPositionAtGeneration initialPosition d id n
-                (RootIndexed.StepField.left field) q := by
-          intro q hq
-          exact (RootIndexed.observedPositionAtGeneration_eq initialPosition d id n
-            (RootIndexed.StepField.left field) q
-            (selectedBRWPopulation.depth n field q
-              ((hselectedBRWPopulationFiniteSlices.mem_toFinset n field q).mp hq))).symm
-        have hnSelectedPopulationOrderKey : ∀ q ∈ nSelectedBRWPopulationParents,
-            id ((RootIndexed.BranchingWalk.ofStepField initialPosition
-              priorField).position d q.1 q.2) =
-              RootIndexed.observedPositionAtGeneration initialPosition d id n
-                priorField q := by
-          intro q hq
-          exact (RootIndexed.observedPositionAtGeneration_eq initialPosition d id n
-            priorField q (hnSelectedBRWPopulationParentsDepth q hq)).symm
-        rw [Combinatorics.Branching.Selection.Coupling.canonicalInjection_apply]
-        exact Combinatorics.Selection.NSelection.matchByRankOrSelf_congr_of_eqOn
-          selectedBRWPopulationParents nSelectedBRWPopulationParents hcard hp hselectedBRWPopulationOrderKey hnSelectedPopulationOrderKey
-      let hparents : Cloud.SliceDominatingMap id
-          (Combinatorics.Branching.Selection.Coupling.populationCloud d
-            selectedBRW selectedBRWPopulationParents)
-          (Combinatorics.Branching.Selection.Coupling.populationCloud d
-            (RootIndexed.BranchingWalk.ofStepField initialPosition nextField)
-            nSelectedBRWPopulationParents) () := {
-        toFun := canonical
-        mapsTo := canonical.mapsTo
-        injOn := canonical.injOn
-        dominates := by
-          intro p hp
-          change (RootIndexed.BranchingWalk.ofStepField initialPosition
-              nextField).position d (canonical p).1 (canonical p).2 ≤
-            selectedBRW.position d p.1 p.2
-          have hdepth : (canonical p).2.length = n := by
-            apply RootIndexed.selectedPopulationTotalized_depth N roots
-              initialPosition d id n priorField (canonical p)
-            simpa [nSelectedBRWPopulationParents, priorField,
-              RootIndexed.restartedRealPositionNSelectedBRWPopulation,
-              Combinatorics.Branching.Selection.Coupling.populationCloud] using
-              canonical.mapsTo hp
-          have hpos : (RootIndexed.BranchingWalk.ofStepField initialPosition
-              nextField).position d (canonical p).1 (canonical p).2 =
-            (RootIndexed.BranchingWalk.ofStepField initialPosition
-              priorField).position d (canonical p).1 (canonical p).2 := by
-            change (RootIndexed.BranchingWalk.ofStepField initialPosition
-                (RootIndexed.StepField.updateGeneration n _ priorField)).position
-                  d (canonical p).1 (canonical p).2 = _
-            exact Combinatorics.Branching.RootIndexed.BranchingWalk.position_updateGeneration_of_le
-              d n initialPosition _ priorField
-                (canonical p).1 (canonical p).2 (by omega)
-          rw [hpos]
-          exact canonical.dominates p hp }
-      have hstep {p : RootIndexed.TreeNode Root α} (hp : p ∈ selectedBRWPopulationParents) :
-          nextField (canonical p).1 (canonical p).2 =
-            RootIndexed.StepField.left field p.1 p.2 := by
-        change RootIndexed.rankInstalledField
-          (fun k sample q => RootIndexed.observedPositionAtGeneration
-            initialPosition d id k (RootIndexed.StepField.left sample) q)
-          (fun k _ β q => RootIndexed.observedPositionAtGeneration
-            initialPosition d id k β q)
-          (hselectedBRWPopulationFiniteSlices.toFinset)
-          (fun k _ β => RootIndexed.selectedPopulationTotalized N roots
-            initialPosition d id k β)
-          RootIndexed.StepField.left RootIndexed.StepField.right (n + 1) field
-          (canonical p).1 (canonical p).2 = _
-        rw [hcanonical hp]
-        exact RootIndexed.rankInstalledField_succ_apply_matchByRankOrSelf
-          (fun k sample q => RootIndexed.observedPositionAtGeneration
-            initialPosition d id k (RootIndexed.StepField.left sample) q)
-          (fun k _ β q => RootIndexed.observedPositionAtGeneration
-            initialPosition d id k β q)
-          (hselectedBRWPopulationFiniteSlices.toFinset)
-          (fun k _ β => RootIndexed.selectedPopulationTotalized N roots
-            initialPosition d id k β)
-          RootIndexed.StepField.left RootIndexed.StepField.right n field hcard
-          hnSelectedBRWPopulationParentsDepth
-          hp
-      have hselected : IsFirstNBy N
-          (fun q => ((RootIndexed.BranchingWalk.ofStepField initialPosition
-            nextField).position d q.1 q.2))
-          (Combinatorics.Branching.Population.offspringAddressSet
-            (↑nSelectedBRWPopulationParents)
-            (fun p => {i | survive (nextField p.1 p.2) i}))
-          (RootIndexed.restartedRealPositionNSelectedBRWPopulation N roots
-            initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) (n + 1) field) := by
-        have hspec := hnSelectedBRWPopulationFirstN n (Nat.lt_succ_self n)
-        have hchildren := Combinatorics.Branching.Population.childrenAtGeneration_eq_offspringAddressSet
-          n nSelectedBRWPopulationParents nextField hnSelectedBRWPopulationParentsDepth
-        have hvalue : Set.EqOn
-            (RootIndexed.observedPositionAtGeneration initialPosition d id
-              (n + 1) nextField)
-            (fun q => (RootIndexed.BranchingWalk.ofStepField initialPosition
-              nextField).position d q.1 q.2)
-            (Combinatorics.Branching.Population.childrenAtGeneration n
-              nSelectedBRWPopulationParents nextField) := by
-          intro q hq
-          exact RootIndexed.observedPositionAtGeneration_eq initialPosition d id
-            (n + 1) nextField q
-            (Combinatorics.Branching.Population.childrenAtGeneration_depth n nSelectedBRWPopulationParents nextField q hq)
-        have hspec' := hspec.congr_value hvalue
-        rw [hchildren] at hspec'
-        simpa only [nextField, nSelectedBRWPopulationParents,
-          RootIndexed.restartedRealPositionNSelectedBRWPopulation] using hspec'
-      have hretained : ↑(hselectedBRWPopulationFiniteSlices.toFinset (n + 1) field) ⊆
-          Combinatorics.Branching.Population.offspringAddressSet
-            (↑(hselectedBRWPopulationFiniteSlices.toFinset n field))
-            (fun p => Combinatorics.Branching.support
-              (RootIndexed.StepField.left field p.1 p.2)) := by
-        simpa only [RootIndexed.CausalPopulation.FiniteSlices.coe_toFinset] using
-          selectedBRWPopulation.successor n field
-      have hselectedBRWPopulationChildSlots_subset_survival : ∀ p ∈ selectedBRWPopulationParents,
-          Combinatorics.Branching.support
-              (RootIndexed.StepField.left field p.1 p.2) ⊆
-            {i | survive (nextField (canonical p).1 (canonical p).2) i} := by
-        intro p hp i hi
-        have hsame := hstep hp
-        rw [hsame]
-        simpa [Combinatorics.Branching.support] using hi
-      have hmatchedBRWParents_sharedIncrement : ∀ p ∈ selectedBRWPopulationParents, ∀ i ∈
-          Combinatorics.Branching.support
-            (RootIndexed.StepField.left field p.1 p.2),
-          value' (((RootIndexed.BranchingWalk.ofStepField initialPosition
-            nextField).step (canonical p).1 (canonical p).2).map d) i =
-          value' ((selectedBRW.step p.1 p.2).map d) i := by
-        intro p hp i hi
-        have hsame := hstep hp
-        change value' ((nextField (canonical p).1 (canonical p).2).map d) i =
-          value' ((RootIndexed.StepField.left field p.1 p.2).map d) i
-        rw [hsame]
-      exact Combinatorics.Branching.Selection.Coupling.nextGenerationInjection_of_isFirstNBy
-        id d N selectedBRW
-        (RootIndexed.BranchingWalk.ofStepField initialPosition nextField)
-        selectedBRWPopulationParents nSelectedBRWPopulationParents
-        (fun p => Combinatorics.Branching.support
-          (RootIndexed.StepField.left field p.1 p.2))
-        (fun p => {i | survive (nextField p.1 p.2) i})
-        (hselectedBRWPopulationFiniteSlices.toFinset (n + 1) field)
-        (RootIndexed.restartedRealPositionNSelectedBRWPopulation N roots
-          initialPosition d (hselectedBRWPopulationFiniteSlices.toFinset) (n + 1) field)
-        hretained (hselectedBRWPopulationCapacity n (Nat.lt_succ_self n)) hselected hparents
-        hselectedBRWPopulationChildSlots_subset_survival hmatchedBRWParents_sharedIncrement
-        (fun _ _ z hle => by simpa using add_le_add_right hle z)
+      exact RootIndexed.restartedRealPositionCoupledSuccessorInjection
+        N roots initialPosition d selectedBRWPopulation hselectedBRWPopulationFiniteSlices
+        n field _ (fun _ hp => hp) (hselectedBRWPopulationCapacity n (Nat.lt_succ_self n))
+        (hnSelectedBRWPopulationFirstN n (Nat.lt_succ_self n)) hinj
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
