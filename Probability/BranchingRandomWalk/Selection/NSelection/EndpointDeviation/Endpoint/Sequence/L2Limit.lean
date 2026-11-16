@@ -5,6 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.FiniteVariance
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.FirstMoment
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.Sequence
 import Probability.MeasureTheory.Convergence.SecondMoment.FromPolynomialTails
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.PositiveInitialExponent
@@ -16,6 +17,14 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.En
 
 ## Public declarations
 
+* `tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub` is the
+  trajectory limit in Wang Yiyang's Theorem 1.1. With $a\in[0,1]$,
+  $m_N=\lfloor N^a\rfloor$, and $H_N/\log^3N\to t>0$, the limit is
+  $M_{H_N}/\log N\to -a+\pi^2\sigma^2t/2$ in $L^2$.
+  The positive exponential moment of the leftmost displacement is required
+  when $a=0$.
+* `tendsto_integral_countableRootEndpointMinimum_div` gives the corresponding
+  normalized expectation limit $\mathbb E[M_{H_N}/\log N]\to -a+\pi^2\sigma^2t/2$.
 * `tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub_of_initialExponent`:
   for the initial population $m_n=\lfloor N_n^a\rfloor$ at $0<a<1$, the
   model's centered-spine, cross-weight, and leftmost fourth-moment
@@ -321,5 +330,109 @@ theorem tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub_of_fullCapacity
       change x ≤ small field
       exact le_of_lt (lt_of_not_ge (show ¬ small field ≤ x from hf))
     _ ≤ _ := hup
+
+/-- The trajectory limit of Wang Yiyang, *Asymptotic Speed of the
+N-Branching Random Walk with Infinite Offspring* (Fudan University, 2026),
+Theorem 1.1. The number of initial particles is $\lfloor N^a\rfloor$
+and every initial position is zero. The additional exponential moment
+is assumed only in the single-root case. -/
+theorem tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub
+    (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
+    (hsuper : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.IsSupercritical
+      (⟨L.raw, inferInstance⟩ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ℕ ℝ))
+    (hnonempty : L.raw nonemptySupport = 1)
+    (hboundary : HasBoundaryNormalization L.potential L.raw)
+    (hcross : HasFiniteCrossWeight L.potential L.raw)
+    (hfour : HasLeftmostFourthMoment L)
+    {sigma a t : ℝ} (hsigma : 0 < sigma)
+    (hspine : IsCenteredSecondMoment
+      (tiltedPotentialLaw realPotential (-1) L.sortedPotentialImage) (sigma ^ 2))
+    (ha : a ∈ Set.Icc (0 : ℝ) 1) (ht : 0 < t)
+    (hexp : a = 0 → HasLeftmostPositiveExponentialMoment L)
+    {N H : ℕ → ℕ} (hcapacity : ∀ n, 0 < N n)
+    (hN : Tendsto N atTop atTop)
+    (hH : Tendsto (fun n => (H n : ℝ) / Real.log (N n : ℝ) ^ 3) atTop (𝓝 t)) :
+    let P := RootIndexed.stepFieldLaw (Root := ℕ) L.sortedPotentialImage
+    let c := -a + (Real.pi ^ 2 / 2) * sigma ^ 2 * t
+    Tendsto (fun n => eLpNorm (fun field =>
+      @countableRootEndpointMinimum ⌊(N n : ℝ) ^ a⌋₊ (N n) (H n)
+        (RootIndexed.addressLinearOrder (Fin ⌊(N n : ℝ) ^ a⌋₊) ℕ) field /
+        Real.log (N n : ℝ) - c) 2 P) atTop (𝓝 0) := by
+  intro P c
+  let endpoint (m : ℕ → ℕ) n :=
+    @countableRootEndpointMinimum (m n) (N n) (H n)
+      (RootIndexed.addressLinearOrder (Fin (m n)) ℕ)
+  change Tendsto (fun n => eLpNorm (fun field =>
+    endpoint (fun k => ⌊(N k : ℝ) ^ a⌋₊) n field / Real.log (N n : ℝ) - c) 2 P)
+    atTop (𝓝 0)
+  rcases ha.1.eq_or_lt with hzero | hpos
+  · subst a
+    have hm : (fun n => ⌊(N n : ℝ) ^ (0 : ℝ)⌋₊) = fun _ => 1 := by
+      funext n
+      rw [Real.rpow_zero, Nat.floor_one]
+    rw [hm]
+    simpa [c, P, endpoint] using
+      tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub_of_singleRoot
+        L hboundary hnonempty hsuper hcross hfour (hexp rfl) hsigma hspine ht hcapacity hN hH
+  rcases ha.2.eq_or_lt with hone | hlt
+  · subst a
+    have hm : (fun n => ⌊(N n : ℝ) ^ (1 : ℝ)⌋₊) = N := by
+      funext n
+      rw [Real.rpow_one, Nat.floor_natCast]
+    rw [hm]
+    simpa [c, P, endpoint] using
+      tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub_of_fullCapacity
+        L hboundary hnonempty hcross hfour hsigma hspine ht hcapacity hN hH
+  exact tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub_of_initialExponent
+    L hboundary hnonempty hcross hfour hsigma hspine hpos hlt ht hcapacity hN hH
+    (fun n => RootIndexed.addressLinearOrder (Fin ⌊(N n : ℝ) ^ a⌋₊) ℕ)
+
+/-- The normalized endpoint expectation in Wang Yiyang, Theorem 1.1. -/
+theorem tendsto_integral_countableRootEndpointMinimum_div
+    (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
+    (hsuper : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.IsSupercritical
+      (⟨L.raw, inferInstance⟩ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ℕ ℝ))
+    (hnonempty : L.raw nonemptySupport = 1)
+    (hboundary : HasBoundaryNormalization L.potential L.raw)
+    (hcross : HasFiniteCrossWeight L.potential L.raw)
+    (hfour : HasLeftmostFourthMoment L)
+    {sigma a t : ℝ} (hsigma : 0 < sigma)
+    (hspine : IsCenteredSecondMoment
+      (tiltedPotentialLaw realPotential (-1) L.sortedPotentialImage) (sigma ^ 2))
+    (ha : a ∈ Set.Icc (0 : ℝ) 1) (ht : 0 < t)
+    (hexp : a = 0 → HasLeftmostPositiveExponentialMoment L)
+    {N H : ℕ → ℕ} (hcapacity : ∀ n, 0 < N n)
+    (hN : Tendsto N atTop atTop)
+    (hH : Tendsto (fun n => (H n : ℝ) / Real.log (N n : ℝ) ^ 3) atTop (𝓝 t)) :
+    let P := RootIndexed.stepFieldLaw (Root := ℕ) L.sortedPotentialImage
+    Tendsto (fun n => ∫ field,
+      @countableRootEndpointMinimum ⌊(N n : ℝ) ^ a⌋₊ (N n) (H n)
+        (RootIndexed.addressLinearOrder (Fin ⌊(N n : ℝ) ^ a⌋₊) ℕ) field /
+        Real.log (N n : ℝ) ∂P) atTop (𝓝 (-a + (Real.pi ^ 2 / 2) * sigma ^ 2 * t)) := by
+  intro P
+  let c := -a + (Real.pi ^ 2 / 2) * sigma ^ 2 * t
+  let m := fun n => ⌊(N n : ℝ) ^ a⌋₊
+  let F (n : ℕ) (field : CountableRootStepField ℕ ℝ) :=
+    @countableRootEndpointMinimum (m n) (N n) (H n)
+      (RootIndexed.addressLinearOrder (Fin (m n)) ℕ) field / Real.log (N n : ℝ)
+  change Tendsto (fun n => ∫ field, F n field ∂P) atTop (𝓝 c)
+  have hL2 : Tendsto (fun n => eLpNorm (F n - fun _ => c) 2 P) atTop (𝓝 0) :=
+    tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub L hsuper hnonempty
+      hboundary hcross hfour hsigma hspine ha ht hexp hcapacity hN hH
+  have hL1 : Tendsto (fun n => eLpNorm (F n - fun _ => c) 1 P) atTop (𝓝 0) := by
+    apply tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hL2
+      (fun _ => bot_le)
+    intro n
+    exact eLpNorm_le_eLpNorm_of_exponent_le (by norm_num)
+  have hF (n : ℕ) : Integrable (F n) P := by
+    let _ := RootIndexed.addressLinearOrder (Fin (m n)) ℕ
+    have hone : (1 : ℝ) ≤ N n := by exact_mod_cast hcapacity n
+    have hm : 0 < m n := Nat.floor_pos.mpr (Real.one_le_rpow hone ha.1)
+    have hfinite := finiteRootStepFieldLaw_integrable_firstNSelectedEndpointMinimum
+      (m n) (N n) (H n) hm (hcapacity n) L hboundary hnonempty
+      (fourthMoment_implies_firstMoment L hfour)
+    have hpreserving := RootIndexed.StepField.measurePreserving_first L.sortedPotentialImage (m n)
+    exact (hpreserving.integrable_comp_of_integrable hfinite).div_const _
+  simpa using tendsto_integral_of_L1' (fun _ => c) (Eventually.of_forall hF) hL1
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
