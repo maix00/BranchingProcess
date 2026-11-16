@@ -16,6 +16,10 @@ import MeasureTheory.BranchingWalk.Step.Selection.Potential
 * `trialSplitParent` gives the address $\rho_k$ of the split parent in the
   pre-sampled tree, with the Lean index starting at zero.
 * `trialGrowthRoot` gives the first child $v_k$ of that split parent.
+* `splitCycle_first_success_at_completion` identifies the first successful
+  trial in split order at the observable success completion.
+* `trialGrowthRoot_eq_growthTrialRootAt_of_splitCount` identifies $v_k$
+  with the generation-indexed candidate when $k$ splits precede its split mark.
 * `exists_firstSuccessfulTrial_position_upperTail` bounds
   $e^{\lambda x}\mathbb P(\kappa\le K,
     V(\rho_\kappa)\ge x+(K-1)M)$ by $\sum_{k=1}^K m_\lambda^k$,
@@ -39,6 +43,7 @@ open _root_.Combinatorics.Selection.NSelection
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate)
 open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 open SelectedPath.GrowthTrial
+open Combinatorics.Branching.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath
 
 /-- Absolute address of the split parent, following the second child to each
 subsequent candidate on the pre-sampled tree. -/
@@ -53,6 +58,162 @@ noncomputable def trialGrowthRoot (R : Step.FiniteSelection ℕ ℝ) :
   | 0, ω => selectedPopulationFirstSplitRoots R ω 0
   | k + 1, ω => selectedPopulationFirstSplitRoots R ω 1 ++
       trialGrowthRoot R k (selectedPopulationFirstSplitSubtrees R ω 1)
+
+lemma trialGrowthRoot_eq_growthTrialRootAt_of_splitCount
+    {Root : Type}
+    (R : Step.FiniteSelection ℕ ℝ) (hR : Measurable R.select)
+    (r : Root) (ω : RootIndexed.StepField Root ℕ ℝ)
+    (hne : ∀ u, (R (ω r u)).Nonempty) (k n : ℕ)
+    (hs : splitEvent R r n ω) (hcount : splitCount R r n ω = k) :
+    trialGrowthRoot R k (ω r) =
+      (growthTrialRootAt (lineages R hR) R r PUnit.unit (n + 1) ω).2 := by
+  classical
+  induction k generalizing Root r ω n with
+  | zero =>
+    have hbefore (j : ℕ) (hj : j < n) : ¬ splitEvent R r j ω := by
+      intro hsplit
+      have halive : ∀ i, isAlive R r i ω := by
+        intro i
+        induction i with
+        | zero => trivial
+        | succ i ih => exact ⟨ih, hne _⟩
+      have hmem : j ∈ (Finset.range n).filter fun i => isAlive R r i ω ∧ splitEvent R r i ω :=
+        Finset.mem_filter.mpr ⟨Finset.mem_range.mpr hj, halive j, hsplit⟩
+      exact (Nat.ne_of_gt (Finset.card_pos.mpr ⟨j, hmem⟩)) hcount
+    have hraw := rawSplitTime_eq_of_first_sampled_split R r ω n hne hs hbefore
+    have hroot := (firstSplitRoots_eq_of_rawSplitTime_eq R r ω n hne hraw).1
+    rw [trialGrowthRoot, (root_at_split R hR r n ω hs).1]
+    exact hroot
+  | succ k ih =>
+    have halive : ∀ i, isAlive R r i ω := by
+      intro i
+      induction i with
+      | zero => trivial
+      | succ i ih => exact ⟨ih, hne _⟩
+    have hex : ∃ j, j < n ∧ splitEvent R r j ω := by
+      have hpos : 0 < splitCount R r n ω := by omega
+      change 0 < ((Finset.range n).filter fun j =>
+        isAlive R r j ω ∧ splitEvent R r j ω).card at hpos
+      obtain ⟨j, hj⟩ := Finset.card_pos.mp hpos
+      simp only [Finset.mem_filter, Finset.mem_range] at hj
+      exact ⟨j, hj.1, hj.2.2⟩
+    let j := Nat.find hex
+    have hj : j < n := (Nat.find_spec hex).1
+    have ht : splitEvent R r j ω := (Nat.find_spec hex).2
+    have hearly (i : ℕ) (hi : i < j) : ¬ splitEvent R r i ω :=
+      fun hisplit => Nat.find_min hex hi ⟨hi.trans hj, hisplit⟩
+    let m := n - (j + 1)
+    have hn : j + 1 + m = n := by dsimp [m]; omega
+    let tail := continuationFieldAtSplit R r j ω
+    have htail : splitEvent R PUnit.unit m tail := by
+      have hmark := mark_decompose_at_split_field R r j m ω ht
+      rw [hn] at hmark
+      change ω r (selectedPath R r n ω) ∈ splitBy R at hs
+      change tail PUnit.unit (selectedPath R PUnit.unit m tail) ∈ splitBy R
+      unfold tail
+      rw [← hmark]
+      exact hs
+    have htailcount : splitCount R PUnit.unit m tail = k := by
+      have heq := splitCount_add_after_first_split R r ω j m (halive j) ht hearly
+      rw [hn, hcount] at heq
+      change k + 1 = 1 + splitCount R PUnit.unit m tail at heq
+      omega
+    have htailalive : isAlive R PUnit.unit m tail :=
+      (isAlive_decompose_at_split_field R r j ω (halive j) ht m).mp (hn ▸ halive n)
+    have hraw := rawSplitTime_eq_of_first_sampled_split R r ω j hne ht hearly
+    have hroot : selectedPopulationFirstSplitRoots R (ω r) 1 = continuationPrefix R r j ω :=
+      (firstSplitRoots_eq_of_rawSplitTime_eq R r ω j hne hraw).2
+    have hfield : selectedPopulationFirstSplitSubtrees R (ω r) 1 = tail PUnit.unit := by
+      change subtreeStepField (selectedPopulationFirstSplitRoots R (ω r) 1) (ω r) = _
+      rw [hroot]
+      rfl
+    have hrec := ih PUnit.unit tail (fun _ => hne _) m htail htailcount
+    rw [trialGrowthRoot, hroot, hfield, hrec, (root_at_split R hR PUnit.unit m tail htail).1]
+    rw [← hn, (root_at_recursive_split R hR r j m ω (halive j) ht htailalive htail).1]
+
+private lemma splitCycle_trial_eq_subtree
+    {D E : Type*} (R : Step.FiniteSelection ℕ ℝ)
+    (F : Mark ℕ (Step ℕ ℝ) → D) (G : Mark ℕ (Step ℕ ℝ) → E)
+    (k : ℕ) (ω : Mark ℕ (Step ℕ ℝ)) :
+    (splitCycle R F G k ω).2 = G (subtreeStepField (trialGrowthRoot R k ω) ω) := by
+  induction k generalizing ω with
+  | zero => rfl
+  | succ k ih =>
+    rw [splitCycle, ih, trialGrowthRoot]
+    congr 1
+    funext u
+    change ω (selectedPopulationFirstSplitRoots R ω 1 ++
+        (trialGrowthRoot R k (selectedPopulationFirstSplitSubtrees R ω 1) ++ u)) =
+      ω ((selectedPopulationFirstSplitRoots R ω 1 ++
+        trialGrowthRoot R k (selectedPopulationFirstSplitSubtrees R ω 1)) ++ u)
+    rw [List.append_assoc]
+
+private lemma exists_split_before_of_lt_splitCount
+    {Root : Type*} (R : Step.FiniteSelection ℕ ℝ) (r : Root)
+    (ω : RootIndexed.StepField Root ℕ ℝ) (k n : ℕ)
+    (hk : k < splitCount R r n ω) :
+    ∃ j < n, splitEvent R r j ω ∧ splitCount R r j ω = k := by
+  classical
+  induction n with
+  | zero => simp [splitCount_eq_sum_indicators] at hk
+  | succ n ih =>
+    by_cases hn : k < splitCount R r n ω
+    · obtain ⟨j, hj, hs, hc⟩ := ih hn
+      exact ⟨j, hj.trans (Nat.lt_succ_self n), hs, hc⟩
+    · have heq : splitCount R r (n + 1) ω = splitCount R r n ω +
+          (if isAlive R r n ω ∧ splitEvent R r n ω then 1 else 0) := by
+        rw [splitCount_eq_sum_indicators R r (n + 1), Finset.sum_range_succ,
+          ← splitCount_eq_sum_indicators]
+      rw [heq] at hk
+      split at hk
+      · rename_i hs
+        exact ⟨n, Nat.lt_succ_self n, hs.2, by omega⟩
+      · omega
+
+lemma splitCycle_first_success_at_completion
+    {Root : Type}
+    (R growth : Step.FiniteSelection ℕ ℝ) (hR : Measurable R.select)
+    (lower upper duration : ℕ) (r : Root)
+    (ω : RootIndexed.StepField Root ℕ ℝ) (hne : ∀ u, (R (ω r u)).Nonempty)
+    (t : ℕ) (ht : firstSuccessfulCompletion R growth hR lower upper duration r ω = t) :
+    let G := growthTrialSuccess growth lower upper duration
+    ∃ n : ℕ, n + 1 + duration = t ∧
+      splitEvent R r n ω ∧
+      let k := splitCount R r n ω
+      (splitCycle R (splitWaitingDisplacement R) G k (ω r)).2 ∧
+      (∀ j < k, ¬ (splitCycle R (splitWaitingDisplacement R) G j (ω r)).2) ∧
+      trialGrowthRoot R k (ω r) =
+        (growthTrialRootAt (lineages R hR) R r PUnit.unit (n + 1) ω).2 := by
+  intro G
+  let declarations : ℕ → Set (RootIndexed.StepField Root ℕ ℝ) := fun i =>
+    {field | ∃ n, ((n + 1 + duration : ℕ) : WithTop ℕ) = i ∧
+      field ∈ successEvent R growth hR lower upper duration r n}
+  have hfirst : firstDeclaredSuccess declarations ω = (t : WithTop ℕ) := ht
+  obtain ⟨⟨n, hnt, hsuccess⟩, hbefore⟩ := (firstDeclaredSuccess_eq_iff declarations ω t).mp hfirst
+  have hnt' : n + 1 + duration = t := WithTop.coe_injective hnt
+  have halive : ∀ j, isAlive R r j ω := by
+    intro j
+    induction j with
+    | zero => trivial
+    | succ j ih => exact ⟨ih, hne _⟩
+  have htrial (j : ℕ) (hs : splitEvent R r j ω) :
+      (splitCycle R (splitWaitingDisplacement R) G (splitCount R r j ω) (ω r)).2 ↔
+        ω ∈ successEvent R growth hR lower upper duration r j := by
+    let u := growthTrialRootAt (lineages R hR) R r PUnit.unit (j + 1) ω
+    have hu : u.1 = r := growthTrialRootAt_root (lineages R hR) R r PUnit.unit (j + 1) ω
+    rw [splitCycle_trial_eq_subtree,
+      trialGrowthRoot_eq_growthTrialRootAt_of_splitCount R hR r ω hne _ j hs rfl]
+    change G (fun v => ω r (u.2 ++ v)) ↔
+      isAlive R r j ω ∧ splitEvent R r j ω ∧ G (fun v => ω u.1 (u.2 ++ v))
+    simp [hu, halive j, hs]
+  refine ⟨n, hnt', hsuccess.2.1, (htrial n hsuccess.2.1).2 hsuccess, ?_, ?_⟩
+  · intro k hk hc
+    obtain ⟨j, hj, hs, hcount⟩ := exists_split_before_of_lt_splitCount R r ω k n hk
+    apply hbefore (j + 1 + duration) (by omega)
+    apply Exists.intro j
+    refine ⟨rfl, (htrial j hs).mp ?_⟩
+    rwa [hcount]
+  · exact trialGrowthRoot_eq_growthTrialRootAt_of_splitCount R hR r ω hne _ n hsuccess.2.1 rfl
 
 private lemma trialPositions_le
     {E : Type*} [MeasurableSpace E]

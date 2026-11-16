@@ -13,10 +13,13 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticS
 
 ## Internal proof declarations
 
-* `first_sampled_split_of_rawSplitTime_eq` identifies the population's raw split
+* `rawSplitTime_eq_of_first_sampled_split` and
+  `first_sampled_split_of_rawSplitTime_eq` identify the population's raw split
   index with the first split mark on the selected path.
 * `firstSplitRoots_eq_of_rawSplitTime_eq` identifies the two sibling addresses
   at the first sampled split.
+* `splitCount_add_after_first_split` splits the count into the first split and
+  the count in its continuation subtree.
 * `mem_recursiveFailure_of_no_success`: if at least $K$ live splits occur
   before $n$ and their growth trials all fail, the root field belongs to the
   $K$-fold recursive failure event.
@@ -61,7 +64,7 @@ private lemma population_eq_singleton_before_split
     rw [Selection.Stepwise.population_succ, ih (by omega), selectedPath, hslot]
     simp [Selection.Stepwise.grow, Selection.Stepwise.children, frontierMarks, hi, depth]
 
-private lemma rawSplitTime_eq_of_first_sampled_split
+lemma rawSplitTime_eq_of_first_sampled_split
     {Root α X : Type*} [LinearOrder α] [OrderBot α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (r : Root) (ω : RootIndexed.StepField Root α X)
     (k : ℕ) (hne : ∀ u, (R (ω r u)).Nonempty)
@@ -156,6 +159,33 @@ private lemma firstSplitSubtrees_eq
   · unfold ProbabilityTheory.BranchingRandomWalk.subtreeStepField continuationFieldAtSplit
     rw [continuationPrefix]
 
+lemma splitCount_add_after_first_split
+    {Root α X : Type*} [LinearOrder α] [OrderBot α] [MeasurableSpace X]
+    (R : Step.FiniteSelection α X) (r : Root) (ω : RootIndexed.StepField Root α X)
+    (k m : ℕ) (halive : isAlive R r k ω)
+    (hs : splitEvent R r k ω) (hearly : ∀ j < k, ¬ splitEvent R r j ω) :
+    splitCount R r (k + 1 + m) ω =
+      1 + splitCount R PUnit.unit m (continuationFieldAtSplit R r k ω) := by
+  classical
+  rw [splitCount_eq_sum_indicators, splitCount_eq_sum_indicators, Finset.sum_range_add]
+  have hpre : (∑ j ∈ Finset.range (k + 1),
+      if isAlive R r j ω ∧ splitEvent R r j ω then 1 else 0) = 1 := by
+    rw [Finset.sum_range_succ]
+    have hz : (∑ j ∈ Finset.range k,
+        if isAlive R r j ω ∧ splitEvent R r j ω then 1 else 0) = 0 :=
+      Finset.sum_eq_zero fun j hj => by simp [hearly j (Finset.mem_range.mp hj)]
+    simp [hz, halive, hs]
+  rw [hpre]
+  congr 1
+  apply Finset.sum_congr rfl
+  intro j _
+  rw [isAlive_decompose_at_split_field R r k ω halive hs j]
+  have hmark := mark_decompose_at_split_field R r k j ω hs
+  change (if isAlive R PUnit.unit j (continuationFieldAtSplit R r k ω) ∧
+    ω r (selectedPath R r (k + 1 + j) ω) ∈ splitBy R then 1 else 0) = _
+  rw [hmark]
+  rfl
+
 lemma mem_recursiveFailure_of_no_success
     {Root : Type} {α X : Type*} [Countable α] [MeasurableSpace α] [MeasurableSingletonClass α]
     [LinearOrder α] [OrderBot α] [MeasurableSpace X]
@@ -190,26 +220,8 @@ lemma mem_recursiveFailure_of_no_success
     have htailCount : K ≤ splitCount R PUnit.unit (n - (k + 1)) tail := by
       have heq : splitCount R r n ω =
           1 + splitCount R PUnit.unit (n - (k + 1)) tail := by
-        rw [splitCount_eq_sum_indicators, splitCount_eq_sum_indicators,
-          show n = k + 1 + (n - (k + 1)) by omega]
-        rw [Finset.sum_range_add]
-        have hpre : (∑ j ∈ Finset.range (k + 1),
-            if isAlive R r j ω ∧ splitEvent R r j ω then 1 else 0) = 1 := by
-          rw [Finset.sum_range_succ]
-          have hz : (∑ j ∈ Finset.range k,
-              if isAlive R r j ω ∧ splitEvent R r j ω then 1 else 0) = 0 :=
-            Finset.sum_eq_zero fun j hj => by simp [hearly j (Finset.mem_range.mp hj)]
-          simp [hz, halive k, hs]
-        rw [hpre, Nat.add_sub_cancel_left]
-        congr 1
-        apply Finset.sum_congr rfl
-        intro j _
-        rw [isAlive_decompose_at_split_field R r k ω (halive k) hs j]
-        have hmark := mark_decompose_at_split_field R r k j ω hs
-        change (if isAlive R PUnit.unit j tail ∧
-          ω r (selectedPath R r (k + 1 + j) ω) ∈ splitBy R then 1 else 0) = _
-        rw [hmark]
-        rfl
+        conv_lhs => rw [show n = k + 1 + (n - (k + 1)) by omega]
+        exact splitCount_add_after_first_split R r ω k _ (halive k) hs hearly
       omega
     have htailFail (j : ℕ) (hj : j < n - (k + 1)) :
         tail ∉ successEvent R growth hR lower upper duration PUnit.unit j := by
