@@ -5,6 +5,9 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.NestedRoots
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.CountableRoots
+import Combinatorics.UlamHarris.Order
+import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
 set_option linter.style.haveILetI false
 
 /-!
@@ -26,6 +29,10 @@ The declarations in
   root-indexed step-field law satisfies
   $\nu(\operatorname{EndpointBelow}(\text{subsetBRWRoots},n,x))\le
   \nu(\operatorname{EndpointBelow}(\text{supersetBRWRoots},n,x))$.
+
+- `measure_countableRootEndpointMinimum_le_mono_roots`: for $0<m\le k$,
+  the minimum from $m$ roots has sublevel probability at most that from $k$
+  roots, on the common countable-root field.
 
 The rank-installed coupling shows that adding initial roots can only increase
 the probability of finding a selected endpoint below a fixed threshold.  The
@@ -316,5 +323,154 @@ theorem RootIndexed.measure_selectedPopulationEndpointBelow_mono_roots
     exact measure_mono_ae hsubset
   rw [hsubsetNSelectedBRWMarginal, hsupersetNSelectedBRWMarginal] at heventMeasureLe
   simpa [μRoot] using heventMeasureLe
+
+open scoped ENNReal
+open _root_.Combinatorics.Selection.NSelection
+
+noncomputable local instance natAddressOrder : LinearOrder (RootIndexed.TreeNode ℕ ℕ) :=
+  RootIndexed.addressLinearOrder ℕ ℕ
+
+noncomputable local instance natAddressDecidableEq : DecidableEq (RootIndexed.TreeNode ℕ ℕ) :=
+  fun a b => LinearOrder.toDecidableEq a b
+
+noncomputable local instance finAddressOrder (m : ℕ) :
+    LinearOrder (RootIndexed.TreeNode (Fin m) ℕ) :=
+  RootIndexed.addressLinearOrder (Fin m) ℕ
+
+private lemma firstNSelectedPopulation_image_first_ae
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hb : HasBoundaryNormalization realPotential μ) (m N : ℕ) :
+    ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := ℕ) μ, ∀ n,
+      (firstNSelectedPopulation m N n (RootIndexed.StepField.first m field)).image
+          (fun p => ((p.1 : ℕ), p.2)) =
+        RootIndexed.selectedPopulationTotalized N (Finset.range m)
+          (fun _ : ℕ => (0 : ℝ)) id id n field := by
+  classical
+  let f : RootIndexed.TreeNode (Fin m) ℕ → RootIndexed.TreeNode ℕ ℕ :=
+    fun p => ((p.1 : ℕ), p.2)
+  have hf : Function.Injective f := by
+    intro p q h
+    have hroot := congrArg (fun v : RootIndexed.TreeNode ℕ ℕ => v.1) h
+    have hword := congrArg (fun v : RootIndexed.TreeNode ℕ ℕ => v.2) h
+    exact Prod.ext (Fin.ext hroot) hword
+  have hlt (p q : RootIndexed.TreeNode (Fin m) ℕ) :
+      @LT.lt _ (finAddressOrder m).toLT p q ↔ @LT.lt _ natAddressOrder.toLT (f p) (f q) := by
+    rw [RootIndexed.addressLinearOrder_lt_iff (Fin m) ℕ,
+      RootIndexed.addressLinearOrder_lt_iff ℕ ℕ]
+    simp only [f, Fin.val_fin_lt, Fin.val_inj]
+  have hfin := RootIndexed.selectedPopulationTotalized_succ_spec_ae μ hb
+    N (Finset.univ : Finset (Fin m)) (fun _ => (0 : ℝ))
+  have hfinPull := (RootIndexed.StepField.measurePreserving_first μ m).quasiMeasurePreserving.ae hfin
+  have hnat := RootIndexed.selectedPopulationTotalized_succ_spec_ae μ hb
+    N (Finset.range m) (fun _ => (0 : ℝ))
+  filter_upwards [hfinPull, hnat] with field hfin hnat n
+  let small (k : ℕ) := firstNSelectedPopulation m N k (RootIndexed.StepField.first m field)
+  let large (k : ℕ) := RootIndexed.selectedPopulationTotalized N (Finset.range m)
+    (fun _ : ℕ => (0 : ℝ)) id id k field
+  change (small n).image f = large n
+  induction n with
+  | zero =>
+    ext p
+    simp only [small, large, firstNSelectedPopulation, RootIndexed.selectedPopulationTotalized,
+      Finset.mem_image, RootIndexed.mem_initialPopulation_iff, Finset.mem_range, Finset.mem_univ,
+      true_and]
+    constructor
+    · rintro ⟨_, ⟨r, rfl⟩, rfl⟩
+      exact ⟨↑r, r.isLt, rfl⟩
+    · rintro ⟨r, hr, rfl⟩
+      exact ⟨(⟨r, hr⟩, []), ⟨⟨r, hr⟩, rfl⟩, rfl⟩
+  | succ n ih =>
+    let smallCandidates := Population.childrenAtGeneration n (small n)
+      (RootIndexed.StepField.first m field)
+    let largeCandidates := Population.childrenAtGeneration n (large n) field
+    let smallValue := RootIndexed.observedPositionAtGeneration
+      (fun _ : Fin m => (0 : ℝ)) id id (n + 1) (RootIndexed.StepField.first m field)
+    let largeValue := RootIndexed.observedPositionAtGeneration
+      (fun _ : ℕ => (0 : ℝ)) id id (n + 1) field
+    have hcandidates : f '' smallCandidates = largeCandidates := by
+      ext q
+      change (∃ p ∈ smallCandidates, f p = q) ↔ q ∈ largeCandidates
+      simp only [smallCandidates, largeCandidates, Population.mem_childrenAtGeneration_iff, ← ih]
+      constructor
+      · rintro ⟨_, ⟨p, hp, hd, i, hi, rfl⟩, rfl⟩
+        exact ⟨f p, Finset.mem_image_of_mem f hp, hd, i, hi, rfl⟩
+      · rintro ⟨parent, hp, hd, i, hi, rfl⟩
+        obtain ⟨p, hsmall, heq⟩ := Finset.mem_image.mp hp
+        subst parent
+        exact ⟨RootIndexed.childAddress p i, ⟨p, hsmall, hd, i, hi, rfl⟩, rfl⟩
+    letI : LT (RootIndexed.TreeNode (Fin m) ℕ) := (finAddressOrder m).toLT
+    letI : LT (RootIndexed.TreeNode ℕ ℕ) := natAddressOrder.toLT
+    have hkey (p q : RootIndexed.TreeNode (Fin m) ℕ) :
+        valueKey smallValue p < valueKey smallValue q ↔
+          valueKey largeValue (f p) < valueKey largeValue (f q) := by
+      have hvalue (p : RootIndexed.TreeNode (Fin m) ℕ) : smallValue p = largeValue (f p) := rfl
+      simp only [valueKey, Prod.Lex.toLex_lt_toLex, hvalue, hlt]
+    have hs : IsFirstNBy N smallValue smallCandidates (small (n + 1)) := hfin n
+    have hl : IsFirstNBy N largeValue largeCandidates (large (n + 1)) := hnat n
+    have himage := hs.image N f hf smallValue largeValue hkey smallCandidates (small (n + 1))
+    rw [hcandidates] at himage
+    exact himage.unique hl
+
+private lemma measure_firstNSelectedEndpointBelow_eq_range
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hb : HasBoundaryNormalization realPotential μ) (m N H : ℕ) (x : ℝ) :
+    finiteRootStepFieldLaw μ m (firstNSelectedEndpointBelow m N H x) =
+      RootIndexed.stepFieldLaw (Root := ℕ) μ
+        (RootIndexed.selectedPopulationEndpointBelow (α := ℕ) N (Finset.range m) (fun _ => 0) H x) := by
+  classical
+  let P := RootIndexed.stepFieldLaw (Root := ℕ) μ
+  let A := firstNSelectedEndpointBelow m N H x
+  let B := RootIndexed.selectedPopulationEndpointBelow (α := ℕ) N (Finset.range m) (fun _ => 0) H x
+  have hpres := RootIndexed.StepField.measurePreserving_first μ m
+  calc
+    _ = P (RootIndexed.StepField.first m ⁻¹' A) := by
+      rw [← hpres.map_eq, Measure.map_apply hpres.measurable
+        (measurableSet_firstNSelectedEndpointBelow m N H x)]
+    _ = P B := by
+      apply measure_congr
+      filter_upwards [firstNSelectedPopulation_image_first_ae μ hb m N] with field himage
+      simp only [A, B, Set.mem_preimage, firstNSelectedEndpointBelow,
+        RootIndexed.selectedPopulationEndpointBelow, Set.mem_ofPred_eq]
+      rw [← himage H]
+      constructor
+      · rintro ⟨p, hp, hx⟩
+        exact ⟨_, Finset.mem_image_of_mem _ hp, hx⟩
+      · rintro ⟨p, hp, hx⟩
+        obtain ⟨q, hq, rfl⟩ := Finset.mem_image.mp hp
+        exact ⟨q, hq, hx⟩
+
+/-- For lexicographically ordered root addresses, increasing the number of
+zero-position roots increases the endpoint sublevel probability. This is the
+initial-population comparison used in the $a=1$ case of Wang Yiyang's
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(Fudan University, 2026), Chapter 4, Theorem 1.1. -/
+theorem measure_countableRootEndpointMinimum_le_mono_roots
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hb : HasBoundaryNormalization realPotential μ) (hne : μ nonemptySupport = 1)
+    {m k N : ℕ} (hm : 0 < m) (hmk : m ≤ k) (hN : 0 < N) (H : ℕ) (x : ℝ) :
+    let P := RootIndexed.stepFieldLaw (Root := ℕ) μ
+    P {field | countableRootEndpointMinimum m N H field ≤ x} ≤
+      P {field | countableRootEndpointMinimum k N H field ≤ x} := by
+  classical
+  let P := RootIndexed.stepFieldLaw (Root := ℕ) μ
+  have hlaw (j : ℕ) (hj : 0 < j) :
+      P {field | countableRootEndpointMinimum j N H field ≤ x} =
+        P (RootIndexed.selectedPopulationEndpointBelow (α := ℕ) N (Finset.range j) (fun _ => 0) H x) := by
+    have hmap := congrArg (fun law : Measure ℝ => law (Set.Iic x))
+      (countableRootEndpointMinimum_map_eq μ j N H)
+    rw [Measure.map_apply (measurable_countableRootEndpointMinimum j N H) measurableSet_Iic,
+      Measure.map_apply (measurable_firstNSelectedEndpointMinimum j N H) measurableSet_Iic]
+      at hmap
+    have hmin := firstNSelectedEndpointMinimum_le_iff_endpointBelow_ae j N H hj hN μ hb hne x
+    calc
+      _ = finiteRootStepFieldLaw μ j {field | firstNSelectedEndpointMinimum j N H field ≤ x} :=
+        hmap
+      _ = finiteRootStepFieldLaw μ j (firstNSelectedEndpointBelow j N H x) :=
+        measure_congr (hmin.mono fun _ h => h.symm)
+      _ = _ := measure_firstNSelectedEndpointBelow_eq_range μ hb j N H x
+  change P _ ≤ P _
+  rw [hlaw m hm, hlaw k (hm.trans_le hmk)]
+  exact RootIndexed.measure_selectedPopulationEndpointBelow_mono_roots
+    (α := ℕ) μ hb N _ _ (Finset.range_mono hmk) (fun _ => 0) H x
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
