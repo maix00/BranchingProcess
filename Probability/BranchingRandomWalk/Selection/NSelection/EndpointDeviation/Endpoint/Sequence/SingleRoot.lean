@@ -86,7 +86,7 @@ theorem eventually_singleRootEndpointMinimum_ge_le_polynomial
   have hμne : μ nonemptySupport = 1 := by
     rw [show μ = L.sortedPotentialImage from rfl, L.sortedPotentialImage_nonemptySupport,
       L.sorted_nonemptySupport, hne]
-  obtain ⟨a, ha, ha1, R, growth, hR, hgrowth, upper, duration, T, hT, hTH, b, hb, hbad⟩ :=
+  obtain ⟨a, ha, ha1, R, growth, hR, hgrowth, upper, duration, γ, _, hT, hTH, b, hb, hbad⟩ :=
     exists_logarithmicEntrance_failure_le_polynomial L hsuper hne hexp hμnorm hN ht hH hη
   have hζgap : -a + (Real.pi ^ 2 / 2) * σ ^ 2 * t < ζ' := by
     change -a + critical < ζ'
