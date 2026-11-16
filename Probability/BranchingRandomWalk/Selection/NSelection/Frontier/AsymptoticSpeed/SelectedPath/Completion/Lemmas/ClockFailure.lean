@@ -15,17 +15,12 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticS
 
 ## Internal proof declarations
 
-* `eventually_measure_completionLate_or_trialFailure_le`: if the split
-  count and clock scales satisfy the logarithmic entrance inequalities and
-  each growth trial succeeds with probability at least $p_1>0$, then
-  $P(\{\tau\le n_N+d_N,\ \kappa\le K_N\}^{c})\le N^{-b}$
-  eventually, for some $b>0$.
 * `exists_logarithmicTrialClock_failure_le_polynomial`: with the binary cutoff
   rule and $d_N=\lfloor\alpha\log N/\log\rho\rfloor+2$, a fixed positive
-  success bound holds at target $\lceil N^\alpha\rceil$.
-  On the
-  original candidate tree the good-event complement is $O(N^{-b})$ for
-  $T_N=n_N+d_N$ and $K_N=\lfloor\delta\log N\rfloor$.
+  success bound holds at target $\lceil N^\alpha\rceil$. On the original
+  candidate tree the good-event complement is $O(N^{-b})$ for
+  $T_N=\lfloor\gamma\log N\rfloor$ and $K_N=\lfloor\delta\log N\rfloor$,
+  provided $\gamma>4\delta/p_0+\alpha/\log\rho$.
 
 This is the exceptional-event probability in Wang Yiyang, *Asymptotic
 Speed of the N-Branching Random Walk with Infinite Offspring*
@@ -46,7 +41,7 @@ open ProbabilityTheory.BranchingRandomWalk.Step.Selection
 open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 open ProbabilityTheory.BranchingProcess.GaltonWatson
 
-lemma eventually_measure_completionLate_or_trialFailure_le
+private lemma eventually_measure_completionLate_or_trialFailure_le
     {Root : Type} [MeasurableSpace Root] [MeasurableSingletonClass Root]
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (R growth : Step.FiniteSelection ℕ ℝ)
@@ -210,9 +205,9 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
       let τ i := Completion.time R growth hR hgrowth (lower i) (upper i) (d i) (0 : ℕ)
       (∀ᶠ i in atTop, p₁ ≤ (offspringFieldLaw μ).real
         {ω | growthTrialSuccess growth (lower i) (upper i) (d i) ω}) ∧
-      ∀ δ : ℝ, 0 < δ →
+      ∀ δ γ : ℝ, 0 < δ → 4 * δ / p₀ + α / Real.log ρ < γ →
         let K i := ⌊δ * Real.log (N i : ℝ)⌋₊
-        let T i := ⌈(4 * δ / p₀) * Real.log (N i : ℝ)⌉₊ + d i
+        let T i := ⌊γ * Real.log (N i : ℝ)⌋₊
         let E i := {field | splitCount R 0 ((τ i field).untopD 0 - (d i + 1))
           (RootIndexed.StepField.left field) < K i} ∩ {field | τ i field ≤ (T i : WithTop ℕ)}
         Tendsto (fun i => (T i : ℝ) / Real.log (N i : ℝ) ^ 3) atTop (𝓝 0) ∧
@@ -258,15 +253,22 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
       (rpow_mul_mean_le_pow_trialDuration hρ (N i) α hi)
       (Nat.ceil_pos.mpr (Real.rpow_pos_of_pos hNpos α)) le_rfl
   refine ⟨M, α, ρ, p₁, ha, ha1, haε, hρ, hp₁, hsuccess', ?_⟩
-  intro δ hδ
+  intro δ γ hδ hγ
   let K i := ⌊δ * Real.log (N i : ℝ)⌋₊
   let clock i := ⌈(4 * δ / p₀) * Real.log (N i : ℝ)⌉₊
   let η := (0 + (M : ℝ)) * δ + (M : ℝ) * (α / Real.log ρ) + 1
   have hbudget : (0 + (M : ℝ)) * δ + (M : ℝ) * (α / Real.log ρ) < η :=
     lt_add_of_pos_right _ zero_lt_one
-  obtain ⟨hscale, hT, hTH⟩ := logarithmicEntrance_scales
-    hρ hp₀ ha hδ (Nat.cast_nonneg M) hsmall hbudget hN ht hH d
+  have hd (i : ℕ) : (d i : ℝ) ≤ (α / Real.log ρ) * Real.log (N i : ℝ) + 2 := by
+    rw [show (α / Real.log ρ) * Real.log (N i : ℝ) = α * Real.log (N i : ℝ) / Real.log ρ by
+      ring]
+    exact trialDuration_le hρ ha.le (N i)
+  have hscale := logarithmicEntrance_scales
+    hρ hp₀ ha hδ (Nat.cast_nonneg M) hsmall hbudget hN d
     (fun i => trialDuration_le hρ ha.le (N i))
+  obtain ⟨hdom, hT, hTH⟩ :=
+    logarithmicEntrance_deadline (by positivity : 0 ≤ 4 * δ / p₀)
+      (by positivity : 0 ≤ α / Real.log ρ) hγ hN ht hH d hd
   have hμne : μ nonemptySupport = 1 := by
     change L.sortedPotentialImage nonemptySupport = 1
     rw [L.sortedPotentialImage_nonemptySupport, L.sorted_nonemptySupport]
@@ -289,8 +291,10 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
     μ R growth hR hgrowth hRne hsplit 0 hN K clock d lower upper hδ hp₁
     (hscale.mono fun _ h => h.1)
     (hscale.mono fun _ h => ⟨h.2.2.1, h.2.2.2.1, h.2.1⟩) hsuccess'
-  refine ⟨b, hb, hbad.mono fun i hi => ?_⟩
-  exact (ENNReal.toReal_mono ENNReal.ofReal_ne_top hi).trans_eq
+  refine ⟨b, hb, (hbad.and hdom).mono fun i ⟨hi, hdi⟩ => ?_⟩
+  refine (ENNReal.toReal_mono ENNReal.ofReal_ne_top ?_).trans_eq
     (ENNReal.toReal_ofReal (Real.exp_nonneg _))
+  refine (measure_mono (Set.compl_subset_compl.mpr ?_)).trans hi
+  exact fun _ hw => ⟨hw.1, hw.2.trans (WithTop.coe_le_coe.mpr hdi)⟩
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas

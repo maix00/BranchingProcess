@@ -18,7 +18,7 @@ import Combinatorics.UlamHarris.Order
 ## Internal proof declarations
 
 * `exists_logarithmicEntrance_failure_le_polynomial`: for $\eta>0$ one
-  can choose $\alpha\in(0,1)$ and a clock $T_N=o(\log^3N)$, with
+  can choose $\alpha\in(0,1)$ and $\gamma>0$ with $T_N=\lfloor\gamma\log N\rfloor=o(\log^3N)$ and
   $P(G_N^c)\le N^{-b}$ eventually for some $b>0$. On $G_N$ the first trial
   reaching $\lceil N^\alpha\rceil$ completes by $T_N$ and at least
   $\lfloor N^\alpha\rfloor$ actual particles lie below $\eta\log N$.
@@ -61,7 +61,8 @@ lemma exists_logarithmicEntrance_failure_le_polynomial
     ∃ α : ℝ, 0 < α ∧ α < 1 ∧
       ∃ (R growth : Step.FiniteSelection ℕ ℝ)
         (hR : Measurable R.select) (hgrowth : Measurable growth.select)
-        (upper duration T : ℕ → ℕ),
+        (upper duration : ℕ → ℕ) (γ : ℝ), 0 < γ ∧
+      let T := fun n => ⌊γ * Real.log (N n : ℝ)⌋₊
       Tendsto (fun n => (T n : ℝ) / Real.log (N n : ℝ) ^ 3) atTop (𝓝 0) ∧
       (∀ᶠ n in atTop, T n ≤ H n) ∧
       ∃ b : ℝ, 0 < b ∧ ∀ᶠ n in atTop,
@@ -145,10 +146,21 @@ lemma exists_logarithmicEntrance_failure_le_polynomial
   let nClock := fun n => ⌈(4 * δ / p₀) * logN n⌉₊
   let duration := fun n => ⌊α * logN n / Real.log ρ⌋₊ + 2
   let upper := fun n => 2 ^ duration n
-  let T := fun n => nClock n + duration n
-  obtain ⟨hscales, hT, hTH⟩ :=
-    logarithmicEntrance_scales hρ hp₀ ha hδ hM hsmall hbudget hN ht hH
+  let C := 4 * δ / p₀
+  let A := α / Real.log ρ
+  let γ := C + A + 1
+  have hC : 0 ≤ C := by dsimp [C]; positivity
+  have hA : 0 ≤ A := by dsimp [A]; positivity
+  have hγ : C + A < γ := lt_add_of_pos_right _ one_pos
+  let T := fun n => ⌊γ * logN n⌋₊
+  have hd (i : ℕ) : (duration i : ℝ) ≤ A * logN i + 2 := by
+    rw [show A * logN i = α * Real.log (N i : ℝ) / Real.log ρ by
+      dsimp [A, logN]; ring]
+    exact trialDuration_le hρ ha.le (N i)
+  have hscales :=
+    logarithmicEntrance_scales hρ hp₀ ha hδ hM hsmall hbudget hN
       duration (fun i => trialDuration_le hρ ha.le (N i))
+  obtain ⟨hdom, hT, hTH⟩ := logarithmicEntrance_deadline hC hA hγ hN ht hH duration hd
   let q := max (1 / 2) (1 - p₁)
   have hq : 0 < q := (show (0 : ℝ) < 1 / 2 by norm_num).trans_le (le_max_left _ _)
   have hq1 : q < 1 := max_lt (by norm_num) (by linarith)
@@ -159,9 +171,10 @@ lemma exists_logarithmicEntrance_failure_le_polynomial
     eventually_geometric_and_exponential_entrance_bound hδ hq hq1 hB hvEq hlog K nClock hK
   have habsorb : ∀ᶠ i in atTop, 4 ≤ Real.exp (b / 2 * logN i) :=
     (Real.tendsto_exp_atTop.comp (hlog.const_mul_atTop (by positivity))).eventually_ge_atTop 4
-  refine ⟨α, ha, ha1, R, growth, hR, hgrowth, upper, duration, T, hT, hTH,
-    b / 2, by positivity, ?_⟩
-  filter_upwards [hscales, hprob, habsorb, hN.eventually_ge_atTop 1] with i hs hp hab hN1
+  refine ⟨α, ha, ha1, R, growth, hR, hgrowth, upper, duration, γ,
+    (add_nonneg hC hA).trans_lt hγ, hT, hTH, b / 2, by positivity, ?_⟩
+  filter_upwards [hscales, hprob, habsorb, hdom, hN.eventually_ge_atTop 1]
+    with i hs hp hab hdomi hN1
   dsimp only
   let lower := ⌈(N i : ℝ) ^ α⌉₊
   let G := growthTrialSuccess growth lower (upper i) (duration i)
@@ -226,7 +239,7 @@ lemma exists_logarithmicEntrance_failure_le_polynomial
     (hfinite.trans ((add_le_add (add_le_add (add_le_add hclock hpow) hpow) hlarge).trans ?_))
   · intro hgood
     obtain ⟨j, hj, ⟨e, he⟩, hτ⟩ := hgood
-    exact hbad ⟨j, hj, ⟨(Fin.castLEEmb (Nat.floor_le_ceil ((N i : ℝ) ^ α))).trans e,
+    exact hbad ⟨j, hj.trans hdomi, ⟨(Fin.castLEEmb (Nat.floor_le_ceil ((N i : ℝ) ^ α))).trans e,
       fun k => he (Fin.castLEEmb (Nat.floor_le_ceil ((N i : ℝ) ^ α)) k)⟩, hτ⟩
   · have heq : Real.exp (-b * logN i) * Real.exp (b / 2 * logN i) =
         Real.exp (-(b / 2) * logN i) := by rw [← Real.exp_add]; congr 1; ring
