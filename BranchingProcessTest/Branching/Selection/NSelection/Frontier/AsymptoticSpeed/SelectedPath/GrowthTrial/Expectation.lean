@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Lemmas.Expectation
+module
+
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Lemmas.Expectation
 
 /-!
 # Axiom audit for the integrated causal selected-path bound

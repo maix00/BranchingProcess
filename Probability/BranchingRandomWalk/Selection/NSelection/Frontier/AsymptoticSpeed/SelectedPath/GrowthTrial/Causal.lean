@@ -55,6 +55,8 @@ the fixed candidate windows are independent of the success/failure outcomes.
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Population.slice_contains_selectedPath` states that
   on the alive event, the population slice contains the address pair
   $(r,\operatorname{ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.selectedPath}(R,r,n,\omega))$.
+* `Population.growthTrial_subset_during_window`: at each $j\le d$, a trial
+  born at generation $s$ is included in the parallel population at $s+j$.
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Population.growthTrial_subset_at_endpoint` embeds an enabled
   candidate at its completion generation;
   `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Population.card_ge_of_success`
@@ -439,6 +441,39 @@ private theorem GrowthTrial.candidateNode_depth
   rw [hrootDepth] at hqDepth
   omega
 
+/-- The candidate population at every age in its observation window is a
+subset of the parallel population at the same generation. -/
+theorem Population.growthTrial_subset_during_window
+    {Root α X : Type*} [Countable α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X] [DecidableEq (RootIndexed.TreeNode Root α)]
+    (R growth : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (cap duration : ℕ) (r : Root) (k age : ℕ) (hage : age ≤ duration)
+    (ω : RootIndexed.StepField Root α X)
+    (halive : ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.isAlive R r k ω)
+    (hsplit : ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.splitEvent R r k ω) :
+    rootedCapStoppedPopulation growth cap ω
+        (ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.growthTrialRootAt (ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.lineages (Root := Root) R hR)
+          R r PUnit.unit (k + 1) ω) age ⊆
+      ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Population.slice R growth hR cap duration r
+        (k + 1 + age) ω := by
+  let candidateRoot :=
+    ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.growthTrialRootAt (ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.lineages (Root := Root) R hR)
+      R r PUnit.unit (k + 1) ω
+  have henabled : k ∈ ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.enabledIndices R r duration
+      (k + 1 + age) ω := by
+    simp [ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.enabledIndices, halive, hsplit]
+    omega
+  intro q hq
+  have hcandidate : q ∈ ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.population R growth hR
+      cap duration r (k + 1 + age) ω := by
+    apply (ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.mem_population_iff R growth hR
+      cap duration r (k + 1 + age) ω q).2
+    refine ⟨k, henabled, ?_⟩
+    simpa [candidateRoot, ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Population.capStoppedCandidate,
+      Nat.add_sub_cancel_left] using hq
+  exact Finset.mem_union_right _ hcandidate
+
 /-- A pre-sampled candidate's cap-stopped population is included in the
 selected-path BRW population at its fixed endpoint. The split
 generation is read from the selected path; the candidate subtree follows the
@@ -457,23 +492,9 @@ theorem Population.growthTrial_subset_at_endpoint
         (ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.growthTrialRootAt (ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.lineages (Root := Root) R hR)
           R r PUnit.unit (k + 1) ω) duration ⊆
       ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Population.slice R growth hR cap duration r
-        (k + 1 + duration) ω := by
-  let candidateRoot :=
-    ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.growthTrialRootAt (ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.lineages (Root := Root) R hR)
-      R r PUnit.unit (k + 1) ω
-  have henabled : k ∈ ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.enabledIndices R r duration
-      (k + 1 + duration) ω := by
-    simp [ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.enabledIndices, halive, hsplit]
-    omega
-  intro q hq
-  have hcandidate : q ∈ ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.population R growth hR
-      cap duration r (k + 1 + duration) ω := by
-    apply (ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.mem_population_iff R growth hR
-      cap duration r (k + 1 + duration) ω q).2
-    refine ⟨k, henabled, ?_⟩
-    simpa [candidateRoot, ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Population.capStoppedCandidate,
-      Nat.add_sub_cancel_left] using hq
-  exact Finset.mem_union_right _ hcandidate
+        (k + 1 + duration) ω :=
+  Population.growthTrial_subset_during_window R growth hR cap duration r k duration
+    le_rfl ω halive hsplit
 
 /-- A successful pre-sampled candidate contributes at least its lower
 population bound to the selected-path BRW population at its fixed

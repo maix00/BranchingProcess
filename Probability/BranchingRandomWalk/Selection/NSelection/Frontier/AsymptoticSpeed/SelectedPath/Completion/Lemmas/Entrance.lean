@@ -12,12 +12,18 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticS
 import Probability.BranchingRandomWalk.Spine.GenerationBranching.Decomposition
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Clock
 import Mathlib.Data.Fintype.EquivFin
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Lemmas.PositivePart
 
 /-!
 # Displacement within a bounded growth trial
 
 ## Internal proof declarations
 
+* `growthTrial_position_le_cutoff_add_selectedMarkSum` bounds the positive
+  position at age $j$ of a trial born at $k+1$ by $M(k+1+j)+\sum_{i<k}(Y_i)_+$.
+* `firstSuccessfulTrial_positionWitness_during_window_ae`: from the birth
+  of the successful growth trial through completion, each member $u$ has
+  an actual selected counterpart $v$ at the same generation with $X(v)\le X(u)$.
 * `rootedCapStoppedPopulation_pathPotential_le`: if every edge selected by a
   growth trial has potential at most $M$, a particle $v$ at trial age $d$
   satisfies $V(v) \le V(u)+Md$, where $u$ is the trial root.
@@ -54,9 +60,10 @@ open ProbabilityTheory.BranchingRandomWalk.Coupling
 
 open Combinatorics.Branching.Step.FiniteSelection
 open SelectedPath.GrowthTrial
+open SelectedPath.GrowthTrial.Lemmas
 open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate)
-open GrowthTrial.Population (capStoppedPopulation capStoppedPopulation_succ_parent
+open GrowthTrial.Population (capStoppedCandidate capStoppedPopulation capStoppedPopulation_succ_parent
   rootedCapStoppedPopulation rootedCapStoppedPopulation_card_ge_of_growthTrialSuccess)
 
 
@@ -516,5 +523,106 @@ lemma measure_badEntrance_le
     _ ≤ P (late ∪ failed) + P (f ⁻¹' large) := measure_union_le _ _
     _ ≤ (P late + P failed) + P (f ⁻¹' large) := add_le_add_left (measure_union_le _ _) _
     _ ≤ _ := add_le_add (add_le_add hlate hfailed) hlarge
+
+/-- Up to the reset, the split leading to the growth trial and each of its
+truncated edges cost at most the cutoff. The preceding spine edges are
+bounded by the observed first-child positive displacements. -/
+lemma growthTrial_position_le_cutoff_add_selectedMarkSum
+    {Root : Type*}
+    (B growth : Step.FiniteSelection ℕ ℝ) (hB : B.IsBoundedBy 2)
+    (M : ℝ) (hM : 0 ≤ M)
+    (hcutoff : ∀ ξ j, j ∈ growth ξ → ξ.potentialValue' realPotential j ≤ M)
+    (r : Root) (k age upper : ℕ) (ω : RootIndexed.StepField Root ℕ ℝ)
+    (hBmeas : Measurable B.select) :
+    let R := firstOrBelowPotential B realPotential M
+    let hR := firstOrBelowPotential_measurable B hBmeas realPotential M
+    let mark j := ω r (selectedPath R r j ω)
+    (∀ j ≤ k, (mark j).IsOrderedBy realPotential) →
+    (∀ j < k, (B (mark j)).Nonempty) →
+    splitEvent R r k ω →
+    ∀ q ∈ capStoppedCandidate (lineages R hR) R growth upper r PUnit.unit (k + 1) age ω,
+      max 0 (Spine.pathPotential realPotential (ω q.1) q.2) ≤
+        M * ((k + 1 + age : ℕ) : ℝ) +
+          ∑ j ∈ Finset.range k, max 0 ((mark j).potentialValue' realPotential
+            (firstSelectedSlot B (mark j))) := by
+  intro R hR mark hordered hnonempty hsplit q hq
+  let u := growthTrialRootAt (lineages R hR) R r PUnit.unit (k + 1) ω
+  let S := ∑ j ∈ Finset.range k, max 0 ((mark j).potentialValue' realPotential
+    (firstSelectedSlot B (mark j)))
+  have hS : 0 ≤ S := Finset.sum_nonneg fun _ _ => le_max_left _ _
+  have hsp := positivePart_le_cutoff_add_firstSelectedChildSum B hB realPotential M hM r k ω
+    (fun j hj => hordered j hj.le) hnonempty
+  have hgrow := rootedCapStoppedPopulation_pathPotential_le growth realPotential M hcutoff
+    upper age ω u q hq
+  have hroot := (GrowthTrial.root_at_split R hR r k ω hsplit).1
+  have hsplitCard : 2 ≤ (R (mark k)).card := by
+    simpa [splitEvent, splitBy, mark] using hsplit
+  have hedge := (firstOrBelowPotential_edgePotentials_le_of_ordered B hB realPotential M
+    (mark k) (hordered k le_rfl) hsplitCard).1
+  have hbase : Spine.pathPotential realPotential (ω u.1) u.2 ≤ M * k + S + M := by
+    change Spine.pathPotential realPotential (ω (growthTrialRootAt (lineages R hR) R r
+      PUnit.unit (k + 1) ω).1) (growthTrialRootAt (lineages R hR) R r
+        PUnit.unit (k + 1) ω).2 ≤ _
+    rw [hroot, Spine.pathPotential_append, Spine.pathPotential_singleton]
+    have hstep : (subtreeStepField (selectedPath R r k ω) (ω r) []).potentialValue'
+        realPotential (firstSelectedSlot R (mark k)) ≤ M := by
+      simpa [subtreeStepField, mark] using hedge
+    exact add_le_add ((le_max_right 0 _).trans hsp) hstep
+  change max 0 (Spine.pathPotential realPotential (ω q.1) q.2) ≤
+    M * ((k + 1 + age : ℕ) : ℝ) + S
+  apply max_le
+  · exact add_nonneg (mul_nonneg hM (Nat.cast_nonneg _)) hS
+  · calc
+      _ ≤ Spine.pathPotential realPotential (ω u.1) u.2 + M * age := hgrow
+      _ ≤ (M * k + S + M) + M * age := add_le_add hbase le_rfl
+      _ = _ := by push_cast; ring
+
+set_option maxHeartbeats 1000000 in
+/-- At any age of the first successful trial, the corresponding descendants
+can be compared to the actual selected population at that generation.
+The parallel population supplies the pathwise comparison for these
+particular descendants of the original trial. -/
+lemma firstSuccessfulTrial_positionWitness_during_window_ae
+    {Root : Type} [MeasurableSpace Root] [MeasurableSingletonClass Root]
+    [MeasurableSpace (RootIndexed.TreeNode Root ℕ)]
+    [MeasurableSingletonClass (RootIndexed.TreeNode Root ℕ)]
+    [Countable (RootIndexed.TreeNode Root ℕ)] [LinearOrder (RootIndexed.TreeNode Root ℕ)]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hnorm : HasBoundaryNormalization realPotential μ)
+    (N : ℕ) (R growth : Step.FiniteSelection ℕ ℝ)
+    (hR : Measurable R.select) (hgrowth : Measurable growth.select)
+    (lower upper duration : ℕ) (hupper : 1 ≤ upper) (hbounded : growth.IsBoundedBy 2)
+    (hcapacity : 1 + (duration + 1) * (2 * upper) ≤ N) (r : Root) :
+    let trials := SelectedPath.Population.leftBRWFamily_finiteSlices R growth hR hgrowth
+      upper duration r
+    let τ := Completion.time R growth hR hgrowth lower upper duration r
+    ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ,
+      let left := RootIndexed.StepField.left field
+      ∀ k age : ℕ, age ≤ duration → τ field = ((k + 1 + duration : ℕ) : WithTop ℕ) →
+        ∀ q ∈ capStoppedCandidate (lineages R hR) R growth upper r
+            PUnit.unit (k + 1) age left,
+          ∃ p ∈ RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
+              (fun _ => 0) id trials.toFinset (k + 1 + age) field,
+            RootIndexed.position (fun _ => 0) id
+              (RootIndexed.restartedRealPositionNSelectedBRWField N {r}
+                (fun _ => 0) id trials.toFinset (k + 1 + age) field) p.1 p.2 ≤
+              RootIndexed.position (fun _ => 0) id left q.1 q.2 := by
+  intro trials τ
+  have hcomp (n : ℕ) := Coupling.positionWitness_ae μ hnorm N (fun _ => 0)
+    R growth hR hgrowth upper duration hbounded hupper hcapacity r n
+  filter_upwards [ae_all_iff.2 hcomp] with field hf
+  intro left k age hage ht q hq
+  let declarations : ℕ → Set (RootIndexed.StepField Root ℕ ℝ) := fun n =>
+    {ω | ∃ k, ((k + 1 + duration : ℕ) : WithTop ℕ) = n ∧
+      ω ∈ successEvent R growth hR lower upper duration r k}
+  have hfirst : firstDeclaredSuccess declarations left = ((k + 1 + duration : ℕ) : WithTop ℕ) := ht
+  obtain ⟨j, hj, hs⟩ := ((firstDeclaredSuccess_eq_iff declarations left _).mp hfirst).1
+  have hjk : j = k := by
+    have h : j + 1 + duration = k + 1 + duration := WithTop.coe_injective hj
+    omega
+  subst j
+  obtain ⟨halive, hsplit, _⟩ := hs
+  exact hf (k + 1 + age) q (SelectedPath.Population.growthTrial_subset_during_window
+    R growth hR upper duration r k age hage left halive hsplit hq)
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas

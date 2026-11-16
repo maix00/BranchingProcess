@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Lemmas.PositivePart
+module
+
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Lemmas.PositivePart
 
 /-!
 # Axiom audit for the selected-path BRW population positive-part estimate
