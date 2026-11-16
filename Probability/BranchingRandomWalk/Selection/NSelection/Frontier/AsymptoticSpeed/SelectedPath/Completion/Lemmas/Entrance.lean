@@ -19,6 +19,15 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.Asympto
 
 ## Internal proof declarations
 
+* `trialResetPositionAtGeneration` is the maximum position of the terminal
+  candidate born at $n-d$, evaluated at completion generation $n$.
+* `trialResetPositionAtGeneration_measurable`: that maximum is observable at $n$.
+* `trialResetPositionAtGeneration_le` bounds it by the growth-root position
+  plus $Md$ when all retained edges cost at most $M$.
+* `entrance_count_le_at_trialResetPosition_ae`: if the trial succeeds with at
+  least $m$ particles then at least $m$ actual selected particles lie at or
+  below its maximum.
+
 * `trialRestartPopulationBeforeReset` gives the selected-path particle before
   the successful trial is born, and the descendants in that trial between its
   birth and its completion $\tau$.
@@ -71,7 +80,8 @@ open SelectedPath.GrowthTrial.Lemmas
 open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate)
 open GrowthTrial.Population (capStoppedCandidate capStoppedPopulation capStoppedPopulation_succ_parent
-  rootedCapStoppedPopulation rootedCapStoppedPopulation_card_ge_of_growthTrialSuccess)
+  rootedCapStoppedPopulation rootedCapStoppedPopulation_card_ge_of_growthTrialSuccess
+  rootedCapStoppedPopulation_node_depth capStoppedCandidate_adapted)
 
 
 private lemma capStoppedPopulation_pathPotential_le
@@ -106,7 +116,7 @@ lemma rootedCapStoppedPopulation_pathPotential_le
   exact add_le_add le_rfl (capStoppedPopulation_pathPotential_le growth φ M hbound cap age
     (ProbabilityTheory.BranchingRandomWalk.subtreeStepField u.2 (ω u.1)) w hw)
 
-lemma entrance_count_le_of_trial_success_ae
+private lemma entrance_count_le_of_trial_positions_ae
     {Root α : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
     [MeasurableSpace Root] [MeasurableSingletonClass Root]
@@ -119,7 +129,6 @@ lemma entrance_count_le_of_trial_success_ae
     (hR : Measurable R.select) (hgrowth : Measurable growth.select)
     (lower upper duration : ℕ) (hupper : 1 ≤ upper)
     (hbounded : growth.IsBoundedBy 2) (hcapacity : 1 + (duration + 1) * (2 * upper) ≤ N)
-    (M : ℝ) (hcutoff : ∀ ξ j, j ∈ growth ξ → ξ.potentialValue' realPotential j ≤ M)
     (r : Root) (k : ℕ) :
     let n := k + 1 + duration
     let trials := SelectedPath.Population.leftBRWFamily_finiteSlices R growth hR hgrowth
@@ -132,10 +141,11 @@ lemma entrance_count_le_of_trial_success_ae
       let left := RootIndexed.StepField.left field
       let u := growthTrialRootAt (lineages R hR) R r PUnit.unit (k + 1) left
       left ∈ successEvent R growth hR lower upper duration r k →
-      ∀ x : ℝ, Spine.pathPotential realPotential (left u.1) u.2 ≤ x →
+      ∀ x : ℝ, (∀ q ∈ rootedCapStoppedPopulation growth upper left u duration,
+        RootIndexed.position (fun _ => 0) id left q.1 q.2 ≤ x) →
         lower ≤ ((population field).filter fun p =>
           RootIndexed.position (fun _ => 0) id (selectedField field) p.1 p.2 ≤
-            x + M * duration).card := by
+            x).card := by
   classical
   dsimp only
   let trials := SelectedPath.Population.leftBRWFamily_finiteSlices R growth hR hgrowth
@@ -173,15 +183,195 @@ lemma entrance_count_le_of_trial_success_ae
     apply Finset.mem_filter.mpr
     refine ⟨dom.mapsTo hparticle, ?_⟩
     have hdom := dom.dominates q hparticle
-    have hpos := rootedCapStoppedPopulation_pathPotential_le growth realPotential
-      M hcutoff upper duration left u q hq'
-    have hs : RootIndexed.position (fun _ => 0) id left q.1 q.2 =
-        Spine.pathPotential realPotential (left q.1) q.2 := by
-      simp [RootIndexed.position, RootIndexed.displace, Spine.pathPotential, realPotential]
-    change RootIndexed.position (fun _ => 0) id _ (dom q).1 (dom q).2 ≤
-      RootIndexed.position (fun _ => 0) id left q.1 q.2 at hdom
-    exact hdom.trans (hs.trans_le (hpos.trans (by gcongr)))
+    exact hdom.trans (hx q hq')
   · exact dom.injOn.mono fun _ hq => hmem hq
+
+lemma entrance_count_le_of_trial_success_ae
+    {Root α : Type*} [Countable α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
+    [MeasurableSpace Root] [MeasurableSingletonClass Root]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    [MeasurableSingletonClass (RootIndexed.TreeNode Root α)]
+    [Countable (RootIndexed.TreeNode Root α)] [LinearOrder (RootIndexed.TreeNode Root α)]
+    (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
+    (hnorm : HasBoundaryNormalization realPotential μ)
+    (N : ℕ) (R growth : Step.FiniteSelection α ℝ)
+    (hR : Measurable R.select) (hgrowth : Measurable growth.select)
+    (lower upper duration : ℕ) (hupper : 1 ≤ upper)
+    (hbounded : growth.IsBoundedBy 2) (hcapacity : 1 + (duration + 1) * (2 * upper) ≤ N)
+    (M : ℝ) (hcutoff : ∀ ξ j, j ∈ growth ξ → ξ.potentialValue' realPotential j ≤ M)
+    (r : Root) (k : ℕ) :
+    let n := k + 1 + duration
+    let trials := SelectedPath.Population.leftBRWFamily_finiteSlices R growth hR hgrowth
+      upper duration r
+    let population := RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r} (fun _ => 0)
+      id trials.toFinset n
+    let selectedField := RootIndexed.restartedRealPositionNSelectedBRWField N {r} (fun _ => 0)
+      id trials.toFinset n
+    ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ,
+      let left := RootIndexed.StepField.left field
+      let u := growthTrialRootAt (lineages R hR) R r PUnit.unit (k + 1) left
+      left ∈ successEvent R growth hR lower upper duration r k →
+      ∀ x : ℝ, Spine.pathPotential realPotential (left u.1) u.2 ≤ x →
+        lower ≤ ((population field).filter fun p =>
+          RootIndexed.position (fun _ => 0) id (selectedField field) p.1 p.2 ≤
+            x + M * duration).card := by
+  dsimp only
+  have hcount := entrance_count_le_of_trial_positions_ae μ hnorm N R growth hR hgrowth
+    lower upper duration hupper hbounded hcapacity r k
+  filter_upwards [hcount] with field hf hsuccess x hx
+  apply hf hsuccess (x + M * duration)
+  intro q hq
+  have hpos := rootedCapStoppedPopulation_pathPotential_le growth realPotential M hcutoff
+    upper duration (RootIndexed.StepField.left field) _ q hq
+  have hs : RootIndexed.position (fun _ => 0) id (RootIndexed.StepField.left field) q.1 q.2 =
+      Spine.pathPotential realPotential ((RootIndexed.StepField.left field) q.1) q.2 := by
+    simp [RootIndexed.position, RootIndexed.displace, Spine.pathPotential, realPotential]
+  rw [hs]
+  exact hpos.trans (add_le_add_left hx _)
+
+/-- The terminal growth-trial maximum at generation `n`.
+The zero value on an empty candidate totalizes the observable. -/
+noncomputable def trialResetPositionAtGeneration
+    {Root : Type*} (R growth : Step.FiniteSelection ℕ ℝ)
+    (hR : Measurable R.select) (upper duration : ℕ) (r : Root) (n : ℕ)
+    (ω : RootIndexed.StepField Root ℕ ℝ) : ℝ :=
+  let S := capStoppedCandidate (lineages R hR) R growth upper r
+    PUnit.unit (n - duration) duration ω
+  if hS : S.Nonempty then S.sup' hS (fun q =>
+    RootIndexed.positionAtGeneration (fun _ => 0) id n q.1 q.2 ω)
+  else 0
+
+lemma trialResetPositionAtGeneration_measurable
+    {Root : Type*} [MeasurableSpace Root] [MeasurableSingletonClass Root]
+    [Countable (RootIndexed.TreeNode Root ℕ)]
+    [MeasurableSpace (RootIndexed.TreeNode Root ℕ)]
+    [MeasurableSingletonClass (RootIndexed.TreeNode Root ℕ)]
+    (R growth : Step.FiniteSelection ℕ ℝ)
+    (hR : Measurable R.select) (hgrowth : Measurable growth.select)
+    (upper duration : ℕ) (r : Root) (n : ℕ) (hn : duration ≤ n) :
+    Measurable[RootIndexed.stepFiltration (Root := Root) (α := ℕ) (X := ℝ) n]
+      (trialResetPositionAtGeneration R growth hR upper duration r n) := by
+  classical
+  let Ω := RootIndexed.StepField Root ℕ ℝ
+  let F := RootIndexed.stepFiltration (Root := Root) (α := ℕ) (X := ℝ) n
+  let S := capStoppedCandidate (lineages R hR) R growth upper r PUnit.unit
+    (n - duration) duration
+  have hS := capStoppedCandidate_adapted (lineages R hR) R growth hR hgrowth upper r
+    PUnit.unit (n - duration) duration
+  rw [Nat.sub_add_cancel hn] at hS
+  let f (s : Finset (RootIndexed.TreeNode Root ℕ)) (ω : Ω) : ℝ :=
+    if hs : s.Nonempty then s.sup' hs (fun q =>
+      RootIndexed.positionAtGeneration (fun _ => 0) id n q.1 q.2 ω)
+    else 0
+  have hf (s : Finset (RootIndexed.TreeNode Root ℕ)) : Measurable[F] (f s) := by
+    by_cases hs : s.Nonempty
+    · let _ : MeasurableSpace Ω := F
+      have h := Finset.measurable_sup' (δ := Ω) hs (f := fun q =>
+        RootIndexed.positionAtGeneration (fun _ => 0) id n q.1 q.2)
+        (fun q _ => RootIndexed.positionAtGeneration_measurable _ id measurable_id n q.1 q.2)
+      simp only [f, dite_eq_left hs]
+      convert h using 1
+      funext ω
+      simp only [Finset.sup'_apply]
+    · simpa only [f, dite_eq_right hs] using (measurable_const (a := (0 : ℝ)))
+  intro B hB
+  change MeasurableSet[F] ((fun ω => f (S ω) ω) ⁻¹' B)
+  have heq : (fun ω => f (S ω) ω) ⁻¹' B =
+      ⋃ s : Finset (RootIndexed.TreeNode Root ℕ), S ⁻¹' {s} ∩ f s ⁻¹' B := by
+    ext ω
+    simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_singleton_iff]
+    exact ⟨fun h => ⟨S ω, rfl, h⟩, fun ⟨_, rfl, h⟩ => h⟩
+  rw [heq]
+  exact MeasurableSet.iUnion fun s => (hS (measurableSet_singleton s)).inter (hf s hB)
+
+/-- The reset position is at most the growth-root position plus the
+cutoff times the number of growth generations. -/
+lemma trialResetPositionAtGeneration_le
+    {Root : Type*} (R growth : Step.FiniteSelection ℕ ℝ)
+    (hR : Measurable R.select) (lower upper duration : ℕ) (r : Root) (k : ℕ)
+    (hupper : 1 ≤ upper) (hlower : 0 < lower)
+    (M : ℝ) (hcutoff : ∀ ξ j, j ∈ growth ξ → ξ.potentialValue' realPotential j ≤ M)
+    (ω : RootIndexed.StepField Root ℕ ℝ)
+    (hs : ω ∈ successEvent R growth hR lower upper duration r k) :
+    let u := growthTrialRootAt (lineages R hR) R r PUnit.unit (k + 1) ω
+    trialResetPositionAtGeneration R growth hR upper duration r (k + 1 + duration) ω ≤
+      Spine.pathPotential realPotential (ω u.1) u.2 + M * duration := by
+  intro u
+  let S := rootedCapStoppedPopulation growth upper ω u duration
+  have hcard : lower ≤ S.card :=
+    rootedCapStoppedPopulation_card_ge_of_growthTrialSuccess growth lower upper duration ω
+      u hupper hs.2.2
+  have hne : S.Nonempty := Finset.card_pos.mp (hlower.trans_le hcard)
+  have hu : u.2.length = k + 1 := growthTrialRootAt_depth (lineages R hR) R r
+    PUnit.unit (k + 1) ω
+  have hc : trialResetPositionAtGeneration R growth hR upper duration r (k + 1 + duration) ω =
+      S.sup' hne (fun q =>
+        RootIndexed.positionAtGeneration (fun _ => 0) id (k + 1 + duration) q.1 q.2 ω) := by
+    simp only [trialResetPositionAtGeneration, Nat.add_sub_cancel, dite_eq_left hne, S, u,
+      capStoppedCandidate]
+  rw [hc, Finset.sup'_le_iff]
+  intro q hq
+  have hdepth := rootedCapStoppedPopulation_node_depth growth upper ω u q duration hq
+  rw [RootIndexed.positionAtGeneration, ite_eq_left (hdepth.trans (congrArg (· + duration) hu))]
+  have hpos : RootIndexed.position (fun _ => 0) id ω q.1 q.2 =
+      Spine.pathPotential realPotential (ω q.1) q.2 := by
+    simp [RootIndexed.position, RootIndexed.displace, Spine.pathPotential, realPotential]
+  rw [hpos]
+  exact rootedCapStoppedPopulation_pathPotential_le growth realPotential M hcutoff
+    upper duration ω u q hq
+
+lemma entrance_count_le_at_trialResetPosition_ae
+    {Root : Type*} [MeasurableSpace Root] [MeasurableSingletonClass Root]
+    [MeasurableSpace (RootIndexed.TreeNode Root ℕ)]
+    [MeasurableSingletonClass (RootIndexed.TreeNode Root ℕ)]
+    [Countable (RootIndexed.TreeNode Root ℕ)] [LinearOrder (RootIndexed.TreeNode Root ℕ)]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hnorm : HasBoundaryNormalization realPotential μ)
+    (N : ℕ) (R growth : Step.FiniteSelection ℕ ℝ)
+    (hR : Measurable R.select) (hgrowth : Measurable growth.select)
+    (lower upper duration : ℕ) (hupper : 1 ≤ upper) (hbounded : growth.IsBoundedBy 2)
+    (hcapacity : 1 + (duration + 1) * (2 * upper) ≤ N) (r : Root) (k : ℕ) :
+    let n := k + 1 + duration
+    let trials := SelectedPath.Population.leftBRWFamily_finiteSlices R growth hR hgrowth
+      upper duration r
+    let population := RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r} (fun _ => 0)
+      id trials.toFinset n
+    let selectedField := RootIndexed.restartedRealPositionNSelectedBRWField N {r} (fun _ => 0)
+      id trials.toFinset n
+    ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ,
+      let left := RootIndexed.StepField.left field
+      left ∈ successEvent R growth hR lower upper duration r k →
+      lower ≤ ((population field).filter fun q =>
+        RootIndexed.position (fun _ => 0) id (selectedField field) q.1 q.2 ≤
+          trialResetPositionAtGeneration R growth hR upper duration r n left).card := by
+  dsimp only
+  have hcount := entrance_count_le_of_trial_positions_ae μ hnorm N R growth hR hgrowth
+    lower upper duration hupper hbounded hcapacity r k
+  filter_upwards [hcount] with field hf hs
+  apply hf hs
+  intro q hq
+  let ω := RootIndexed.StepField.left field
+  let u := growthTrialRootAt (lineages R hR) R r PUnit.unit (k + 1) ω
+  let S := rootedCapStoppedPopulation growth upper ω u duration
+  have hqS : q ∈ S := hq
+  have hdepth := rootedCapStoppedPopulation_node_depth growth upper ω u q duration hqS
+  have hu : u.2.length = k + 1 := growthTrialRootAt_depth (lineages R hR) R r
+    PUnit.unit (k + 1) ω
+  have hne : S.Nonempty := ⟨q, hqS⟩
+  have hc : trialResetPositionAtGeneration R growth hR upper duration r (k + 1 + duration) ω =
+      S.sup' hne (fun q =>
+        RootIndexed.positionAtGeneration (fun _ => 0) id (k + 1 + duration) q.1 q.2 ω) := by
+    simp only [trialResetPositionAtGeneration, Nat.add_sub_cancel, dite_eq_left hne, S, u,
+      capStoppedCandidate]
+  change RootIndexed.position (fun _ => 0) id ω q.1 q.2 ≤
+    trialResetPositionAtGeneration R growth hR upper duration r (k + 1 + duration) ω
+  rw [hc]
+  have hle := Finset.le_sup' (fun q =>
+    RootIndexed.positionAtGeneration (fun _ => 0) id (k + 1 + duration) q.1 q.2 ω) hqS
+  simpa only [RootIndexed.positionAtGeneration, hdepth.trans (congrArg (· + duration) hu),
+    ite_true] using hle
+
 
 lemma entrance_count_le_at_firstSuccessfulCompletion_ae
     {Root α : Type*} [Countable α] [MeasurableSpace α]
@@ -590,7 +780,7 @@ can be compared to the actual selected population at that generation.
 The parallel population supplies the pathwise comparison for these
 particular descendants of the original trial. -/
 lemma firstSuccessfulTrial_positionWitness_during_window_ae
-    {Root : Type} [MeasurableSpace Root] [MeasurableSingletonClass Root]
+    {Root : Type*} [MeasurableSpace Root] [MeasurableSingletonClass Root]
     [MeasurableSpace (RootIndexed.TreeNode Root ℕ)]
     [MeasurableSingletonClass (RootIndexed.TreeNode Root ℕ)]
     [Countable (RootIndexed.TreeNode Root ℕ)] [LinearOrder (RootIndexed.TreeNode Root ℕ)]
@@ -653,7 +843,7 @@ set_option maxHeartbeats 1000000 in
 The comparison is obtained by restricting the injection of the causal
 population to the chosen slice. -/
 lemma trialRestartPopulationBeforeReset_positionWitness_ae
-    {Root : Type} [MeasurableSpace Root] [MeasurableSingletonClass Root]
+    {Root : Type*} [MeasurableSpace Root] [MeasurableSingletonClass Root]
     [MeasurableSpace (RootIndexed.TreeNode Root ℕ)]
     [MeasurableSingletonClass (RootIndexed.TreeNode Root ℕ)]
     [Countable (RootIndexed.TreeNode Root ℕ)] [LinearOrder (RootIndexed.TreeNode Root ℕ)]
