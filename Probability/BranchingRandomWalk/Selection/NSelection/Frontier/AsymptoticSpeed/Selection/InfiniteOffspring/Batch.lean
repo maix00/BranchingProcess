@@ -13,7 +13,7 @@ public import Combinatorics.BranchingWalk.Step.Ordering.Monotone
 public import Combinatorics.Selection.NSelection.Matching.SelectedPopulation
 public import Combinatorics.Selection.NSelection.Matching.ByRank
 public import Mathlib.Data.Finset.Sort
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # Optional-slot offspring batches
@@ -31,6 +31,9 @@ InfiniteSlotLabel (a parent rank and natural-number child slot),
 infiniteOffspringCandidates, infiniteOffspringPosition, and
 selectedLabelAtRank. The selection facts selectedLabelAtRank_mem and
 selectedLabelAtRank_rank identify the selected label and its rank.
+infiniteOffspringPosition_select_mono_of_capacity_le gives
+$T_{N_2}(x^2)_i \le T_{N_1}(x^1)_i$ for $N_1 \le N_2$ and $i<N_1$
+when $x_i^2 \le x_i^1$ and the offspring marks agree on common ranks.
 infiniteOffspringPosition_select_mono states that coordinatewise lowering
 parent positions lowers every rank after common-mark leftmost-N selection.
 
@@ -116,9 +119,81 @@ theorem selectedLabelAtRank_rank {N : ℕ}
     exact (Option.some_get _).symm
   exact (particleAtRankBy_eq_some_iff.mp hget).2
 
-/-- With the same optional offspring slots, lowering every parent position
-lowers every selected spatial rank.  The proof handles arbitrary/countable
-offspring populations through `IsFirstNBy` and Hall matching. -/
+/-- At common parent ranks use the same optional offspring slots. If the
+larger population starts to the left at these ranks, each of its corresponding
+selected ranks is also to the left. -/
+theorem infiniteOffspringPosition_select_mono_of_capacity_le
+    {N₁ N₂ : ℕ} (hcapacity : N₁ ≤ N₂)
+    (positionSmall : Fin N₁ → ℝ) (positionLarge : Fin N₂ → ℝ)
+    (offspring : Fin N₂ → Step ℕ ℝ)
+    (selectedSmall : Finset (InfiniteSlotLabel N₁))
+    (selectedLarge : Finset (InfiniteSlotLabel N₂))
+    (hSmall : IsFirstNBy N₁
+      (infiniteOffspringPosition positionSmall (offspring ∘ Fin.castLE hcapacity))
+      (infiniteOffspringCandidates (offspring ∘ Fin.castLE hcapacity)) selectedSmall)
+    (hLarge : IsFirstNBy N₂ (infiniteOffspringPosition positionLarge offspring)
+      (infiniteOffspringCandidates offspring) selectedLarge)
+    (hSmallCard : selectedSmall.card = N₁) (hLargeCard : selectedLarge.card = N₂)
+    (hposition : ∀ i, positionLarge (Fin.castLE hcapacity i) ≤ positionSmall i) :
+    ∀ i : Fin N₁,
+      infiniteOffspringPosition positionLarge offspring
+          (selectedLabelAtRank (infiniteOffspringPosition positionLarge offspring)
+            selectedLarge hLargeCard (Fin.castLE hcapacity i)) ≤
+        infiniteOffspringPosition positionSmall (offspring ∘ Fin.castLE hcapacity)
+          (selectedLabelAtRank
+            (infiniteOffspringPosition positionSmall (offspring ∘ Fin.castLE hcapacity))
+            selectedSmall hSmallCard i) := by
+  classical
+  let smallValue := infiniteOffspringPosition positionSmall (offspring ∘ Fin.castLE hcapacity)
+  let largeValue := infiniteOffspringPosition positionLarge offspring
+  let sameSlot (q : InfiniteSlotLabel N₁) : InfiniteSlotLabel N₂ :=
+    toLex (Fin.castLE hcapacity (ofLex q).1, (ofLex q).2)
+  have hmatching := exists_injective_le_of_partnerAssignment_into_firstNBy
+    N₂ smallValue largeValue selectedSmall (infiniteOffspringCandidates offspring)
+    selectedLarge hLarge (hSmallCard.trans_le hcapacity)
+    (fun q : {q // q ∈ selectedSmall} => sameSlot q.1)
+    (by intro q; exact hSmall.subset q.2)
+    (by
+      intro q r hqr
+      apply Subtype.ext
+      have hparent := congrArg (fun z : InfiniteSlotLabel N₂ => (ofLex z).1) hqr
+      have hslot := congrArg (fun z : InfiniteSlotLabel N₂ => (ofLex z).2) hqr
+      have hpair : ofLex q.1 = ofLex r.1 :=
+        Prod.ext (Fin.castLE_injective hcapacity hparent) hslot
+      exact congrArg toLex hpair)
+    (by
+      intro q
+      exact add_le_add (hposition (ofLex q.1).1) le_rfl)
+  obtain ⟨partnerOfObject, hmatchMem, hmatchLe, hmatchInj⟩ := hmatching
+  have hthreshold : ∀ a : ℝ,
+      (selectedSmall.filter fun q => smallValue q ≤ a).card ≤
+        (selectedLarge.filter fun q => largeValue q ≤ a).card := by
+    intro a
+    let selectedSmallAtMostA := selectedSmall.filter fun q => smallValue q ≤ a
+    let selectedLargeAtMostA := selectedLarge.filter fun q => largeValue q ≤ a
+    let f : {q // q ∈ selectedSmallAtMostA} → {q // q ∈ selectedLargeAtMostA} := fun q =>
+      ⟨partnerOfObject q.1 (Finset.mem_filter.mp q.2 |>.1),
+        Finset.mem_filter.mpr ⟨
+          hmatchMem q.1 (Finset.mem_filter.mp q.2 |>.1),
+          (hmatchLe q.1 (Finset.mem_filter.mp q.2 |>.1)).trans
+            (Finset.mem_filter.mp q.2 |>.2)⟩⟩
+    have hf : Function.Injective f := by
+      intro q r hqr
+      apply Subtype.ext
+      apply hmatchInj q.1 (Finset.mem_filter.mp q.2 |>.1)
+        r.1 (Finset.mem_filter.mp r.2 |>.1)
+      exact congrArg Subtype.val hqr
+    simpa [selectedSmallAtMostA, selectedLargeAtMostA] using Finset.card_le_card_of_injective hf
+  intro i
+  exact partnerOrderKey_le_of_rankBy_eq_of_filter_card_le smallValue largeValue
+    selectedSmall selectedLarge hthreshold
+    (selectedLabelAtRank_mem smallValue selectedSmall hSmallCard i)
+    ((selectedLabelAtRank_rank largeValue selectedLarge hLargeCard
+      (Fin.castLE hcapacity i)).trans
+        (selectedLabelAtRank_rank smallValue selectedSmall hSmallCard i).symm)
+
+/-- At fixed capacity, lowering every starting position lowers each selected
+rank under the same offspring marks. -/
 theorem infiniteOffspringPosition_select_mono
     {N : ℕ}
     (positionLow positionHigh : Fin N → ℝ)
@@ -138,59 +213,9 @@ theorem infiniteOffspringPosition_select_mono
         infiniteOffspringPosition positionHigh offspring
           (selectedLabelAtRank (infiniteOffspringPosition positionHigh offspring)
             selectedHigh hHighCard i) := by
-  classical
-  let lowValue := infiniteOffspringPosition positionLow offspring
-  let highValue := infiniteOffspringPosition positionHigh offspring
-  have hmatching := exists_injective_le_of_partnerAssignment_into_firstNBy
-    N highValue lowValue selectedHigh (infiniteOffspringCandidates offspring)
-    selectedLow hLow (by rw [hHighCard])
-    (fun q : {q // q ∈ selectedHigh} => q.1)
-    (by intro q; exact hHigh.subset q.2)
-    (by intro q r hqr; exact Subtype.ext hqr)
-    (by
-      intro q
-      dsimp [lowValue, highValue, infiniteOffspringPosition]
-      linarith [hposition (ofLex q.1).1])
-  obtain ⟨partnerOfObject, hmatchMem, hmatchLe, hmatchInj⟩ := hmatching
-  have hthreshold : ∀ a : ℝ,
-      (selectedHigh.filter fun q => highValue q ≤ a).card ≤
-        (selectedLow.filter fun q => lowValue q ≤ a).card := by
-    intro a
-    let selectedHighAtMostA := selectedHigh.filter fun q => highValue q ≤ a
-    let selectedLowAtMostA := selectedLow.filter fun q => lowValue q ≤ a
-    let f : {q // q ∈ selectedHighAtMostA} → {q // q ∈ selectedLowAtMostA} := fun q =>
-      ⟨partnerOfObject q.1 (Finset.mem_filter.mp q.2 |>.1),
-        Finset.mem_filter.mpr ⟨
-          hmatchMem q.1 (Finset.mem_filter.mp q.2 |>.1),
-          (hmatchLe q.1 (Finset.mem_filter.mp q.2 |>.1)).trans
-            (Finset.mem_filter.mp q.2 |>.2)⟩⟩
-    have hf : Function.Injective f := by
-      intro q r hqr
-      apply Subtype.ext
-      apply hmatchInj q.1 (Finset.mem_filter.mp q.2 |>.1)
-        r.1 (Finset.mem_filter.mp r.2 |>.1)
-      exact congrArg Subtype.val hqr
-    simpa [selectedHighAtMostA, selectedLowAtMostA] using Finset.card_le_card_of_injective hf
-  intro i
-  let q := selectedLabelAtRank highValue selectedHigh hHighCard i
-  have hq : q ∈ selectedHigh := by
-    exact selectedLabelAtRank_mem highValue selectedHigh hHighCard i
-  let r := matchByRank highValue lowValue selectedHigh selectedLow
-    (by rw [hHighCard, hLowCard]) q hq
-  have hr : r ∈ selectedLow :=
-    matchByRank_mem highValue lowValue selectedHigh selectedLow
-      (by rw [hHighCard, hLowCard]) q hq
-  have hrank : rankBy lowValue selectedLow r = i.val := by
-    rw [rankBy_matchByRank]
-    exact selectedLabelAtRank_rank highValue selectedHigh hHighCard i
-  have hrank' := selectedLabelAtRank_rank lowValue selectedLow hLowCard i
-  have hEq : r = selectedLabelAtRank lowValue selectedLow hLowCard i :=
-    rankBy_injOn lowValue selectedLow hr
-      (selectedLabelAtRank_mem lowValue selectedLow hLowCard i)
-      (hrank.trans hrank'.symm)
-  rw [← hEq]
-  exact matchByRank_partnerOrderKey_le highValue lowValue selectedHigh selectedLow
-    (by rw [hHighCard, hLowCard]) hthreshold q hq
+  exact infiniteOffspringPosition_select_mono_of_capacity_le (le_refl N)
+    positionHigh positionLow offspring selectedHigh selectedLow hHigh hLow
+    hHighCard hLowCard hposition
 
 /-- A batch is admissible when each parent has finite negative exponential
 weight and the batch contains at least N present candidates.  Individual
