@@ -233,40 +233,6 @@ lemma splitWaitingDisplacement_measurable
     rw [heq]
     exact (hσ.measurableSet_inter_eq_iff _ n).2 ((hsum n hA).inter (hσ.measurableSet_eq n))
 
-private lemma exponentialTerm_at_first_sampled_split
-    (R : Step.FiniteSelection ℕ ℝ) (ω : RootIndexed.StepField PUnit.{1} ℕ ℝ)
-    (n : ℕ) (hn : splitEvent R PUnit.unit.{1} n ω)
-    (hbefore : ∀ i < n, ¬ splitEvent R PUnit.unit.{1} i ω)
-    (lam : ℝ) :
-    (∑' k, geometricFailureExponentialTerm (Coupling.step R PUnit.unit.{1})
-      (splitBy R) (fun ξ => value' ξ 0) lam k ω) =
-    ENNReal.ofReal (Real.exp (lam * waitingSum R n (ω PUnit.unit.{1}))) := by
-  let f := fun k => geometricFailureExponentialTerm (Coupling.step R PUnit.unit.{1})
-    (splitBy R) (fun ξ => value' ξ 0) lam k ω
-  have hsplit : Coupling.step R PUnit.unit.{1} n ω ∈ splitBy R := hn
-  have hfail (i : ℕ) (hi : i < n) : Coupling.step R PUnit.unit.{1} i ω ∉ splitBy R := hbefore i hi
-  have hf (k : ℕ) (hk : k ≠ n) : f k = 0 := by
-    unfold f geometricFailureExponentialTerm
-    by_cases hkn : k < n
-    · rw [Finset.prod_range_succ, ite_eq_right (Nat.lt_irrefl _)]
-      rw [Set.indicator_of_notMem (hfail k hkn), mul_zero]
-    · have hnk : n < k := by omega
-      apply Finset.prod_eq_zero (Finset.mem_range.mpr (by omega) : n ∈ Finset.range (k + 1))
-      rw [ite_eq_left hnk]
-      have hnot : Coupling.step R PUnit.unit.{1} n ω ∉ (splitBy R)ᶜ := fun h => h hsplit
-      rw [Set.indicator_of_notMem hnot, mul_zero]
-  change (∑' k, f k) = _
-  rw [tsum_eq_single n hf]
-  unfold f geometricFailureExponentialTerm
-  rw [Finset.prod_range_succ, ite_eq_right (Nat.lt_irrefl _), Set.indicator_of_mem hsplit, mul_one,
-    waitingSum, Finset.mul_sum, Real.exp_sum, ENNReal.ofReal_prod_of_nonneg]
-  · apply Finset.prod_congr rfl
-    intro i hi
-    rw [ite_eq_left (Finset.mem_range.mp hi),
-      Set.indicator_of_mem (show Coupling.step R PUnit.unit.{1} i ω ∈ (splitBy R)ᶜ from hfail i (Finset.mem_range.mp hi)), mul_one]
-  · intro i _
-    exact (Real.exp_pos _).le
-
 lemma exists_splitWaitingDisplacement_exponentialMoment
     {ι X : Type*} [MeasurableSpace X]
     (L : StepLaw ι ℕ X) [IsProbabilityMeasure L.raw]
@@ -322,12 +288,17 @@ lemma exists_splitWaitingDisplacement_exponentialMoment
   | succ n =>
     have hn := selectedPopulationRawSplitTime_eq_of_completion_eq R _ n hj.symm
     obtain ⟨hs, hbefore⟩ := first_sampled_split_of_rawSplitTime_eq R PUnit.unit.{1} ω n hnonempty hn
-    rw [exponentialTerm_at_first_sampled_split R ω n hs hbefore lam]
+    rw [geometricFailureExponentialTerm_tsum_eq_of_first_success
+      (Coupling.step R PUnit.unit.{1}) (splitBy R) (fun ξ => value' ξ 0) lam ω n hs hbefore]
     change ENNReal.ofReal (Real.exp (lam * splitWaitingDisplacement R (ω PUnit.unit))) = _
     unfold splitWaitingDisplacement
     rw [hj.symm]
     change ENNReal.ofReal (Real.exp (lam * waitingSum R (n + 1 - 1) (ω PUnit.unit))) = _
-    simp
+    have heq : singletonField (ω PUnit.unit) = ω := by
+      funext u
+      cases u
+      rfl
+    simp [waitingSum, heq]
 
 private lemma potential_selectedPath_eq_waitingSum
     (R : Step.FiniteSelection ℕ ℝ) (ω : Mark ℕ (Step ℕ ℝ))

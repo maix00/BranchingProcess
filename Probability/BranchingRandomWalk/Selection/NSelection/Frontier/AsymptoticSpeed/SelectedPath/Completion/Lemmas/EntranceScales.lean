@@ -18,17 +18,15 @@ import Mathlib.Algebra.Order.Floor.Semiring
 * `trialDuration_le` gives $d_N\le\alpha\log N/\log\rho+2$ for
   $d_N=\lfloor\alpha\log N/\log\rho\rfloor+2$.
 * `rpow_mul_mean_le_pow_trialDuration` gives $\rho N^\alpha\le\rho^{d_N}$.
-* `logarithmicEntrance_scales` bounds the clock, capacity and displacement
-  for a duration below $\alpha\log N/\log\rho+2$.
-* `logarithmicEntrance_deadline`: if $\gamma>4\delta/p+\alpha/\log\rho$,
-  then $\lceil(4\delta/p)\log N\rceil+d_N\le\lfloor\gamma\log N\rfloor$
-  eventually. The latter deadline is $o(\log^3N)$ and lies below the
-  terminal generation eventually.
-* `eventually_geometric_and_exponential_entrance_bound`: when $0<q<1$,
-  the clock error and the first-$K$ failure terms are bounded by a common
-  polynomial rate. The weighted trial-root term
-  $K\exp(K\log B-\lambda v\delta\log N)$ has a polynomial rate when
-  $\lambda v=\log B+1$ and $B\ge1$.
+* `logarithmicEntrance_scales` bounds $K_N=\lfloor\delta\log N\rfloor$,
+  parallel population capacity, and displacement.
+* `logarithmicEntrance_deadline`: for $\gamma>0$, the deadline
+  $T_N=\lfloor\gamma\log N\rfloor$ is $o(\log^3N)$ and eventually below
+  the terminal generation.
+* `eventually_exponential_trialRoot_bound`: for $B\ge1$ and
+  $\lambda v=\log B+1$, the weighted trial-root bound
+  $e^{-\lambda v\delta\log N}\sum_{k=1}^{K_N} B^k$ is at most
+  $N^{-\delta/2}$ eventually.
 
 These are the logarithmic scales of Wang Yiyang, *Asymptotic Speed of
 the N-Branching Random Walk with Infinite Offspring* (Fudan University,
@@ -90,8 +88,8 @@ lemma rpow_mul_mean_le_pow_trialDuration {ρ : ℝ} (hρ : 1 < ρ)
   linarith
 
 lemma logarithmicEntrance_scales
-    {ρ p α δ M v η : ℝ}
-    (hρ : 1 < ρ) (hp : 0 < p) (ha : 0 < α) (hδ : 0 < δ)
+    {ρ α δ M v η : ℝ}
+    (hρ : 1 < ρ) (ha : 0 < α) (hδ : 0 < δ)
     (hM : 0 ≤ M)
     (hsmall : α / Real.log ρ < 1 / (2 * Real.log 2))
     (hbudget : (v + M) * δ + M * (α / Real.log ρ) < η)
@@ -100,21 +98,17 @@ lemma logarithmicEntrance_scales
       (d i : ℝ) ≤ α * Real.log (N i : ℝ) / Real.log ρ + 2) :
     let L := fun i => Real.log (N i : ℝ)
     let K := fun i => ⌊δ * L i⌋₊
-    let n := fun i => ⌈(4 * δ / p) * L i⌉₊
     ∀ᶠ i in atTop,
-      0 < n i ∧ (K i : ℝ) ≤ (n i : ℝ) * p / 4 ∧
       δ * L i / 2 ≤ (K i : ℝ) ∧ (K i : ℝ) ≤ δ * L i ∧
       1 + (d i + 1) * (2 * 2 ^ d i) ≤ N i ∧
       v * (δ * L i) + (K i : ℝ) * M + M * d i ≤ η * L i := by
-  intro L K n
+  intro L K
   have hL : Tendsto L atTop atTop :=
     Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop.comp hN)
   have hρlog : 0 < Real.log ρ := Real.log_pos hρ
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
   let A := α / Real.log ρ
-  let C := 4 * δ / p
   have hA : 0 < A := div_pos ha hρlog
-  have hC : 0 < C := div_pos (by positivity) hp
   have hduration' (i : ℕ) : (d i : ℝ) ≤ A * L i + 2 := by
     simpa [A, div_eq_mul_inv, mul_right_comm] using hduration i
   have hA' : A < 1 / (2 * Real.log 2) := hsmall
@@ -152,53 +146,32 @@ lemma logarithmicEntrance_scales
     hL.eventually_ge_atTop (2 * M / (η - ((v + M) * δ + M * A))),
     hcapEventually] with i hlog hlogK hlogc hcap
   have hLpos : 0 < L i := by linarith
-  have hnpos : 0 < n i := Nat.ceil_pos.mpr (mul_pos hC hLpos)
-  have hnlo : C * L i ≤ (n i : ℝ) := Nat.le_ceil _
   have hKhi : (K i : ℝ) ≤ δ * L i := Nat.floor_le (mul_nonneg hδ.le hLpos.le)
   have hKlo : δ * L i / 2 ≤ (K i : ℝ) := by
     have hlo : δ * L i < (K i : ℝ) + 1 := Nat.lt_floor_add_one _
     have hh : 2 ≤ L i * δ := (div_le_iff₀ hδ).mp hlogK
     nlinarith
-  have hnK : (K i : ℝ) ≤ (n i : ℝ) * p / 4 := by
-    have hh := mul_le_mul_of_nonneg_right hnlo hp.le
-    have heq : C * L i * p = 4 * (δ * L i) := by
-      dsimp [C]; field_simp
-    rw [heq] at hh
-    linarith
-  refine ⟨hnpos, hnK, hKlo, hKhi, hcap, ?_⟩
+  refine ⟨hKlo, hKhi, hcap, ?_⟩
   have hdle := mul_le_mul_of_nonneg_left (hduration' i) hM
   have hKle := mul_le_mul_of_nonneg_right hKhi hM
   have hc := (div_le_iff₀ (sub_pos.mpr hbudget)).mp hlogc
   nlinarith only [hdle, hKle, hc]
 
-/-- Transfer the estimate at the auxiliary split cutoff to the deadline
-$T=\gamma\log N$ in Wang Yiyang, *Asymptotic Speed of the N-Branching Random
-Walk with Infinite Offspring* (Fudan University, 2026), Chapter 4, Theorems
-1.1 and 1.2. For an integer generation $s$, $s\le T$ is equivalent to
-$s\le\lfloor T\rfloor$. -/
+/-- For an integer generation $s$, the deadline $s\le\gamma\log N$
+in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* (Fudan University, 2026), Chapter 4, Theorems 1.1 and 1.2, is
+equivalent to $s\le\lfloor\gamma\log N\rfloor$. -/
 lemma logarithmicEntrance_deadline
-    {C A γ : ℝ} (hC : 0 ≤ C) (hA : 0 ≤ A) (hγ : C + A < γ)
+    {γ : ℝ} (hγpos : 0 < γ)
     {N H : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t : ℝ} (ht : 0 < t)
-    (hH : Tendsto (fun i => (H i : ℝ) / Real.log (N i : ℝ) ^ 3) atTop (𝓝 t))
-    (d : ℕ → ℕ) (hd : ∀ i, (d i : ℝ) ≤ A * Real.log (N i : ℝ) + 2) :
+    (hH : Tendsto (fun i => (H i : ℝ) / Real.log (N i : ℝ) ^ 3) atTop (𝓝 t)) :
     let L := fun i => Real.log (N i : ℝ)
     let T := fun i => ⌊γ * L i⌋₊
-    (∀ᶠ i in atTop, ⌈C * L i⌉₊ + d i ≤ T i) ∧
     Tendsto (fun i => (T i : ℝ) / L i ^ 3) atTop (𝓝 0) ∧
     (∀ᶠ i in atTop, T i ≤ H i) := by
   intro L T
-  have hγpos : 0 < γ := (add_nonneg hC hA).trans_lt hγ
   have hL : Tendsto L atTop atTop :=
     Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop.comp hN)
-  have hdom : ∀ᶠ i in atTop, ⌈C * L i⌉₊ + d i ≤ T i := by
-    filter_upwards [hL.eventually_ge_atTop 0,
-      hL.eventually_ge_atTop (3 / (γ - (C + A)))] with i hi hgap
-    apply Nat.le_floor
-    push_cast
-    have hceil := Nat.ceil_lt_add_one (mul_nonneg hC hi)
-    have hmargin := (div_le_iff₀ (sub_pos.mpr hγ)).mp hgap
-    linarith only [hceil, hd i, hmargin,
-      show L i * (γ - (C + A)) = γ * L i - C * L i - A * L i by ring]
   have hT : Tendsto (fun i => (T i : ℝ) / L i ^ 3) atTop (𝓝 0) := by
     have hzero : Tendsto (fun i => γ / L i ^ 2) atTop (𝓝 0) :=
       tendsto_const_nhds.div_atTop ((tendsto_pow_atTop (by norm_num : (2 : ℕ) ≠ 0)).comp hL)
@@ -209,7 +182,7 @@ lemma logarithmicEntrance_deadline
     apply (div_le_div_iff₀ (pow_pos hpos _) (pow_pos hpos _)).mpr
     simpa only [pow_succ' (L i) 2, mul_assoc, mul_left_comm, mul_comm] using
       mul_le_mul_of_nonneg_right hup (sq_nonneg (L i))
-  refine ⟨hdom, hT, ?_⟩
+  refine ⟨hT, ?_⟩
   filter_upwards [hL.eventually_ge_atTop 1,
     hT (gt_mem_nhds (show 0 < t / 2 by positivity)),
     hH (lt_mem_nhds (show t / 2 < t by linarith))] with i hi hTi hHi
@@ -218,39 +191,16 @@ lemma logarithmicEntrance_deadline
     (div_le_div_iff_of_pos_right hpos).mp (hTi.le.trans hHi.le)
   exact_mod_cast hle
 
-lemma eventually_geometric_and_exponential_entrance_bound
-    {p δ q B lam v : ℝ}
-    (hδ : 0 < δ) (hq : 0 < q) (hq1 : q < 1)
+lemma eventually_exponential_trialRoot_bound
+    {δ B lam v : ℝ} (hδ : 0 < δ)
     (hB : 1 ≤ B) (hv : lam * v = Real.log B + 1)
-    {L : ℕ → ℝ} (hL : Tendsto L atTop atTop) (K n : ℕ → ℕ)
-    (hK : ∀ᶠ i in atTop,
-      δ * L i / 2 ≤ (K i : ℝ) ∧ (K i : ℝ) ≤ δ * L i ∧
-        (K i : ℝ) ≤ (n i : ℝ) * p / 4) :
-    ∃ b : ℝ, 0 < b ∧ ∀ᶠ i in atTop,
-      Real.exp (-((n i : ℝ) * p / 4)) ≤ Real.exp (-b * L i) ∧
-      q ^ K i ≤ Real.exp (-b * L i) ∧
-      (∑ k ∈ Finset.range (K i), B ^ (k + 1)) ≤
-        Real.exp (lam * (v * (δ * L i))) * Real.exp (-b * L i) := by
-  let b := min (δ / 2) (-(Real.log q) * δ / 2)
-  have hqlog : Real.log q < 0 := Real.log_neg hq hq1
-  have hb : 0 < b := lt_min (by positivity) (by positivity [neg_pos.mpr hqlog])
-  have hb₁ : b ≤ δ / 2 := min_le_left _ _
-  have hb₂ : b ≤ -(Real.log q) * δ / 2 := min_le_right _ _
-  refine ⟨b, hb, ?_⟩
-  filter_upwards [hK, hL.eventually_ge_atTop 0,
+    {L : ℕ → ℝ} (hL : Tendsto L atTop atTop) (K : ℕ → ℕ)
+    (hK : ∀ᶠ i in atTop, (K i : ℝ) ≤ δ * L i) :
+    ∀ᶠ i in atTop, (∑ k ∈ Finset.range (K i), B ^ (k + 1)) ≤
+      Real.exp (lam * (v * (δ * L i))) * Real.exp (-(δ / 2) * L i) := by
+  filter_upwards [hK,
     hL.eventually (eventually_affine_le_exp_mul δ 0 (δ / 2) (by positivity))]
-    with i hi hLi hfactor
-  obtain ⟨hlo, hhi, hclock⟩ := hi
-  have hclock' : Real.exp (-((n i : ℝ) * p / 4)) ≤ Real.exp (-b * L i) := by
-    apply Real.exp_le_exp.mpr
-    nlinarith [mul_le_mul_of_nonneg_right hb₁ hLi]
-  have hgeom : q ^ K i ≤ Real.exp (-b * L i) := by
-    calc
-      q ^ K i = Real.exp ((K i : ℝ) * Real.log q) := by
-        rw [Real.exp_nat_mul, Real.exp_log hq]
-      _ ≤ _ := Real.exp_le_exp.mpr (by
-        nlinarith [mul_le_mul_of_nonpos_right hlo hqlog.le,
-          mul_le_mul_of_nonneg_right hb₂ hLi])
+    with i hhi hfactor
   have hsum : (∑ k ∈ Finset.range (K i), B ^ (k + 1)) ≤ (K i : ℝ) * B ^ K i := by
     calc
       _ ≤ ∑ _k ∈ Finset.range (K i), B ^ K i := by
@@ -265,14 +215,13 @@ lemma eventually_geometric_and_exponential_entrance_bound
       _ ≤ _ := Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right hhi (Real.log_nonneg hB))
   have hcount : (K i : ℝ) ≤ Real.exp (δ / 2 * L i) :=
     hhi.trans (by simpa using hfactor)
-  refine ⟨hclock', hgeom, hsum.trans ?_⟩
+  refine hsum.trans ?_
   calc
     _ ≤ Real.exp (δ / 2 * L i) * Real.exp (δ * L i * Real.log B) :=
       mul_le_mul hcount hpow (by positivity) (by positivity)
-    _ ≤ Real.exp (lam * (v * (δ * L i))) * Real.exp (-b * L i) := by
-      rw [← Real.exp_add, ← Real.exp_add]
-      apply Real.exp_le_exp.mpr
-      rw [← mul_assoc, hv]
-      nlinarith [mul_le_mul_of_nonneg_right hb₁ hLi]
+    _ = Real.exp (lam * (v * (δ * L i))) * Real.exp (-(δ / 2) * L i) := by
+      rw [← Real.exp_add, ← Real.exp_add, ← mul_assoc, hv]
+      congr 1
+      ring
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas
