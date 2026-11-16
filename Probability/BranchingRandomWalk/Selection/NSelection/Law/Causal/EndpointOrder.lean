@@ -27,6 +27,8 @@ import Mathlib.Order.Sum.Order
   injectively to particles at weakly smaller positions in the larger cloud,
   then the larger cloud has the smaller probability of having every
   generation-$H$ particle at or above $x$.
+* `RootIndexed.measure_selectedPopulationEndpointAtLeast_relabel`: an injective
+  relabeling preserving the tie order gives the same endpoint probability.
 * `RootIndexed.measure_selectedPopulationEndpointAtLeast_le_of_cloudEmbedding`:
   the same upper-tail comparison holds for initial clouds on distinct
   finite label types, each with its own order for ties.
@@ -143,7 +145,9 @@ theorem RootIndexed.measure_selectedPopulationEndpointAtLeast_le_of_initialEmbed
   intro p hp
   exact WithTop.coe_le_coe.mp ((hb.trans hminimum).trans (Finset.inf_le hp))
 
-private lemma endpointAtLeast_relabel
+/-- Transport the endpoint event along an injective relabeling that
+preserves the order on the embedded genealogical labels. -/
+theorem RootIndexed.measure_selectedPopulationEndpointAtLeast_relabel
     {Root κ α : Type*} [Fintype κ] [DecidableEq Root]
     [MeasurableSpace (RootIndexed.TreeNode Root α)] [Countable (RootIndexed.TreeNode Root α)]
     [MeasurableSpace (RootIndexed.TreeNode κ α)] [Countable (RootIndexed.TreeNode κ α)]
@@ -238,10 +242,10 @@ theorem RootIndexed.measure_selectedPopulationEndpointAtLeast_le_of_cloudEmbeddi
     exact Sum.Lex.inr_lt_inr_iff.symm
   rw [← show _ = RootIndexed.stepFieldLaw μ
         (RootIndexed.selectedPopulationEndpointAtLeast N Finset.univ x₁ H x) from
-      endpointAtLeast_relabel μ Sum.inl Sum.inl_injective hl N initial H x,
+      RootIndexed.measure_selectedPopulationEndpointAtLeast_relabel μ Sum.inl Sum.inl_injective hl N initial H x,
     ← show _ = RootIndexed.stepFieldLaw μ
         (RootIndexed.selectedPopulationEndpointAtLeast N Finset.univ x₂ H x) from
-      endpointAtLeast_relabel μ Sum.inr Sum.inr_injective hr N initial H x]
+      RootIndexed.measure_selectedPopulationEndpointAtLeast_relabel μ Sum.inr Sum.inr_injective hr N initial H x]
   let assign : κ₁ ⊕ κ₂ → κ₁ ⊕ κ₂ := Sum.elim (Sum.inr ∘ matchRoot) Sum.inr
   refine RootIndexed.measure_selectedPopulationEndpointAtLeast_le_of_initialEmbedding
     μ hnorm N hN _ _ ?_ initial assign ?_ ?_ ?_ H x

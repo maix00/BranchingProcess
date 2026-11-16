@@ -4,9 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot.Coupling
-import Probability.BranchingRandomWalk.Step.Selection.BinaryOffspringLaw
-import Probability.BranchingProcess.Offspring.FieldLaw
+module
+
+import Mathlib.MeasureTheory.Integral.Prod
+import Probability.Independence.ConditionalIntegral
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot.Coupling
+public import Probability.BranchingRandomWalk.Step.Selection.BinaryOffspringLaw
+public import Probability.BranchingProcess.Offspring.FieldLaw
 
 /-!
 # Finite-slot population moments
@@ -59,6 +63,8 @@ and integrated recursions are
   `E[Zₙ₊₁²] = m² E[Zₙ²] + (q - m²)mⁿ`, where `m` and `q` are the offspring
   mean and second moment.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
@@ -817,3 +823,5 @@ theorem finiteSlotPopulationSizeReal_sq_integral_eq_recursion
   rw [finiteSlotPopulationSizeReal_sq_integral_succ_eq μ S hS hcapacity n,
     hmean n]
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot
+
+end
