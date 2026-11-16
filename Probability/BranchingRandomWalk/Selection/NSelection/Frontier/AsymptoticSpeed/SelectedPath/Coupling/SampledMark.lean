@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Path
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
-import Probability.Independence.FiniteFamily
-import Combinatorics.BranchingWalk.Step.Selection.Potential
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Path
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
+public import Probability.Independence.FiniteFamily
+public import Combinatorics.BranchingWalk.Step.Selection.Potential
 
 /-!
 # Laws of predictably sampled selected-path steps
@@ -41,6 +43,8 @@ Predictable sampling preserves the one-step law and independence:
   predictably sampled marks have the original one-step law and are mutually
   independent, with the corresponding observable expectation identities.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 
@@ -364,3 +368,5 @@ theorem integral_step_firstSelectedSlotPositivePotential
     (firstSelectedSlotPositivePotential R φ) hg
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Coupling
+
+end

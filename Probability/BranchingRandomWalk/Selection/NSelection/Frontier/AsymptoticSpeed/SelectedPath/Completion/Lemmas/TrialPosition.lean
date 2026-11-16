@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.FailureDisplacement
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.TrialIndependence
+module
+
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.FailureDisplacement
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.TrialIndependence
 import MeasureTheory.BranchingWalk.Step.Selection.Potential
 
 /-!
@@ -264,15 +266,16 @@ lemma exists_firstSuccessfulTrial_position_upperTail
     (hexp : HasLeftmostPositiveExponentialMoment L)
     (hnonempty : L.raw nonemptySupport = 1)
     (growth : Step.FiniteSelection ℕ ℝ) (hgrowth : Measurable growth.select)
-    (M : ℝ) (hM : 0 ≤ M) (lower upper duration : ℕ) :
+    (M : ℝ) (hM : 0 ≤ M) :
     let μ := L.sortedPotentialImage
     let R := firstOrBelowPotential (firstNBySlotOrder (α := ℕ) (X := ℝ) 2) realPotential M
-    let G := growthTrialSuccess growth lower upper duration
     0 < μ (splitBy R) →
     ∃ lam > (0 : ℝ), let A := ∫⁻ ξ, ENNReal.ofReal (Real.exp (lam * value' ξ 0)) *
           (splitBy R)ᶜ.indicator (fun _ => (1 : ℝ≥0∞)) ξ ∂μ
       let m := μ (splitBy R) / (1 - A)
-      A < 1 ∧ m < ∞ ∧ ∀ (x : ℝ) (K : ℕ),
+      μ {ξ | (R ξ).Nonempty} = 1 ∧ A < 1 ∧ m < ∞ ∧
+      ∀ (lower upper duration : ℕ) (x : ℝ) (K : ℕ),
+        let G := growthTrialSuccess growth lower upper duration
         ENNReal.ofReal (Real.exp (lam * x)) *
           offspringFieldLaw μ {ω | ∃ k < K,
             (splitCycle R (splitWaitingDisplacement R) G k ω).2 ∧
@@ -281,7 +284,7 @@ lemma exists_firstSuccessfulTrial_position_upperTail
               Spine.pathPotential realPotential ω (trialSplitParent R k ω) ∨
               x + (K : ℝ) * M ≤ Spine.pathPotential realPotential ω (trialGrowthRoot R k ω))} ≤
           ∑ k ∈ Finset.range K, m ^ (k + 1) := by
-  intro μ R G hp
+  intro μ R hp
   let B := firstNBySlotOrder (α := ℕ) (X := ℝ) 2
   have hR : Measurable R.select :=
     firstOrBelowPotential_measurable B firstTwoBySlotOrder_measurable realPotential M
@@ -357,8 +360,8 @@ lemma exists_firstSuccessfulTrial_position_upperTail
       filter_upwards [hnonemptyR, hfirst, hcut] with ξ h₁ h₂ h₃
       exact ⟨h₁, h₂, h₃⟩
     exact ae_of_ae_map hmeas.aemeasurable (by rwa [offspringFieldLaw_coordinate μ u])
-  refine ⟨lam, hlam, hA, hfin, ?_⟩
-  intro x K
+  refine ⟨lam, hlam, hne, hA, hfin, ?_⟩
+  intro lower upper duration x K G
   have htail := measure_firstSuccessfulSplitCycle_partialSum_ge_le
     μ R growth hR hgrowth hfinite (splitWaitingDisplacement R)
     (splitWaitingDisplacement_measurable R hR) lower upper duration lam x hlam K

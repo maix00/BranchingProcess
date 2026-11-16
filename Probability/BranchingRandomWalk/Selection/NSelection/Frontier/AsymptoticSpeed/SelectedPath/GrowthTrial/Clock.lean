@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Causal
-import Probability.BranchingProcess.Offspring.FieldLaw
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Lemmas.RecursiveClock
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Coupling.SampledMark
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitTime.Finite
-import Probability.Independence.FiniteEventCount
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Causal
+public import Probability.BranchingProcess.Offspring.FieldLaw
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Lemmas.RecursiveClock
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Coupling.SampledMark
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitTime.Finite
+public import Probability.Independence.FiniteEventCount
 
 /-!
 # First successful growth trial along a selected path
@@ -27,6 +29,8 @@ estimate in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk
 with Infinite Offspring* (Fudan University, 2026), Chapter 4, Theorem 1.1
 for $a=0$.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal BigOperators
@@ -135,5 +139,7 @@ theorem measure_firstSuccessfulCompletion_gt_le
     (add_le_add hfew hfailed.le)
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial
+
+end
 
 end

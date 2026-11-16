@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+module
+
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Basic
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.TrialPosition
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.TrialPosition
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Coupling.Population
 import Probability.BranchingRandomWalk.Spine.GenerationBranching.Decomposition
+import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Clock
+import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Displacement within a bounded growth trial
@@ -28,6 +32,10 @@ import Probability.BranchingRandomWalk.Spine.GenerationBranching.Decomposition
 * `firstSuccess_rankedEntrance_le_ae`: the $m$ ranked roots at $\tau$ have
   positions at most $V(v_\kappa)+Md$, with $v_\kappa$ indexed by trial order.
 
+* `measure_badEntrance_le`: the complement of entrance by $n+d$ with
+  $m$ actual particles at positions at most $x+(K+d)M$ is bounded by
+  the clock error, first-$K$ trial failure, and the large trial-root event.
+
 This is the bounded-growth contribution to the entrance estimate in Wang
 Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
 (Fudan University, 2026), Chapter 4, Theorem 1.1 at $a=0$.
@@ -36,12 +44,15 @@ Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas
 
 open Combinatorics.Branching Combinatorics.UlamHarris
-open MeasureTheory
+open MeasureTheory ProbabilityTheory Filter
+open scoped ENNReal
 open _root_.Combinatorics.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Coupling
 
 open Combinatorics.Branching.Step.FiniteSelection
 open SelectedPath.GrowthTrial
+open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate)
 open GrowthTrial.Population (capStoppedPopulation capStoppedPopulation_succ_parent
   rootedCapStoppedPopulation rootedCapStoppedPopulation_card_ge_of_growthTrialSuccess)
 
@@ -322,5 +333,151 @@ lemma firstSuccess_rankedEntrance_le_ae
   rw [hroot, ← hu]
   exact position_endpointNodesByRank_le_of_entrance_count N R growth hR hgrowth
     lower upper duration r field t ht _ hcount
+
+/-- Combine the clock, first successful trial index, and position estimates
+for the entrance of the single-root process. -/
+lemma measure_badEntrance_le
+    {Root : Type} [MeasurableSpace Root] [MeasurableSingletonClass Root]
+    [MeasurableSpace (RootIndexed.TreeNode Root ℕ)]
+    [MeasurableSingletonClass (RootIndexed.TreeNode Root ℕ)]
+    [Countable (RootIndexed.TreeNode Root ℕ)] [LinearOrder (RootIndexed.TreeNode Root ℕ)]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hnorm : HasBoundaryNormalization realPotential μ)
+    (N : ℕ) (R growth : Step.FiniteSelection ℕ ℝ)
+    (hR : Measurable R.select) (hgrowth : Measurable growth.select)
+    (hRne : μ {ξ | (R ξ).Nonempty} = 1) (hsplit : 0 < μ (splitBy R))
+    (lower upper duration : ℕ) (hupper : 1 ≤ upper) (hbounded : growth.IsBoundedBy 2)
+    (hcapacity : 1 + (duration + 1) * (2 * upper) ≤ N)
+    (M : ℝ) (hcutoff : ∀ ξ j, j ∈ growth ξ → ξ.potentialValue' realPotential j ≤ M)
+    (r : Root) (n K : ℕ) (hn : 0 < n)
+    (hK : (K : ℝ) ≤ (n : ℝ) * (μ (splitBy R)).toReal / 4) (x c : ℝ)
+    (hc : x + (K : ℝ) * M + M * duration ≤ c) :
+    let τ := Completion.time R growth hR hgrowth lower upper duration r
+    let trials := SelectedPath.Population.leftBRWFamily_finiteSlices R growth hR hgrowth
+      upper duration r
+    let stage := RootIndexed.restartedRealPositionNSelectedBRWField N {r}
+      (fun _ => 0) id trials.toFinset
+    let Pop := RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
+      (fun _ => 0) id trials.toFinset
+    let P := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
+    let G := growthTrialSuccess growth lower upper duration
+    let large := {ω | ∃ k < K, (splitCycle R (splitWaitingDisplacement R) G k ω).2 ∧
+      (∀ j < k, ¬ (splitCycle R (splitWaitingDisplacement R) G j ω).2) ∧
+      (x + ((K - 1 : ℕ) : ℝ) * M ≤
+        Spine.pathPotential realPotential ω (trialSplitParent R k ω) ∨
+       x + (K : ℝ) * M ≤ Spine.pathPotential realPotential ω (trialGrowthRoot R k ω))}
+    P {field | ¬ ∃ i ≤ n + duration, (∃ e : Fin lower ↪ RootIndexed.TreeNode Root ℕ,
+      ∀ j, e j ∈ Pop i field ∧
+        RootIndexed.position (fun _ => 0) id (stage i field) (e j).1 (e j).2 ≤ c) ∧
+        τ field = i} ≤
+      (ENNReal.ofReal (Real.exp (-((n : ℝ) * (μ (splitBy R)).toReal / 4))) +
+        (offspringFieldLaw μ {ω | ¬ G ω}) ^ K) +
+      (offspringFieldLaw μ {ω | ¬ G ω}) ^ K + offspringFieldLaw μ large := by
+  intro τ trials stage Pop P G large
+  let left : RootIndexed.StepField (Root ⊕ Root) ℕ ℝ → RootIndexed.StepField Root ℕ ℝ :=
+    RootIndexed.StepField.left
+  let f := fun field => left field r
+  let Q := RootIndexed.stepFieldLaw (Root := Root) μ
+  let ν := offspringFieldLaw μ
+  have hleft : Measurable left := measurable_pi_iff.mpr fun i => measurable_pi_apply (Sum.inl i)
+  have hleftlaw : P.map left = Q := RootIndexed.stepFieldLaw_reindex μ Sum.inl Sum.inl_injective
+  have hf : Measurable f := (measurable_pi_apply r).comp hleft
+  have hflaw : P.map f = ν := by
+    change P.map ((fun ω : RootIndexed.StepField Root ℕ ℝ => ω r) ∘ left) = ν
+    rw [← Measure.map_map (measurable_pi_apply r) hleft, hleftlaw,
+      RootIndexed.stepFieldLaw_root_marginal μ r]
+  let late := {field | ((n + duration : ℕ) : WithTop ℕ) < τ field}
+  let failed := f ⁻¹' recursiveFailure R growth duration lower upper K
+  have hlate : P late ≤ ENNReal.ofReal (Real.exp (-((n : ℝ) * (μ (splitBy R)).toReal / 4))) +
+        (ν {ω | ¬ G ω}) ^ K := by
+    change P (left ⁻¹' {ω | ((n + duration : ℕ) : WithTop ℕ) <
+      firstSuccessfulCompletion R growth hR lower upper duration r ω}) ≤ _
+    refine (Measure.le_map_apply hleft.aemeasurable _).trans ?_
+    rw [hleftlaw]
+    exact measure_firstSuccessfulCompletion_gt_le μ R growth hR hgrowth hRne hsplit
+      lower upper duration n K hn r hK
+  have hfailed : P failed ≤ (ν {ω | ¬ G ω}) ^ K := by
+    refine (Measure.le_map_apply hf.aemeasurable _).trans ?_
+    rw [hflaw]
+    have hfinite := selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
+      μ R hR hRne (splitBy_measurable R hR) hsplit
+    exact (measure_recursiveFailure_eq_pow μ R growth hR hgrowth duration lower upper hfinite K).le
+  have hlarge : P (f ⁻¹' large) ≤ ν large :=
+    (Measure.le_map_apply hf.aemeasurable large).trans_eq (congrArg (fun m => m large) hflaw)
+  have hRneMeas : MeasurableSet {ξ | (R ξ).Nonempty} := by
+    have hm : Measurable (fun ξ => (R ξ).card) :=
+      (measurable_of_countable fun s : Finset ℕ => s.card).comp hR
+    rw [show {ξ | (R ξ).Nonempty} = (fun ξ => (R ξ).card) ⁻¹' Set.Ioi 0 by
+      ext ξ
+      exact Finset.card_pos.symm]
+    exact hm measurableSet_Ioi
+  have hall : ∀ᵐ field ∂P, ∀ u, (R (f field u)).Nonempty := by
+    apply ae_all_iff.2
+    intro u
+    have hmeas : Measurable (fun field => f field u) := (measurable_pi_apply u).comp hf
+    have hlaw : P.map (fun field => f field u) = μ := by
+      change P.map ((fun ω : Mark ℕ (Step ℕ ℝ) => ω u) ∘ f) = μ
+      rw [← Measure.map_map (measurable_pi_apply u) hf, hflaw, offspringFieldLaw_coordinate μ u]
+    apply (ae_mem_iff_measure_eq (hmeas hRneMeas).nullMeasurableSet).2
+    rw [← Measure.map_apply (show Measurable (fun field => f field u) from hmeas) hRneMeas,
+      hlaw, hRne]
+    exact measure_univ.symm
+  have hentry := entrance_count_le_at_firstSuccessfulCompletion_ae μ hnorm N R growth hR hgrowth
+    lower upper duration hupper hbounded hcapacity M hcutoff r
+  have hsub : {field | ¬ ∃ i ≤ n + duration, (∃ e : Fin lower ↪ RootIndexed.TreeNode Root ℕ,
+      ∀ j, e j ∈ Pop i field ∧
+        RootIndexed.position (fun _ => 0) id (stage i field) (e j).1 (e j).2 ≤ c) ∧
+        τ field = i} ≤ᵐ[P] late ∪ failed ∪ f ⁻¹' large := by
+    filter_upwards [hall, hentry] with field hmarks hentry₀ hbad
+    by_cases hlate : field ∈ late
+    · exact Or.inl (Or.inl hlate)
+    have htime : τ field ≤ ((n + duration : ℕ) : WithTop ℕ) := le_of_not_gt hlate
+    have hfin : τ field ≠ ⊤ := ne_top_of_le_ne_top WithTop.coe_ne_top htime
+    obtain ⟨i, hi⟩ := WithTop.ne_top_iff_exists.mp hfin
+    have hit : i ≤ n + duration := WithTop.coe_le_coe.mp (hi.trans_le htime)
+    have hτi : firstSuccessfulCompletion R growth hR lower upper duration r (left field) = i :=
+      hi.symm
+    obtain ⟨j, hj, hsplitj, hsucc, hbefore, hroot⟩ :=
+      splitCycle_first_success_at_completion R growth hR lower upper duration r (left field)
+        hmarks i hτi
+    let k := splitCount R r j (left field)
+    by_cases hk : k < K
+    · by_cases hpos : x + (K : ℝ) * M ≤
+        Spine.pathPotential realPotential (f field) (trialGrowthRoot R k (f field))
+      · exact Or.inr ⟨k, hk, hsucc, hbefore, Or.inr hpos⟩
+      · exfalso
+        apply hbad
+        obtain ⟨j', hj', _, hcount⟩ := hentry₀ i hτi
+        have heq : j' = j := by omega
+        subst j'
+        let u := growthTrialRootAt (lineages R hR) R r PUnit.unit (j + 1) (left field)
+        have hu : u.1 = r := growthTrialRootAt_root (lineages R hR) R r PUnit.unit (j + 1) (left field)
+        have hbound : Spine.pathPotential realPotential (left field u.1) u.2 + M * duration ≤ c := by
+          change trialGrowthRoot R k (f field) = u.2 at hroot
+          rw [hu, ← hroot]
+          exact (add_le_add_left (le_of_lt (lt_of_not_ge hpos)) _).trans hc
+        obtain ⟨e, he⟩ := Function.Embedding.exists_of_card_le_finset
+          (α := Fin lower) (by simpa using hcount)
+        exact ⟨i, hit, ⟨e, fun j => by
+          have hj := Finset.mem_filter.mp (he (Set.mem_range_self j))
+          exact ⟨hj.1, hj.2.trans hbound⟩⟩, hi.symm⟩
+    · refine Or.inl (Or.inr (mem_recursiveFailure_of_no_success R growth hR lower upper
+          duration K r (left field) hmarks j (le_of_not_gt hk) ?_))
+      intro j' hj' hs
+      have hle : i ≤ j' + 1 + duration := by
+        let declared : ℕ → Set (RootIndexed.StepField Root ℕ ℝ) := fun i =>
+          {ω | ∃ j, ((j + 1 + duration : ℕ) : WithTop ℕ) = i ∧
+            ω ∈ successEvent R growth hR lower upper duration r j}
+        have hh := (firstDeclaredSuccess_le_iff declared (left field) (j' + 1 + duration)).2
+          ⟨j' + 1 + duration, le_rfl, j', rfl, hs⟩
+        change firstSuccessfulCompletion R growth hR lower upper duration r (left field) ≤ _ at hh
+        rw [hτi] at hh
+        exact WithTop.coe_le_coe.mp hh
+      omega
+  calc
+    _ ≤ P ((late ∪ failed) ∪ f ⁻¹' large) := measure_mono_ae hsub
+    _ ≤ P (late ∪ failed) + P (f ⁻¹' large) := measure_union_le _ _
+    _ ≤ (P late + P failed) + P (f ⁻¹' large) := add_le_add_left (measure_union_le _ _) _
+    _ ≤ _ := add_le_add (add_le_add hlate hfailed) hlarge
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas

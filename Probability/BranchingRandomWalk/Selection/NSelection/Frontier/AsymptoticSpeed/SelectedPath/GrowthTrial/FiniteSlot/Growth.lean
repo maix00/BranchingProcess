@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot.Moments
-import Probability.BranchingRandomWalk.Step.Selection.BinaryOffspringLaw
-import MeasureTheory.BranchingWalk.Step.Selection.Potential
-import Probability.MeasureTheory.Moments.SecondMomentGrowth
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Basic
-import Probability.BranchingProcess.Offspring.FieldLaw
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot.Moments
+public import Probability.BranchingRandomWalk.Step.Selection.BinaryOffspringLaw
+public import MeasureTheory.BranchingWalk.Step.Selection.Potential
+public import Probability.MeasureTheory.Moments.SecondMomentGrowth
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Basic
+public import Probability.BranchingProcess.Offspring.FieldLaw
 /-!
 # Growth estimates for bounded selected populations
 
@@ -29,6 +31,8 @@ has the uniform lower bound
 \[\mathbb P\!\left(Z_{T_N}\ge\lfloor N^a\rfloor\right)
   \ge\frac{1}{4K(\rho,v)}.\]
 
+* `finiteSlotOffspringVarianceReal_nonneg`: for the encoded binary offspring
+  law, $\mathbb E[X^2]-(\mathbb E[X])^2\ge0$.
 * `finiteSlotOffspringMeanReal_gt_one_of_nonempty_and_split` converts the
   supercriticality of the encoded offspring law into the real-valued mean
   hypothesis used by the population moment recursion, under almost-sure
@@ -46,6 +50,8 @@ has the uniform lower bound
   and the endpoint upper cap `2 ^ duration`.
 -/
 
+@[expose] public section
+
 open Filter MeasureTheory
 open scoped Topology
 open scoped ENNReal
@@ -57,7 +63,7 @@ open Combinatorics.Branching Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingProcess
 
 /-- The variance of a finite-slot offspring count is nonnegative. -/
-private theorem finiteSlotOffspringVarianceReal_nonneg
+theorem finiteSlotOffspringVarianceReal_nonneg
     (ν : ProbabilityMeasure (Step (Fin 2) PUnit.{1})) :
     0 ≤ finiteSlotOffspringSecondMomentReal ν -
       finiteSlotOffspringMeanReal ν ^ 2 := by
@@ -395,3 +401,5 @@ theorem measure_finiteSlotGrowthTrialSuccess_ge_floor_rpow
 
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot
+
+end
