@@ -41,7 +41,10 @@ second-moment constant.
 
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.exists_success_probability_lower_bound` states that under
   nonempty supercritical offspring assumptions there is a finite cutoff
-  `M` such that, for every `N ≥ 1`, the probability of a trial reaching
+  `M` for which the selector retaining the first two slots with potential
+  at most $M$ has mean $\rho>1$, and the path selector has positive split
+  probability at the same cutoff. For $N\ge1$ and $a\ge0$, the probability
+  of a trial reaching
   `⌊N ^ a⌋₊` by generation
   `d = ⌈(a log N + log 2) / log ρ⌉₊`, with upper bound `2 ^ d`, is at least
   `1 / (4 K(ρ, v))`, where `K` is the normalized second-moment constant.
@@ -66,10 +69,10 @@ open Combinatorics.Branching.Step.FiniteSelection
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 open ProbabilityTheory.BranchingProcess.GaltonWatson
 
-/-- Under the offspring assumptions, a finite cutoff gives a
-supercritical binary selector. Its actual selected population has a uniformly
-positive probability of satisfying the complete logarithmic growth-trial
-conditions, without a moment assumption on the original offspring law. -/
+/-- The growth trial of Wang Yiyang, *Asymptotic Speed of the N-Branching
+Random Walk with Infinite Offspring* (Fudan University, 2026), Chapter 4,
+Theorem 1.1 for $a=0$. A finite cutoff on both selected displacements
+gives a supercritical binary selector and a uniform success probability. -/
 theorem exists_success_probability_lower_bound
     {ι α X : Type*} [MeasurableSpace X] [Countable ι]
     [Countable α] [MeasurableSpace α] [MeasurableSingletonClass α]
@@ -81,57 +84,57 @@ theorem exists_success_probability_lower_bound
     (hsupercritical : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.IsSupercritical
       (⟨L.raw, ‹IsProbabilityMeasure L.raw›⟩ :
         ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι X)) :
-    ∃ M : ℕ, ∀ N : ℕ, ∀ a : ℝ, 1 ≤ N →
-      let S : Step.FiniteSelection α X :=
-        firstOrBelowPotential
-          (Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2)
-          L.potential (M : ℝ)
-      let law := ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot.selectedOffspringLaw L M
+    ∃ M : ℕ,
+      let B := Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2
+      let S := B.belowPotential L.potential (M : ℝ)
+      let hS := B.belowPotential_measurable firstTwoBySlotOrder_measurable L.potential (M : ℝ)
+      let law := Selection.Stepwise.binaryOffspringLaw ⟨L.sorted, inferInstance⟩ S hS
       let ρ := finiteSlotOffspringMeanReal law
-      let duration := ⌈(a * Real.log N + Real.log 2) / Real.log ρ⌉₊
       let variance := finiteSlotOffspringSecondMomentReal law - ρ ^ 2
-      (offspringFieldLaw L.sorted).real
-        {ω | growthTrialSuccess S (⌊(N : ℝ) ^ a⌋₊)
-          (2 ^ duration) duration ω} ≥
-        1 / (4 * normalizedSecondMomentConstant ρ variance) := by
-  obtain ⟨M, hsplit, _hsplitMeas⟩ :=
-    exists_nat_cutoff_positive_firstOrBelowPotentialSplit L hsupercritical
-  refine ⟨M, ?_⟩
-  intro N a hN
-  let R : Step.FiniteSelection α X :=
-    Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2
-  let S : Step.FiniteSelection α X :=
-    firstOrBelowPotential R L.potential (M : ℝ)
+      1 < ρ ∧ 0 < L.sorted (splitBy (firstOrBelowPotential B L.potential (M : ℝ))) ∧
+        ∀ (N : ℕ) (a : ℝ), 1 ≤ N → 0 ≤ a →
+        let duration := ⌈(a * Real.log N + Real.log 2) / Real.log ρ⌉₊
+        (offspringFieldLaw L.sorted).real
+          {ω | growthTrialSuccess S (⌊(N : ℝ) ^ a⌋₊)
+            (2 ^ duration) duration ω} ≥
+          1 / (4 * normalizedSecondMomentConstant ρ variance) := by
+  let B := Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2
   let ν : ProbabilityMeasure (Step α X) := ⟨L.sorted, inferInstance⟩
-  have hRmeas : Measurable R.select := by
-    simpa [R] using firstTwoBySlotOrder_measurable (α := α) (X := X)
-  have hRcap : R.IsBoundedBy 2 := by
-    simpa [R] using
-      (Step.FiniteSelection.firstNBySlotOrder_isBoundedBy
-        (α := α) (X := X) 2)
-  have hSmeas : Measurable S.select := by
-    simpa [S] using firstOrBelowPotential_measurable
-      R hRmeas L.potential (M : ℝ)
-  have hScap : ∀ ξ, (S ξ).card ≤ 2 := by
+  have hB : Measurable B.select := firstTwoBySlotOrder_measurable
+  have hBcap : B.IsBoundedBy 2 := firstNBySlotOrder_isBoundedBy 2
+  obtain ⟨M₀, hsplit, _⟩ := exists_nat_cutoff_positive_firstOrBelowPotentialSplit L hsupercritical
+  have hBne : ∀ᵐ ξ ∂(ν : Measure _), (B ξ).Nonempty := by
+    filter_upwards [firstOrBelowPotential_nonempty_ae L hnonempty (M₀ : ℝ)] with ξ hξ
+    exact hξ.mono (firstOrBelowPotential_subset B L.potential (M₀ : ℝ) ξ)
+  have hBsplit : 0 < (ν : Measure _) {ξ | 2 ≤ (B ξ).card} :=
+    hsplit.trans_le (measure_mono fun ξ hξ => hξ.trans
+      (Finset.card_le_card (firstOrBelowPotential_subset B L.potential (M₀ : ℝ) ξ)))
+  have hmean := finiteSlotOffspringMeanReal_gt_one_of_nonempty_and_split
+    ν B hB hBcap hBne hBsplit
+  obtain ⟨M, hM⟩ := exists_nat_cutoff_binaryOffspringMean_gt_one ν B hB hBcap L.potential hmean
+  let S := B.belowPotential L.potential (M : ℝ)
+  have hS : Measurable S.select := B.belowPotential_measurable hB L.potential (M : ℝ)
+  have hScap : S.IsBoundedBy 2 := by
     intro ξ
-    exact firstOrBelowPotential_isBoundedBy
-      R L.potential (M : ℝ) hRcap ξ
-  have hSnonempty : ∀ᵐ ξ ∂(ν : Measure (Step α X)), (S ξ).Nonempty := by
-    simpa [ν, S] using firstOrBelowPotential_nonempty_ae
-      L hnonempty (M : ℝ)
-  have hSsplit : 0 < (ν : Measure (Step α X))
-      {ξ | 2 ≤ (S ξ).card} := by
-    simpa [ν, S, splitBy] using hsplit
-  have hmean : 1 < finiteSlotOffspringMeanReal
-      (Selection.Stepwise.binaryOffspringLaw ν S hSmeas) :=
-    finiteSlotOffspringMeanReal_gt_one_of_nonempty_and_split ν S hSmeas
-      hScap hSnonempty hSsplit
-  have hbound := measure_finiteSlotGrowthTrialSuccess_ge_floor_rpow
-    L.sorted S hSmeas hScap hSnonempty hmean N a hN
-  have hlaw : ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot.selectedOffspringLaw L M =
-      Selection.Stepwise.binaryOffspringLaw ν S hSmeas := by
-    simp [ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot.selectedOffspringLaw, R, S, ν]
-  simpa [R, S, ν, hlaw] using hbound
+    apply (Finset.card_le_card ?_).trans (hBcap ξ)
+    intro i hi
+    exact ((Step.FiniteSelection.mem_filter B _ ξ i).mp hi).1
+  have hsplitS := measure_selects_two_pos_of_binaryOffspringMean_gt_one ν S hS hScap hM
+  have hsplitR : 0 < L.sorted (splitBy (firstOrBelowPotential B L.potential (M : ℝ))) := by
+    apply hsplitS.trans_le
+    apply measure_mono
+    intro ξ hξ
+    change 2 ≤ (S ξ).card at hξ
+    change 2 ≤ (firstOrBelowPotential B L.potential (M : ℝ) ξ).card
+    exact hξ.trans (Finset.card_le_card fun i hi =>
+      @Finset.mem_union_right α (Classical.decEq α) _ i _ hi)
+  refine ⟨M, hM, hsplitR, ?_⟩
+  intro N a hN ha
+  have hNreal : (1 : ℝ) ≤ N := by exact_mod_cast hN
+  have hlower : 0 < ⌊(N : ℝ) ^ a⌋₊ :=
+    Nat.floor_pos.mpr (Real.one_le_rpow hNreal ha)
+  exact measure_finiteSlotGrowthTrialSuccess_ge_floor_rpow
+    L.sorted S hS hScap hM N a hN (Or.inl hlower)
 
 /-- A growth-trial candidate's growth trial is successful whenever its observable
 split is enabled, almost surely, if its binary horizon fits under the cap.
