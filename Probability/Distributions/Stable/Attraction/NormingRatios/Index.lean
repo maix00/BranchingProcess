@@ -116,7 +116,7 @@ private lemma tendsto_atTop_of_halving_growth
   have hbound : ∀ n, N ≤ n → c * p ^ d n ≤ b n := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro hn
       by_cases hsmall : n < 2 * N
       · have hd : d n = 0 := by

@@ -133,9 +133,8 @@ lemma finiteLinearBall_subset_cyclicOffsetCover_allOffsets
     exists_offsetCorridorPath_of_linearTube_allOffsets hn hu
       (Fin.removeLinearDrift drift s) hremove0 hε16 htube'
   refine Set.mem_iUnion.mpr ⟨k, ?_⟩
-  change finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u
-    (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ)
-      (finCycle k).symm x)
+  change (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ)
+    (finCycle k).symm x) ∈ finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u
   change offsetCorridorPath u
     (Fin.removeLinearDrift drift
       (finiteNormalizedStepKnots scale
@@ -297,9 +296,8 @@ lemma finiteLinearBall_subset_cyclicOffsetCover_lowerEdge
     exists_offsetCorridorPath_of_linearTube_lowerEdge hn hu
       (Fin.removeLinearDrift drift s) hremove0 hε hε16 htube'
   refine Set.mem_iUnion.mpr ⟨k, ?_⟩
-  change finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u
-    (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ)
-      (finCycle k).symm x)
+  change (MeasurableEquiv.piCongrLeft (fun _ : Fin n => ℝ)
+    (finCycle k).symm x) ∈ finiteDriftRemovedOffsetCorridorEvent (n := n) scale drift u
   change offsetCorridorPath u
     (Fin.removeLinearDrift drift
       (finiteNormalizedStepKnots scale

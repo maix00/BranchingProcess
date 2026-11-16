@@ -612,7 +612,7 @@ theorem measure_setOf_lt_limsup_eq_zero [IsFiniteMeasure μ]
     simp only [Set.mem_preimage, hEdef, Set.mem_ofPred_eq, hLx, hLsx]
   -- Extract a genuinely invariant `I`-measurable set `E'` with `E' =ᵐ E`.
   obtain ⟨E', hE'm, hE'eq, hE'inv⟩ :=
-    hT.quasiMeasurePreserving.exists_preimage_eq_of_preimage_ae hEnull hEinv
+    hT.quasiMeasurePreserving.exists_preimage_eq_of_preimage_ae hT.measurable hEnull hEinv
   have hE'I : MeasurableSet[MeasurableSpace.invariants T] E' :=
     MeasurableSpace.measurableSet_invariants.2 ⟨hE'm, hE'inv⟩
   -- Orbit stays in/out of `E'`: `T^[k] x ∈ E' ↔ x ∈ E'`.
@@ -671,7 +671,7 @@ theorem measure_setOf_lt_limsup_eq_zero [IsFiniteMeasure μ]
       rw [hzero] at hn; exact lt_irrefl 0 hn
     · -- `E' ⊆ Bφ` (a.e.): `limsup > L + ε` gives a positive partial sum.
       intro hxE'
-      have hxE : x ∈ E := Eq.mp hE'x hxE'
+      have hxE : x ∈ E := hE'x.mp hxE'
       have hlt : L x + ε < Ls x := hxE
       -- frequently, `A_{n}(g) x > L x + ε`; pick `n = m+1 ≥ 1`.
       have hcobdd : IsCoboundedUnder (· ≤ ·) atTop (fun n => birkhoffAverage ℝ T g n x) := by

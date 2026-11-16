@@ -28,7 +28,7 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Se
 In the namespace
 `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation`,
 `eventually_measure_secondStageEnoughRoots_allAvoid_le` is a
-proof-chain lemma. Given a finite killed population with at least `K n`
+proof-chain lemma. Given a finite selected BRW population with at least `K n`
 measurably selected roots at horizon `n`, it specializes the predictable
 independent-subtree estimate to the event `secondStageEnoughRoots`. Under its
 boundary, cross-weight, centered second-moment, and parameter hypotheses, there are
@@ -40,7 +40,7 @@ such that eventually
    \exp\!\left(-\frac{K_n}{4}\,
      \operatorname{toReal}(\operatorname{PZMean}(D_n,\kappa,c,v))\right),
 \]
-where \(A_n\) is the event that the killed slice contains at least `K_n` roots.
+where \(A_n\) is the event that the selected BRW slice contains at least `K_n` roots.
 The hypotheses include `D n → ∞`, boundary normalization, finite cross
 weight, a centered tilted increment law with variance `sigma ^ 2 > 0`,
 `K n ≤ m` for every `n` and `K n > 0` eventually, and the stated inequalities
