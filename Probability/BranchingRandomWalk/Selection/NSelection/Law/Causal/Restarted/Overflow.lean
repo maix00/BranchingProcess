@@ -129,33 +129,6 @@ private theorem stageComparison_throughOverflow_ae
     have hmem : p ∈ ({p} : Finset (RootIndexed.TreeNode Root α)) := Finset.mem_singleton_self p
     exact ⟨f p, f.mapsTo hmem, f.dominates p hmem⟩
 
-private theorem adapted_eq_of_agree_before
-    {Root α Mark E : Type*} [MeasurableSpace Mark] [MeasurableSpace E] [MeasurableSingletonClass E]
-    (n : ℕ) (g : RootIndexed.StepField Root α Mark → E)
-    (hg : Measurable[RootIndexed.stepFiltration (Root := Root) (α := α) (X := Mark) n] g)
-    (v w : RootIndexed.StepField Root α Mark)
-    (h : ∀ r u, u.length < n → v r u = w r u) :
-    g v = g w := by
-  let restrict (f : RootIndexed.StepField Root α Mark)
-      (p : {p : Root × TreeNode α // p.2.length < n}) := f p.1.1 p.1.2
-  have hle : RootIndexed.stepGenerationSpace (Root := Root) (α := α) (X := Mark) n ≤
-      MeasurableSpace.comap restrict inferInstance := by
-    rw [RootIndexed.stepGenerationSpace_eq_coordinate_iSup]
-    refine iSup_le fun p => iSup_le fun hp => ?_
-    let q : {q : Root × TreeNode α // q.2.length < n} := ⟨p, hp⟩
-    exact MeasurableSpace.comap_le_comap_of_eq_comp
-      (fun x : {q : Root × TreeNode α // q.2.length < n} → Step α Mark => x q)
-      (measurable_pi_apply q) rfl
-  have hm := (hg.mono hle le_rfl) (measurableSet_singleton (g v))
-  obtain ⟨A, _, hA⟩ := MeasurableSpace.measurableSet_comap.mp hm
-  have hrestrict : restrict v = restrict w := funext fun p => h p.1.1 p.1.2 p.2
-  have hv : v ∈ restrict ⁻¹' A := by rw [hA]; simp
-  have hw : w ∈ restrict ⁻¹' A := by
-    change restrict w ∈ A
-    exact hrestrict ▸ hv
-  rw [hA] at hw
-  exact (Set.mem_singleton_iff.mp hw).symm
-
 /-- The stopped comparison of Wang Yiyang, *Asymptotic Speed of the
 N-Branching Random Walk with Infinite Offspring* (Fudan University, 2026),
 Chapter 3, Lemma 3.15, on a single coupled pair of product-law fields.
@@ -226,14 +199,14 @@ theorem RootIndexed.restartedRealPositionComparison_throughOverflow_ae
   let selected := RootIndexed.selectedPopulationTotalized N roots initialPosition id id n V
   have hagree := RootIndexed.restartedRealPositionTrajectoryField_eq_stage N roots initialPosition id population field n
   have hpop : selected = parents :=
-    adapted_eq_of_agree_before n _ (RootIndexed.selectedPopulationTotalized_adapted
+    RootIndexed.adapted_eq_of_agree_before n _ (RootIndexed.selectedPopulationTotalized_adapted
       N roots initialPosition id measurable_id id measurable_id n) V S hagree
   have hposition (q : RootIndexed.TreeNode Root α) (hq : q ∈ parents) :
       RootIndexed.position initialPosition id V q.1 q.2 =
         RootIndexed.position initialPosition id S q.1 q.2 := by
     have hdepth : q.2.length = n :=
       RootIndexed.selectedPopulationTotalized_depth N roots initialPosition id id n S q hq
-    have heq := adapted_eq_of_agree_before n _ (RootIndexed.positionAtGeneration_measurable
+    have heq := RootIndexed.adapted_eq_of_agree_before n _ (RootIndexed.positionAtGeneration_measurable
       initialPosition id measurable_id n q.1 q.2) V S hagree
     simpa [RootIndexed.positionAtGeneration, hdepth] using heq
   refine ⟨?_, ?_⟩

@@ -25,6 +25,9 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Selecte
 * `RootIndexed.stoppedRankInstalledTrajectoryField_measurable_law`: this field has the same product
   offspring law as the original first-$N$ process.
 
+* `RootIndexed.stoppedRankInstalledTrajectoryField_eq_stage_before`: if
+  $n\le\tau$, the stopped installation and the stage-$n$ installation agree
+  on every mark revealed strictly before $n$.
 * `RootIndexed.stoppedRankInstalledTrajectoryField_apply_of_le_length`: on
   $\{\tau=n\}$, every mark at depth at least $n$ is its right-field mark.
 * `RootIndexed.stoppedRankInstalledTrajectoryField_subtrees_factorization`:
@@ -230,6 +233,32 @@ lemma RootIndexed.stoppedRankInstalledTrajectoryField_eq_stage
     exact congrFun (congrFun hstage r) u
   · change U (u.length + 1) ω r u = V n ω r u
     rw [hafter _ (by omega), hstage]
+
+omit [MeasurableSpace (RootIndexed.TreeNode Root α)]
+  [Countable (RootIndexed.TreeNode Root α)] in
+/-- The installed field agrees with the ordinary stage on all marks exposed
+before that stage, provided the installation has not stopped earlier. -/
+lemma RootIndexed.stoppedRankInstalledTrajectoryField_eq_stage_before
+    (N : ℕ) (roots : Finset Root) (initialPosition : Root → ℝ)
+    {P : RootIndexed.CausalPopulation Ωf Root α ℝ 𝔽 RootIndexed.StepField.left}
+    (hP : P.FiniteSlices)
+    (τ : Ωf → WithTop ℕ) (hτ : IsStoppingTime 𝔽 τ)
+    (ω : Ωf) (n : ℕ) (hn : (n : WithTop ℕ) ≤ τ ω)
+    (r : Root) (u : TreeNode α) (hu : u.length < n) :
+    RootIndexed.stoppedRankInstalledTrajectoryField N roots initialPosition hP τ hτ ω r u =
+      RootIndexed.restartedRealPositionNSelectedBRWField N roots initialPosition id
+        hP.toFinset n ω r u := by
+  let cut := (beforeStop_finiteSlices hP τ hτ).toFinset
+  have hstage : RootIndexed.restartedRealPositionNSelectedBRWField N roots initialPosition id cut n ω =
+      RootIndexed.restartedRealPositionNSelectedBRWField N roots initialPosition id hP.toFinset n ω := by
+    dsimp only [RootIndexed.restartedRealPositionNSelectedBRWField]
+    apply rankInstalledField_eq_of_slices_eq
+    intro j hj
+    have hlt : (j : WithTop ℕ) < τ ω := (WithTop.coe_lt_coe.mpr hj).trans_le hn
+    change cut j ω = _
+    rw [show cut j ω = _ from beforeStop_toFinset hP τ hτ j ω, ite_eq_left hlt]
+  change RootIndexed.restartedRealPositionTrajectoryField N roots initialPosition id cut ω r u = _
+  rw [RootIndexed.restartedRealPositionTrajectoryField_eq_stage _ _ _ _ _ _ n r u hu, hstage]
 
 omit [MeasurableSpace (RootIndexed.TreeNode Root α)]
   [Countable (RootIndexed.TreeNode Root α)] in
