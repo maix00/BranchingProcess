@@ -35,7 +35,7 @@ cutoff \(M\) gives, uniformly in \(N\),
 \[\mathbb P_{\mathrm{offspringFieldLaw}(L.\mathrm{sortedPotentialImage})}
   \!\left\{\omega:\
     \operatorname{growthTrialSuccess}
-      (S,\lfloor N^a\rfloor_+,2^{d_N},d_N,\omega)\right\}
+      (S,\lceil N^a\rceil_+,2^{d_N},d_N,\omega)\right\}
   \ge\frac{1}{4K(\rho,v)},\]
 
 where \(S\) is the cutoff selected-growth-trial rule and \(K\) is the normalized
@@ -47,7 +47,7 @@ second-moment constant.
   at most $M$ has mean $\rho>1$, and the path selector has positive split
   probability at the same cutoff. For $N\ge1$ and $a\ge0$, the probability
   of a trial reaching
-  `⌊N ^ a⌋₊` by generation
+  an integer target $1\le q\le\lceil N^a\rceil$ by generation
   `d = ⌈(a log N + log 2) / log ρ⌉₊`, with upper bound `2 ^ d`, is at least
   `1 / (4 K(ρ, v))`, where `K` is the normalized second-moment constant.
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.successEvent_of_binary_horizon_ae` states that
@@ -98,10 +98,11 @@ theorem exists_success_probability_lower_bound
       let variance := finiteSlotOffspringSecondMomentReal law - ρ ^ 2
       let p₁ := 1 / (4 * normalizedSecondMomentConstant ρ variance)
       1 < ρ ∧ 0 < μ (splitBy (firstOrBelowPotential B realPotential (M : ℝ))) ∧
-        0 < p₁ ∧ ∀ (N : ℕ) (a : ℝ), 1 ≤ N → 0 ≤ a →
+        0 < p₁ ∧ ∀ (N : ℕ) (a : ℝ) (lower : ℕ),
+          1 ≤ N → 0 < lower → lower ≤ ⌈(N : ℝ) ^ a⌉₊ →
         let duration := ⌈(a * Real.log N + Real.log 2) / Real.log ρ⌉₊
         (offspringFieldLaw μ).real
-          {ω | growthTrialSuccess S (⌊(N : ℝ) ^ a⌋₊) (2 ^ duration) duration ω} ≥ p₁ := by
+          {ω | growthTrialSuccess S lower (2 ^ duration) duration ω} ≥ p₁ := by
   intro μ
   let B := Step.FiniteSelection.firstNBySlotOrder (α := α) (X := ℝ) 2
   let rawB := Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2
@@ -156,12 +157,9 @@ theorem exists_success_probability_lower_bound
   refine ⟨M, hM, hsplitR, ?_, ?_⟩
   · unfold normalizedSecondMomentConstant
     positivity
-  intro N a hN ha
-  have hNreal : (1 : ℝ) ≤ N := by exact_mod_cast hN
-  have hlower : 0 < ⌊(N : ℝ) ^ a⌋₊ :=
-    Nat.floor_pos.mpr (Real.one_le_rpow hNreal ha)
-  exact measure_finiteSlotGrowthTrialSuccess_ge_floor_rpow
-    μ S hS hScap hM N a hN (Or.inl hlower)
+  intro N a lower hN hlower htarget
+  exact measure_finiteSlotGrowthTrialSuccess_at_logarithmicHorizon
+    μ S hS hScap hM N a hN lower htarget (Or.inl hlower)
 
 /-- A growth-trial candidate's growth trial is successful whenever its observable
 split is enabled, almost surely, if its binary horizon fits under the cap.

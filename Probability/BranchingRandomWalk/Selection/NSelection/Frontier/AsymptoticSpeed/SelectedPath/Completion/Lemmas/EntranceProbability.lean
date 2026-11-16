@@ -178,7 +178,9 @@ lemma exists_logarithmicEntrance_failure_le_polynomial
   have hsuccessMeas : MeasurableSet {ω | G ω} :=
     (generationFiltration (M := Step ℕ ℝ)).le (duration i) _
       (growthTrialSuccess_measurable growth hgrowth lower (upper i) (duration i))
-  have hsuccess' : p₁ ≤ (ν {ω | G ω}).toReal := hsuccess (N i) α hN1 ha.le
+  have hsuccess' : p₁ ≤ (ν {ω | G ω}).toReal := hsuccess (N i) α lower hN1
+      (Nat.floor_pos.mpr (Real.one_le_rpow (by exact_mod_cast hN1) ha.le))
+      (Nat.floor_le_ceil _)
   have hfail : ν {ω | ¬ G ω} ≤ ENNReal.ofReal q := by
     change ν {ω | G ω}ᶜ ≤ ENNReal.ofReal q
     rw [measure_compl hsuccessMeas (measure_ne_top _ _), measure_univ]

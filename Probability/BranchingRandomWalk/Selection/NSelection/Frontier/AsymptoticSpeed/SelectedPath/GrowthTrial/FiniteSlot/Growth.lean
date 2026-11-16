@@ -41,12 +41,12 @@ has the uniform lower bound
   for a binary selector implies $\mathbb P(\#S=2)>0$.
 * `exists_nat_cutoff_binaryOffspringMean_gt_one`: if $\rho>1$, filtering
   all retained marks at a large enough common cutoff preserves mean $>1$.
-* `measure_finiteSlotPopulation_ge_floor_rpow` gives a scale-uniform lower
-  bound for the event that the selected population reaches `⌊N ^ a⌋₊` by its
+* `measure_finiteSlotPopulation_ge_rpow` gives a scale-uniform lower
+  bound for the event that the selected population reaches `N ^ a` by its
   logarithmic horizon:
-  `P(Z_⌈(a log N + log 2)/log ρ⌉₊ ≥ ⌊N ^ a⌋₊) ≥ 1/(4 K(ρ,v))`.
-* `measure_finiteSlotGrowthTrialSuccess_ge_floor_rpow` gives the same lower
-  bound for the full trial event, including nonempty intermediate generations
+  `P(Z_⌈(a log N + log 2)/log ρ⌉₊ ≥ N ^ a) ≥ 1/(4 K(ρ,v))`.
+* `measure_finiteSlotGrowthTrialSuccess_at_logarithmicHorizon` gives the same lower
+  bound for the full trial event at any positive target up to $\lceil N^a\rceil$, including nonempty intermediate generations
   and the endpoint upper cap `2 ^ duration`.
 -/
 
@@ -232,7 +232,7 @@ theorem exists_nat_cutoff_binaryOffspringMean_gt_one
 logarithmic horizon with a probability bounded below independently of the
 scale.  Only the original offspring mean is used: second moments are finite
 because the selected row has at most two children. -/
-theorem measure_finiteSlotPopulation_ge_floor_rpow
+theorem measure_finiteSlotPopulation_ge_rpow
     {α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [MeasurableSpace X]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
@@ -243,7 +243,7 @@ theorem measure_finiteSlotPopulation_ge_floor_rpow
       (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))
     (N : ℕ) (a : ℝ) (hN : 1 ≤ N) :
     (offspringFieldLaw μ).real
-      {ω | (⌊(N : ℝ) ^ a⌋₊ : ℝ) ≤
+      {ω | (N : ℝ) ^ a ≤
         finiteSlotPopulationSizeReal S ω
           ⌈(a * Real.log N + Real.log 2) /
             Real.log (finiteSlotOffspringMeanReal
@@ -297,7 +297,7 @@ theorem measure_finiteSlotPopulation_ge_floor_rpow
     intro n
     simpa [m₂, Z, ν, ρ, v] using
       finiteSlotPopulationSizeReal_sq_integral_eq_recursion μ S hS hcapacity n
-  have hprob := measure_ge_floor_rpow_of_moment_recursion
+  have hprob := measure_ge_rpow_of_moment_recursion
     (offspringFieldLaw μ) ρ v hmean hvar Z m₂ hZmeas hZnonneg hZint hZmem
     hmean' hm₂zero
     (fun n => rfl) hm₂succ N a hN
@@ -306,7 +306,7 @@ theorem measure_finiteSlotPopulation_ge_floor_rpow
 /-- The finite-slot second-moment bound applies to the complete growth-trial
 event on the actual pre-sampled selected population. A positive terminal
 target certifies survival to every preceding age. -/
-theorem measure_finiteSlotGrowthTrialSuccess_ge_floor_rpow
+theorem measure_finiteSlotGrowthTrialSuccess_at_logarithmicHorizon
     {α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [MeasurableSpace X]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
@@ -316,9 +316,10 @@ theorem measure_finiteSlotGrowthTrialSuccess_ge_floor_rpow
     (hmean : 1 < finiteSlotOffspringMeanReal
       (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))
     (N : ℕ) (a : ℝ) (hN : 1 ≤ N)
-    (hprior : 0 < ⌊(N : ℝ) ^ a⌋₊ ∨ ∀ᵐ ξ ∂μ, (S ξ).Nonempty) :
+    (lower : ℕ) (hlower : lower ≤ ⌈(N : ℝ) ^ a⌉₊)
+    (hprior : 0 < lower ∨ ∀ᵐ ξ ∂μ, (S ξ).Nonempty) :
     (offspringFieldLaw μ).real
-      {ω | growthTrialSuccess S (⌊(N : ℝ) ^ a⌋₊)
+      {ω | growthTrialSuccess S lower
         (2 ^ ⌈(a * Real.log N + Real.log 2) /
           Real.log (finiteSlotOffspringMeanReal
             (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))⌉₊)
@@ -336,10 +337,9 @@ theorem measure_finiteSlotGrowthTrialSuccess_ge_floor_rpow
   let ρ := finiteSlotOffspringMeanReal ν
   let v := finiteSlotOffspringSecondMomentReal ν - ρ ^ 2
   let duration := ⌈(a * Real.log N + Real.log 2) / Real.log ρ⌉₊
-  let lower := ⌊(N : ℝ) ^ a⌋₊
   let upper := 2 ^ duration
   let endpoint : Set (Mark α (Step α X)) :=
-    {ω | (lower : ℝ) ≤ finiteSlotPopulationSizeReal S ω duration}
+    {ω | (N : ℝ) ^ a ≤ finiteSlotPopulationSizeReal S ω duration}
   let success : Set (Mark α (Step α X)) :=
     {ω | growthTrialSuccess S lower upper duration ω}
   have hprior' : ∀ᵐ ω ∂offspringFieldLaw μ,
@@ -370,7 +370,7 @@ theorem measure_finiteSlotGrowthTrialSuccess_ge_floor_rpow
           offspringFieldLaw_coordinate μ u, hsplitOne]
         simp
       exact hall.mono fun _ => Or.inr
-  have hendpoint := measure_finiteSlotPopulation_ge_floor_rpow
+  have hendpoint := measure_finiteSlotPopulation_ge_rpow
     μ S hS hcapacity hmean N a hN
   have hsuccess_mono : (offspringFieldLaw μ).real endpoint ≤
       (offspringFieldLaw μ).real success := by
@@ -379,11 +379,11 @@ theorem measure_finiteSlotGrowthTrialSuccess_ge_floor_rpow
       intro hendpoint
       have hcard : lower ≤ (Selection.Stepwise.population S duration ω).card := by
         have hendpoint' := hendpoint
-        change (lower : ℝ) ≤
+        change (N : ℝ) ^ a ≤
           ((finiteSlotActiveLabels S ω duration).card : ℝ) at hendpoint'
         rw [finiteSlotActiveLabels_card_eq_population_card S ω hcapacity duration]
           at hendpoint'
-        exact_mod_cast hendpoint'
+        exact hlower.trans (Nat.ceil_le.mpr hendpoint')
       rcases hmarks with hpos | hmarks
       · exact growthTrialSuccess_of_positive_terminal_population
           S hcapacity ω lower duration upper hpos le_rfl hcard
@@ -396,7 +396,7 @@ theorem measure_finiteSlotGrowthTrialSuccess_ge_floor_rpow
   calc
     1 / (4 * normalizedSecondMomentConstant ρ v) ≤
         (offspringFieldLaw μ).real endpoint := by
-      simpa [endpoint, duration, lower, ν, ρ, v] using hendpoint
+      simpa [endpoint, duration, ν, ρ, v] using hendpoint
     _ ≤ (offspringFieldLaw μ).real success := hsuccess_mono
 
 
