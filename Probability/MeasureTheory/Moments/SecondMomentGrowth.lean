@@ -30,9 +30,9 @@ import Probability.MeasureTheory.Moments.PaleyZygmund
   Paley--Zygmund inequality to a nonnegative square-integrable random-variable
   sequence with mean $\rho^n$ and the stated second-moment recursion. It gives
   a uniform positive lower bound for reaching half the mean.
-- `measure_ge_floor_rpow_of_moment_recursion` chooses the horizon
+- `measure_ge_rpow_of_moment_recursion` chooses the horizon
   $h=\lceil(a\log N+\log 2)/\log\rho\rceil_+$ and gives the same uniform
-  lower bound for reaching $\lfloor N^a\rfloor_+$.
+  lower bound for reaching $N^a$.
 
 The probability-space statements apply to any sequence satisfying the listed
 moment identities. Finite-slot Galton--Watson applications are in
@@ -170,8 +170,8 @@ theorem measure_ge_half_mean_of_moment_recursion
 bound. If a random-variable sequence satisfies the stated moment recursion,
 then at
 `h_N = ceil ((a log N + log 2) / log ρ)` the population reaches
-`floor (N^a)` with a probability bounded away from zero. -/
-theorem measure_ge_floor_rpow_of_moment_recursion
+`N^a` with a probability bounded away from zero. -/
+theorem measure_ge_rpow_of_moment_recursion
     {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
     (ρ variance : ℝ) (hρ : 1 < ρ) (hvariance : 0 ≤ variance)
     (Z : ℕ → Ω → ℝ) (m₂ : ℕ → ℝ)
@@ -184,13 +184,12 @@ theorem measure_ge_floor_rpow_of_moment_recursion
     (hsecond : ∀ n, ∫ ω, Z n ω ^ 2 ∂μ = m₂ n)
     (hm₂_succ : ∀ n, m₂ (n + 1) = ρ ^ 2 * m₂ n + variance * ρ ^ n)
     (N : ℕ) (a : ℝ) (hN : 1 ≤ N) :
-    (μ.real {ω | (⌊(N : ℝ) ^ a⌋₊ : ℝ) ≤
+    (μ.real {ω | (N : ℝ) ^ a ≤
       Z ⌈(a * Real.log N + Real.log 2) / Real.log ρ⌉₊ ω}) ≥
       1 / (4 * normalizedSecondMomentConstant ρ variance) := by
   have hNpow_nonneg : 0 ≤ (N : ℝ) ^ a :=
     Real.rpow_nonneg (by positivity : 0 ≤ (N : ℝ)) a
-  have hfloor_le : (⌊(N : ℝ) ^ a⌋₊ : ℝ) ≤ (N : ℝ) ^ a := Nat.floor_le hNpow_nonneg
-  have hscale : 2 * (⌊(N : ℝ) ^ a⌋₊ : ℝ) ≤
+  have hscale : 2 * (N : ℝ) ^ a ≤
       ρ ^ ⌈(a * Real.log N + Real.log 2) / Real.log ρ⌉₊ := by
     have hNpos : 0 < (N : ℝ) := by
       exact_mod_cast (Nat.lt_of_lt_of_le Nat.zero_lt_one hN)
@@ -205,11 +204,10 @@ theorem measure_ge_floor_rpow_of_moment_recursion
       ring
     have hlarge := Real.le_pow_natCeil_logb hρ htarget_pos
     rw [hlogb] at hlarge
-    exact (mul_le_mul_of_nonneg_left hfloor_le (by norm_num)).trans
-      hlarge
+    exact hlarge
   exact measure_ge_half_mean_of_moment_recursion μ ρ variance hρ
     hvariance Z m₂ hZmeas hZ_nonneg hZ_integrable hZ_memLp hmean hm₂_zero
-    hsecond hm₂_succ _ _ (Nat.cast_nonneg _) hscale
+    hsecond hm₂_succ _ _ hNpow_nonneg hscale
 
 end ProbabilityTheory
 

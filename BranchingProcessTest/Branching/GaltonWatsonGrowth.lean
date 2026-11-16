@@ -225,7 +225,7 @@ example (field : Combinatorics.Branching.StepField (Fin 2) PUnit) (n : ℕ) :
   ProbabilityTheory.BranchingProcess.GaltonWatson.generationSize_succ_eq_sum_childSubtree
     field n
 
-#print axioms measure_ge_floor_rpow_of_moment_recursion
+#print axioms measure_ge_rpow_of_moment_recursion
 #print axioms generationSize_one_law
 #print axioms generationSecondMoment_succ_eq_offspringMoments
 

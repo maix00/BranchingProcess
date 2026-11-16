@@ -19,6 +19,13 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.Asympto
 
 ## Internal proof declarations
 
+* `trialRestartPopulationBeforeReset` gives the selected-path particle before
+  the successful trial is born, and the descendants in that trial between its
+  birth and its completion $\tau$.
+* `trialRestartPopulationBeforeReset_positionWitness_ae`: up to $\tau$,
+  each particle at position $x$ has an actual selected counterpart at the
+  same generation at position at most $x$, when the selected path is alive.
+
 * `growthTrial_position_le_cutoff_add_selectedMarkSum` bounds the positive
   position at age $j$ of a trial born at $k+1$ by $M(k+1+j)+\sum_{i<k}(Y_i)_+$.
 * `firstSuccessfulTrial_positionWitness_during_window_ae`: from the birth
@@ -624,5 +631,86 @@ lemma firstSuccessfulTrial_positionWitness_during_window_ae
   obtain ⟨halive, hsplit, _⟩ := hs
   exact hf (k + 1 + age) q (SelectedPath.Population.growthTrial_subset_during_window
     R growth hR upper duration r k age hage left halive hsplit hq)
+
+/-- The pre-reset generation slice on the common pre-sampled tree. Once
+the birth generation of the successful trial has been reached, its slice
+is used through its completion generation. -/
+noncomputable def trialRestartPopulationBeforeReset
+    {Root : Type*} [DecidableEq (RootIndexed.TreeNode Root ℕ)]
+    (R growth : Step.FiniteSelection ℕ ℝ)
+    (hR : Measurable R.select) (lower upper duration : ℕ) (r : Root) (H : ℕ)
+    (ω : RootIndexed.StepField Root ℕ ℝ) : Finset (RootIndexed.TreeNode Root ℕ) :=
+  match firstSuccessfulCompletion R growth hR lower upper duration r ω with
+  | ⊤ => {(r, selectedPath R r H ω)}
+  | (n : ℕ) =>
+    if H < n - duration then {(r, selectedPath R r H ω)}
+    else if H ≤ n then capStoppedCandidate (lineages R hR) R growth upper r
+      PUnit.unit (n - duration) (H - (n - duration)) ω
+    else ∅
+
+set_option maxHeartbeats 1000000 in
+/-- Compare the pre-reset slice itself with the actual selected population.
+The comparison is obtained by restricting the injection of the causal
+population to the chosen slice. -/
+lemma trialRestartPopulationBeforeReset_positionWitness_ae
+    {Root : Type} [MeasurableSpace Root] [MeasurableSingletonClass Root]
+    [MeasurableSpace (RootIndexed.TreeNode Root ℕ)]
+    [MeasurableSingletonClass (RootIndexed.TreeNode Root ℕ)]
+    [Countable (RootIndexed.TreeNode Root ℕ)] [LinearOrder (RootIndexed.TreeNode Root ℕ)]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hnorm : HasBoundaryNormalization realPotential μ)
+    (N : ℕ) (R growth : Step.FiniteSelection ℕ ℝ)
+    (hR : Measurable R.select) (hgrowth : Measurable growth.select)
+    (lower upper duration : ℕ) (hupper : 1 ≤ upper) (hbounded : growth.IsBoundedBy 2)
+    (hcapacity : 1 + (duration + 1) * (2 * upper) ≤ N) (r : Root) :
+    let trials := SelectedPath.Population.leftBRWFamily_finiteSlices R growth hR hgrowth
+      upper duration r
+    ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ,
+      let left := RootIndexed.StepField.left field
+      ∀ H, isAlive R r H left →
+        ∀ q ∈ trialRestartPopulationBeforeReset R growth hR lower upper duration r H left,
+          ∃ p ∈ RootIndexed.restartedRealPositionNSelectedBRWPopulation N {r}
+              (fun _ => 0) id trials.toFinset H field,
+            RootIndexed.position (fun _ => 0) id
+              (RootIndexed.restartedRealPositionNSelectedBRWField N {r}
+                (fun _ => 0) id trials.toFinset H field) p.1 p.2 ≤
+              RootIndexed.position (fun _ => 0) id left q.1 q.2 := by
+  intro trials
+  have hcomp (H : ℕ) := Coupling.positionWitness_ae μ hnorm N (fun _ => 0)
+    R growth hR hgrowth upper duration hbounded hupper hcapacity r H
+  have hgrowthComp := firstSuccessfulTrial_positionWitness_during_window_ae
+    μ hnorm N R growth hR hgrowth lower upper duration hupper hbounded hcapacity r
+  filter_upwards [ae_all_iff.2 hcomp, hgrowthComp] with field hcompField hgrowthField
+  intro left H hAlive q hq
+  have hpath (hqpath : q = (r, selectedPath R r H left)) := by
+    exact hcompField H q (hqpath ▸
+      SelectedPath.Population.slice_contains_selectedPath R growth hR upper duration r H left hAlive)
+  cases htime : firstSuccessfulCompletion R growth hR lower upper duration r left with
+  | top =>
+    apply hpath
+    simpa only [trialRestartPopulationBeforeReset, htime, Finset.mem_singleton] using hq
+  | coe n =>
+    by_cases hbefore : H < n - duration
+    · apply hpath
+      simpa only [trialRestartPopulationBeforeReset, htime, ite_eq_left hbefore,
+        Finset.mem_singleton] using hq
+    by_cases hH : H ≤ n
+    · let declarations : ℕ → Set (RootIndexed.StepField Root ℕ ℝ) := fun j =>
+        {ω | ∃ k, ((k + 1 + duration : ℕ) : WithTop ℕ) = j ∧
+          ω ∈ successEvent R growth hR lower upper duration r k}
+      have ht : firstDeclaredSuccess declarations left = (n : WithTop ℕ) := htime
+      obtain ⟨k, hk, _⟩ := ((firstDeclaredSuccess_eq_iff declarations left n).mp ht).1
+      have hn : k + 1 + duration = n := WithTop.coe_injective hk
+      have hborn : n - duration = k + 1 := by omega
+      have hnotborn : ¬ H < k + 1 := by omega
+      have hage : H - (k + 1) ≤ duration := by omega
+      have hHage : k + 1 + (H - (k + 1)) = H := by omega
+      have hmem : q ∈ capStoppedCandidate (lineages R hR) R growth upper r
+          PUnit.unit (k + 1) (H - (k + 1)) left := by
+        simpa only [trialRestartPopulationBeforeReset, htime, hborn, ite_eq_right hnotborn,
+          ite_eq_left hH] using hq
+      have h := hgrowthField k (H - (k + 1)) hage (htime.trans hk.symm) q hmem
+      simpa only [hHage] using h
+    · simp [trialRestartPopulationBeforeReset, htime, hbefore, hH] at hq
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas
