@@ -25,31 +25,16 @@ observable success event for each enabled growth-trial candidate.
 
 ## Public declarations
 
-For \(N\ge1\) and exponent \(a\), define the logarithmic horizon
-
-\[d_N=\left\lceil\frac{a\log N+\log 2}{\log\rho}\right\rceil_+.\]
-
-Under the nonempty supercritical offspring hypotheses, a finite potential
-cutoff \(M\) gives, uniformly in \(N\),
-
-\[\mathbb P_{\mathrm{offspringFieldLaw}(L.\mathrm{sortedPotentialImage})}
-  \!\left\{\omega:\
-    \operatorname{growthTrialSuccess}
-      (S,\lceil N^a\rceil_+,2^{d_N},d_N,\omega)\right\}
-  \ge\frac{1}{4K(\rho,v)},\]
-
-where \(S\) is the cutoff selected-growth-trial rule and \(K\) is the normalized
-second-moment constant.
+At a horizon $d$ with $2x\le\rho^d$, the uniform positive bound applies
+to an integer target $1\le q\le\lceil x\rceil$ and a cap of $2^d$.
 
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.exists_success_probability_lower_bound` states that under
   nonempty supercritical offspring assumptions there is a finite cutoff
   `M` for which the selector retaining the first two slots with potential
   at most $M$ has mean $\rho>1$, and the path selector has positive split
-  probability at the same cutoff. For $N\ge1$ and $a\ge0$, the probability
-  of a trial reaching
-  an integer target $1\le q\le\lceil N^a\rceil$ by generation
-  `d = ⌈(a log N + log 2) / log ρ⌉₊`, with upper bound `2 ^ d`, is at least
-  `1 / (4 K(ρ, v))`, where `K` is the normalized second-moment constant.
+  probability at the same cutoff. If $2x\le\rho^d$, the probability of full
+  success is at least $1/(4K(\rho,v))$ for a positive integer target up to
+  $\lceil x\rceil$ and a cap of $2^d$.
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.successEvent_of_binary_horizon_ae` states that
   an enabled split candidate satisfies the full trial event almost surely when
   its horizon obeys `2 ^ duration ≤ upper` and every selected mark is almost
@@ -98,9 +83,9 @@ theorem exists_success_probability_lower_bound
       let variance := finiteSlotOffspringSecondMomentReal law - ρ ^ 2
       let p₁ := 1 / (4 * normalizedSecondMomentConstant ρ variance)
       1 < ρ ∧ 0 < μ (splitBy (firstOrBelowPotential B realPotential (M : ℝ))) ∧
-        0 < p₁ ∧ ∀ (N : ℕ) (a : ℝ) (lower : ℕ),
-          1 ≤ N → 0 < lower → lower ≤ ⌈(N : ℝ) ^ a⌉₊ →
-        let duration := ⌈(a * Real.log N + Real.log 2) / Real.log ρ⌉₊
+        0 < p₁ ∧ ∀ (duration lower : ℕ) (threshold : ℝ),
+          0 ≤ threshold → 2 * threshold ≤ ρ ^ duration →
+          0 < lower → lower ≤ ⌈threshold⌉₊ →
         (offspringFieldLaw μ).real
           {ω | growthTrialSuccess S lower (2 ^ duration) duration ω} ≥ p₁ := by
   intro μ
@@ -157,9 +142,9 @@ theorem exists_success_probability_lower_bound
   refine ⟨M, hM, hsplitR, ?_, ?_⟩
   · unfold normalizedSecondMomentConstant
     positivity
-  intro N a lower hN hlower htarget
-  exact measure_finiteSlotGrowthTrialSuccess_at_logarithmicHorizon
-    μ S hS hScap hM N a hN lower htarget (Or.inl hlower)
+  intro duration lower threshold hthreshold hscale hlower htarget
+  exact measure_finiteSlotGrowthTrialSuccess_of_mean_ge
+    μ S hS hScap hM duration lower threshold hthreshold hscale htarget (Or.inl hlower)
 
 /-- A growth-trial candidate's growth trial is successful whenever its observable
 split is enabled, almost surely, if its binary horizon fits under the cap.

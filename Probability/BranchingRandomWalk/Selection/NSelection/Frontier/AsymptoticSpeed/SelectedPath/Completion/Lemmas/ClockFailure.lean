@@ -21,8 +21,9 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticS
   $P(\{\tau\le n_N+d_N,\ \kappa\le K_N\}^{c})\le N^{-b}$
   eventually, for some $b>0$.
 * `exists_logarithmicTrialClock_failure_le_polynomial`: with the binary cutoff
-  rule and $d_N=\lceil(\alpha\log N+\log 2)/\log\rho\rceil$, a fixed
-  positive success bound holds at target $\lceil N^\alpha\rceil$. On the
+  rule and $d_N=\lfloor\alpha\log N/\log\rho\rfloor-1$, a fixed positive
+  success bound holds at target $\lceil N^\beta\rceil$ with $0<\beta<\alpha$.
+  On the
   original candidate tree the good-event complement is $O(N^{-b})$ for
   $T_N=n_N+d_N$ and $K_N=\lfloor\delta\log N\rfloor$.
 
@@ -184,7 +185,8 @@ lemma eventually_measure_completionLate_or_trialFailure_le
 
 /-- The success and clock estimates for the original pre-sampled growth
 trial, with the integer target corresponding to population at least
-$N^\alpha$. The exponent may be chosen arbitrarily small. -/
+$N^\beta$. The duration retains its floor and the one generation used
+by the split. The two exponents may be chosen arbitrarily small. -/
 lemma exists_logarithmicTrialClock_failure_le_polynomial
     (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
     (hne : L.raw nonemptySupport = 1)
@@ -195,15 +197,16 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
     (hH : Tendsto (fun i => (H i : ℝ) / Real.log (N i : ℝ) ^ 3) atTop (𝓝 t)) :
     let μ := L.sortedPotentialImage
     let P := RootIndexed.stepFieldLaw (Root := ℕ ⊕ ℕ) μ
-    ∃ (M : ℕ) (α ρ p₁ : ℝ), 0 < α ∧ α < 1 ∧ α < ε ∧ 1 < ρ ∧ 0 < p₁ ∧
+    ∃ (M : ℕ) (α β ρ p₁ : ℝ),
+      0 < β ∧ β < α ∧ α < 1 ∧ α < ε ∧ 1 < ρ ∧ 0 < p₁ ∧
       let B := Step.FiniteSelection.firstNBySlotOrder (α := ℕ) (X := ℝ) 2
       let R := firstOrBelowPotential B realPotential (M : ℝ)
       let growth := B.belowPotential realPotential (M : ℝ)
       let hR := firstOrBelowPotential_measurable B firstTwoBySlotOrder_measurable realPotential M
       let hgrowth := B.belowPotential_measurable firstTwoBySlotOrder_measurable realPotential M
       let p₀ := (μ (splitBy R)).toReal
-      let d i := ⌈(α * Real.log (N i : ℝ) + Real.log 2) / Real.log ρ⌉₊
-      let lower i := ⌈(N i : ℝ) ^ α⌉₊
+      let d i := ⌊α * Real.log (N i : ℝ) / Real.log ρ⌋₊ - 1
+      let lower i := ⌈(N i : ℝ) ^ β⌉₊
       let upper i := 2 ^ d i
       let τ i := Completion.time R growth hR hgrowth (lower i) (upper i) (d i) (0 : ℕ)
       (∀ᶠ i in atTop, p₁ ≤ (offspringFieldLaw μ).real
@@ -245,15 +248,20 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
       field_simp
     rw [hcancel]
     exact one_div_lt_one_div_of_lt (by positivity) (by linarith)
-  let d i := ⌈(α * Real.log (N i : ℝ) + Real.log 2) / Real.log ρ⌉₊
-  let lower i := ⌈(N i : ℝ) ^ α⌉₊
+  let β := α / 2
+  have hβ : 0 < β := by dsimp [β]; linarith
+  have hβα : β < α := by dsimp [β]; linarith
+  let d i := ⌊α * Real.log (N i : ℝ) / Real.log ρ⌋₊ - 1
+  let lower i := ⌈(N i : ℝ) ^ β⌉₊
   let upper i := 2 ^ d i
   have hsuccess' : ∀ᶠ i in atTop, p₁ ≤ (offspringFieldLaw μ).real
        {ω | growthTrialSuccess growth (lower i) (upper i) (d i) ω} := by
-    filter_upwards [hN.eventually_ge_atTop 1] with i hi
-    exact hsuccess (N i) α (lower i) hi
-      (Nat.ceil_pos.mpr (Real.rpow_pos_of_pos (by exact_mod_cast Nat.zero_lt_of_lt hi) α)) le_rfl
-  refine ⟨M, α, ρ, p₁, ha, ha1, haε, hρ, hp₁, hsuccess', ?_⟩
+    filter_upwards [hN.eventually_ge_atTop 1,
+      eventually_two_rpow_le_pow_trialDuration hρ hβα hN] with i hi hmean
+    have hNpos : 0 < (N i : ℝ) := by exact_mod_cast Nat.zero_lt_of_lt hi
+    exact hsuccess (d i) (lower i) ((N i : ℝ) ^ β) (by positivity) hmean
+      (Nat.ceil_pos.mpr (Real.rpow_pos_of_pos hNpos β)) le_rfl
+  refine ⟨M, α, β, ρ, p₁, hβ, hβα, ha1, haε, hρ, hp₁, hsuccess', ?_⟩
   intro δ hδ
   let K i := ⌊δ * Real.log (N i : ℝ)⌋₊
   let clock i := ⌈(4 * δ / p₀) * Real.log (N i : ℝ)⌉₊
@@ -261,7 +269,8 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
   have hbudget : (0 + (M : ℝ)) * δ + (M : ℝ) * (α / Real.log ρ) < η :=
     lt_add_of_pos_right _ zero_lt_one
   obtain ⟨hscale, hT, hTH⟩ := logarithmicEntrance_scales
-    hρ hp₀ ha hδ (Nat.cast_nonneg M) hsmall hbudget hN ht hH
+    hρ hp₀ ha hδ (Nat.cast_nonneg M) hsmall hbudget hN ht hH d
+    (fun i => trialDuration_le hρ ha.le (N i))
   have hμne : μ nonemptySupport = 1 := by
     change L.sortedPotentialImage nonemptySupport = 1
     rw [L.sortedPotentialImage_nonemptySupport, L.sorted_nonemptySupport]
