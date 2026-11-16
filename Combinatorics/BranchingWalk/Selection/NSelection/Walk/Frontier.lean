@@ -95,7 +95,7 @@ variable {X : Type*} [DecidableEq X] {N : ℕ} {M : FiniteNSelection X N}
 
 /-- The lower frontier of the walk at generation `n`: the least positions of
 the population. -/
-def lowerFrontier [LE X] (V : Walk N X M) (n : ℕ) : Set X :=
+noncomputable def lowerFrontier [LE X] (V : Walk N X M) (n : ℕ) : Set X :=
   V.cloud.lowerFrontier n
 
 @[simp] theorem mem_lowerFrontier_iff [LE X] (V : Walk N X M) (n : ℕ) (x : X) :
@@ -109,7 +109,7 @@ theorem lowerFrontier_subset_population [LE X] (V : Walk N X M) (n : ℕ) :
 
 /-- The upper frontier of the walk at generation `n`: the greatest positions of
 the population. -/
-def upperFrontier [LE X] (V : Walk N X M) (n : ℕ) : Set X :=
+noncomputable def upperFrontier [LE X] (V : Walk N X M) (n : ℕ) : Set X :=
   V.cloud.upperFrontier n
 
 @[simp] theorem mem_upperFrontier_iff [LE X] (V : Walk N X M) (n : ℕ) (x : X) :

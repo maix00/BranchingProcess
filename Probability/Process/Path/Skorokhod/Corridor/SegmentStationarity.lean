@@ -119,7 +119,7 @@ theorem HasIndepIncrements.measure_fullSegmentCorridor_shift
         X 0 length lower upper ω hω).symm
   have haeB : B =ᵐ[P] fullSegmentCorridorEvent X start length lower upper := by
     filter_upwards [hcadlag] with ω hω
-    exact propext (mem_fullSegmentCorridorEvent_iff_rational
+    exact (mem_fullSegmentCorridorEvent_iff_rational
       X start length lower upper ω hω).symm
   rw [measure_congr haeA, measure_congr haeB] at hlaw
   exact hlaw
@@ -158,7 +158,7 @@ theorem HasIndepIncrements.measure_fullSegmentCorridorReturn_shift
   have haeB : B =ᵐ[P] fullSegmentCorridorReturnEvent X start length
       lower upper coreLower coreUpper := by
     filter_upwards [hcadlag] with ω hω
-    exact propext (mem_fullSegmentCorridorReturnEvent_iff_rational
+    exact (mem_fullSegmentCorridorReturnEvent_iff_rational
       X start length lower upper coreLower coreUpper ω hω).symm
   rw [measure_congr haeA, measure_congr haeB] at hlaw
   exact hlaw

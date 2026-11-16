@@ -111,7 +111,6 @@ theorem IsStrictlyAlphaStable.twoSidedMass_of_cdfAtZero
     filter_upwards [haeNonneg] with p hp
     simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_prod,
       weightedSum, one_mul]
-    apply propext
     constructor
     · intro hzero
       constructor <;> linarith [hp.1, hp.2]

@@ -63,8 +63,7 @@ theorem openHorizontalTubeProbability_le_pow_blockOscillationLT_of_blockCover
     (blocks length horizon : ℕ) (hcover : blocks * length ≤ horizon) :
     openHorizontalTubeProbability (iidSequenceLaw ν) a width horizon ≤
       (iidSequenceLaw ν {increment |
-        blockOscillationLTEvent width length
-          (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks := by
+        (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationLTEvent width length}) ^ blocks := by
   have hzero : -a * width < 0 ∧ 0 < (1 - a) * width := by
     constructor
     · nlinarith [mul_pos ha0 hwidth]
@@ -82,9 +81,8 @@ theorem openHorizontalTubeProbability_le_pow_blockOscillationLT_of_blockCover
   have hsubset :
       {increment : ℕ → ℝ | InOpenHorizontalTube a width horizon increment} ⊆
         {increment : ℕ → ℝ | ∀ j : Fin blocks,
-          blockOscillationLTEvent width length
-            (Combinatorics.Sequence.blockCoordinates
-              (j * length) length increment)} := by
+          (Combinatorics.Sequence.blockCoordinates
+              (j * length) length increment) ∈ blockOscillationLTEvent width length} := by
     intro increment htube j
     change ∀ i k : Fin (length + 1),
       |Fin.partialSum
@@ -148,12 +146,10 @@ theorem openHorizontalTubeProbability_le_pow_blockOscillationLT_of_blockCover
         iidSequenceLaw ν {increment |
           InOpenHorizontalTube a width horizon increment} := rfl
     _ ≤ iidSequenceLaw ν {increment : ℕ → ℝ | ∀ j : Fin blocks,
-          blockOscillationLTEvent width length
-            (Combinatorics.Sequence.blockCoordinates
-              (j * length) length increment)} := measure_mono hsubset
+          (Combinatorics.Sequence.blockCoordinates
+              (j * length) length increment) ∈ blockOscillationLTEvent width length} := measure_mono hsubset
     _ = (iidSequenceLaw ν {increment |
-          blockOscillationLTEvent width length
-            (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks :=
+          (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationLTEvent width length}) ^ blocks :=
       iidSequenceLaw_measure_forall_consecutiveBlockEvent ν blocks length
         (blockOscillationLTEvent width length)
         (measurableSet_blockOscillationLTEvent width length)
@@ -168,8 +164,7 @@ theorem openHorizontalTubeProbability_le_pow_blockOscillationLT_of_completeBlock
     (hlength : 0 < length) :
     openHorizontalTubeProbability (iidSequenceLaw ν) a width horizon ≤
       (iidSequenceLaw ν {increment |
-        blockOscillationLTEvent width length
-          (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^
+        (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationLTEvent width length}) ^
         ⌊((length : ℝ) / (horizon : ℝ))⁻¹⌋₊ := by
   have hcount : ⌊((length : ℝ) / (horizon : ℝ))⁻¹⌋₊ = horizon / length := by
     have hquotient : ((length : ℝ) / (horizon : ℝ))⁻¹ =
@@ -193,8 +188,7 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
     horizontalTubeProbability (iidSequenceLaw ν) a width
         horizon ≤
       (iidSequenceLaw ν {increment |
-        blockOscillationEvent width length
-          (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks := by
+        (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationEvent width length}) ^ blocks := by
   have hzero : -a * width ≤ 0 ∧ 0 ≤ (1 - a) * width := by
     constructor
     · exact mul_nonpos_of_nonpos_of_nonneg (by linarith) hwidth
@@ -213,8 +207,7 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
       {increment : ℕ → ℝ |
         InHorizontalTube a width horizon increment} ⊆
       {increment : ℕ → ℝ | ∀ j : Fin blocks,
-        blockOscillationEvent width length
-          (Combinatorics.Sequence.blockCoordinates (j * length) length increment)} := by
+        (Combinatorics.Sequence.blockCoordinates (j * length) length increment) ∈ blockOscillationEvent width length} := by
     intro increment htube j
     change Metric.OscillationBounded
       (fun time : Fin (length + 1) =>
@@ -281,12 +274,10 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
       iidSequenceLaw ν {increment |
         InHorizontalTube a width horizon increment} := rfl
     _ ≤ iidSequenceLaw ν {increment : ℕ → ℝ | ∀ j : Fin blocks,
-          blockOscillationEvent width length
-            (Combinatorics.Sequence.blockCoordinates (j * length) length increment)} :=
+          (Combinatorics.Sequence.blockCoordinates (j * length) length increment) ∈ blockOscillationEvent width length} :=
       measure_mono hsubset
     _ = (iidSequenceLaw ν {increment |
-          blockOscillationEvent width length
-            (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks :=
+          (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationEvent width length}) ^ blocks :=
       iidSequenceLaw_measure_forall_consecutiveBlockEvent ν blocks length
         (blockOscillationEvent width length)
         (measurableSet_blockOscillationEvent width length)
@@ -300,8 +291,7 @@ theorem horizontalTubeProbability_le_pow_blockOscillation
     (length horizon : ℕ) :
     horizontalTubeProbability (iidSequenceLaw ν) a width horizon ≤
       (iidSequenceLaw ν {increment |
-        blockOscillationEvent width length
-          (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ (horizon / length) := by
+        (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationEvent width length}) ^ (horizon / length) := by
   exact horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
     ν ha0 ha1 hwidth (horizon / length) length horizon
     (Nat.div_mul_le_self horizon length)
@@ -315,8 +305,7 @@ theorem horizontalTubeProbability_le_exp_of_blockOscillationProbability
     (length horizon : ℕ) (hlength : 0 < length)
     (hblockRemainder : d * ((length : ℝ) / width ^ 2) ≤ remainder)
     (hblock : iidSequenceLaw ν {increment : ℕ → ℝ |
-      blockOscillationEvent width length
-        (Combinatorics.Sequence.blockCoordinates 0 length increment)} ≤
+      (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationEvent width length} ≤
       ENNReal.ofReal (Real.exp (-d * ((length : ℝ) / width ^ 2)))) :
     horizontalTubeProbability (iidSequenceLaw ν) a width horizon ≤
       ENNReal.ofReal (Real.exp
@@ -381,8 +370,7 @@ theorem horizontalTubeProbability_le_exp_of_blockOscillationProbability
     ν ha0 ha1 hwidth.le length horizon
   have hpowBlock :
       (iidSequenceLaw ν {increment : ℕ → ℝ |
-        blockOscillationEvent width length
-          (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks ≤
+        (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationEvent width length}) ^ blocks ≤
         (ENNReal.ofReal (Real.exp (-d * ((length : ℝ) / width ^ 2)))) ^ blocks :=
     pow_le_pow_left' hblock blocks
   have hexpPow :
@@ -402,8 +390,7 @@ theorem horizontalTubeProbability_le_exp_of_blockOscillationProbability
   calc
     horizontalTubeProbability (iidSequenceLaw ν) a width horizon ≤
         (iidSequenceLaw ν {increment : ℕ → ℝ |
-          blockOscillationEvent width length
-            (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks := by
+          (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationEvent width length}) ^ blocks := by
       simpa [blocks] using hpow
     _ ≤ (ENNReal.ofReal
         (Real.exp (-d * ((length : ℝ) / width ^ 2)))) ^ blocks := hpowBlock
