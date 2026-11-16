@@ -78,7 +78,6 @@ private lemma IsStableLevyProcess.measure_fullEntrance_pos_of_linearTube
       tube ∩ fullSegmentCorridorReturnEvent X 0 1
         (c - 1) (c + 1) (c - b - ε) (c - b + ε) := by
     filter_upwards [h.increments.ae_start_eq_zero] with ω hzero
-    apply propext
     constructor
     · intro hω
       refine ⟨hω, ?_⟩

@@ -26,6 +26,10 @@ public import Probability.BranchingRandomWalk.Population.Processes.Selected.Root
   almost surely, each next selected population is the first \(N\) children in
   the prescribed order.
 
+- `ProbabilityTheory.BranchingRandomWalk.RootIndexed.selectedPopulationTotalized_nonempty_ae`:
+  for nonempty initial roots, positive capacity, boundary normalization and
+  almost surely nonempty offspring, $Z_n\ne\varnothing$ for all $n$ almost surely.
+
 Boundary normalization makes every pre-sampled offspring configuration have
 finite negative exponential weight almost surely.  Countability lifts this to
 all root/address coordinates, and finite parent populations then have
@@ -134,5 +138,54 @@ theorem RootIndexed.selectedPopulationTotalized_succ_spec_ae
   intro n
   exact RootIndexed.selectedPopulationTotalized_succ_spec
     N roots initial id id n field (hgood n)
+
+/-- A nonempty initial population stays nonempty under an almost surely
+nonempty offspring law and admissible first-`N` selection. -/
+theorem RootIndexed.selectedPopulationTotalized_nonempty_ae
+    {Root α : Type*} [Countable Root] [Countable α]
+    (N : ℕ) (roots : Finset Root) (hroots : roots.Nonempty)
+    (initialPosition : Root → ℝ) (hN : 0 < N)
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    [Countable (RootIndexed.TreeNode Root α)]
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)]
+    (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (hnonempty : μ nonemptySupport = 1) :
+    ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) μ,
+      ∀ n, (RootIndexed.selectedPopulationTotalized N
+        roots initialPosition id id n field).Nonempty := by
+  have hspec := RootIndexed.selectedPopulationTotalized_succ_spec_ae
+    μ hboundary N roots initialPosition
+  have hchildren := RootIndexed.stepFieldLaw_ae_all_of_measure_one (Root := Root)
+    nonemptySupport_measurable μ hnonempty
+  filter_upwards [hspec, hchildren] with field hspec hchildren
+  intro n
+  induction n with
+  | zero =>
+      obtain ⟨r, hr⟩ := hroots
+      exact ⟨(r, []), RootIndexed.mem_initialPopulation_iff.mpr ⟨r, hr, rfl⟩⟩
+  | succ n ih =>
+      let parents := RootIndexed.selectedPopulationTotalized N
+        roots initialPosition id id n field
+      have hdepth : ∀ p ∈ parents, p.2.length = n := by
+        intro p hp
+        exact RootIndexed.selectedPopulationTotalized_depth N roots
+          initialPosition id id n field p hp
+      have hcandidates :
+          (Combinatorics.Branching.Population.childrenAtGeneration n parents field).Nonempty := by
+        rcases ih with ⟨p, hp⟩
+        obtain ⟨i, hi⟩ := hchildren p.1 p.2
+        exact ⟨(p.1, p.2 ++ [i]),
+          Combinatorics.Branching.Population.childAddress_mem_childrenAtGeneration n parents field
+            p hp (hdepth p hp) i hi⟩
+      have hselected : IsFirstNBy N
+          (RootIndexed.observedPositionAtGeneration initialPosition
+            id id (n + 1) field)
+          (Combinatorics.Branching.Population.childrenAtGeneration n parents field)
+          (RootIndexed.selectedPopulationTotalized N
+            roots initialPosition id id
+            (n + 1) field) := hspec n
+      exact hselected.nonempty_of_nonempty_candidates hN hcandidates
 
 end ProbabilityTheory.BranchingRandomWalk
