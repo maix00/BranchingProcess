@@ -52,7 +52,7 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
-namespace StepSelection
+namespace Selection.Stepwise
 namespace SplitSchedule
 
 open Combinatorics.UlamHarris Combinatorics.Branching
@@ -65,7 +65,7 @@ def successSet
     {α X : Type*} (R : Step.FiniteSelection α X)
     (duration target : ℕ) : Set (Mark α (Step α X)) :=
   {ω | target ≤
-    (ProbabilityTheory.BranchingRandomWalk.StepSelection.population
+    (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.population
       R duration ω).card}
 
 theorem measurableSet_successSet
@@ -74,12 +74,12 @@ theorem measurableSet_successSet
     (duration target : ℕ) :
     MeasurableSet (successSet R duration target) := by
   have hpopulation : Measurable
-      (ProbabilityTheory.BranchingRandomWalk.StepSelection.population
+      (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.population
         R duration) :=
-    (ProbabilityTheory.BranchingRandomWalk.StepSelection.population_adapted
+    (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.population_adapted
       R hR duration).mono (generationFiltration.le duration) le_rfl
   have hcard : Measurable (fun ω : Mark α (Step α X) =>
-      (ProbabilityTheory.BranchingRandomWalk.StepSelection.population
+      (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.population
         R duration ω).card) :=
     (measurable_of_countable
       (fun s : Finset (TreeNode α) => s.card)).comp hpopulation
@@ -90,7 +90,7 @@ def successEvent
     {I Root α X : Type*} (R : Step.FiniteSelection α X)
     (root : I → Root) (duration target : ℕ) (i : I) :
     Set (RootIndexed.StepField Root α X) :=
-  {ω | target ≤ (RootIndexed.StepSelection.population
+  {ω | target ≤ (RootIndexed.Selection.Stepwise.population
     R duration ω (root i)).card}
 
 theorem successEvent_eq_preimage
@@ -114,13 +114,13 @@ theorem measurableSet_successEvent_adapted
   have hpopulation : Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) duration]
       (fun ω : RootIndexed.StepField Root α X =>
-        RootIndexed.StepSelection.population R duration ω (root i)) :=
+        RootIndexed.Selection.Stepwise.population R duration ω (root i)) :=
     (measurable_pi_apply (root i)).comp
-      (RootIndexed.StepSelection.population_adapted R hR duration)
+      (RootIndexed.Selection.Stepwise.population_adapted R hR duration)
   have hcard : Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) duration]
       (fun ω : RootIndexed.StepField Root α X =>
-        (RootIndexed.StepSelection.population R duration ω (root i)).card) :=
+        (RootIndexed.Selection.Stepwise.population R duration ω (root i)).card) :=
     (measurable_of_countable
       (fun s : Finset (TreeNode α) => s.card)).comp hpopulation
   exact hcard measurableSet_Ici
@@ -292,6 +292,6 @@ theorem measure_iInter_failureEvent
     Finset.prod_const] using h
 
 end SplitSchedule
-end StepSelection
+end Selection.Stepwise
 end RootIndexed
 end ProbabilityTheory.BranchingRandomWalk

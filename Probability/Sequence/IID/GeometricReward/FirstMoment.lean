@@ -178,7 +178,7 @@ theorem iidGeometricSplitCycle_integral
 
 /-- Nonnegative first-moment bound for the accumulated positive rewards in a
 split cycle. Failed generations use the first-child mark `Y`, while a success
-uses the distinct reserve mark `Z`. -/
+uses the distinct completion mark `Z`. -/
 theorem iidGeometricSplitCycle_positiveReward_le
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     (ν : Measure α) [IsProbabilityMeasure ν]

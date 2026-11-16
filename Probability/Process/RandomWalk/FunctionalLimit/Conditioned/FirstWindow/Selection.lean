@@ -189,6 +189,7 @@ theorem measurable_firstSurvivingWindowIndex (n : ℕ) :
   change MeasurableSet {x : ℕ → ℝ |
     firstSurvivingWindowIndex n x = j}
   rw [hfiber]
+  rw [Set.ofPred_or]
   exact (measurableSet_isFirstSurvivingWindow n j).union
     (by by_cases hj : j = 0
         · simp only [hj, true_and]
@@ -255,7 +256,6 @@ theorem measure_selectedFirstSurvivingBlock_eq_conditionalBlock
       simp [selectedFirstSurvivingBlock, hindex]
     simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_inter_iff,
       Set.mem_ofPred_eq]
-    apply propext
     constructor
     · intro h
       exact ⟨start, hfirst, by rwa [hblock] at h⟩

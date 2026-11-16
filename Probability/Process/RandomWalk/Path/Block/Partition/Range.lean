@@ -161,8 +161,8 @@ theorem measure_forall_halfOpenPartitionCellCorridors_le_prod_rangeProbability
       apply Finset.prod_congr rfl
       intro j hj
       change iidSequenceLaw ν {increment : ℕ → ℝ |
-          blockOscillationPrefixLTEvent (upper j - lower j) (length j.val)
-            (Combinatorics.Sequence.blockCoordinates 0 (length j.val) increment)} = _
+          Combinatorics.Sequence.blockCoordinates 0 (length j.val) increment ∈
+            blockOscillationPrefixLTEvent (upper j - lower j) (length j.val)} = _
       exact iidSequenceLaw_blockOscillationPrefixLTEvent_eq_partialSumRangeProbability
         ν (hlength j)
 
@@ -275,8 +275,7 @@ theorem measure_forall_partitionCellCorridors_le_prod_rangeProbability
       apply Finset.prod_congr rfl
       intro j hj
       change iidSequenceLaw ν {increment : ℕ → ℝ |
-          blockOscillationLTEvent (upper j - lower j) (length j.val)
-            (Combinatorics.Sequence.blockCoordinates 0 (length j.val) increment)} = _
+          (Combinatorics.Sequence.blockCoordinates 0 (length j.val) increment) ∈ blockOscillationLTEvent (upper j - lower j) (length j.val)} = _
       exact iidSequenceLaw_blockOscillationLTEvent_eq_partialSumRangeProbability
         ν (upper j - lower j) (length j.val)
 
@@ -394,12 +393,11 @@ theorem measure_forall_selectedHalfOpenPartitionCellCorridors_le_prod_rangeProba
         partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
           (upper j - lower j) (length j.val - 1) := by
     have hevent : oneBlockEvent j = {increment : ℕ → ℝ |
-        blockOscillationPrefixLTEvent (upper j - lower j) (length j.val)
-          (Combinatorics.Sequence.blockCoordinates 0 (length j.val) increment)} := by
+        Combinatorics.Sequence.blockCoordinates 0 (length j.val) increment ∈
+            blockOscillationPrefixLTEvent (upper j - lower j) (length j.val)} := by
       ext increment
       simp only [oneBlockEvent, blockEvent]
       rw [ite_eq_left hj]
-      rfl
     rw [hevent]
     exact iidSequenceLaw_blockOscillationPrefixLTEvent_eq_partialSumRangeProbability
       ν (hlength j hj)
@@ -453,8 +451,7 @@ theorem iidSequenceLaw_measure_partialSumRangeLT_le_pow_blockOscillationLT_of_bl
     (hcover : blocks * length ≤ horizon) :
     partialSumRangeOscillationLTProbability (iidSequenceLaw ν) width horizon ≤
       (iidSequenceLaw ν {increment |
-        blockOscillationLTEvent width length
-          (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks := by
+        (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationLTEvent width length}) ^ blocks := by
   change iidSequenceLaw ν {increment : ℕ → ℝ | ∀ i j : Fin (horizon + 1),
     |AdditivePath.displacement (i : ℕ) increment -
       AdditivePath.displacement (j : ℕ) increment| < width} ≤ _
@@ -463,8 +460,7 @@ theorem iidSequenceLaw_measure_partialSumRangeLT_le_pow_blockOscillationLT_of_bl
         |AdditivePath.displacement (i : ℕ) increment -
           AdditivePath.displacement (j : ℕ) increment| < width} ⊆
       {increment : ℕ → ℝ | ∀ j : Fin blocks,
-        blockOscillationLTEvent width length
-          (Combinatorics.Sequence.blockCoordinates (j * length) length increment)} := by
+        (Combinatorics.Sequence.blockCoordinates (j * length) length increment) ∈ blockOscillationLTEvent width length} := by
     intro increment hrange j
     change ∀ i k : Fin (length + 1),
       |Fin.partialSum
@@ -510,12 +506,10 @@ theorem iidSequenceLaw_measure_partialSumRangeLT_le_pow_blockOscillationLT_of_bl
     exact hrange ti tk
   calc
     _ ≤ iidSequenceLaw ν {increment : ℕ → ℝ | ∀ j : Fin blocks,
-          blockOscillationLTEvent width length
-            (Combinatorics.Sequence.blockCoordinates (j * length) length increment)} :=
+          (Combinatorics.Sequence.blockCoordinates (j * length) length increment) ∈ blockOscillationLTEvent width length} :=
       measure_mono hsubset
     _ = (iidSequenceLaw ν {increment |
-          blockOscillationLTEvent width length
-            (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks :=
+          (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationLTEvent width length}) ^ blocks :=
       iidSequenceLaw_measure_forall_consecutiveBlockEvent ν blocks length
         (blockOscillationLTEvent width length)
         (measurableSet_blockOscillationLTEvent width length)

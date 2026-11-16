@@ -25,7 +25,7 @@ fresh descendant tree by the one-root many-to-one estimate.  Empty offspring
 remain allowed: all population and descendant events are phrased by actual
 surviving addresses.
 
-The source estimate is equation (4.16) in the proof of Proposition 3.1 of
+The estimate used here is equation (4.16) in the proof of Proposition 3.1 of
 Elie Aïdékon and Yueyun Hu, *Average-weight percolation on the complete graph*,
 arXiv:2512.23266 (2025).
 
@@ -236,7 +236,7 @@ theorem measure_selectedFirstPassageBelowAtGeneration_le
           ((H - j + 1 : ℝ≥0∞) * ENNReal.ofReal (Real.exp (-B))) := by
       gcongr
 
-/-- The full finite-horizon large-drawdown source event: at some generation
+/-- The full finite-horizon large-drawdown event: at some generation
 `j < H`, a particle of the first-`N` population has a descendant whose
 relative path first crosses below `-B` before generation `H`. -/
 def selectedFirstPassageBelowByHorizon (m N H : ℕ) (B : ℝ)
