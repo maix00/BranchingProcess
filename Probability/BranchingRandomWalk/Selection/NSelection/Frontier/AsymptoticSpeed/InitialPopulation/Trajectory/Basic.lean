@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Field.Fresh
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Population
-import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Position
-import Combinatorics.UlamHarris.Order
-import Combinatorics.Selection.NSelection.Mechanism.Infinite.Basic
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Field.Fresh
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Population
+public import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Position
+public import Combinatorics.UlamHarris.Order
+public import Combinatorics.Selection.NSelection.Mechanism.Infinite.Basic
 
 /-!
 # The trajectory rooted at the capacity-hitting population
@@ -75,6 +77,8 @@ normalization.
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
 
@@ -843,3 +847,5 @@ theorem smallInitialPopulationHitSubtreeField_law
     m N hm hmN μ hboundary hnonempty hsupercritical B hB
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
+
+end

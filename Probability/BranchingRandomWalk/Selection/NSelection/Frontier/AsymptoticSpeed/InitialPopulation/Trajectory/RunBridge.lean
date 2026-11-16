@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Selection.PopulationBatch
-import Combinatorics.Selection.NSelection.Matching.ByRank
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Basic
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Basic
-import Combinatorics.UlamHarris.Relation
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Selection.PopulationBatch
+public import Combinatorics.Selection.NSelection.Matching.ByRank
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Basic
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Basic
+public import Combinatorics.UlamHarris.Relation
 /-!
 # The ranked-batch representation of a finite selected trajectory
 
@@ -35,6 +37,8 @@ the comparison independent of address tie breaks.
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
 
@@ -242,7 +246,7 @@ noncomputable def selectedPopulationRankPosition
     [LinearOrder (RootIndexed.TreeNode (Fin N) ℕ)]
     (field : RootIndexed.StepField (Fin N) ℕ ℝ) : Fin N → ℝ :=
   fun i => RootIndexed.observedPositionAtGeneration initial id id n field
-    (rankedRoots N n initial field i)
+    (selectedPopulationRankRoots N initial n field i)
 
 private theorem rankedPopulation_card_eq_of_rankedBatches_good
     (N : ℕ) (initial : Fin N → ℝ)
@@ -504,3 +508,5 @@ theorem selectedPopulationRankPosition_hasAsymptoticSpeed_of_originRun
   rfl
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
+
+end

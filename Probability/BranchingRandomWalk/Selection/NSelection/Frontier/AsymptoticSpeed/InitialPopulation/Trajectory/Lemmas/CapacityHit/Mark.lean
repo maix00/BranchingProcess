@@ -26,6 +26,10 @@ The proof-chain declarations are:
   the selected address used to sample an offspring mark at generation $n$.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.smallInitialActiveMark`:
   the offspring mark sampled at that address.
+- `measurable_smallInitialActiveMark_at_succ` makes the sampled mark
+  measurable at generation $n+1$.
+- `smallInitialActiveMark_independent_and_law` gives law $\mu$ for the
+  sampled mark and its independence of the generation-$n$ past.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.smallInitialActiveSplitEvent`:
   the event that the sampled mark has at least two children.
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.ae_frequently_smallInitialActiveSplitEvent`:
@@ -210,7 +214,7 @@ private lemma smallInitialFutureRoots_injective (m N n : ℕ) (hm : 0 < m)
   exact Subsingleton.elim _ _
 
 /-- The actual adaptive mark is measurable when generation `n` is revealed. -/
-private lemma measurable_smallInitialActiveMark_at_succ
+lemma measurable_smallInitialActiveMark_at_succ
     (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
@@ -260,7 +264,7 @@ offspring mark with the original law, independent of the revealed past.
 The fallback address is only reached if the selected population is empty;
 its depth is still `n`, so the probabilistic statement is valid on the full
 sample space. -/
-private lemma smallInitialActiveMark_independent_and_law
+lemma smallInitialActiveMark_independent_and_law
     (m N n : ℕ) (hm : 0 < m)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [MeasurableSingletonClass (Fin m × TreeNode ℕ)]
