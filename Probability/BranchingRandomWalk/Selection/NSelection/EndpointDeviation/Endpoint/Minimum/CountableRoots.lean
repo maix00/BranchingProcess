@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Basic
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.FiniteRestriction
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Basic
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.FiniteRestriction
 /-!
 # Endpoint observations on one countable-root forest
 
@@ -32,6 +34,8 @@ node type has the stated measurable space, countability, and linear order;
 the pushforward-law identity also assumes that the one-step measure is a
 probability measure.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -78,3 +82,5 @@ theorem countableRootEndpointMinimum_map_eq
       (RootIndexed.StepField.measurePreserving_first μ m).map_eq
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
+
+end

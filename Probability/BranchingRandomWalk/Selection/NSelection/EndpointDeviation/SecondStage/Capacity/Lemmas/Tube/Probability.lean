@@ -10,33 +10,25 @@ import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Spin
 import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 import Probability.Process.RandomWalk.Path.Restart.Basic
 import Probability.Process.Path.Restart.Basic
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Event
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Theorems
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.LogarithmicScales
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Cutoff
-import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.Tube.Event
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Capacity.Lemmas.Tube.Event
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Population.RestartedWindow
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 
 /-!
-# Restarted-window probability bound
-
-This module contains the one-use probability comparison required by the
-positive-initial-mass capacity proof, Proposition 3.1, equation (4.15), of
-Elie Aïdékon and Yueyun Hu, *Average-weight percolation on the complete
-graph*, arXiv:2512.23266 (2025). The event definitions and reusable path
-inclusions are in `Spine/Lemmas/Tube/Event.lean`.
+# Probability of a shifted second-stage prefix
 
 ## Internal proof declarations
 
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown` bounds each post-cutoff restarted-window probability by the corresponding finite-prefix drawdown probability.
+* `iidSequenceLaw_restartedWindowProbability_le_secondStagePrefix` gives
+  $\mathbb P(W_k)\le\mathbb P(T_{k-\ell})$, where $W_k$ is the restarted
+  window event through time $k$ and $T_{k-\ell}$ is its relative tube prefix.
 
-For each post-cutoff time $k$, the restarted-window event is bounded by the
-corresponding shifted drawdown event:
-\[
- \mathbb P(\text{restarted window at }k)
-   \le \mathbb P(\text{drawdown endpoint event over }k-\ell).
-\]
+The comparison uses shift invariance of the increment law in the
+two-stage construction of Wang Yiyang, *Asymptotic Speed of the N-Branching
+Random Walk with Infinite Offspring* (Fudan University, 2026), Chapter 4,
+Theorem 1.1, case $0<a<1$.
 -/
 
 open Filter MeasureTheory
@@ -52,26 +44,17 @@ open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.Process.Path
 
 /-- Under an IID increment law, the restarted-window probability after the
-cutoff is bounded by the drawdown probability of the shifted second-stage
-prefix at its actual length. -/
-lemma iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown
+cutoff is bounded by the probability of the shifted second-stage prefix. -/
+lemma iidSequenceLaw_restartedWindowProbability_le_secondStagePrefix
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (ell ellN k : ℕ) (logN b v c κ : ℝ)
-    (hk : ell < k) (hkN : k ≤ ellN)
-    (hκ : 0 ≤ κ) (hc : 0 < c) (hvc : v ≤ c) :
+    (hk : ell < k) (hkN : k ≤ ellN) :
     RandomWalk.restartedWindowProbability (iidSequenceLaw ν) ell
         (positiveARestartedWindow ell ellN logN b v c κ) k 0 ≤
-      iidSequenceLaw ν
-        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
-          (k - ell)
-          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
-          (positiveADrift ell ellN κ c (k - ell) +
-            c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) := by
+      iidSequenceLaw ν (positiveASecondStageTubePrefixEvent ell ellN (k - ell) κ c v) := by
   let d := k - ell
   let tubePrefix := positiveASecondStageTubePrefixEvent ell ellN d κ c v
   let shift : (ℕ → ℝ) → (ℕ → ℝ) := fun increment j => increment (ell + j)
-  have hd : d ≤ ellN - ell := by dsimp [d]; omega
-  have hDpos : 0 < ellN - ell := by omega
   have hsubsetRestart :
       {increment : ℕ → ℝ |
         InRestartedWindows ell
@@ -82,14 +65,6 @@ lemma iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown
     simpa [d, tubePrefix, shift] using
       (positiveARestartedWindow_event_subset_shiftedSecondStageTubePrefix
         ell ellN k logN b v c κ hk hkN) hmem
-  have hsubsetDrawdown : tubePrefix ⊆
-      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
-        d
-        (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
-        (positiveADrift ell ellN κ c d +
-          c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) :=
-    positiveASecondStageTubePrefixEvent_subset_drawdownEvent
-      ell ellN d κ c v (lt_of_lt_of_le hk hkN) hd hκ hc hvc
   have hprefixMeas : MeasurableSet tubePrefix := by
     classical
     rw [show tubePrefix = ⋂ j : Fin (d + 1),
@@ -119,12 +94,5 @@ lemma iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown
     _ = (iidSequenceLaw ν).map shift tubePrefix := by
       rw [Measure.map_apply hshiftMeas hprefixMeas]
     _ = (iidSequenceLaw ν) tubePrefix := by rw [hshiftLaw]
-    _ ≤ (iidSequenceLaw ν)
-        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
-          d
-          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
-          (positiveADrift ell ellN κ c d +
-            c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) :=
-      measure_mono hsubsetDrawdown
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

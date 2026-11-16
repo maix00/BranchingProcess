@@ -16,7 +16,7 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Dr
 import Probability.BranchingRandomWalk.Spine.Path.Decomposition.Branching
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Position
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.TubeParameters
-import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Drawdown.Spine.Lemmas.ParameterBounds
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Lemmas.Parameters
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Scale.Basic
 import Probability.Process.Path.Restart.Basic
 
