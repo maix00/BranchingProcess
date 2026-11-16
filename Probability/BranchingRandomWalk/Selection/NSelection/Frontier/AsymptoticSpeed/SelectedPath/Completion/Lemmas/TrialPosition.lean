@@ -9,6 +9,7 @@ module
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.FailureDisplacement
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.TrialIndependence
 import MeasureTheory.BranchingWalk.Step.Selection.Potential
+import Probability.Sequence.IID.GeometricReward.Definitions
 
 /-!
 # First successful trial's split position
@@ -22,6 +23,9 @@ import MeasureTheory.BranchingWalk.Step.Selection.Potential
   trial in split order at the observable success completion.
 * `trialGrowthRoot_eq_growthTrialRootAt_of_splitCount` identifies $v_k$
   with the generation-indexed candidate when $k$ splits precede its split mark.
+* `lintegral_firstSuccessfulTrial_root_positive_le` bounds the positive
+  position of the first successful root on ${kappale K}$ by
+  $mathbb E[Y_+]/(p_0p_1)+KM$ in expectation.
 * `exists_firstSuccessfulTrial_position_upperTail` bounds
   $e^{\lambda x}\mathbb P(\kappa\le K,
     V(\rho_\kappa)\ge x+(K-1)M)$ by $\sum_{k=1}^K m_\lambda^k$,
@@ -379,5 +383,101 @@ lemma exists_firstSuccessfulTrial_position_upperTail
   · have hkm' : ((k + 1 : ℕ) : ℝ) * M ≤ (K : ℝ) * M :=
       mul_le_mul_of_nonneg_right (by exact_mod_cast (Nat.succ_le_of_lt hk)) hM
     linarith
+
+attribute [local instance] Classical.propDecidable
+
+/-- The entrance root of the first successful trial, restricted to the
+first $K$ trials, has positive mean at most the stopped positive waiting
+sum plus $KM$. This is the entrance-position term in Wang Yiyang,
+Theorem 1.2. -/
+lemma lintegral_firstSuccessfulTrial_root_positive_le
+    {ι X E : Type*} [Countable ι] [MeasurableSpace X] [MeasurableSpace E]
+    (L : StepLaw ι ℕ X) [IsProbabilityMeasure L.raw]
+    (hboundary : HasBoundaryNormalization L.potential L.raw) (hfirst : HasLeftmostFirstMoment L)
+    (R : Step.FiniteSelection ℕ ℝ) (hR : Measurable R.select)
+    (hne : L.sortedPotentialImage {ξ | (R ξ).Nonempty} = 1)
+    (hp : 0 < L.sortedPotentialImage (splitBy R))
+    (G : Mark ℕ (Step ℕ ℝ) → E) (hG : Measurable G)
+    (success : Set E) (hsuccess : MeasurableSet success)
+    (hprob : 0 < (offspringFieldLaw L.sortedPotentialImage).real (G ⁻¹' success))
+    (M : ℝ) (hM : 0 ≤ M) (K : ℕ)
+    (hmarks : ∀ᵐ ω ∂offspringFieldLaw L.sortedPotentialImage, ∀ u,
+      (R (ω u)).Nonempty ∧ firstSelectedSlot R (ω u) = 0 ∧
+        (2 ≤ (R (ω u)).card → value' (ω u) (firstSelectedSlot R (ω u)) ≤ M ∧
+          value' (ω u) (secondSelectedSlot R (ω u)) ≤ M)) :
+    let μ := L.sortedPotentialImage
+    let ν := offspringFieldLaw μ
+    let D := splitCycle R (splitWaitingDisplacement R) G
+    (∫⁻ ω, ⨆ k : Fin K,
+      (if (D k.val ω).2 ∈ success ∧ ∀ j < k.val, (D j ω).2 ∉ success
+        then ENNReal.ofReal (max (Spine.pathPotential realPotential ω (trialGrowthRoot R k.val ω)) 0)
+        else 0) ∂ν) ≤
+      ENNReal.ofReal (((∫ ξ, max (value' ξ 0) 0 ∂μ) / μ.real (splitBy R)) /
+        ν.real (G ⁻¹' success) + K * M) := by
+  classical
+  intro μ ν D
+  let B : Set (ℝ × E) := Prod.snd ⁻¹' success
+  let Y : ℝ × E → ℝ := fun z => max z.1 0
+  let Z (ω : Mark ℕ (Step ℕ ℝ)) := ∑' j, geometricPrefixRewardTerm D B Y j ω
+  have hpos : ∀ ω, 0 ≤ Z ω := by
+    intro ω
+    apply tsum_nonneg
+    intro j
+    unfold geometricPrefixRewardTerm
+    apply mul_nonneg (le_max_right _ _)
+    exact Set.indicator_nonneg (fun _ _ => zero_le_one) ω
+  have hfinite := selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
+    μ R hR hne (splitBy_measurable R hR) hp
+  obtain ⟨hX, _, hXpos⟩ := splitWaitingDisplacement_firstMoment L hboundary hfirst R hR hne hp
+  obtain ⟨hZi, hZmean⟩ := integral_splitCycle_positiveDisplacement_through_success
+    μ R hR hfinite (splitWaitingDisplacement R) (splitWaitingDisplacement_measurable R hR)
+    hX G hG success hsuccess hprob
+  change Integrable Z ν at hZi
+  change (∫ ω, Z ω ∂ν) = _ at hZmean
+  have hZbound : (∫ ω, Z ω ∂ν) ≤
+      ((∫ ξ, max (value' ξ 0) 0 ∂μ) / μ.real (splitBy R)) / ν.real (G ⁻¹' success) := by
+    rw [hZmean]
+    exact div_le_div_of_nonneg_right hXpos hprob.le
+  have hpoint : ∀ᵐ ω ∂ν, (⨆ k : Fin K,
+      (if (D k.val ω).2 ∈ success ∧ ∀ j < k.val, (D j ω).2 ∉ success
+        then ENNReal.ofReal (max (Spine.pathPotential realPotential ω (trialGrowthRoot R k.val ω)) 0)
+        else 0)) ≤ ENNReal.ofReal (Z ω + K * M) := by
+    filter_upwards [hmarks] with ω hω
+    apply iSup_le
+    intro k
+    split_ifs with hk
+    swap
+    · exact bot_le
+    have hsum : Z ω = ∑ j ∈ Finset.range (k.val + 1), Y (D j ω) := by
+      unfold Z
+      rw [tsum_eq_sum (s := Finset.range (k.val + 1))]
+      · apply Finset.sum_congr rfl
+        intro j hj
+        have hj' := Finset.mem_range.mp hj
+        have hprefix : ω ∈ geometricFailurePrefix D B j := by
+          simp only [geometricFailurePrefix, Set.mem_iInter, Set.mem_preimage, Finset.mem_range]
+          exact fun i hi => hk.2 i (by omega)
+        simp [geometricPrefixRewardTerm, hprefix]
+      · intro j hj
+        have hprefix : ω ∉ geometricFailurePrefix D B j := by
+          simp only [geometricFailurePrefix, Set.mem_iInter, Set.mem_preimage, Finset.mem_range]
+          intro h
+          exact h k.val (Nat.lt_of_succ_le (Nat.le_of_not_gt (Finset.mem_range.not.mp hj))) hk.1
+        simp [geometricPrefixRewardTerm, hprefix]
+    have hr := (trialPositions_le R G M hM k.val ω hω).2
+    have hwaiting : (∑ j ∈ Finset.range (k.val + 1), (D j ω).1) ≤ Z ω := by
+      rw [hsum]
+      exact Finset.sum_le_sum fun j _ => le_max_left _ _
+    apply ENNReal.ofReal_le_ofReal
+    apply max_le
+    · exact hr.trans (add_le_add hwaiting
+        (mul_le_mul_of_nonneg_right (by exact_mod_cast Nat.succ_le_of_lt k.isLt) hM))
+    · exact add_nonneg (hpos ω) (mul_nonneg (Nat.cast_nonneg K) hM)
+  apply (lintegral_mono_ae hpoint).trans
+  have hi : Integrable (fun ω => Z ω + K * M) ν := hZi.add (integrable_const _)
+  rw [← ofReal_integral_eq_lintegral_ofReal hi
+    (Filter.Eventually.of_forall fun ω => add_nonneg (hpos ω) (by positivity)),
+    integral_add hZi (integrable_const (K * M)), integral_const, probReal_univ, one_smul]
+  exact ENNReal.ofReal_le_ofReal (add_le_add hZbound le_rfl)
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas

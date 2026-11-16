@@ -9,6 +9,9 @@ module
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.FirstSplit.BranchingProperty
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Recursive
 
+import Probability.Sequence.IID.GeometricReward.FirstMoment
+import Mathlib.MeasureTheory.Integral.Prod
+
 /-!
 # Independence of successive split cycles
 
@@ -17,6 +20,9 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticS
 * `splitCycle` iterates the second-child continuation and records the pair $Z_k=(F_k,G_k)$.
 * `splitCycle_prefix_map_eq_pi`: the successive pairs $Z_i=(F_i,G_i)$,
   $i<n$, have joint law $\rho^{\otimes n}$ for their common law $\rho$.
+* `integral_splitCycle_positiveDisplacement_through_success`: if $kappa$
+  is the first successful growth trial and $p$ its single-trial probability,
+  $mathbb E[sum_{jlekappa}(X_j)_+]=mathbb E[(X_1)_+]/p$.
 * `measure_firstSuccessfulSplitCycle_partialSum_ge_le`: with
   $S_k=\sum_{i<k}F_i$, the first successful growth trial satisfies
   $e^{\lambda x}\mathbb P(\kappa\le K, S_\kappa\ge x)
@@ -320,5 +326,95 @@ lemma measure_firstSuccessfulSplitCycle_partialSum_ge_le
   intro ω hω
   obtain ⟨k, hk, _, _, hsum⟩ := hω
   exact ⟨k, hk, hsum⟩
+
+private lemma splitCycle_independence
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (R : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (hfinite : ∀ᵐ ω ∂offspringFieldLaw μ, selectedPopulationSplitCompletion R ω ≠ ⊤)
+    (F : Mark α (Step α X) → D)
+    (hF : Measurable[(selectedPopulationSplitCompletion_isStoppingTime R hR).measurableSpace] F)
+    (G : Mark α (Step α X) → E) (hG : Measurable G) :
+    let ν := offspringFieldLaw μ
+    let ρ := (ν.map F).prod (ν.map G)
+    iIndepFun (splitCycle R F G) ν ∧ ∀ n, ν.map (splitCycle R F G n) = ρ := by
+  intro ν ρ
+  have hFp := hF.mono (selectedPopulationSplitCompletion_isStoppingTime R hR).measurableSpace_le le_rfl
+  have hC := measurable_splitCycle R hR F hFp G hG
+  let _ : IsProbabilityMeasure (ν.map F) :=
+    (Measure.isProbabilityMeasure_map_iff hFp.aemeasurable).2 inferInstance
+  let _ : IsProbabilityMeasure (ν.map G) :=
+    (Measure.isProbabilityMeasure_map_iff hG.aemeasurable).2 inferInstance
+  let _ : IsProbabilityMeasure ρ := inferInstanceAs (IsProbabilityMeasure ((ν.map F).prod (ν.map G)))
+  have hLaw (n : ℕ) : ν.map (splitCycle R F G n) = ρ := by
+    let p : Fin (n + 1) := ⟨n, Nat.lt_succ_self n⟩
+    have hπ := splitCycle_prefix_map_eq_pi μ R hR hfinite F hF G hG (n + 1)
+    have hfun : splitCycle R F G n =
+        (Function.eval p) ∘ (fun ω (i : Fin (n + 1)) => splitCycle R F G i.val ω) := rfl
+    rw [hfun, ← Measure.map_map (measurable_pi_apply p) (measurable_pi_iff.mpr fun i => hC i.val)]
+    change (ν.map (fun ω (i : Fin (n + 1)) => splitCycle R F G i.val ω)).map (Function.eval p) = ρ
+    rw [hπ]
+    simp [ρ, ν, Measure.pi_map_eval]
+  refine ⟨iIndepFun_iff_finset.mpr ?_, hLaw⟩
+  intro s
+  let k := s.sup id + 1
+  have hprefix : iIndepFun (fun i : Fin k => splitCycle R F G i.val) ν := by
+    apply (iIndepFun_iff_map_fun_eq_pi_map (fun i : Fin k => (hC i.val).aemeasurable)).2
+    simp_rw [hLaw]
+    exact splitCycle_prefix_map_eq_pi μ R hR hfinite F hF G hG k
+  let e (j : ↑s) : Fin k :=
+    ⟨j.val, Nat.lt_succ_of_le (Finset.le_sup (f := id) j.property)⟩
+  have hinj : Function.Injective e := fun _ _ h => Subtype.ext (congrArg Fin.val h)
+  have he := hprefix.precomp (g := e) hinj
+  exact he
+
+/-- The positive displacements through the first successful growth trial
+have expected sum equal to the one-cycle positive mean divided by the
+growth-trial success probability. -/
+lemma integral_splitCycle_positiveDisplacement_through_success
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (R : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (hfinite : ∀ᵐ ω ∂offspringFieldLaw μ, selectedPopulationSplitCompletion R ω ≠ ⊤)
+    (F : Mark α (Step α X) → ℝ)
+    (hF : Measurable[(selectedPopulationSplitCompletion_isStoppingTime R hR).measurableSpace] F)
+    (hFi : Integrable F (offspringFieldLaw μ))
+    (G : Mark α (Step α X) → E) (hG : Measurable G)
+    (success : Set E) (hsuccess : MeasurableSet success)
+    (hp : 0 < (offspringFieldLaw μ).real (G ⁻¹' success)) :
+    let ν := offspringFieldLaw μ
+    let D := splitCycle R F G
+    let B : Set (ℝ × E) := Prod.snd ⁻¹' success
+    let Y := fun z : ℝ × E => max z.1 0
+    Integrable (fun ω => ∑' n, geometricPrefixRewardTerm D B Y n ω) ν ∧
+      (∫ ω, ∑' n, geometricPrefixRewardTerm D B Y n ω ∂ν) =
+        (∫ ω, max (F ω) 0 ∂ν) / ν.real (G ⁻¹' success) := by
+  intro ν D B Y
+  let ρ := (ν.map F).prod (ν.map G)
+  have hFp := hF.mono (selectedPopulationSplitCompletion_isStoppingTime R hR).measurableSpace_le le_rfl
+  let _ : IsProbabilityMeasure (ν.map F) :=
+    (Measure.isProbabilityMeasure_map_iff hFp.aemeasurable).2 inferInstance
+  let _ : IsProbabilityMeasure (ν.map G) :=
+    (Measure.isProbabilityMeasure_map_iff hG.aemeasurable).2 inferInstance
+  let _ : IsProbabilityMeasure ρ := inferInstanceAs (IsProbabilityMeasure ((ν.map F).prod (ν.map G)))
+  obtain ⟨hDi, hLaw⟩ := splitCycle_independence μ R hR hfinite F hF G hG
+  have hD := measurable_splitCycle R hR F hFp G hG
+  have hB : MeasurableSet B := measurable_snd hsuccess
+  have hY : Measurable Y := measurable_fst.max measurable_const
+  have hYmeas : Measurable (fun y : ℝ => max y 0) := measurable_id.max measurable_const
+  have hYi : Integrable Y ρ := by
+    have h : Integrable (fun y : ℝ => max y 0) (ν.map F) :=
+      (integrable_map_measure hYmeas.aestronglyMeasurable hFp.aemeasurable).2 hFi.real_toNNReal
+    exact h.comp_fst (ν.map G)
+  have hp' : ρ.real B = ν.real (G ⁻¹' success) := by
+    have hb : ρ B = ν (G ⁻¹' success) := by
+      change ((ν.map F).prod (ν.map G)) (Prod.snd ⁻¹' success) = _
+      rw [← Measure.map_apply measurable_snd hsuccess, Measure.map_snd_prod,
+        measure_univ, one_smul, Measure.map_apply hG hsuccess]
+    exact congrArg ENNReal.toReal hb
+  refine ⟨iidGeometricReward_integrable ν ρ D hD hDi hLaw B hB Y hY hYi _ hp hp', ?_⟩
+  rw [iidGeometricReward_integral ν ρ D hD hDi hLaw B hB Y hY hYi _ hp hp']
+  congr 1
+  change (∫ z, max z.1 0 ∂(ν.map F).prod (ν.map G)) = _
+  rw [integral_fun_fst (fun y : ℝ => max y 0), probReal_univ, one_smul,
+    integral_map hFp.aemeasurable hYmeas.aestronglyMeasurable]
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas

@@ -32,6 +32,9 @@ import Mathlib.Data.Fintype.EquivFin
 * `firstSuccess_rankedEntrance_le_ae`: the $m$ ranked roots at $\tau$ have
   positions at most $V(v_\kappa)+Md$, with $v_\kappa$ indexed by trial order.
 
+* `measure_completionLate_and_trialFailure_le`: the probability of
+  $\tau>n+d$ is at most $e^{-np_0/4}+(1-p_1)^K$, and the probability that
+  the first $K$ growth trials all fail is at most $(1-p_1)^K$.
 * `measure_badEntrance_le`: the complement of entrance by $n+d$ with
   $m$ actual particles at positions at most $x+(K+d)M$ is bounded by
   the clock error, first-$K$ trial failure, and the large trial-root event.
@@ -334,6 +337,52 @@ lemma firstSuccess_rankedEntrance_le_ae
   exact position_endpointNodesByRank_le_of_entrance_count N R growth hR hgrowth
     lower upper duration r field t ht _ hcount
 
+/-- Separate the clock error and the event that the first $K$ trials all
+fail. These two estimates require no displacement moments. -/
+lemma measure_completionLate_and_trialFailure_le
+    {Root : Type} [MeasurableSpace Root] [MeasurableSingletonClass Root]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (R growth : Step.FiniteSelection ℕ ℝ)
+    (hR : Measurable R.select) (hgrowth : Measurable growth.select)
+    (hRne : μ {ξ | (R ξ).Nonempty} = 1) (hsplit : 0 < μ (splitBy R))
+    (lower upper duration : ℕ) (r : Root) (n K : ℕ) (hn : 0 < n)
+    (hK : (K : ℝ) ≤ (n : ℝ) * (μ (splitBy R)).toReal / 4) :
+    let τ := Completion.time R growth hR hgrowth lower upper duration r
+    let ν := offspringFieldLaw μ
+    let P := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
+    let G := growthTrialSuccess growth lower upper duration
+    let failed := (fun field => RootIndexed.StepField.left field r) ⁻¹'
+      recursiveFailure R growth duration lower upper K
+    let b := (ν {ω | ¬ G ω}) ^ K
+    P {field | ((n + duration : ℕ) : WithTop ℕ) < τ field} ≤
+      ENNReal.ofReal (Real.exp (-((n : ℝ) * (μ (splitBy R)).toReal / 4))) + b ∧
+      P failed ≤ b := by
+  intro τ ν P G failed b
+  let left : RootIndexed.StepField (Root ⊕ Root) ℕ ℝ → RootIndexed.StepField Root ℕ ℝ :=
+    RootIndexed.StepField.left
+  have hleft : Measurable left := measurable_pi_iff.mpr fun i => measurable_pi_apply (Sum.inl i)
+  have hleftLaw : P.map left = RootIndexed.stepFieldLaw μ :=
+    RootIndexed.stepFieldLaw_reindex μ Sum.inl Sum.inl_injective
+  constructor
+  · change P (left ⁻¹' {ω | ((n + duration : ℕ) : WithTop ℕ) <
+      firstSuccessfulCompletion R growth hR lower upper duration r ω}) ≤ _
+    refine (Measure.le_map_apply hleft.aemeasurable _).trans ?_
+    rw [hleftLaw]
+    exact measure_firstSuccessfulCompletion_gt_le μ R growth hR hgrowth hRne hsplit
+      lower upper duration n K hn r hK
+  · let f := fun field => left field r
+    have hf : Measurable f := (measurable_pi_apply r).comp hleft
+    have hflaw : P.map f = ν := by
+      change P.map ((fun ω : RootIndexed.StepField Root ℕ ℝ => ω r) ∘ left) = ν
+      rw [← Measure.map_map (measurable_pi_apply r) hleft, hleftLaw,
+        RootIndexed.stepFieldLaw_root_marginal μ r]
+    change P (f ⁻¹' recursiveFailure R growth duration lower upper K) ≤ _
+    refine (Measure.le_map_apply hf.aemeasurable _).trans ?_
+    rw [hflaw]
+    have hfinite := selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
+      μ R hR hRne (splitBy_measurable R hR) hsplit
+    exact (measure_recursiveFailure_eq_pow μ R growth hR hgrowth duration lower upper hfinite K).le
+
 /-- Combine the clock, first successful trial index, and position estimates
 for the entrance of the single-root process. -/
 lemma measure_badEntrance_le
@@ -388,20 +437,8 @@ lemma measure_badEntrance_le
       RootIndexed.stepFieldLaw_root_marginal μ r]
   let late := {field | ((n + duration : ℕ) : WithTop ℕ) < τ field}
   let failed := f ⁻¹' recursiveFailure R growth duration lower upper K
-  have hlate : P late ≤ ENNReal.ofReal (Real.exp (-((n : ℝ) * (μ (splitBy R)).toReal / 4))) +
-        (ν {ω | ¬ G ω}) ^ K := by
-    change P (left ⁻¹' {ω | ((n + duration : ℕ) : WithTop ℕ) <
-      firstSuccessfulCompletion R growth hR lower upper duration r ω}) ≤ _
-    refine (Measure.le_map_apply hleft.aemeasurable _).trans ?_
-    rw [hleftlaw]
-    exact measure_firstSuccessfulCompletion_gt_le μ R growth hR hgrowth hRne hsplit
-      lower upper duration n K hn r hK
-  have hfailed : P failed ≤ (ν {ω | ¬ G ω}) ^ K := by
-    refine (Measure.le_map_apply hf.aemeasurable _).trans ?_
-    rw [hflaw]
-    have hfinite := selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
-      μ R hR hRne (splitBy_measurable R hR) hsplit
-    exact (measure_recursiveFailure_eq_pow μ R growth hR hgrowth duration lower upper hfinite K).le
+  obtain ⟨hlate, hfailed⟩ := measure_completionLate_and_trialFailure_le
+    μ R growth hR hgrowth hRne hsplit lower upper duration r n K hn hK
   have hlarge : P (f ⁻¹' large) ≤ ν large :=
     (Measure.le_map_apply hf.aemeasurable large).trans_eq (congrArg (fun m => m large) hflaw)
   have hRneMeas : MeasurableSet {ξ | (R ξ).Nonempty} := by
