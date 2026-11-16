@@ -43,7 +43,7 @@ u\in P_n&\Longleftrightarrow
 open MeasureTheory
 open Combinatorics.Branching Combinatorics.UlamHarris
 
-namespace ProbabilityTheory.BranchingRandomWalk.StepSelection
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
@@ -122,4 +122,4 @@ theorem mem_population_iff_length_selectedAlong
           simp [frontierMarks, hparentLength]
         exact ⟨q.dropLast, hparent, i, hfrontier ▸ hparts.2, hsplit.symm⟩
 
-end ProbabilityTheory.BranchingRandomWalk.StepSelection
+end ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise

@@ -1,0 +1,8 @@
+import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.GrowthTrial.GeometricFirstMoment
+
+/-!
+# Axiom audit for the one-cycle L¹ position estimate
+-/
+
+#print axioms ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.GrowthTrial.iidGeometricFailureLeftmostPositiveDisplacement_le
+#print axioms ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.GrowthTrial.exists_nat_cutoff_iidGeometricFailureLeftmostPositiveDisplacement_le
