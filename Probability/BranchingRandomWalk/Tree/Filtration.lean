@@ -51,7 +51,7 @@ depth strictly below `n`, and `generationFiltration` turns these spaces into a
 filtration of the full product space. The file proves that the mark at depth
 `d` is revealed at generation `d + 1`, that the current frontier is a
 measurable observation, and the two random-index measurability steps used by
-the restart and reserve arguments: `selected_mark_measurable` for an address
+the stopped exploration arguments: `selected_mark_measurable` for an address
 chosen from generation-`n` information, and `causal_lineage_adapted` for an
 unconditionally pre-defined lineage that extends one generation at a time.
 The adapted-state corollary `frontier_causal_state_adapted` is proved in

@@ -5,12 +5,12 @@ defaultTargets = ["BranchingProcess"]
 [[require]]
 name = "BrownianMotion"
 path = "Vendor/BrownianMotion"
-# This tracked snapshot of the fork is described in Vendor/BrownianMotion/UPSTREAM.md.
+# BrownianMotion is pinned by the Git submodule at Vendor/BrownianMotion.
 
 [[require]]
 name = "mathlib"
 path = "Vendor/Mathlib"
-# Pinned Git submodule of maix00/mathlib4 at 380f2aafb622cb2c1c93dac545b6389083c68c51.
+# Mathlib is pinned by the Git submodule at Vendor/Mathlib.
 
 [[lean_lib]]
 name = "BranchingProcess"

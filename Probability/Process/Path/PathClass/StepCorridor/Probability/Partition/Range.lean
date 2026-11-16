@@ -83,7 +83,7 @@ theorem measurableSet_commonPartitionCellRangeBound (width : ℝ) :
 
 /-- A sample-space event that the translated path stays within a closed
 range-diameter bound on one half-open common cell. -/
-def commonPartitionCellRangeEvent
+noncomputable def commonPartitionCellRangeEvent
     {Ω : Type*} {X : unitInterval → Ω → ℝ}
     (upper lower : StepBoundary)
     (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))

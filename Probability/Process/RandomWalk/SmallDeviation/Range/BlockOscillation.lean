@@ -64,8 +64,7 @@ theorem eventually_iidSequenceLaw_blockOscillationProbability_le_exp_of_centered
     (hrate_lt : rate < Real.pi ^ 2 / (2 * factor ^ 2)) :
     ∀ᶠ n : ℕ in atTop,
       iidSequenceLaw ν {increment : ℕ → ℝ |
-        blockOscillationEvent (scale n) (n - 1)
-          (Combinatorics.Sequence.blockCoordinates 0 (n - 1) increment)} ≤
+        (Combinatorics.Sequence.blockCoordinates 0 (n - 1) increment) ∈ blockOscillationEvent (scale n) (n - 1)} ≤
         ENNReal.ofReal (Real.exp (-rate * ((n : ℝ) / scale n ^ 2))) := by
   let enlargedScale : ℕ → ℝ := fun n => factor * scale n
   let lower : C(unitInterval, ℝ) :=
@@ -166,8 +165,7 @@ theorem eventually_iidSequenceLaw_blockOscillationProbability_le_exp_of_centered
     rw [← ENNReal.ofReal_toReal hqtop]
     exact (ENNReal.ofReal_le_ofReal_iff (Real.exp_nonneg _)).2 hprobReal.le
   have hsubset : {increment : ℕ → ℝ |
-      blockOscillationEvent (scale n) (n - 1)
-        (Combinatorics.Sequence.blockCoordinates 0 (n - 1) increment)} ⊆
+      (Combinatorics.Sequence.blockCoordinates 0 (n - 1) increment) ∈ blockOscillationEvent (scale n) (n - 1)} ⊆
       corridorEvent n := by
     intro increment hosc
     exact blockOscillationEvent_subset_enlargedSourceCorridor hn hs hfactor
