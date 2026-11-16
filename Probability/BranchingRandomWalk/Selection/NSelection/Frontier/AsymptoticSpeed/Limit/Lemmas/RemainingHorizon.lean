@@ -5,11 +5,12 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.L2Limit
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.Closure
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.StoppingSubtrees.Vector.Expectation
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.TrialRoots
 
 /-!
-# Endpoint expectation after a short entrance time
+# Endpoint moments after a successful entrance
 
 ## Internal proof declarations
 
@@ -21,6 +22,9 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticS
   successful growth trial's descendants, the centered continuation mean on
   $E_N$ is bounded by $P(E_N)(-a+\pi^2\sigma^2t/2+\varepsilon)$
   in units of $\log N$.
+* `exists_firstSuccessfulTrial_remainingPositive_sq_le`: the positive part
+  of the centered reset endpoint has second-moment contribution at most
+  $P(\tau\le H)(1+\mathbb E[(\Xi_1)_+^4])H^2$ on $\{\tau\le H\}$.
 
 This is the uniform remaining-horizon use of Theorem 1.1 in Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
@@ -164,7 +168,82 @@ lemma exists_firstSuccessfulTrial_remainingMean_le
     measurableSet_trialCount_lt_at_completion R growth hR hgrowth (lower n) (upper n)
       (duration n) (K n) r
   have hcount : (Set.range (roots n)).Countable := Set.to_countable _
-  exact RootIndexed.integral_stopped_selectedSubtreeStepFieldVector_le μ (τ n) hτ (roots n)
-    hcount (hfiber n) (hdepth n) (hinj n) A hA (T n) g hmeas (fun i _ => hint i) _ hmean
+  exact (RootIndexed.integral_stopped_selectedSubtreeStepFieldVector_le μ (τ n) hτ (roots n)
+    hcount (hfiber n) (hdepth n) (hinj n) A hA (T n) g hmeas (fun i _ => hint i) _ hmean).2
+
+/-- Apply the positive endpoint moment bound to the stopped continuation
+from the original successful trial, after subtracting the reset position. -/
+lemma exists_firstSuccessfulTrial_remainingPositive_sq_le
+    (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
+    (hboundary : HasBoundaryNormalization L.potential L.raw)
+    (hnonempty : L.raw nonemptySupport = 1) (hfour : HasLeftmostFourthMoment L)
+    (N H m lower upper duration : ℕ) (hN : 0 < N) (hH : 0 < H)
+    (hm : 0 < m) (hmLower : m ≤ lower) (hupper : 1 ≤ upper)
+    (R growth : Step.FiniteSelection ℕ ℝ) (hR : Measurable R.select)
+    (hgrowth : Measurable growth.select) (r : ℕ) :
+    let P := RootIndexed.stepFieldLaw (Root := ℕ) L.sortedPotentialImage
+    let τ := firstSuccessfulCompletion R growth hR lower upper duration r
+    ∃ roots : RootIndexed.StepField ℕ ℕ ℝ → Fin m → RootIndexed.TreeNode ℕ ℕ,
+      (∀ ω k, τ ω = ((k + 1 + duration : ℕ) : WithTop ℕ) →
+        ∀ i, roots ω i ∈ capStoppedCandidate (lineages R hR) R growth upper r
+          PUnit.unit (k + 1) duration ω) ∧
+      IntegrableOn (fun ω => (max (@firstNSelectedEndpointMinimum m N (H - (τ ω).untopD 0)
+        (RootIndexed.addressLinearOrder (Fin m) ℕ)
+        (RootIndexed.selectedSubtreeStepFieldVector roots ω)) 0) ^ 2)
+        {ω | τ ω ≤ (H : WithTop ℕ)} P ∧
+      (∫ ω in {ω | τ ω ≤ (H : WithTop ℕ)},
+        (max (@firstNSelectedEndpointMinimum m N (H - (τ ω).untopD 0)
+          (RootIndexed.addressLinearOrder (Fin m) ℕ)
+          (RootIndexed.selectedSubtreeStepFieldVector roots ω)) 0) ^ 2 ∂P) ≤
+        P.real {ω | τ ω ≤ (H : WithTop ℕ)} *
+          ((H : ℝ) ^ 2 * (1 + ∫ ξ, (L.leftmostPositivePart ξ) ^ 4 ∂L.raw)) := by
+  intro P τ
+  obtain ⟨roots, hfiber, hdepth, hinj, hmember⟩ :=
+    exists_firstSuccessfulTrialRoots R growth hR hgrowth m lower upper duration hmLower hupper r
+  refine ⟨roots, hmember, ?_⟩
+  let _ := RootIndexed.addressLinearOrder (Fin m) ℕ
+  let μ := L.sortedPotentialImage
+  let Q := finiteRootStepFieldLaw μ m
+  let hτ := firstSuccessfulCompletion_isStoppingTime R growth hR hgrowth lower upper duration r
+  let C := ∫ ξ, (L.leftmostPositivePart ξ) ^ 4 ∂L.raw
+  let f i (field : FiniteRootStepField m ℕ ℝ) :=
+    max (firstNSelectedEndpointMinimum m N (H - i) field) 0
+  let g i (field : FiniteRootStepField m ℕ ℝ) := (f i field) ^ 2
+  have hg (i : ℕ) : Measurable (g i) :=
+    ((measurable_firstNSelectedEndpointMinimum m N (H - i)).max measurable_const).pow_const 2
+  have hC : 0 ≤ C := integral_nonneg fun _ => by positivity
+  have hHreal : 0 < (H : ℝ) := by exact_mod_cast hH
+  have hpoint (i : ℕ) (field : FiniteRootStepField m ℕ ℝ) :
+      g i field ≤ (H : ℝ) ^ 2 + (f i field) ^ 4 / (H : ℝ) ^ 2 := by
+    rw [add_div_eq_mul_add_div _ _ (ne_of_gt (sq_pos_of_pos hHreal))]
+    apply (le_div_iff₀ (sq_pos_of_pos hHreal)).2
+    dsimp [g]
+    nlinarith [sq_nonneg ((f i field) ^ 2 - (H : ℝ) ^ 2),
+      mul_nonneg (sq_nonneg (f i field)) (sq_nonneg (H : ℝ))]
+  have htests (i : ℕ) : Integrable (g i) Q ∧
+      (∫ field, g i field ∂Q) ≤ (H : ℝ) ^ 2 * (1 + C) := by
+    have h4 := finiteRootStepFieldLaw_integrable_pow_four_max_firstNSelectedEndpointMinimum_pos
+      m N (H - i) hm hN L hboundary hnonempty hfour
+    have hdom := (integrable_const ((H : ℝ) ^ 2)).add (h4.1.div_const ((H : ℝ) ^ 2))
+    change Integrable (fun field => (H : ℝ) ^ 2 + (f i field) ^ 4 / (H : ℝ) ^ 2) Q at hdom
+    have hint : Integrable (g i) Q := hdom.mono' (hg i).aestronglyMeasurable <|
+      ae_of_all Q fun field => by
+        have hnonneg : 0 ≤ g i field := sq_nonneg _
+        simpa only [Real.norm_eq_abs, abs_of_nonneg hnonneg] using hpoint i field
+    refine ⟨hint, (integral_mono hint hdom (hpoint i)).trans ?_⟩
+    have h4int : Integrable (fun field => (f i field) ^ 4) Q := h4.1
+    rw [integral_add (integrable_const _) (h4int.div_const _), integral_const, probReal_univ,
+      smul_eq_mul, one_mul, integral_div]
+    have h4bound : (∫ field, (f i field) ^ 4 ∂Q) ≤ (H : ℝ) ^ 4 * C :=
+      h4.2.trans (mul_le_mul_of_nonneg_right
+        (pow_le_pow_left₀ (Nat.cast_nonneg _) (by exact_mod_cast Nat.sub_le H i) 4) hC)
+    calc
+      _ ≤ (H : ℝ) ^ 2 + ((H : ℝ) ^ 4 * C) / (H : ℝ) ^ 2 :=
+        add_le_add_right (div_le_div_of_nonneg_right h4bound (sq_nonneg _)) _
+      _ = _ := by field_simp
+  have h := RootIndexed.integral_stopped_selectedSubtreeStepFieldVector_le μ τ hτ roots
+    (Set.to_countable _) hfiber hdepth hinj Set.univ MeasurableSet.univ H g hg
+    (fun i _ => (htests i).1) _ (fun i _ => (htests i).2)
+  simpa only [Set.univ_inter] using h
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
