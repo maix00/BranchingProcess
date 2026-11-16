@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Hitting
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Population
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.StoppingSubtrees.Vector.Factorization
-import Probability.Process.HittingTime.Declarations
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Hitting
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Population
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.StoppingSubtrees.Vector.Factorization
+public import Probability.Process.HittingTime.Declarations
 
 /-!
 # Fresh descendants at the capacity-hitting time
@@ -54,6 +56,8 @@ population's descendant field for the existing stopped-subtree factorization.
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
 
@@ -468,3 +472,5 @@ theorem smallInitialPopulationHitRoots_freshField_law
     _ = finiteRootStepFieldLaw μ N B := by rw [hfiniteProb]; simp
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
+
+end

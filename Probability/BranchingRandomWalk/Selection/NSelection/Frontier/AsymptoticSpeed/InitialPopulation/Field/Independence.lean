@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Basic
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.Basic
 /-!
 # Independence of the hit positions and fresh descendants
 
@@ -28,6 +30,8 @@ exact-`N` field law.
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
 
@@ -228,3 +232,5 @@ theorem smallInitialPopulationHitInitialPosition_freshField_factorization
     _ = P (initial ⁻¹' A) * Q B := by rw [hright]
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
+
+end

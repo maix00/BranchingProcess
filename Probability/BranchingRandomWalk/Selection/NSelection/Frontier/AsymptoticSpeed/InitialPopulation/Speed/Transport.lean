@@ -4,13 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Population.Processes.Selected.ParameterizedRootIndexed
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Selection.PopulationBatch
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.RunBridge
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.InfiniteOffspring.Repair
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.InfiniteOffspring.Speed
-import Mathlib.MeasureTheory.Measure.Prod
-import Mathlib.MeasureTheory.MeasurableSpace.MeasurablyGenerated
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.Selected.ParameterizedRootIndexed
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Selection.PopulationBatch
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.InitialPopulation.Trajectory.RunBridge
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.InfiniteOffspring.Repair
+public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.InfiniteOffspring.Speed
+public import Mathlib.MeasureTheory.Measure.Prod
+public import Mathlib.MeasureTheory.MeasurableSpace.MeasurablyGenerated
 /-!
 # Speed transport for a random initial population
 
@@ -29,12 +31,22 @@ import Mathlib.MeasureTheory.MeasurableSpace.MeasurablyGenerated
   moment condition, there is a speed shared almost surely under the product
   of any initial-position law and the canonical root-field law.
 
+- `selectedPopulationEndpointTrajectory_ae_hasAsymptoticSpeed_and_L1_of_stepLaw`:
+  under the same assumptions, each deterministic full-capacity start has
+  $M_n/n\to v_N$ almost surely and in $L^1$ on the root-field law.
+
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* (Fudan University, 2026), Chapter 3, Corollary 3.13, gives the
+comparison with constant initial positions.
+
 This file connects the measurable endpoint of a selected population with the
 rank-zero trajectory used by the exact-capacity speed theorem.
 -/
 
 open Asymptotics MeasureTheory Filter
-open scoped Topology
+open scoped ENNReal Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
 
@@ -246,7 +258,7 @@ private lemma ae_selectedPopulationEndpointTrajectoryWithParameter_sections
   simp [selectedPopulationEndpointTrajectoryWithParameter, hendpoint n]
 
 set_option maxHeartbeats 3000000
-private lemma ae_selectedPopulationEndpointTrajectoryWithParameter_sections_of_stepLaw
+theorem selectedPopulationEndpointTrajectory_ae_hasAsymptoticSpeed_and_L1_of_stepLaw
     {ι X : Type*} [Countable ι] [MeasurableSpace X]
     {N : ℕ} (hN : 0 < N) (L : StepLaw ι ℕ X)
     [IsProbabilityMeasure L.raw]
@@ -260,21 +272,22 @@ private lemma ae_selectedPopulationEndpointTrajectoryWithParameter_sections_of_s
     [MeasurableSingletonClass (Fin N × RootIndexed.TreeNode (Fin N) ℕ)]
     [MeasurableSingletonClass (Fin N → Fin N × RootIndexed.TreeNode (Fin N) ℕ)] :
     ∃ speed : ℝ, ∀ initial : Fin N → ℝ,
-      ∀ᵐ field ∂RootIndexed.stepFieldLaw
-        (Root := Fin N) L.sortedPotentialImage,
-        HasAsymptoticSpeed (𝕜 := ℝ)
-          (selectedPopulationEndpointTrajectoryWithParameter N
-            (initial, field)) speed := by
+      let P := RootIndexed.stepFieldLaw (Root := Fin N) L.sortedPotentialImage
+      let endpoint := fun field =>
+        selectedPopulationEndpointTrajectoryWithParameter N (initial, field)
+      (∀ᵐ field ∂P, HasAsymptoticSpeed (𝕜 := ℝ) (endpoint field) speed) ∧
+      Tendsto (fun n : ℕ => eLpNorm (fun field =>
+        (n : ℝ)⁻¹ * endpoint field n - speed) 1 P) atTop (𝓝 0) := by
   classical
   let μ := L.sortedPotentialImage
   let envLaw := generationEnvironmentLaw μ N
   let fieldLaw := RootIndexed.stepFieldLaw (Root := Fin N) μ
-  letI : IsProbabilityMeasure μ := by
+  let _ : IsProbabilityMeasure μ := by
     dsimp [μ]
     infer_instance
-  letI : IsProbabilityMeasure envLaw := by
+  let _ : IsProbabilityMeasure envLaw := by
     exact generationEnvironmentLaw_isProbability μ N
-  letI : IsProbabilityMeasure fieldLaw := by
+  let _ : IsProbabilityMeasure fieldLaw := by
     dsimp [fieldLaw]
     infer_instance
   have hboundaryμ : HasBoundaryNormalization realPotential μ := by
@@ -284,8 +297,8 @@ private lemma ae_selectedPopulationEndpointTrajectoryWithParameter_sections_of_s
     dsimp [μ]
     rw [L.sortedPotentialImage_nonemptySupport, L.sorted_nonemptySupport]
     exact hnonempty
-  obtain ⟨c, horiginSpeed⟩ :=
-    infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed_of_stepLaw
+  obtain ⟨c, horiginSpeed, hL1⟩ :=
+    infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed_and_L1_of_stepLaw
       hN L hboundary hnonempty hfirst
   let speed := -c
   let originPosition : ℕ → GenerationEnvironment N → ℝ := fun n ω =>
@@ -333,9 +346,6 @@ private lemma ae_selectedPopulationEndpointTrajectoryWithParameter_sections_of_s
     filter_upwards [] with n
     rw [hrun n]
     rfl
-  let batchMap : RootIndexed.StepField (Fin N) ℕ ℝ →
-      GenerationEnvironment N := fun field n =>
-        selectedRootBatch (selectedPopulationRankRoots N (fun _ => 0)) n field
   have hbatchLaw (initial : Fin N → ℝ) : HasLaw
       (fun field n => selectedRootBatch
         (selectedPopulationRankRoots N initial) n field)
@@ -347,8 +357,116 @@ private lemma ae_selectedPopulationEndpointTrajectoryWithParameter_sections_of_s
     ae_selectedPopulationEndpointTrajectoryWithParameter_sections
       hN envLaw fieldLaw originPosition speed
       (by intro n ω; rfl) hspeedMeasurable hspeedRepaired hgoodEnv hbatchLaw
-  refine ⟨speed, ?_⟩
-  simpa [fieldLaw] using hsections
+  refine ⟨speed, fun initial => ⟨hsections initial, ?_⟩⟩
+  let rows (field : RootIndexed.StepField (Fin N) ℕ ℝ) : GenerationEnvironment N :=
+    fun n => selectedRootBatch (selectedPopulationRankRoots N initial) n field
+  have hrowLaw : HasLaw rows envLaw fieldLaw := hbatchLaw initial
+  let K := ∑ i, |initial i|
+  have hK (i : Fin N) : |initial i| ≤ K :=
+    Finset.single_le_sum (fun j _ => abs_nonneg (initial j)) (Finset.mem_univ i)
+  let error (n : ℕ) (field : RootIndexed.StepField (Fin N) ℕ ℝ) :=
+    (n : ℝ)⁻¹ * selectedPopulationEndpointTrajectoryWithParameter N (initial, field) n - speed
+  let originError (n : ℕ) (ω : GenerationEnvironment N) :=
+    (n : ℝ)⁻¹ * originPosition n ω - speed
+  have hmeasOrigin (n : ℕ) : Measurable (originError n) :=
+    (hscaledMeasurable n).sub_const _
+  have hmeasError (n : ℕ) : Measurable (error n) :=
+    (measurable_const.mul
+      ((measurable_selectedPopulationEndpointTrajectoryWithParameter N n).comp
+        (measurable_const.prodMk measurable_id))).sub_const _
+  have hgoodRaw : ∀ᵐ field ∂fieldLaw, ∀ t, IsGoodInfiniteOffspringBatch (rows field t) :=
+    ae_of_ae_map hrowLaw.aemeasurable (hrowLaw.map_eq.symm ▸ hgoodEnv)
+  have hbound (n : ℕ) : ∀ᵐ field ∂fieldLaw,
+      |error n field| ≤ |originError n (rows field)| + (n : ℝ)⁻¹ * K := by
+    filter_upwards [hgoodRaw] with field hgood
+    let initialRank := selectedPopulationRankPosition N 0 initial field
+    let i₀ : Fin N := ⟨0, hN⟩
+    have hmin := selectedPopulationEndpointWithParameter_eq_rankZero N n hN initial field
+      (selectedPopulationTotalized_card_eq_of_rankedBatches_good N initial field hgood n)
+    have htraj := congrFun
+      (selectedPopulationRankPosition_eq_infiniteOffspringRun N initial field hgood n) i₀
+    have hmarks : (fun t => repairGenerationBatch (rows field t)) = rows field := by
+      funext t
+      exact repairGenerationBatch_eq_of_repairable _ (hgood t)
+    have hzero : originPosition n (rows field) =
+        infiniteOffspringRun (rows field) hgood (fun _ => 0) n i₀ := by
+      dsimp [originPosition, i₀]
+      rw [measurableRepairedInfiniteOffspringRun_eq_infiniteOffspringRun]
+      exact congrFun (infiniteOffspringRun_congr _ _ hmarks _ hgood _ _) _
+    have hinit (i : Fin N) : |initialRank i| ≤ K := by
+      unfold initialRank selectedPopulationRankPosition RootIndexed.observedPositionAtGeneration
+        RootIndexed.positionAtGeneration
+      split
+      · rename_i hlength
+        have hnil := List.length_eq_zero_iff.mp hlength
+        simp only [hnil, id_eq, RootIndexed.position, RootIndexed.displace,
+          Combinatorics.Branching.displaceWith]
+        simpa using hK _
+      · simpa using (le_trans (abs_nonneg _) (hK i))
+    have hlo := infiniteOffspringRun_mono_initial (rows field) hgood
+      (fun _ => -K) initialRank (fun i => (abs_le.mp (hinit i)).1) n i₀
+    have hhi := infiniteOffspringRun_mono_initial (rows field) hgood
+      initialRank (fun _ => K) (fun i => (abs_le.mp (hinit i)).2) n i₀
+    have hshift (a : ℝ) := congrFun
+      (infiniteOffspringRun_shift (rows field) hgood (fun _ => 0) a n) i₀
+    simp only [zero_add] at hshift
+    rw [hshift] at hlo hhi
+    have hdiff : |infiniteOffspringRun (rows field) hgood initialRank n i₀ -
+        infiniteOffspringRun (rows field) hgood (fun _ => 0) n i₀| ≤ K := by
+      rw [abs_le]
+      exact ⟨by linarith, by linarith⟩
+    change |(n : ℝ)⁻¹ * selectedPopulationEndpointWithParameter N n (initial, field) -
+        speed| ≤ |(n : ℝ)⁻¹ * originPosition n (rows field) - speed| + (n : ℝ)⁻¹ * K
+    rw [hmin, htraj, hzero]
+    let scale : ℝ := (n : ℝ)⁻¹
+    have hs : 0 ≤ scale := inv_nonneg.mpr (Nat.cast_nonneg _)
+    calc
+      _ ≤ |scale * infiniteOffspringRun (rows field) hgood (fun _ => 0) n i₀ - speed| +
+          |scale * (infiniteOffspringRun (rows field) hgood initialRank n i₀ -
+            infiniteOffspringRun (rows field) hgood (fun _ => 0) n i₀)| := by
+        convert abs_add_le
+          (scale * infiniteOffspringRun (rows field) hgood (fun _ => 0) n i₀ - speed)
+          (scale * (infiniteOffspringRun (rows field) hgood initialRank n i₀ -
+            infiniteOffspringRun (rows field) hgood (fun _ => 0) n i₀)) using 2 <;> ring
+      _ ≤ _ := by rw [abs_mul, abs_of_nonneg hs]; gcongr
+  have hL1rows (n : ℕ) :
+      eLpNorm (originError n ∘ rows) 1 fieldLaw = eLpNorm (originError n) 1 envLaw := by
+    rw [← eLpNorm_map_measure (hmeasOrigin n).aestronglyMeasurable hrowLaw.aemeasurable,
+      hrowLaw.map_eq]
+  have hinv : Tendsto (fun n : ℕ => (n : ℝ)⁻¹ * K) atTop (𝓝 0) := by
+    simpa using ((tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop).mul_const K)
+  have hupper : Tendsto (fun n =>
+      eLpNorm (originError n) 1 envLaw + ENNReal.ofReal ((n : ℝ)⁻¹ * K))
+      atTop (𝓝 0) := by
+    have hbase : Tendsto (fun n => eLpNorm (originError n) 1 envLaw) atTop (𝓝 0) := hL1
+    have hcorrection : Tendsto (fun n : ℕ => ENNReal.ofReal ((n : ℝ)⁻¹ * K)) atTop (𝓝 0) := by
+      simpa only [Function.comp_def, ENNReal.ofReal_zero] using
+        ENNReal.continuous_ofReal.continuousAt.tendsto.comp hinv
+    simpa only [add_zero] using hbase.add hcorrection
+  apply tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hupper (fun _ => zero_le)
+  intro n
+  calc
+    eLpNorm (error n) 1 fieldLaw ≤
+        eLpNorm (fun field => |originError n (rows field)| + (n : ℝ)⁻¹ * K) 1 fieldLaw :=
+      eLpNorm_mono_ae_real (hmeasError n).aestronglyMeasurable
+        ((hbound n).mono fun _ h => by simpa only [Real.norm_eq_abs] using h)
+    _ ≤ eLpNorm (originError n) 1 envLaw + ENNReal.ofReal ((n : ℝ)⁻¹ * K) := by
+      have hm := (hmeasOrigin n).aemeasurable.comp_aemeasurable hrowLaw.aemeasurable
+      have hc : 0 ≤ (n : ℝ)⁻¹ * K :=
+        mul_nonneg (inv_nonneg.mpr (Nat.cast_nonneg _))
+          (Finset.sum_nonneg fun _ _ => abs_nonneg _)
+      have habs : eLpNorm (fun field => |originError n (rows field)|) 1 fieldLaw =
+          eLpNorm (originError n) 1 envLaw := by
+        rw [← hL1rows n]
+        simpa only [Real.norm_eq_abs, Function.comp_def] using
+          eLpNorm_norm (originError n ∘ rows) hm.aestronglyMeasurable
+      have hconst : eLpNorm (fun _ : RootIndexed.StepField (Fin N) ℕ ℝ => (n : ℝ)⁻¹ * K)
+          1 fieldLaw = ENNReal.ofReal ((n : ℝ)⁻¹ * K) := by
+        rw [eLpNorm_const _ one_ne_zero (IsProbabilityMeasure.ne_zero _)]
+        simp only [Real.eNorm_eq_ofReal_abs, abs_of_nonneg hc, measure_univ, ENNReal.one_rpow, mul_one]
+      rw [← habs, ← hconst]
+      exact eLpNorm_add_le le_rfl
+
 
 set_option maxHeartbeats 3000000
 /-- Under the boundary, nonempty-offspring, and leftmost first
@@ -377,21 +495,21 @@ theorem ae_selectedPopulationEndpointTrajectoryWithParameter_prod_of_stepLaw
   classical
   let μ := L.sortedPotentialImage
   let fieldLaw := RootIndexed.stepFieldLaw (Root := Fin N) μ
-  letI : IsProbabilityMeasure μ := by
+  let _ : IsProbabilityMeasure μ := by
     dsimp [μ]
     infer_instance
-  letI : IsProbabilityMeasure fieldLaw := by
+  let _ : IsProbabilityMeasure fieldLaw := by
     dsimp [fieldLaw]
     infer_instance
   obtain ⟨speed, hsections⟩ :=
-    ae_selectedPopulationEndpointTrajectoryWithParameter_sections_of_stepLaw
+    selectedPopulationEndpointTrajectory_ae_hasAsymptoticSpeed_and_L1_of_stepLaw
       hN L hboundary hnonempty hfirst
   have hsectionsAE : ∀ᵐ initial ∂ρ, ∀ᵐ field ∂fieldLaw,
       HasAsymptoticSpeed (𝕜 := ℝ)
         (selectedPopulationEndpointTrajectoryWithParameter N
           (initial, field)) speed := by
     filter_upwards [] with initial
-    exact hsections initial
+    exact (hsections initial).1
   have hjoint : ∀ᵐ p ∂ρ.prod fieldLaw,
       HasAsymptoticSpeed (𝕜 := ℝ)
         (selectedPopulationEndpointTrajectoryWithParameter N p) speed := by
@@ -419,3 +537,5 @@ theorem ae_selectedPopulationEndpointTrajectoryWithParameter_prod_of_stepLaw
   simpa [fieldLaw, μ] using hjoint
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed
+
+end

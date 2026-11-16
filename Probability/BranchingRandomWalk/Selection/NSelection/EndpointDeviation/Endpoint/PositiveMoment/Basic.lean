@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.FiniteExpectations
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Basic
-import Probability.BranchingRandomWalk.Spine.ManyToOne.GenerationManyToOne
-import Probability.MeasureTheory.Moments.ExponentialMoment
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law.FiniteExpectations
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.Basic
+public import Probability.BranchingRandomWalk.Spine.ManyToOne.GenerationManyToOne
+public import Probability.MeasureTheory.Moments.ExponentialMoment
 
 /-!
 # Negative endpoint moments for finite-root N-selection
@@ -32,6 +34,8 @@ negative-part fourth-moment input for the trajectory `L²` argument.
 
 open MeasureTheory
 open scoped ENNReal BigOperators
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
@@ -186,3 +190,5 @@ theorem finiteRootStepFieldLaw_integrable_pow_four_max_neg_firstNSelectedEndpoin
       m N H hm hN μ hboundary hnonempty)
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
+
+end
