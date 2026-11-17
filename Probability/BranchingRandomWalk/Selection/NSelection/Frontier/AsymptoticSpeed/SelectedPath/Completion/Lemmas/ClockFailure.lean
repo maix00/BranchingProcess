@@ -305,7 +305,7 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
         ∃ b : ℝ, 0 < b ∧ ∀ᶠ i in atTop,
           P.real (E i)ᶜ ≤ Real.exp (-b * Real.log (N i : ℝ)) := by
   intro μ P
-  obtain ⟨M, hρ, hsplit, hp₁, hsuccess⟩ :=
+  obtain ⟨M, hρ, hsplit, p₁, hp₁, hsuccess⟩ :=
     exists_success_probability_lower_bound L hne hsuper
   let B := Step.FiniteSelection.firstNBySlotOrder (α := ℕ) (X := ℝ) 2
   let R := firstOrBelowPotential B realPotential (M : ℝ)
@@ -315,8 +315,6 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
   let law := Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _)
     growth hgrowth
   let ρ := finiteSlotOffspringMeanReal law
-  let p₁ := ((ρ - 1) / ρ) ^ 2 / normalizedSecondMomentConstant ρ
-    (finiteSlotOffspringSecondMomentReal law - ρ ^ 2)
   have hρlog : 0 < Real.log ρ := Real.log_pos hρ
   let α := min (ε / 2) (min (1 / 2) (Real.log ρ / (4 * Real.log 2)))
   have ha : 0 < α := lt_min (by positivity) (lt_min (by norm_num) (by positivity))
@@ -333,13 +331,33 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
   let d i := ⌊α * Real.log (N i : ℝ) / Real.log ρ⌋₊ + 2
   let lower i := ⌈(N i : ℝ) ^ α⌉₊
   let upper i := 2 ^ d i
+  have hparallel := logarithmicEntrance_scales hρ ha (δ := 1) zero_lt_one
+    (M := (M : ℝ)) (Nat.cast_nonneg M) (v := 0) hsmall
+    (η := (0 + (M : ℝ)) * 1 + (M : ℝ) * (α / Real.log ρ) + 1)
+    (lt_add_of_pos_right _ zero_lt_one) hN d (fun i => trialDuration_le hρ ha.le (N i))
+  have hcapacity : growth.IsBoundedBy 2 := by
+    intro ξ
+    exact (Finset.card_le_card (fun i hi =>
+      ((Step.FiniteSelection.mem_filter B _ ξ i).mp hi).1)).trans
+      (firstNBySlotOrder_isBoundedBy 2 ξ)
+  obtain ⟨hdTop, hMarkov⟩ := trialDuration_markov_scales hρ ha ha1 hN
+  have hscaleSuccess : ∀ᶠ i in atTop, 0 < N i ∧ 0 < (N i : ℝ) ^ α ∧
+      ρ * (N i : ℝ) ^ α ≤ ρ ^ d i := by
+    filter_upwards [hN.eventually_ge_atTop 1] with i hi
+    have hNi : 0 < N i := Nat.zero_lt_of_lt hi
+    exact ⟨hNi, Real.rpow_pos_of_pos (by exact_mod_cast hNi) α,
+      rpow_mul_mean_le_pow_trialDuration hρ (N i) α hi⟩
   have hsuccess' : ∀ᶠ i in atTop, p₁ ≤ (offspringFieldLaw μ).real
-       {ω | growthTrialSuccess growth (lower i) (upper i) (d i) ω} := by
-    filter_upwards [hN.eventually_ge_atTop 1 ] with i hi
-    have hNpos : 0 < (N i : ℝ) := by exact_mod_cast Nat.zero_lt_of_lt hi
-    exact hsuccess (d i) (lower i) ((N i : ℝ) ^ α) (by positivity)
-      (rpow_mul_mean_le_pow_trialDuration hρ (N i) α hi)
-      (Nat.ceil_pos.mpr (Real.rpow_pos_of_pos hNpos α)) le_rfl
+      {ω | growthTrialSuccess growth (lower i) (upper i) (d i) ω} := by
+    filter_upwards [hsuccess d N (fun i => (N i : ℝ) ^ α) hdTop hscaleSuccess hMarkov,
+      hscaleSuccess, hparallel] with i hs hscale hbudget
+    have hupper : 2 ^ d i ≤ N i := by
+      have hh := hbudget.2.2.1
+      nlinarith
+    rw [show upper i = 2 ^ d i by rfl,
+      growthTrialSuccess_eq_of_binary_horizon_le growth hcapacity (lower i) (d i) (N i)
+        (Nat.ceil_pos.mpr hscale.2.1) hupper]
+    exact hs
   refine ⟨M, α, ρ, p₁, ha, ha1, haε, hρ, hp₁, hsuccess', ?_⟩
   intro δ θ γ hδ hθ hratio hγ
   let K i := ⌊δ * Real.log (N i : ℝ)⌋₊

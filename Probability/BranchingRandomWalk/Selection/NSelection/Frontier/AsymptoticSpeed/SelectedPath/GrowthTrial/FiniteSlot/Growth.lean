@@ -9,7 +9,6 @@ module
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot.Moments
 public import Probability.BranchingRandomWalk.Step.Selection.BinaryOffspringLaw
 public import MeasureTheory.BranchingWalk.Step.Selection.Potential
-public import Probability.MeasureTheory.Moments.SecondMomentGrowth
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Basic
 public import Probability.BranchingProcess.Offspring.FieldLaw
 /-!
@@ -17,12 +16,9 @@ public import Probability.BranchingProcess.Offspring.FieldLaw
 
 The finite-slot row law and its first two moment recursions apply to the
 actual selected population on the pre-sampled tree. This file turns those
-recursions into fixed-horizon probability bounds.
+recursions into a bound on reaching capacity by a fixed horizon.
 
 ## Public declarations
-
-If $\rho x\le\rho^d$, the probability of reaching $x$ at age $d$ is
-at least $((\rho-1)/\rho)^2/K(\rho,v)$.
 
 * `finiteSlotOffspringVarianceReal_nonneg`: for the encoded binary offspring
   law, $\mathbb E[X^2]-(\mathbb E[X])^2\ge0$.
@@ -34,11 +30,8 @@ at least $((\rho-1)/\rho)^2/K(\rho,v)$.
   for a binary selector implies $\mathbb P(\#S=2)>0$.
 * `exists_nat_cutoff_binaryOffspringMean_gt_one`: if $\rho>1$, filtering
   all retained marks at a large enough common cutoff preserves mean $>1$.
-* `measure_finiteSlotPopulation_ge_threshold`: if $\rho x\le\rho^d$ and
-  $x\ge0$, then $P(Z_d\ge x)\ge ((\rho-1)/\rho)^2/K(\rho,v)$.
-* `measure_finiteSlotGrowthTrialSuccess_of_mean_ge` gives the same bound
-  for full success at an integer target at most $\lceil x\rceil$ and
-  with the capacity $2^d$.
+* `measure_finiteSlotPopulation_hits_capacity_le`: if $K>0$, then
+  $P(\exists j\le d,\ Z_j\ge K)\le K^{-1}\sum_{j=0}^{d}\rho^j$.
 -/
 
 @[expose] public section
@@ -219,174 +212,40 @@ theorem exists_nat_cutoff_binaryOffspringMean_gt_one
   rw [binaryOffspringMean_eq_integral_card ν (R M) (S.belowPotential_measurable hS φ M) (hcapR M)]
   exact hM
 
-/-- The finite-slot population reaches its power-scale target at the usual
-logarithmic horizon with a probability bounded below independently of the
-scale.  Only the original offspring mean is used: second moments are finite
-because the selected row has at most two children. -/
-theorem measure_finiteSlotPopulation_ge_threshold
+/-- Markov's inequality at each generation bounds the probability that a finite
+trial reaches its capacity by age `duration`. -/
+theorem measure_finiteSlotPopulation_hits_capacity_le
     {α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [MeasurableSpace X]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (S : Step.FiniteSelection α X) (hS : Measurable S.select)
-    (hcapacity : ∀ ξ, (S ξ).card ≤ 2)
-    (hmean : 1 < finiteSlotOffspringMeanReal
-      (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))
-    (duration : ℕ) (threshold : ℝ) (hthreshold : 0 ≤ threshold)
-    (hscale : (finiteSlotOffspringMeanReal
-      (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS)) * threshold ≤ (finiteSlotOffspringMeanReal
-      (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS)) ^ duration) :
+    (hcap : S.IsBoundedBy 2) (duration : ℕ) {capacity : ℝ} (hcapacity : 0 < capacity) :
+    let ρ := finiteSlotOffspringMeanReal
+      (Selection.Stepwise.binaryOffspringLaw
+        (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS)
     (offspringFieldLaw μ).real
-      {ω | threshold ≤ finiteSlotPopulationSizeReal S ω duration} ≥
-      (((finiteSlotOffspringMeanReal
-      (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS)) - 1) / (finiteSlotOffspringMeanReal
-      (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))) ^ 2 / normalizedSecondMomentConstant
-        (finiteSlotOffspringMeanReal
-          (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))
-        (finiteSlotOffspringSecondMomentReal
-          (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS) -
-          (finiteSlotOffspringMeanReal
-            (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS)) ^ 2) := by
-  let ν := ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS
-  let ρ := finiteSlotOffspringMeanReal ν
-  let v := finiteSlotOffspringSecondMomentReal ν - ρ ^ 2
-  let Z := fun n ω => finiteSlotPopulationSizeReal S ω n
-  let m₂ := fun n => ∫ ω, Z n ω ^ 2 ∂offspringFieldLaw μ
-  have hvar : 0 ≤ v := by
-    exact finiteSlotOffspringVarianceReal_nonneg ν
-  have hZmeas : ∀ n, Measurable (Z n) := by
-    intro n
-    exact finiteSlotPopulationSizeReal_measurable S hS hcapacity n
-  have hZnonneg : ∀ n, 0 ≤ᵐ[offspringFieldLaw μ] Z n := by
-    intro n
-    exact ae_of_all _ (fun ω => by simp [Z, finiteSlotPopulationSizeReal])
-  have hZint : ∀ n, Integrable (Z n) (offspringFieldLaw μ) := by
-    intro n
-    exact finiteSlotPopulationSizeReal_integrable μ S hS hcapacity n
-  have hZmem : ∀ n, MemLp (Z n) 2 (offspringFieldLaw μ) := by
-    intro n
-    apply MemLp.of_bound (hZmeas n).aestronglyMeasurable ((2 : ℝ) ^ n)
-    filter_upwards [] with ω
-    rw [Real.norm_eq_abs, abs_of_nonneg (by simp [Z, finiteSlotPopulationSizeReal])]
-    exact finiteSlotPopulationSizeReal_bound S hcapacity ω n
-  have hmean' : ∀ n, ∫ ω, Z n ω ∂offspringFieldLaw μ = ρ ^ n := by
-    intro n
-    simpa [Z, ν, ρ] using
-      finiteSlotPopulationSizeReal_integral_eq_pow μ S hS hcapacity n
-  have hm₂zero : m₂ 0 = 1 := by
-    have hcard : ∀ ω, (finiteSlotActiveLabels S ω 0).card = 1 := by
-      intro ω
-      rw [finiteSlotActiveLabels_card_eq_population_card S ω hcapacity 0]
-      simp [Selection.Stepwise.population_zero]
-    have hz : ∀ ω, Z 0 ω = 1 := by
-      intro ω
-      change ((finiteSlotActiveLabels S ω 0).card : ℝ) = 1
-      rw [hcard]
-      norm_num
-    simp [m₂, hz]
-  have hm₂succ : ∀ n, m₂ (n + 1) = ρ ^ 2 * m₂ n + v * ρ ^ n := by
-    intro n
-    simpa [m₂, Z, ν, ρ, v] using
-      finiteSlotPopulationSizeReal_sq_integral_eq_recursion μ S hS hcapacity n
-  have hprob := measure_ge_fraction_mean_of_moment_recursion
-    (offspringFieldLaw μ) ρ v hmean hvar Z m₂ hZmeas hZnonneg hZint hZmem
-    hmean' hm₂zero
-    (fun n => rfl) hm₂succ duration threshold hthreshold hscale
-  simpa [Z, ν, ρ, v] using hprob
-
-/-- The finite-slot second-moment bound applies to the complete growth-trial
-event on the actual pre-sampled selected population. A positive terminal
-target certifies survival to every preceding age. -/
-theorem measure_finiteSlotGrowthTrialSuccess_of_mean_ge
-    {α X : Type*} [Countable α] [MeasurableSpace α]
-    [MeasurableSingletonClass α] [MeasurableSpace X]
-    [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
-    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
-    (S : Step.FiniteSelection α X) (hS : Measurable S.select)
-    (hcapacity : ∀ ξ, (S ξ).card ≤ 2)
-    (hmean : 1 < finiteSlotOffspringMeanReal
-      (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))
-    (duration lower : ℕ) (threshold : ℝ) (hthreshold : 0 ≤ threshold)
-    (hscale : (finiteSlotOffspringMeanReal
-      (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS)) * threshold ≤ (finiteSlotOffspringMeanReal
-      (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS)) ^ duration)
-    (hlower : lower ≤ ⌈threshold⌉₊)
-    (hprior : 0 < lower ∨ ∀ᵐ ξ ∂μ, (S ξ).Nonempty) :
-    (offspringFieldLaw μ).real
-      {ω | growthTrialSuccess S lower (2 ^ duration) duration ω} ≥
-      (((finiteSlotOffspringMeanReal
-      (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS)) - 1) / (finiteSlotOffspringMeanReal
-      (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))) ^ 2 / normalizedSecondMomentConstant
-        (finiteSlotOffspringMeanReal
-          (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS))
-        (finiteSlotOffspringSecondMomentReal
-          (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS) -
-          (finiteSlotOffspringMeanReal
-            (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS)) ^ 2) := by
-  let ν := ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS
-  let ρ := finiteSlotOffspringMeanReal ν
-  let v := finiteSlotOffspringSecondMomentReal ν - ρ ^ 2
-  let upper := 2 ^ duration
-  let endpoint : Set (Mark α (Step α X)) :=
-    {ω | threshold ≤ finiteSlotPopulationSizeReal S ω duration}
-  let success : Set (Mark α (Step α X)) :=
-    {ω | growthTrialSuccess S lower upper duration ω}
-  have hprior' : ∀ᵐ ω ∂offspringFieldLaw μ,
-      0 < lower ∨ ∀ u : TreeNode α, (S (ω u)).Nonempty := by
-    rcases hprior with hpos | hnonempty
-    · exact ae_of_all _ fun _ => Or.inl hpos
-    · have hsplitMeas : MeasurableSet {ξ : Step α X | (S ξ).Nonempty} := by
-        have hcard : Measurable (fun ξ : Step α X => (S ξ).card) :=
-          (measurable_of_countable fun t : Finset α => t.card).comp hS
-        have heq : {ξ : Step α X | (S ξ).Nonempty} =
-            {ξ | 0 < (S ξ).card} := by
-          ext ξ
-          simp
-        rw [heq]
-        exact hcard measurableSet_Ioi
-      have hsplitOne : μ {ξ : Step α X | (S ξ).Nonempty} = 1 := by
-        have hset : {ξ : Step α X | (S ξ).Nonempty} =ᵐ[μ] Set.univ := by
-          filter_upwards [hnonempty] with ξ hξ
-          simp [hξ]
-        exact (measure_congr hset).trans measure_univ
-      have hall : ∀ᵐ ω ∂offspringFieldLaw μ, ∀ u : TreeNode α, (S (ω u)).Nonempty := by
-        apply ae_all_iff.2
-        intro u
-        have heval : Measurable (fun ω : Mark α (Step α X) => ω u) :=
-          measurable_pi_apply u
-        apply (ae_mem_iff_measure_eq (heval hsplitMeas).nullMeasurableSet).2
-        rw [← Measure.map_apply heval hsplitMeas,
-          offspringFieldLaw_coordinate μ u, hsplitOne]
-        simp
-      exact hall.mono fun _ => Or.inr
-  have hendpoint := measure_finiteSlotPopulation_ge_threshold
-    μ S hS hcapacity hmean duration threshold hthreshold hscale
-  have hsuccess_mono : (offspringFieldLaw μ).real endpoint ≤
-      (offspringFieldLaw μ).real success := by
-    have hsub : endpoint ≤ᵐ[offspringFieldLaw μ] success := by
-      filter_upwards [hprior'] with ω hmarks
-      intro hendpoint
-      have hcard : lower ≤ (Selection.Stepwise.population S duration ω).card := by
-        have hendpoint' := hendpoint
-        change threshold ≤
-          ((finiteSlotActiveLabels S ω duration).card : ℝ) at hendpoint'
-        rw [finiteSlotActiveLabels_card_eq_population_card S ω hcapacity duration]
-          at hendpoint'
-        exact hlower.trans (Nat.ceil_le.mpr hendpoint')
-      rcases hmarks with hpos | hmarks
-      · exact growthTrialSuccess_of_positive_terminal_population
-          S hcapacity ω lower duration upper hpos le_rfl hcard
-      · exact growthTrialSuccess_of_population_ge_lower
-          S hcapacity ω hmarks lower duration upper le_rfl hcard
-    change (offspringFieldLaw μ endpoint).toReal ≤ (offspringFieldLaw μ success).toReal
-    exact ENNReal.toReal_mono (measure_ne_top _ _) (measure_mono_ae hsub)
-  change ((ρ - 1) / ρ) ^ 2 / normalizedSecondMomentConstant ρ v ≤
-    (offspringFieldLaw μ).real success
-  calc
-    ((ρ - 1) / ρ) ^ 2 / normalizedSecondMomentConstant ρ v ≤
-        (offspringFieldLaw μ).real endpoint := by
-      simpa [endpoint, ν, ρ, v] using hendpoint
-    _ ≤ (offspringFieldLaw μ).real success := hsuccess_mono
+      {ω | ∃ j ≤ duration, capacity ≤ finiteSlotPopulationSizeReal S ω j} ≤
+      (∑ j ∈ Finset.range (duration + 1), ρ ^ j) / capacity := by
+  intro ρ
+  let P := offspringFieldLaw μ
+  let hit (j : ℕ) : Set (Mark α (Step α X)) :=
+    {ω | capacity ≤ finiteSlotPopulationSizeReal S ω j}
+  have hset : {ω | ∃ j ≤ duration, capacity ≤ finiteSlotPopulationSizeReal S ω j} =
+      ⋃ j ∈ Finset.range (duration + 1), hit j := by
+    ext ω
+    simp [hit]
+  rw [hset]
+  refine (measureReal_biUnion_finset_le _ hit).trans ?_
+  rw [Finset.sum_div]
+  refine Finset.sum_le_sum fun j _ => ?_
+  apply (le_div_iff₀ hcapacity).2
+  rw [mul_comm, ← finiteSlotPopulationSizeReal_integral_eq_pow μ S hS hcap j]
+  exact mul_meas_ge_le_integral_of_nonneg
+    (ae_of_all P fun ω => by
+      change 0 ≤ ((finiteSlotActiveLabels S ω j).card : ℝ)
+      positivity)
+    (finiteSlotPopulationSizeReal_integrable μ S hS hcap j) capacity
 
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot

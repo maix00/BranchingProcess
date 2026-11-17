@@ -9,6 +9,7 @@ module
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Algebra.Order.Floor.Semiring
+import Mathlib.Algebra.Field.GeomSum
 
 /-!
 # Logarithmic scales for entrance from one initial particle
@@ -18,6 +19,8 @@ import Mathlib.Algebra.Order.Floor.Semiring
 * `trialDuration_le` gives $d_N\le\alpha\log N/\log\rho+2$ for
   $d_N=\lfloor\alpha\log N/\log\rho\rfloor+2$.
 * `rpow_mul_mean_le_pow_trialDuration` gives $\rho N^\alpha\le\rho^{d_N}$.
+* `trialDuration_markov_scales`: $d_N\to\infty$ and
+  $N^{-1}\sum_{j=0}^{d_N}\rho^j\to 0$ when $0<\alpha<1$.
 * `logarithmicEntrance_scales` bounds $K_N=\lfloor\delta\log N\rfloor$,
   parallel population capacity, and displacement.
 * `logarithmicEntrance_deadline`: for $\gamma>0$, the deadline
@@ -86,6 +89,58 @@ lemma rpow_mul_mean_le_pow_trialDuration {ρ : ℝ} (hρ : 1 < ρ)
   rw [Real.log_exp]
   simp only [d, Nat.cast_add, Nat.cast_ofNat]
   linarith
+
+/-- At the logarithmic trial duration, the sum of the per-generation Markov
+bounds is of order $N^{\alpha-1}$. -/
+lemma trialDuration_markov_scales {ρ α : ℝ} (hρ : 1 < ρ) (ha : 0 < α) (ha1 : α < 1)
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) :
+    let d i := ⌊α * Real.log (N i : ℝ) / Real.log ρ⌋₊ + 2
+    Tendsto d atTop atTop ∧
+      Tendsto (fun i => (∑ j ∈ Finset.range (d i + 1), ρ ^ j) / (N i : ℝ)) atTop (𝓝 0) := by
+  intro d
+  have hρpos : 0 < ρ := zero_lt_one.trans hρ
+  have hlogρ := Real.log_pos hρ
+  have hNreal : Tendsto (fun i => (N i : ℝ)) atTop atTop :=
+    tendsto_natCast_atTop_atTop.comp hN
+  have hlog : Tendsto (fun i => Real.log (N i : ℝ)) atTop atTop :=
+    Real.tendsto_log_atTop.comp hNreal
+  have hd : Tendsto (fun i => α * Real.log (N i : ℝ) / Real.log ρ) atTop atTop := by
+    simpa only [div_mul_eq_mul_div] using hlog.const_mul_atTop (div_pos ha hlogρ)
+  refine ⟨tendsto_atTop_mono (fun i => Nat.le_add_right _ 2)
+    (tendsto_nat_floor_atTop.comp hd), ?_⟩
+  have hbound : ∀ᶠ i in atTop, (∑ j ∈ Finset.range (d i + 1), ρ ^ j) / (N i : ℝ) ≤
+      (ρ ^ 3 / (ρ - 1)) * (N i : ℝ) ^ (α - 1) := by
+    filter_upwards [hN.eventually_ge_atTop 1] with i hi
+    have hNpos : 0 < (N i : ℝ) := by exact_mod_cast Nat.zero_lt_of_lt hi
+    have hpow : ρ ^ (d i + 1) ≤ ρ ^ 3 * (N i : ℝ) ^ α := by
+      rw [show ρ ^ (d i + 1) = Real.exp (((d i + 1 : ℕ) : ℝ) * Real.log ρ) by
+        rw [Real.exp_nat_mul, Real.exp_log hρpos]]
+      rw [show ρ ^ 3 = Real.exp ((3 : ℝ) * Real.log ρ) by
+        change ρ ^ (3 : ℕ) = Real.exp (((3 : ℕ) : ℝ) * Real.log ρ)
+        rw [Real.exp_nat_mul, Real.exp_log hρpos]]
+      rw [Real.rpow_def_of_pos hNpos, ← Real.exp_add]
+      apply Real.exp_le_exp.mpr
+      simp only [Nat.cast_add, Nat.cast_one]
+      have hh := mul_le_mul_of_nonneg_right (trialDuration_le hρ ha.le (N i)) hlogρ.le
+      rw [add_mul, div_mul_cancel₀ _ hlogρ.ne'] at hh
+      change (d i : ℝ) * Real.log ρ ≤ _ at hh
+      linarith
+    rw [geom_sum_eq hρ.ne', Real.rpow_sub_one hNpos.ne']
+    calc
+      (ρ ^ (d i + 1) - 1) / (ρ - 1) / (N i : ℝ)
+          ≤ (ρ ^ 3 * (N i : ℝ) ^ α) / (ρ - 1) / (N i : ℝ) :=
+        div_le_div_of_nonneg_right
+          (div_le_div_of_nonneg_right (by linarith) (sub_nonneg.mpr hρ.le)) hNpos.le
+      _ = _ := by ring
+  have hdecay : Tendsto (fun i => (N i : ℝ) ^ (α - 1)) atTop (𝓝 0) := by
+    rw [← neg_sub 1 α]
+    exact (tendsto_rpow_neg_atTop (sub_pos.mpr ha1)).comp hNreal
+  exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds
+    (by simpa only [mul_zero] using hdecay.const_mul (ρ ^ 3 / (ρ - 1)))
+    (.of_forall fun i => by
+      exact div_nonneg (Finset.sum_nonneg fun _ _ => pow_nonneg hρpos.le _) (Nat.cast_nonneg _))
+    hbound
+
 
 lemma logarithmicEntrance_scales
     {ρ α δ M v η : ℝ}

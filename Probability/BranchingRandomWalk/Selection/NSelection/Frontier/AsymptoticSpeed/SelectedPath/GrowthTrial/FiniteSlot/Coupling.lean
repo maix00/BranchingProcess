@@ -6,6 +6,9 @@ Authors: WANG Yiyang
 
 module
 
+import Mathlib.Probability.ConditionalExpectation
+import Mathlib.MeasureTheory.Function.ConditionalExpectation.PullOut
+
 public import Probability.BranchingRandomWalk.Step.Selection.BinaryOffspringLaw
 public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Basic
 public import Mathlib.Probability.ProductMeasure
@@ -51,6 +54,8 @@ finite-slot offspring configurations at those addresses.
 * `ProbabilityTheory.BranchingRandomWalk.finiteSlotActiveLabels_levelSteps_independent`
   proves that the active labels $A_n$ and level steps $L_n$ are independent
   under the step-field law.
+* `finiteSlotActiveLabels_condExp_succ_card_filtration`: the expected next population
+  conditional on the full generation filtration is $Z_n$ times the offspring mean.
 * `ProbabilityTheory.BranchingRandomWalk.finiteSlotActiveLabels_condExp_succ_card`
   gives the conditional expectation of `|Aₙ₊₁|` given `Aₙ` as the integral of
   `Rₙ(Aₙ, ·)` against the product offspring law.
@@ -686,5 +691,103 @@ theorem finiteSlotActiveLabels_condExp_succ_card
     simpa [rows] using finiteSlotLevelSteps_law μ S hS n
   rw [hrowLaw] at hcond
   simpa [active, nextSize, rowSum] using hcond
+
+set_option maxHeartbeats 250000 in
+/-- Condition the next population size on the entire generation
+filtration by integrating each offspring count in the independent new row. -/
+theorem finiteSlotActiveLabels_condExp_succ_card_filtration
+    {α X : Type*} [Countable α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] [MeasurableSpace X]
+    [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (S : Step.FiniteSelection α X) (hS : Measurable S.select)
+    (hcapacity : ∀ ξ, (S ξ).card ≤ 2) (n : ℕ) :
+    let P := offspringFieldLaw μ
+    let ν := Selection.Stepwise.binaryOffspringLaw (⟨μ, inferInstance⟩ : ProbabilityMeasure _) S hS
+    condExp (generationFiltration (M := Step α X) n) P
+      (fun ω => ((finiteSlotActiveLabels S ω (n + 1)).card : ℝ)) =ᵐ[P]
+    fun ω => (finiteSlotActiveLabels S ω n).card *
+      (∫ ξ, (ξ.childCount.toNat : ℝ) ∂(ν : Measure (Step (Fin 2) PUnit.{1}))) := by
+  classical
+  intro P ν
+  let Ω := Mark α (Step α X)
+  let I := Fin n → Fin 2
+  let rows (ω : Ω) := finiteSlotLevelSteps S ω n
+  let ℱ : Filtration ℕ (MeasurableSpace.pi : MeasurableSpace Ω) := generationFiltration
+  let a (u : I) (ω : Ω) : ℝ :=
+    if u ∈ finiteSlotActiveLabels S ω n then 1 else 0
+  let g (u : I) (ω : Ω) : ℝ := ((rows ω u).childCount.toNat : ℝ)
+  let c := ∫ ξ, (ξ.childCount.toNat : ℝ) ∂(ν : Measure (Step (Fin 2) PUnit.{1}))
+  have hm : (ℱ n) ≤ (MeasurableSpace.pi : MeasurableSpace Ω) :=
+    (generationFiltration (M := Step α X) (α := α)).le n
+  have hd : MeasurableSpace.comap rows inferInstance ≤ (MeasurableSpace.pi : MeasurableSpace Ω) :=
+    (finiteSlotLevelSteps_measurable S hS n).comap_le
+  have hA := finiteSlotActiveLabels_measurable S hS hcapacity n
+  have ha (u : I) : Measurable[(ℱ n)] (a u) :=
+    (measurable_of_countable (fun A : Finset I => if u ∈ A then (1 : ℝ) else 0)).comp hA
+  have hCount : Measurable (fun ξ : Step (Fin 2) PUnit.{1} => (ξ.childCount.toNat : ℝ)) :=
+    (measurable_of_countable (fun k : ℕ∞ => (k.toNat : ℝ))).comp Step.childCount_measurable
+  have hrowEval (u : I) :
+      Measurable (fun row : I → Step (Fin 2) PUnit.{1} => row u) :=
+    measurable_pi_apply u
+  have hrows : Measurable[MeasurableSpace.comap rows inferInstance] rows :=
+    Measurable.of_comap_le le_rfl
+  have hg (u : I) : Measurable[MeasurableSpace.comap rows inferInstance] (g u) :=
+    hCount.comp ((hrowEval u).comp hrows)
+  have hgBound (ω : Ω) (u : I) : ‖g u ω‖ ≤ 2 := by
+    rw [Real.norm_eq_abs, abs_of_nonneg (Nat.cast_nonneg _)]
+    have hcount : (rows ω u).childCount ≤ (2 : ℕ∞) := by
+      rw [Step.childCount]
+      calc
+        (support (rows ω u)).encard ≤ ENat.card (Fin 2) := Set.encard_le_card
+        _ = (2 : ℕ∞) := by simp
+    have hnat : (rows ω u).childCount.toNat ≤ 2 := by
+      simpa using ENat.toNat_le_toNat hcount (by simp)
+    change ((rows ω u).childCount.toNat : ℝ) ≤ 2
+    exact_mod_cast hnat
+  have hgi (u : I) : Integrable (g u) P := Integrable.of_bound
+    ((hg u).mono hd le_rfl).aestronglyMeasurable 2 (ae_of_all P (fun ω => hgBound ω u))
+  have hai (u : I) : Integrable (a u * g u) P := Integrable.of_bound
+    (((ha u).mono hm le_rfl).mul ((hg u).mono hd le_rfl)).aestronglyMeasurable 2
+    (ae_of_all P fun ω => by
+      change ‖a u ω * g u ω‖ ≤ 2
+      by_cases h : u ∈ finiteSlotActiveLabels S ω n
+      · simpa [a, h] using hgBound ω u
+      · simp [a, h])
+  have hgMean (u : I) : ∫ ω, g u ω ∂P = c := by
+    have heval : Measurable (fun ω => rows ω u) :=
+      (hrowEval u).comp (finiteSlotLevelSteps_measurable S hS n)
+    have hlaw : P.map (fun ω => rows ω u) = ν := by
+      change P.map ((fun row : I → Step (Fin 2) PUnit.{1} => row u) ∘ rows) = ν
+      rw [← Measure.map_map (hrowEval u) (finiteSlotLevelSteps_measurable S hS n),
+        finiteSlotLevelSteps_law μ S hS n, Measure.infinitePi_map_eval]
+    dsimp [c]
+    rw [← hlaw, integral_map heval.aemeasurable hCount.aestronglyMeasurable]
+  have hpull (u : I) : P[a u * g u | (ℱ n)] =ᵐ[P] fun ω => a u ω * c := by
+    have hind := (finiteSlotLevelSteps_independent μ S hS n).symm
+    have hcond := condExp_indep_eq hd hm (hg u).stronglyMeasurable hind
+    refine (condExp_mul_of_stronglyMeasurable_left (ha u).stronglyMeasurable (hai u) (hgi u)).trans ?_
+    filter_upwards [hcond] with ω hω
+    change a u ω * P[g u | (ℱ n)] ω = _
+    rw [hω, hgMean]
+  have hnext : (fun ω : Ω => ((finiteSlotActiveLabels S ω (n + 1)).card : ℝ)) =
+      ∑ u : I, a u * g u := by
+    funext ω
+    have hsum := finiteSlotActiveLabels_card_succ_eq_sum S ω hcapacity n
+    simp only [Finset.sum_apply, Pi.mul_apply, a, g]
+    rw [show (∑ u : I, (if u ∈ finiteSlotActiveLabels S ω n then 1 else 0) *
+        ((rows ω u).childCount.toNat : ℝ)) =
+        ∑ u ∈ finiteSlotActiveLabels S ω n, ((rows ω u).childCount.toNat : ℝ) by
+      simp only [ite_mul, one_mul, zero_mul]
+      exact finiteSlotRowCountSum_eq_sum n _ _]
+    exact_mod_cast hsum
+  change P[(fun ω => ((finiteSlotActiveLabels S ω (n + 1)).card : ℝ)) | (ℱ n)] =ᵐ[P] _
+  rw [hnext]
+  refine (condExp_finsetSum (fun u _ => hai u) (ℱ n)).trans ?_
+  filter_upwards [ae_all_iff.mpr hpull] with ω hω
+  simp only [Finset.sum_apply, hω]
+  change (∑ u : I, a u ω * c) = _
+  rw [← Finset.sum_mul]
+  simp [a, c]
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot
