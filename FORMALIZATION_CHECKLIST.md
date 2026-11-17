@@ -61,8 +61,11 @@ The first-moment results for the exploratory speed bound are tracked separately.
 
 The first-moment speed lower bound now follows from Lemma 4.1 and the full-capacity
 block comparison in `Limit/SpeedLowerBound.lean` as
-`exists_speed_with_logSq_lowerBound_of_firstMoment`. The matching upper bound
-still has the restart estimates identified in the thesis as open obligations.
+`exists_speed_with_logSq_lowerBound_of_firstMoment`. For the upper bound, `Limit/Lemmas/ReserveContinuation.lean` proves that the
+subtree rooted at the continuation particle at the deadline is independent of
+the deadline filtration, and factors from the actual exceptional event. The
+comparison of that subtree with the full restart endpoint still requires
+control of the displacement accumulated before the deadline.
 
 Dependency order:
 

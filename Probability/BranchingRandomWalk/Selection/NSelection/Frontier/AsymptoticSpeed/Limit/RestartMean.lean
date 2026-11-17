@@ -15,6 +15,7 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.Asympto
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.TrialPosition
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.WaitingTime
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.Lemmas.RestartMoment
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.Lemmas.ReserveContinuation
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Splits
 
 /-!
@@ -48,43 +49,6 @@ local notation "𝔽" => RootIndexed.stepFiltration (Root := ℕ ⊕ ℕ) (α :=
 
 noncomputable local instance (m : ℕ) : LinearOrder (RootIndexed.TreeNode (Fin m) ℕ) :=
   RootIndexed.addressLinearOrder (Fin m) ℕ
-
-private lemma measurableSet_splitCount_at_stopped_time
-    (R : Step.FiniteSelection ℕ ℝ) (hR : Measurable R.select)
-    {τ : Ωf → WithTop ℕ} (hτ : IsStoppingTime 𝔽 τ) (d K : ℕ) :
-    MeasurableSet[hτ.measurableSpace] {ω | splitCount R 0 ((τ ω).untopD 0 - (d + 1))
-      (RootIndexed.StepField.left ω) < K} := by
-  let A : Set Ωf := {ω | splitCount R 0 ((τ ω).untopD 0 - (d + 1))
-    (RootIndexed.StepField.left ω) < K}
-  let B (n : ℕ) : Set Ωf := {ω | splitCount R 0 (n - (d + 1))
-    (RootIndexed.StepField.left ω) < K}
-  have hB (n : ℕ) : MeasurableSet[𝔽 n] (B n) := by
-    let k := n - (d + 1)
-    have hleft := RootIndexed.StepField.reindex_filtration_measurable
-      (α := ℕ) (X := ℝ) (Sum.inl : ℕ → ℕ ⊕ ℕ) k
-    exact (𝔽).mono (Nat.sub_le ..) _
-      (((splitCount_measurable R hR (0 : ℕ) k).comp hleft) (measurableSet_Iio (a := K)))
-  have heq : A = ⋃ s : WithTop ℕ, B (s.untopD 0) ∩ {ω | τ ω = s} := by
-    ext ω
-    simp only [A, B, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq]
-    exact ⟨fun h => ⟨τ ω, h, rfl⟩, fun ⟨s, h, he⟩ => he.symm ▸ h⟩
-  change MeasurableSet[hτ.measurableSpace] A
-  rw [heq]
-  apply MeasurableSet.iUnion
-  intro s
-  cases s with
-  | top =>
-    exact ((hτ.le_measurableSpace_of_const_le (i := 0) fun _ => bot_le) _ (hB 0)).inter
-      (hτ.measurable (measurableSet_singleton _))
-  | coe n =>
-    have he : A ∩ {ω | τ ω = (n : WithTop ℕ)} = B n ∩ {ω | τ ω = (n : WithTop ℕ)} := by
-      ext ω
-      simp only [A, B, Set.mem_inter_iff, Set.mem_ofPred_eq]
-      exact and_congr_left fun h => by rw [h]; rfl
-    change MeasurableSet[hτ.measurableSpace] (B n ∩ {ω | τ ω = (n : WithTop ℕ)})
-    rw [← he]
-    apply (hτ.measurableSet_inter_eq_iff _ n).2
-    exact he.symm ▸ (hB n).inter (hτ.measurableSet_eq n)
 
 /-- The entrance, centered continuation and bad-event terms of the restart
 bound at a horizon asymptotic to $t\log^3 N$. -/
