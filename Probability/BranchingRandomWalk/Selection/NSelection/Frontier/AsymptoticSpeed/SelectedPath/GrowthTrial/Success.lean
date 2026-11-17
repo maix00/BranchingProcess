@@ -8,7 +8,7 @@ module
 
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot.Growth
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot.GaltonWatson
-public import Probability.MeasureTheory.Moments.SecondMomentGrowth
+import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.FiniteSlot.NormalizedGrowth
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Causal
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Basic
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Roots
@@ -25,16 +25,15 @@ observable success event for each enabled growth-trial candidate.
 
 ## Public declarations
 
-At a horizon $d$ with $\rho x\le\rho^d$, the uniform positive bound applies
-to an integer target $1\le q\le\lceil x\rceil$ and a cap of $2^d$.
-
-* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.exists_success_probability_lower_bound` states that under
-  nonempty supercritical offspring assumptions there is a finite cutoff
-  `M` for which the selector retaining the first two slots with potential
-  at most $M$ has mean $\rho>1$, and the path selector has positive split
-  probability at the same cutoff. If $\rho x\le\rho^d$, the probability of full
-  success is at least $((\rho-1)/\rho)^2/K(\rho,v)$ for a positive integer target up to
-  $\lceil x\rceil$ and a cap of $2^d$.
+* `exists_success_probability_lower_bound`: for a sufficiently large cutoff
+  $M$, the binary growth selector has mean $\rho>1$ and the path selector has
+  positive split probability. At durations $d_n\to\infty$ with
+  $\rho x_n\le\rho^{d_n}$ eventually and
+  $K_n^{-1}\sum_{j=0}^{d_n}\rho^j\to0$, a trial with target
+  $\lceil x_n\rceil$ and capacity $K_n$ has probability at least $p_1>0$
+  eventually.
+* `growthTrialSuccess_eq_of_binary_horizon_le`: if $q>0$ and $2^d\le K$,
+  the trials at capacities $K$ and $2^d$ have the same success event.
 * `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.successEvent_of_binary_horizon_ae` states that
   an enabled split candidate satisfies the full trial event almost surely when
   its horizon obeys `2 ^ duration ≤ upper` and every selected mark is almost
@@ -43,8 +42,8 @@ to an integer target $1\le q\le\lceil x\rceil$ and a cap of $2^d$.
 
 @[expose] public section
 
-open MeasureTheory
-open scoped ENNReal
+open Filter MeasureTheory
+open scoped ENNReal Topology
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial
 
@@ -80,14 +79,14 @@ theorem exists_success_probability_lower_bound
       let hS := B.belowPotential_measurable firstTwoBySlotOrder_measurable realPotential (M : ℝ)
       let law := Selection.Stepwise.binaryOffspringLaw ⟨μ, inferInstance⟩ S hS
       let ρ := finiteSlotOffspringMeanReal law
-      let variance := finiteSlotOffspringSecondMomentReal law - ρ ^ 2
-      let p₁ := ((ρ - 1) / ρ) ^ 2 / normalizedSecondMomentConstant ρ variance
       1 < ρ ∧ 0 < μ (splitBy (firstOrBelowPotential B realPotential (M : ℝ))) ∧
-        0 < p₁ ∧ ∀ (duration lower : ℕ) (threshold : ℝ),
-          0 ≤ threshold → ρ * threshold ≤ ρ ^ duration →
-          0 < lower → lower ≤ ⌈threshold⌉₊ →
-        (offspringFieldLaw μ).real
-          {ω | growthTrialSuccess S lower (2 ^ duration) duration ω} ≥ p₁ := by
+        ∃ p₁ : ℝ, 0 < p₁ ∧ ∀ (duration capacity : ℕ → ℕ) (target : ℕ → ℝ),
+          Tendsto duration atTop atTop →
+          (∀ᶠ n in atTop, 0 < capacity n ∧ 0 < target n ∧ ρ * target n ≤ ρ ^ duration n) →
+          Tendsto (fun n => (∑ j ∈ Finset.range (duration n + 1), ρ ^ j) / (capacity n : ℝ))
+            atTop (𝓝 0) →
+          ∀ᶠ n in atTop, p₁ ≤ (offspringFieldLaw μ).real
+            {ω | growthTrialSuccess S ⌈target n⌉₊ (capacity n) (duration n) ω} := by
   intro μ
   let B := Step.FiniteSelection.firstNBySlotOrder (α := α) (X := ℝ) 2
   let rawB := Step.FiniteSelection.firstNBySlotOrder (α := α) (X := X) 2
@@ -136,15 +135,23 @@ theorem exists_success_probability_lower_bound
     change 2 ≤ (firstOrBelowPotential B realPotential (M : ℝ) ξ).card
     exact hξ.trans (Finset.card_le_card fun i hi =>
       @Finset.mem_union_right α (Classical.decEq α) _ i _ hi)
-  let law := Selection.Stepwise.binaryOffspringLaw ν S hS
-  have hvar := finiteSlotOffspringVarianceReal_nonneg law
-  have hρsub : 0 < finiteSlotOffspringMeanReal law - 1 := sub_pos.mpr hM
-  refine ⟨M, hM, hsplitR, ?_, ?_⟩
-  · unfold normalizedSecondMomentConstant
-    positivity
-  intro duration lower threshold hthreshold hscale hlower htarget
-  exact measure_finiteSlotGrowthTrialSuccess_of_mean_ge
-    μ S hS hScap hM duration lower threshold hthreshold hscale htarget (Or.inl hlower)
+  obtain ⟨p, hp, hsuccess⟩ :=
+    exists_eventually_measure_growthTrialSuccess_ge μ S hS hScap hM
+  exact ⟨M, hM, hsplitR, p / 2, by positivity, hsuccess⟩
+
+/-- The binary cap used for parallel trials has the same success event as
+any larger single-trial cap at this duration. -/
+theorem growthTrialSuccess_eq_of_binary_horizon_le
+    {α X : Type*} [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
+    (S : Step.FiniteSelection α X) (hcap : S.IsBoundedBy 2)
+    (q d K : ℕ) (hq : 0 < q) (hK : 2 ^ d ≤ K) :
+    {ω | growthTrialSuccess S q (2 ^ d) d ω} =
+      {ω | growthTrialSuccess S q K d ω} := by
+  ext ω
+  exact ⟨fun h => growthTrialSuccess_of_positive_terminal_population S hcap ω q d K
+      hq hK h.1,
+    fun h => growthTrialSuccess_of_positive_terminal_population S hcap ω q d (2 ^ d)
+      hq le_rfl h.1⟩
 
 /-- A growth-trial candidate's growth trial is successful whenever its observable
 split is enabled, almost surely, if its binary horizon fits under the cap.
