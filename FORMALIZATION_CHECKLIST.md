@@ -55,7 +55,7 @@ the same offspring law; no reflected-law or symmetry assumption is intended.
 | T11: final trajectory theorem | **Formalized** | `Endpoint/Sequence/L2Limit.lean` proves `tendsto_eLpNorm_two_selectedPopulationEndpoint_div_sub` on the actual selected-population law for $a\in[0,1]$, with the additional positive exponential moment only when $a=0$. The same module gives convergence of the normalized endpoint expectation. |
 | T12-K: speed existence | **Formalized for every fixed positive capacity** | `Frontier/AsymptoticSpeed/InitialPopulation/Speed/CapacityHit.lean` proves `smallInitialPopulation_ae_hasAsymptoticSpeed_and_L1_of_stepLaw`. It transfers the common full-capacity speed to every deterministic nonempty initial cloud of size at most $N$ by stopping at the capacity hit and applying the fresh descendant-field law. |
 | T12-L/U: speed lower/upper bounds | **Formalized** | The full-capacity block comparison gives the lower bound in `Limit/SpeedLowerBound.lean`. `Limit/RestartMean.lean` uses the original successful trial on the pre-sampled tree and its stopped continuation. The normalized population limit and the per-generation Markov bound give a uniform trial success probability. The reset-position mean is $O(\log N)$ and the full restart endpoint has $L^2$ norm $O(\log^3 N)$, so the polynomial bad-event bound gives an $o(\log N)$ contribution. The single-root block comparison in `Limit/BlockComparison.lean` then gives the speed upper bound. |
-| T12: final speed formula | **Formalized** | `Limit/Speed.lean` proves `exists_speed_with_logSq_limit` under the fourth-moment assumptions of Wang Yiyang, Theorem 1.2. It gives the common almost-sure and $L^1$ speed for each deterministic nonempty initial cloud of size at most $N$, and $v_N\log^2 N\to\pi^2\sigma^2/2$. |
+| T12: final speed formula | **Formalized** | `Limit/Speed.lean` proves `exists_speed_with_logSq_limit` under the first-moment assumptions in Wang Yiyang, Chapter 4, §4.3. It gives the common almost-sure and $L^1$ speed for each deterministic nonempty initial cloud of size at most $N$, and $v_N\log^2 N\to\pi^2\sigma^2/2$. |
 
 The first-moment results for the exploratory speed bound are tracked separately. `Endpoint/PositiveMoment/FirstMoment.lean` proves integrability of the selected endpoint using Appendix A, Lemmas A.2, A.3, and A.5. `Endpoint/Sequence/ExpectationLower.lean` proves Lemma 4.1 on the countable-root field law using the polynomial lower tail and $\mathbb E[e^{-M_N}]\le N$.
 
@@ -67,8 +67,12 @@ truncation before it and fresh offspring marks after it. The stopped
 branching property bounds the reset continuation on the exceptional event.
 Together with the exponential bound for the negative part, this proves
 $\mathbb E[M^{\mathrm b}_{H_N}\mathbf1_{E_N^c}]=o(\log N)$ under the
-leftmost first moment. The good-event centered continuation still requires
-a sharp expectation bound under that assumption.
+leftmost first moment. For the good event,
+`Endpoint/PositiveMoment/Lemmas/TwoLineages.lean` uses two independent
+leftmost-child lineages to bound the positive endpoint in $L^2$.
+`Limit/Lemmas/ContinuationMean.lean` combines this bound with the
+positive-exponent polynomial upper tail, and `RemainingHorizon.lean`
+gives the uniform estimate over the deadline window.
 
 Dependency order:
 

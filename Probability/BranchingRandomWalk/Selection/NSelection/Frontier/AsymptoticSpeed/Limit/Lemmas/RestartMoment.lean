@@ -367,7 +367,7 @@ lemma integral_firstNSelectedEndpointMinimum_le_restart_terms
     {m : ℕ} [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
     (hnorm : HasBoundaryNormalization L.potential L.raw)
-    (hne : L.raw nonemptySupport = 1) (hfour : HasLeftmostFourthMoment L)
+    (hne : L.raw nonemptySupport = 1) (hfirst : HasLeftmostFirstMoment L)
     (N H T : ℕ) (hN : 0 < N) (hm : 0 < m) (hTH : T ≤ H)
     (R growth : Step.FiniteSelection ℕ ℝ)
     (hR : Measurable R.select) (hgrowth : Measurable growth.select)
@@ -386,7 +386,7 @@ lemma integral_firstNSelectedEndpointMinimum_le_restart_terms
     (∀ ω (n : ℕ), τ ω = n → ∀ i, (roots ω i).2.length = n) →
     (∀ ω, τ ω ≠ ⊤ → Function.Injective (roots ω)) →
     (∀ x : ℝ, Q {ω | x ≤ G ω} ≤ P {ω | x ≤ F ω}) →
-    MemLp F 2 P →
+    Integrable F P →
     ∀ (A : Set Ωf), MeasurableSet[hτ.measurableSpace] A →
     ∀ b : ℝ,
       (∀ i ≤ T, (∫ field, firstNSelectedEndpointMinimum m N (H - i) field
@@ -394,12 +394,10 @@ lemma integral_firstNSelectedEndpointMinimum_le_restart_terms
     let E := A ∩ {ω | τ ω ≤ (T : WithTop ℕ)}
     IntegrableOn C E P ∧
     (∫ field, G field ∂Q) ≤ (∫ ω in E, C ω ∂P) + P.real E * b + ∫ ω in Eᶜ, F ω ∂P := by
-  intro μ P Q order G τ hτ F C hfiber hdepth hinj horder hF A hA b hb E
+  intro μ P Q order G τ hτ F C hfiber hdepth hinj horder hFint A hA b hb E
   let _ : LinearOrder (RootIndexed.TreeNode (Fin 1) ℕ) := order
   have hFm := measurable_trialRestartEndpoint N R growth hR hgrowth lower upper duration 0 H roots hfiber
   have hGm : Measurable G := measurable_firstNSelectedEndpointMinimum 1 N H
-  have hFint : Integrable F P := hF.integrable (by norm_num)
-  have hfirst := fourthMoment_implies_firstMoment L hfour
   have hGint : Integrable G Q :=
     finiteRootStepFieldLaw_integrable_firstNSelectedEndpointMinimum 1 N H
       (by decide) hN L hnorm hne hfirst
