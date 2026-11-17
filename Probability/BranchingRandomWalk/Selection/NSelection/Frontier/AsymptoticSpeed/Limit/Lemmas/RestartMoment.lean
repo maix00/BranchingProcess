@@ -202,7 +202,6 @@ private lemma firstTwo_positive_memLp
 
 set_option maxHeartbeats 1000000 in
 lemma restartEndpoint_memLp_two_and_eLpNorm_le
-    {m : ℕ} [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
     (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
     (hnorm : HasBoundaryNormalization L.potential L.raw)
     (hne : L.raw nonemptySupport = 1) (hfour : HasLeftmostFourthMoment L)
@@ -215,7 +214,8 @@ lemma restartEndpoint_memLp_two_and_eLpNorm_le
     let hB := firstTwoBySlotOrder_measurable (X := ℝ)
     let hR := firstOrBelowPotential_measurable B hB realPotential M
     let hgrowth := B.belowPotential_measurable hB realPotential M
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ (N lower upper duration H : ℕ),
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (m : ℕ) [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)],
+      ∀ (N lower upper duration H : ℕ),
       0 < N → 0 < m → 0 < H →
       ∀ (roots : Ωf → Fin m → RootIndexed.TreeNode (ℕ ⊕ ℕ) ℕ),
         let τ := SelectedPath.Completion.time R growth hR hgrowth lower upper duration (0 : ℕ)
@@ -236,7 +236,7 @@ lemma restartEndpoint_memLp_two_and_eLpNorm_le
   have hmark : MemLp mark 2 μ := firstTwo_positive_memLp L hfour
   have hC : 0 ≤ C := by dsimp [C, a]; positivity
   refine ⟨C, hC, ?_⟩
-  intro N lower upper duration H hN hm hH roots τ hτ F hfiber hdepth hinj horder
+  intro m orderM N lower upper duration H hN hm hH roots τ hτ F hfiber hdepth hinj horder
   have hF := measurable_trialRestartEndpoint N R growth hR hgrowth lower upper duration 0 H roots hfiber
   have hμne : μ nonemptySupport = 1 := by
     change L.sortedPotentialImage nonemptySupport = 1
@@ -334,7 +334,7 @@ lemma tendsto_restartEndpoint_badIntegral_div_log
     {t C b : ℝ} (ht : 0 < t) (hC : 0 ≤ C) (hb : 0 < b)
     (hH : Filter.Tendsto (fun n => (H n : ℝ) / Real.log (N n : ℝ) ^ 3)
       Filter.atTop (nhds t))
-    (hF : ∀ n, MemLp (F n) 2 P)
+    (hF : ∀ᶠ n in Filter.atTop, MemLp (F n) 2 P)
     (hnorm : ∀ᶠ n in Filter.atTop, eLpNorm (F n) 2 P ≤ ENNReal.ofReal (C * (H n : ℝ)))
     (hprob : ∀ᶠ n in Filter.atTop, P.real (E n)ᶜ ≤ Real.exp (-b * Real.log (N n : ℝ))) :
     Filter.Tendsto (fun n => (∫ ω in (E n)ᶜ, F n ω ∂P) / Real.log (N n : ℝ))
@@ -343,9 +343,9 @@ lemma tendsto_restartEndpoint_badIntegral_div_log
     Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop.comp hN)
   refine tendsto_setIntegral_div_log_of_failure P F (fun n => (E n)ᶜ) hF hN
     (C := C * (t + 1)) (by positivity) hb ?_ hprob
-  filter_upwards [hnorm, hlog.eventually_gt_atTop 0,
-    hH (gt_mem_nhds (lt_add_of_pos_right t one_pos))] with n hn hl hT
-  rw [eLpNorm_two_eq_ofReal_sqrt (hF n)] at hn
+  filter_upwards [hF, hnorm, hlog.eventually_gt_atTop 0,
+    hH (gt_mem_nhds (lt_add_of_pos_right t one_pos))] with n hFn hn hl hT
+  rw [eLpNorm_two_eq_ofReal_sqrt hFn] at hn
   have hnorm' := (ENNReal.ofReal_le_ofReal_iff (mul_nonneg hC (Nat.cast_nonneg _))).mp hn
   have ht' : (H n : ℝ) ≤ (t + 1) * Real.log (N n : ℝ) ^ 3 :=
     (div_le_iff₀ (pow_pos hl 3)).mp hT.le

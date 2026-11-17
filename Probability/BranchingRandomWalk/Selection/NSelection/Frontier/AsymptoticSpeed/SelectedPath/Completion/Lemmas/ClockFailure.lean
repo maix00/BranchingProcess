@@ -280,6 +280,9 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
     let P := RootIndexed.stepFieldLaw (Root := ℕ ⊕ ℕ) μ
     ∃ (M : ℕ) (α ρ p₁ : ℝ),
       0 < α ∧ α < 1 ∧ α < ε ∧ 1 < ρ ∧ 0 < p₁ ∧
+      (M : ℝ) * (α / Real.log ρ) < ε ∧
+      0 < μ (splitBy (firstOrBelowPotential
+        (Step.FiniteSelection.firstNBySlotOrder (α := ℕ) (X := ℝ) 2) realPotential (M : ℝ))) ∧
       let B := Step.FiniteSelection.firstNBySlotOrder (α := ℕ) (X := ℝ) 2
       let R := firstOrBelowPotential B realPotential (M : ℝ)
       let growth := B.belowPotential realPotential (M : ℝ)
@@ -316,13 +319,24 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
     growth hgrowth
   let ρ := finiteSlotOffspringMeanReal law
   have hρlog : 0 < Real.log ρ := Real.log_pos hρ
-  let α := min (ε / 2) (min (1 / 2) (Real.log ρ / (4 * Real.log 2)))
-  have ha : 0 < α := lt_min (by positivity) (lt_min (by norm_num) (by positivity))
-  have ha1 : α < 1 := ((min_le_right _ _).trans (min_le_left _ _)).trans_lt (by norm_num)
-  have haε : α < ε := (min_le_left _ _).trans_lt (by linarith)
+  let α₀ := min (ε / 2) (min (1 / 2) (Real.log ρ / (4 * Real.log 2)))
+  let α := min α₀ (ε * Real.log ρ / (2 * ((M : ℝ) + 1)))
+  have hα₀ : α ≤ α₀ := min_le_left _ _
+  have ha : 0 < α :=
+    lt_min (lt_min (by positivity) (lt_min (by norm_num) (by positivity))) (by positivity)
+  have ha1 : α < 1 := (hα₀.trans ((min_le_right _ _).trans (min_le_left _ _))).trans_lt (by norm_num)
+  have haε : α < ε := (hα₀.trans (min_le_left _ _)).trans_lt (by linarith)
+  have hposition : (M : ℝ) * (α / Real.log ρ) < ε := by
+    have hm : (0 : ℝ) ≤ M := Nat.cast_nonneg _
+    have hden : 0 < 2 * ((M : ℝ) + 1) := by positivity
+    have hα' := (le_div_iff₀ hden).mp (min_le_right α₀ (ε * Real.log ρ / (2 * ((M : ℝ) + 1))))
+    have hbd : (M : ℝ) * α ≤ ε * Real.log ρ / 2 := by nlinarith
+    rw [← mul_div_assoc]
+    apply (div_lt_iff₀ hρlog).2
+    exact hbd.trans_lt (by nlinarith [mul_pos hε hρlog])
   have hsmall : α / Real.log ρ < 1 / (2 * Real.log 2) := by
     refine (div_le_div_of_nonneg_right
-      ((min_le_right _ _).trans (min_le_right _ _)) hρlog.le).trans_lt ?_
+      (hα₀.trans ((min_le_right _ _).trans (min_le_right _ _))) hρlog.le).trans_lt ?_
     have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
     have hcancel : (Real.log ρ / (4 * Real.log 2)) / Real.log ρ = 1 / (4 * Real.log 2) := by
       field_simp
@@ -358,7 +372,7 @@ lemma exists_logarithmicTrialClock_failure_le_polynomial
       growthTrialSuccess_eq_of_binary_horizon_le growth hcapacity (lower i) (d i) (N i)
         (Nat.ceil_pos.mpr hscale.2.1) hupper]
     exact hs
-  refine ⟨M, α, ρ, p₁, ha, ha1, haε, hρ, hp₁, hsuccess', ?_⟩
+  refine ⟨M, α, ρ, p₁, ha, ha1, haε, hρ, hp₁, hposition, hsplit, hsuccess', ?_⟩
   intro δ θ γ hδ hθ hratio hγ
   let K i := ⌊δ * Real.log (N i : ℝ)⌋₊
   let η := (0 + (M : ℝ)) * δ + (M : ℝ) * (α / Real.log ρ) + 1

@@ -56,6 +56,8 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.Asympto
 * `firstSuccess_rankedEntrance_le_ae`: the $m$ ranked roots at $\tau$ have
   positions at most $V(v_\kappa)+Md$, with $v_\kappa$ indexed by trial order.
 
+* `integral_trialResetPosition_le` bounds the reset position on the good
+  event by $\mathbb E[Y_+]/(p_0q_N)+KM+Md$.
 * `measure_badEntrance_le`: the probability of missing entrance by $T$
   with $m$ actual particles at or below $c$ is bounded by the probability
   of missing the first-$K$ completion deadline plus the trial-root tail.
@@ -932,5 +934,121 @@ lemma trialRestart_beforeReset_and_shift_le
       exact (le_max_right _ _).trans (hgrow k duration hn hs q hq)
     · rw [dite_eq_right hnonempty]
       exact max_le ((le_max_left _ _).trans hpath) ((le_max_left _ _).trans hpath)
+
+open ProbabilityTheory.BranchingProcess (offspringFieldLaw) in
+/-- Bound the reset position on the good event by the stopped sum of
+positive waiting displacements and the bounded growth edges. -/
+lemma integral_trialResetPosition_le
+    (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
+    (hnorm : HasBoundaryNormalization L.potential L.raw) (hfirst : HasLeftmostFirstMoment L)
+    (R growth : Step.FiniteSelection ℕ ℝ)
+    (hR : Measurable R.select) (hgrowth : Measurable growth.select)
+    (M : ℝ) (hM : 0 ≤ M)
+    (hcut : ∀ ξ j, j ∈ growth ξ → ξ.potentialValue' realPotential j ≤ M)
+    (lower upper duration K T : ℕ) (hlower : 0 < lower) (hupper : 1 ≤ upper) :
+    let μ := L.sortedPotentialImage
+    let ν := offspringFieldLaw μ
+    let P := RootIndexed.stepFieldLaw (Root := ℕ ⊕ ℕ) μ
+    let G := growthTrialSuccess growth lower upper duration
+    let τ := Completion.time R growth hR hgrowth lower upper duration (0 : ℕ)
+    let E := {ω | splitCount R 0 ((τ ω).untopD 0 - (duration + 1))
+        (RootIndexed.StepField.left ω) < K} ∩ {ω | τ ω ≤ (T : WithTop ℕ)}
+    let C ω := trialResetPositionAtGeneration R growth hR upper duration 0
+      ((τ ω).untopD 0) (RootIndexed.StepField.left ω)
+    μ {ξ | (R ξ).Nonempty} = 1 → 0 < μ (splitBy R) →
+    0 < ν.real {field | G field} →
+    (∀ᵐ field ∂ν, ∀ u, (R (field u)).Nonempty ∧ firstSelectedSlot R (field u) = 0 ∧
+      (2 ≤ (R (field u)).card → value' (field u) (firstSelectedSlot R (field u)) ≤ M ∧
+        value' (field u) (secondSelectedSlot R (field u)) ≤ M)) →
+    MeasurableSet E → IntegrableOn C E P →
+    (∫ ω in E, C ω ∂P) ≤
+      ((∫ ξ, max (value' ξ 0) 0 ∂μ) / μ.real (splitBy R)) /
+        ν.real {field | G field} + (K : ℝ) * M + M * duration := by
+  classical
+  intro μ ν P G τ E C hRne hp hprob hmarks hE hC
+  let Ω := RootIndexed.StepField (ℕ ⊕ ℕ) ℕ ℝ
+  let left : Ω → RootIndexed.StepField ℕ ℕ ℝ := RootIndexed.StepField.left
+  let f (ω : Ω) := left ω 0
+  have hleft : Measurable left := measurable_pi_iff.mpr fun i => measurable_pi_apply (Sum.inl i)
+  have hf : Measurable f := (measurable_pi_apply (0 : ℕ)).comp hleft
+  have hflaw : P.map f = ν := by
+    change P.map ((fun field : RootIndexed.StepField ℕ ℕ ℝ => field 0) ∘ left) = ν
+    rw [← Measure.map_map (measurable_pi_apply (0 : ℕ)) hleft,
+      show P.map left = RootIndexed.stepFieldLaw (Root := ℕ) μ from
+        RootIndexed.stepFieldLaw_reindex μ Sum.inl Sum.inl_injective,
+      RootIndexed.stepFieldLaw_root_marginal μ 0]
+  have hG : Measurable G := measurable_to_prop <| by
+    simpa only [Set.preimage_singleton_true] using
+      (generationFiltration (M := Step ℕ ℝ)).le duration _
+        (growthTrialSuccess_measurable growth hgrowth lower upper duration)
+  obtain ⟨Z, hZint, hZnonneg, hZmean, hZdom⟩ :=
+    exists_firstSuccessfulTrial_root_integrable_majorant L hnorm hfirst R hR hRne hp G hG
+      {b | b} (Set.to_countable _).measurableSet hprob M hM K hmarks
+  have hintegral : Integrable Z (P.map f) := hflaw ▸ hZint
+  have hZf := hintegral.comp_aemeasurable hf.aemeasurable
+  have hZfull : Integrable (fun ω => Z (f ω) + M * duration) P :=
+    hZf.add (integrable_const _)
+  let D := splitCycle R (splitWaitingDisplacement R) G
+  let good (ω : Mark ℕ (Step ℕ ℝ)) :=
+    (∀ u, (R (ω u)).Nonempty) ∧ ∀ k : Fin K, (D k.val ω).2 →
+      (∀ j < k.val, ¬ (D j ω).2) →
+      Spine.pathPotential realPotential ω (trialGrowthRoot R k.val ω) ≤ Z ω
+  have hgood : ∀ᵐ ω ∂P.map f, good ω := by
+    rw [hflaw]
+    filter_upwards [hmarks, hZdom] with ω hw hz
+    exact ⟨fun u => (hw u).1, hz⟩
+  have hall : ∀ᵐ ω ∂P, good (f ω) := ae_of_ae_map hf.aemeasurable hgood
+  have hpoint : ∀ᵐ ω ∂P.restrict E, C ω ≤ Z (f ω) + M * duration := by
+    filter_upwards [hall.filter_mono (ae_mono Measure.restrict_le_self), ae_restrict_mem hE]
+      with ω hω hw
+    have ht : τ ω ≤ (T : WithTop ℕ) := hw.2
+    have hfin : τ ω ≠ ⊤ := ne_top_of_le_ne_top WithTop.coe_ne_top ht
+    obtain ⟨n, hn⟩ := WithTop.ne_top_iff_exists.mp hfin
+    have hτn : firstSuccessfulCompletion R growth hR lower upper duration (0 : ℕ) (left ω) = n :=
+      hn.symm
+    obtain ⟨j, hj, _, hsucc, hbefore, hroot⟩ :=
+      splitCycle_first_success_at_completion R growth hR lower upper duration (0 : ℕ)
+        (left ω) hω.1 n hτn
+    have hcount := hw.1
+    change splitCount R 0 ((τ ω).untopD 0 - (duration + 1)) (left ω) < K at hcount
+    rw [← hn, WithTop.untopD_coe, ← hj, show j + 1 + duration - (duration + 1) = j by omega]
+      at hcount
+    let k : Fin K := ⟨splitCount R 0 j (left ω), hcount⟩
+    let declared : ℕ → Set (RootIndexed.StepField ℕ ℕ ℝ) := fun s =>
+      {field | ∃ l, ((l + 1 + duration : ℕ) : WithTop ℕ) = s ∧
+        field ∈ successEvent R growth hR lower upper duration 0 l}
+    have hfirst : firstDeclaredSuccess declared (left ω) = n := hτn
+    obtain ⟨l, hl, hmem⟩ := ((firstDeclaredSuccess_eq_iff declared (left ω) n).mp hfirst).1
+    have hl' : l + 1 + duration = n := WithTop.coe_injective hl
+    have hlj : l = j := by omega
+    have hCpos := trialResetPositionAtGeneration_le R growth hR lower upper duration
+      (0 : ℕ) j hupper hlower M hcut (left ω) (hlj ▸ hmem)
+    let u := growthTrialRootAt (lineages R hR) R 0 PUnit.unit (j + 1) (left ω)
+    have hzero : u.1 = 0 := growthTrialRootAt_root (lineages R hR) R 0 PUnit.unit (j + 1) (left ω)
+    change trialGrowthRoot R k.val (f ω) = u.2 at hroot
+    have hposition := hω.2 k hsucc hbefore
+    rw [hroot] at hposition
+    change trialResetPositionAtGeneration R growth hR upper duration 0
+      ((τ ω).untopD 0) (left ω) ≤ _
+    rw [← hn, WithTop.untopD_coe, ← hj]
+    change trialResetPositionAtGeneration R growth hR upper duration 0
+      (j + 1 + duration) (left ω) ≤
+      Spine.pathPotential realPotential (left ω u.1) u.2 + M * duration at hCpos
+    rw [hzero] at hCpos
+    exact hCpos.trans (add_le_add hposition le_rfl)
+  calc
+    (∫ ω in E, C ω ∂P) ≤ ∫ ω in E, (Z (f ω) + M * duration) ∂P :=
+      integral_mono_ae hC hZfull.integrableOn hpoint
+    _ ≤ ∫ ω, (Z (f ω) + M * duration) ∂P :=
+      integral_mono_measure Measure.restrict_le_self
+        (.of_forall fun ω => add_nonneg (hZnonneg _) (by positivity)) hZfull
+    _ ≤ _ := by
+      change (∫ ω, (Z ∘ f) ω + (fun _ : Ω => M * (duration : ℝ)) ω ∂P) ≤ _
+      rw [integral_add hZf (integrable_const _)]
+      have hzmap := integral_map hf.aemeasurable hintegral.aestronglyMeasurable
+      rw [hflaw] at hzmap
+      change (∫ ω, Z ω ∂ν) = (∫ ω, (Z ∘ f) ω ∂P) at hzmap
+      rw [← hzmap, integral_const, probReal_univ, one_smul]
+      exact add_le_add hZmean le_rfl
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas
