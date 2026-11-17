@@ -59,6 +59,11 @@ the same offspring law; no reflected-law or symmetry assumption is intended.
 
 The first-moment results for the exploratory speed bound are tracked separately. `Endpoint/PositiveMoment/FirstMoment.lean` proves integrability of the selected endpoint using Appendix A, Lemmas A.2, A.3, and A.5. `Endpoint/Sequence/ExpectationLower.lean` proves Lemma 4.1 on the countable-root field law using the polynomial lower tail and $\mathbb E[e^{-M_N}]\le N$.
 
+The first-moment speed lower bound now follows from Lemma 4.1 and the full-capacity
+block comparison in `Limit/SpeedLowerBound.lean` as
+`exists_speed_with_logSq_lowerBound_of_firstMoment`. The matching upper bound
+still has the restart estimates identified in the thesis as open obligations.
+
 Dependency order:
 
 ```text
