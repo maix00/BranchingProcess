@@ -15,6 +15,7 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.Asympto
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.TrialPosition
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas.WaitingTime
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.Lemmas.RestartMoment
+import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.Lemmas.FirstMomentFailure
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.Lemmas.ReserveContinuation
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Splits
 
@@ -57,7 +58,7 @@ public theorem eventually_singleRootEndpointMean_div_log_le_of_remainingMean
     (hsuper : BranchingProcess.OffspringConfigurationLaw.IsSupercritical
       (⟨L.raw, inferInstance⟩ : BranchingProcess.OffspringConfigurationLaw ℕ ℝ))
     (hne : L.raw nonemptySupport = 1)
-    (hnorm : HasBoundaryNormalization L.potential L.raw) (hfour : HasLeftmostFourthMoment L)
+    (hnorm : HasBoundaryNormalization L.potential L.raw) (hfirst : HasLeftmostFirstMoment L)
     {c t : ℝ} (hc : 0 ≤ c) (ht : 0 < t)
     {N H : ℕ → ℕ} (hN : Tendsto N atTop atTop)
     (hH : Tendsto (fun n => (H n : ℝ) / Real.log (N n : ℝ) ^ 3) atTop (𝓝 t))
@@ -164,15 +165,28 @@ public theorem eventually_singleRootEndpointMean_div_log_le_of_remainingMean
       ∀ x : ℝ, (finiteRootStepFieldLaw μ 1)
         {ω | x ≤ firstNSelectedEndpointMinimum 1 (N n) (H n) ω} ≤ P {ω | x ≤ F n ω}
       from by simpa only [F, root, dite_eq_left h] using h.choose_spec
-  obtain ⟨C, hC, hmoment⟩ := restartEndpoint_memLp_two_and_eLpNorm_le L hnorm hne hfour
-    (M : ℝ) (Nat.cast_nonneg _)
-  have hL2 : ∀ᶠ n in atTop, MemLp (F n) 2 P ∧
-      eLpNorm (F n) 2 P ≤ ENNReal.ofReal (C * (H n : ℝ)) := by
-    filter_upwards [hroot, hvalid] with n hr hn
-    exact hmoment (m n) (N n) (lower n) (upper n) (d n) (H n) hn.1 hn.2.1 hn.2.2.2
-      (root n) hr.1 hr.2.1 hr.2.2.1 hr.2.2.2
-  have hbadlim := tendsto_restartEndpoint_badIntegral_div_log P F E hN ht hC hb hH
-    (hL2.mono fun _ h => h.1) (hL2.mono fun _ h => h.2) hbad
+  have hdeadline : ∀ᶠ n in atTop, (T n : ℝ) ≤ |γ| * logN n := by
+    filter_upwards [hlog.eventually_gt_atTop 0] with n hn
+    change (⌊γ * logN n⌋₊ : ℝ) ≤ |γ| * logN n
+    by_cases hg : 0 ≤ γ
+    · exact (Nat.floor_le (mul_nonneg hg hn.le)).trans
+        (mul_le_mul_of_nonneg_right (le_abs_self γ) hn.le)
+    · rw [Nat.floor_eq_zero.mpr (lt_of_le_of_lt (mul_nonpos_of_nonpos_of_nonneg
+          (le_of_not_ge hg) hn.le) zero_lt_one), Nat.cast_zero]
+      positivity
+  have hhorizon : ∀ᶠ n in atTop, (H n : ℝ) ≤ (t + 1) * logN n ^ 3 := by
+    filter_upwards [hlog.eventually_gt_atTop 0,
+      hH.eventually (Iio_mem_nhds (lt_add_of_pos_right t one_pos))] with n hn hscale
+    exact (div_le_iff₀ (pow_pos hn 3)).mp hscale.le
+  have hroots : ∀ᶠ n in atTop, 0 < m n ∧ 0 < N n ∧
+      (∀ v, MeasurableSet[(hτ n).measurableSpace] {ω | root n ω = v}) ∧
+      (∀ ω (i : ℕ), τ n ω = i → ∀ j, (root n ω j).2.length = i) ∧
+      (∀ ω, τ n ω ≠ ⊤ → Function.Injective (root n ω)) := by
+    filter_upwards [hvalid, hroot] with n hn hr
+    exact ⟨hn.2.1, hn.1, hr.1, hr.2.1, hr.2.2.1⟩
+  obtain ⟨hFint, hbadlim⟩ := tendsto_restartEndpoint_on_failure_div_log L hnorm hne hfirst
+    (M : ℝ) (Nat.cast_nonneg _) root (abs_nonneg γ) (by positivity : 0 ≤ t + 1) hb hN
+    hdeadline hhorizon hroots hbad (hroot.mono fun _ h => h.2.2.2)
   have hshort := hremaining a ha ha1 T hT
   let offset := ((∫ ξ, max (value' ξ 0) 0 ∂μ) / μ.real (splitBy R)) / p + 2 * M
   have hoffset : ∀ᶠ n in atTop, offset ≤ logN n := hlog.eventually_ge_atTop offset
@@ -180,19 +194,19 @@ public theorem eventually_singleRootEndpointMean_div_log_le_of_remainingMean
     dsimp [δ]
     rw [one_div_mul_eq_div]
     exact (div_le_one (by positivity)).2 (by linarith)
-  filter_upwards [hscales, hroot, hvalid, hL2, hshort, hsuccess, hoffset,
+  filter_upwards [hscales, hroot, hvalid, hFint, hshort, hsuccess, hoffset,
     hlog.eventually_gt_atTop 0, hbadlim.eventually (gt_mem_nhds one_pos)]
-    with n hs hr hn hl₂ hrem hsucc hoff hln hbadn
+    with n hs hr hn hFi hrem hsucc hoff hln hbadn
   have hA : MeasurableSet[(hτ n).measurableSpace] (A n) := by
     exact measurableSet_splitCount_at_stopped_time R hR (hτ n) (d n) (K n)
   have hE : MeasurableSet (E n) := ((hτ n).measurableSpace_le _ hA).inter
     ((𝔽).le (T n) _ ((hτ n).measurableSet_le (T n)))
   let cN := (c * t + 1) * logN n
-  obtain ⟨hI, him⟩ := integral_firstNSelectedEndpointMinimum_le_restart_terms L hnorm hne hfour
+  obtain ⟨hI, him⟩ := integral_firstNSelectedEndpointMinimum_le_restart_terms L hnorm hne hfirst
     (m := m n) (N n) (H n) (T n) hn.1 hn.2.1 hs.1 R growth hR hgrowth
-    (lower n) (upper n) (d n) (root n) hr.1 hr.2.1 hr.2.2.1 hr.2.2.2 hl₂.1
+    (lower n) (upper n) (d n) (root n) hr.1 hr.2.1 hr.2.2.1 hr.2.2.2 hFi
     (A n) hA cN hrem
-  have hentry := integral_trialResetPosition_le L hnorm (fourthMoment_implies_firstMoment L hfour)
+  have hentry := integral_trialResetPosition_le L hnorm hfirst
     R growth hR hgrowth M (Nat.cast_nonneg _) hcut (lower n) (upper n) (d n) (K n) (T n)
     (hn.2.1.trans_le (hmLower n)) (hupper n) hRne hsplit (hp.trans_le hsucc) hmarks hE hI
   let posMean := ∫ ξ, max (value' ξ 0) 0 ∂μ
