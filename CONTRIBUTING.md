@@ -39,14 +39,18 @@ are all useful contributions.
 
 ## Formalizing proofs from references
 
-Follow the mathematical argument of the referenced work. Check that each Lean
-step proves the corresponding claim on the same objects, with the same
-hypotheses and parameter choices. A local correction can repair a bound,
-index, or missing justification while preserving the proof strategy. Record
-the discrepancy and make the local correction in any maintained exposition.
-If a demonstrated error cannot be repaired within that strategy, document the
-obstruction and obtain the maintainer's agreement before adopting a different
-proof.
+Identify the source for the result being formalized, whether it is an article,
+thesis, book, or another reference. Cite the specific theorem, lemma, or proof
+that the implementation follows. Check that the Lean proof follows that
+argument on the same mathematical objects, with the corresponding hypotheses
+and parameter choices.
+
+A local correction may fix a bound, index, or missing justification while
+preserving the proof strategy. Document the discrepancy and apply the same
+correction to any corresponding exposition maintained in this repository.
+If a demonstrated error cannot be repaired locally within the source's proof
+strategy, document the obstruction and obtain the maintainer's agreement
+before changing the strategy.
 
 ## Pull requests
 
