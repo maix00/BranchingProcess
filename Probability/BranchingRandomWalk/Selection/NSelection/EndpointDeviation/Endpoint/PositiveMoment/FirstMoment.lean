@@ -23,6 +23,8 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviatio
   zero-position roots.
 * `finiteRootStepFieldLaw_integrable_firstNSelectedEndpointMinimum`:
   under the additional leftmost first moment, $M_H$ is integrable.
+* `finiteRootStepFieldLaw_endpointMinimum_firstMoment`:
+  $\mathbb E[(M_H)_+]\le H\mathbb E[|D_0|]$ under the same assumptions.
   At each generation the leftmost selected parent's leftmost child gives
   $M_{k+1}\le M_k+|D_k|$, where $D_k$ has the law of the leftmost displacement.
 
@@ -65,7 +67,7 @@ theorem finiteRootStepFieldLaw_integrable_exp_neg_firstNSelectedEndpointMinimum
 assumption. This combines Lemmas A.3 and A.5 of Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
 (Fudan University, 2026), Appendix A. -/
-theorem finiteRootStepFieldLaw_integrable_firstNSelectedEndpointMinimum
+theorem finiteRootStepFieldLaw_endpointMinimum_firstMoment
     {ι X : Type*} [Countable ι] [MeasurableSpace X]
     (m N H : ℕ) (hm : 0 < m) (hN : 0 < N)
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -74,8 +76,11 @@ theorem finiteRootStepFieldLaw_integrable_firstNSelectedEndpointMinimum
     (hboundary : HasBoundaryNormalization L.potential L.raw)
     (hnonempty : L.raw nonemptySupport = 1)
     (hfirst : HasLeftmostFirstMoment L) :
-    Integrable (firstNSelectedEndpointMinimum m N H)
-      (finiteRootStepFieldLaw L.sortedPotentialImage m) := by
+    let P := finiteRootStepFieldLaw L.sortedPotentialImage m
+    let F := firstNSelectedEndpointMinimum m N H
+    Integrable F P ∧
+      (∫ field, max (F field) 0 ∂P) ≤
+        (H : ℝ) * ∫ ξ, |value' ξ 0| ∂L.sortedPotentialImage := by
   let μ := L.sortedPotentialImage
   let P := finiteRootStepFieldLaw μ m
   let M := firstNSelectedEndpointMinimum m N
@@ -83,7 +88,8 @@ theorem finiteRootStepFieldLaw_integrable_firstNSelectedEndpointMinimum
   let mark (k : ℕ) (field : FiniteRootStepField m ℕ ℝ) :=
     field (chosen k field).1 (chosen k field).2
   let D (k : ℕ) (field : FiniteRootStepField m ℕ ℝ) := |value' (mark k field) 0|
-  have hD (k : ℕ) : Integrable (D k) P := by
+  have hD (k : ℕ) : Integrable (D k) P ∧
+      (∫ field, D k field ∂P) = ∫ ξ, |value' ξ 0| ∂μ := by
     let F := RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)
     have hchosen : Measurable[F k] (chosen k) :=
       measurable_firstNSelectedEndpointMinAddressAtDepth m N k hm
@@ -102,9 +108,12 @@ theorem finiteRootStepFieldLaw_integrable_firstNSelectedEndpointMinimum
           (measurable_pi_apply p.2).comp (measurable_pi_apply p.1)
       exact hmeas.comp (measurable_id.prodMk (hchosen.mono (F.le k) le_rfl))
     have hslot := L.integrable_sortedPotentialImage_firstSlot_abs hboundary hfirst
-    exact ((hmarkMap.symm ▸ hslot : Integrable
+    refine ⟨((hmarkMap.symm ▸ hslot : Integrable
       (fun ξ : Step ℕ ℝ => |value' ξ 0|) (P.map (mark k))).comp_aemeasurable
-      hmark.aemeasurable)
+      hmark.aemeasurable), ?_⟩
+    rw [← hmarkMap]
+    exact (integral_map hmark.aemeasurable
+      ((value'_measurable (0 : ℕ)).abs.aestronglyMeasurable)).symm
   have hupper : ∀ᵐ field ∂P, ∀ n, M n field ≤ ∑ k ∈ Finset.range n, D k field := by
     filter_upwards [finiteRootStepFieldLaw_endpointMinimum_succ_le_predictablePositiveSlotZero_ae
       m N hm hN L hboundary hnonempty] with field hs n
@@ -120,15 +129,43 @@ theorem finiteRootStepFieldLaw_integrable_firstNSelectedEndpointMinimum
   have hExp := finiteRootStepFieldLaw_integrable_exp_neg_firstNSelectedEndpointMinimum
     m N H hm hN μ hboundaryμ hnonemptyμ
   have hsum : Integrable (fun field => ∑ k ∈ Finset.range H, D k field) P :=
-    integrable_finsetSum _ fun k _ => hD k
-  apply (hsum.add hExp).mono' (measurable_firstNSelectedEndpointMinimum m N H).aestronglyMeasurable
-  filter_upwards [hupper] with field hs
-  simp only [Real.norm_eq_abs, Pi.add_apply]
-  have hnonneg : 0 ≤ ∑ k ∈ Finset.range H, D k field :=
-    Finset.sum_nonneg fun _ _ => abs_nonneg _
-  have hneg := Real.add_one_le_exp (-M H field)
-  rw [abs_le]
-  constructor <;> linarith [Real.exp_nonneg (-M H field), hs H]
+    integrable_finsetSum _ fun k _ => (hD k).1
+  have hInt : Integrable (M H) P := by
+    apply (hsum.add hExp).mono' (measurable_firstNSelectedEndpointMinimum m N H).aestronglyMeasurable
+    filter_upwards [hupper] with field hs
+    simp only [Real.norm_eq_abs, Pi.add_apply]
+    have hnonneg : 0 ≤ ∑ k ∈ Finset.range H, D k field :=
+      Finset.sum_nonneg fun _ _ => abs_nonneg _
+    have hneg := Real.add_one_le_exp (-M H field)
+    rw [abs_le]
+    constructor <;> linarith [Real.exp_nonneg (-M H field), hs H]
+
+  refine ⟨hInt, ?_⟩
+  calc
+    _ ≤ ∫ field, ∑ k ∈ Finset.range H, D k field ∂P := by
+      apply integral_mono_ae (hInt.sup (integrable_const 0)) hsum
+      filter_upwards [hupper] with field hs
+      exact max_le (hs H) (Finset.sum_nonneg fun _ _ => abs_nonneg _)
+    _ = _ := by
+      rw [integral_finsetSum _ (fun k _ => (hD k).1)]
+      simp_rw [fun k => (hD k).2]
+      simp [μ]
+
+/-- The minimum of the selected population at a fixed horizon is integrable
+under the leftmost first-moment assumption. -/
+theorem finiteRootStepFieldLaw_integrable_firstNSelectedEndpointMinimum
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (m N H : ℕ) (hm : 0 < m) (hN : 0 < N)
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
+    (L : StepLaw ι ℕ X) [IsProbabilityMeasure L.raw]
+    (hboundary : HasBoundaryNormalization L.potential L.raw)
+    (hnonempty : L.raw nonemptySupport = 1)
+    (hfirst : HasLeftmostFirstMoment L) :
+    Integrable (firstNSelectedEndpointMinimum m N H)
+      (finiteRootStepFieldLaw L.sortedPotentialImage m) :=
+  (finiteRootStepFieldLaw_endpointMinimum_firstMoment m N H hm hN L hboundary
+    hnonempty hfirst).1
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
