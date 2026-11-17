@@ -59,7 +59,7 @@ private lemma abs_setIntegral_le_sqrt_mul
 
 lemma tendsto_setIntegral_div_log_of_failure
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
-    (Y : ℕ → Ω → ℝ) (A : ℕ → Set Ω) (hY : ∀ n, MemLp (Y n) 2 P)
+    (Y : ℕ → Ω → ℝ) (A : ℕ → Set Ω) (hY : ∀ᶠ n in atTop, MemLp (Y n) 2 P)
     {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {C b : ℝ} (hC : 0 ≤ C) (hb : 0 < b)
     (hsecond : ∀ᶠ n in atTop,
       Real.sqrt (∫ ω, (Y n ω) ^ 2 ∂P) ≤ C * Real.log (N n : ℝ) ^ 3)
@@ -81,7 +81,7 @@ lemma tendsto_setIntegral_div_log_of_failure
   have hlim : Tendsto (fun n => C * (L n ^ 2 * Real.exp (-(b / 2) * L n))) atTop (𝓝 0) := by
     simpa using (hdecay.comp hL).const_mul C
   apply squeeze_zero_norm' _ hlim
-  filter_upwards [hsecond, hprob, hL.eventually_gt_atTop 0] with n h₂ hp hlog
+  filter_upwards [hY, hsecond, hprob, hL.eventually_gt_atTop 0] with n hYn h₂ hp hlog
   have hroot : Real.sqrt (P.real (A n)) ≤ Real.exp (-(b / 2) * L n) := by
     refine (Real.sqrt_le_sqrt hp).trans_eq ?_
     rw [Real.sqrt_eq_rpow, ← Real.exp_mul]
@@ -89,7 +89,7 @@ lemma tendsto_setIntegral_div_log_of_failure
     ring
   rw [Real.norm_eq_abs, abs_div, abs_of_pos hlog]
   apply (div_le_iff₀ hlog).2
-  have hholder := abs_setIntegral_le_sqrt_mul P (Y n) (hY n) (A n)
+  have hholder := abs_setIntegral_le_sqrt_mul P (Y n) hYn (A n)
   calc
     _ ≤ (C * L n ^ 3) * Real.exp (-(b / 2) * L n) :=
       hholder.trans (mul_le_mul h₂ hroot (Real.sqrt_nonneg _) (by positivity))

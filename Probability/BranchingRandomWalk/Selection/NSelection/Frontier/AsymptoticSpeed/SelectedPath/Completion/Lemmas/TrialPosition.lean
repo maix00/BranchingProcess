@@ -23,9 +23,11 @@ import Probability.Sequence.IID.GeometricReward.Definitions
   trial in split order at the observable success completion.
 * `trialGrowthRoot_eq_growthTrialRootAt_of_splitCount` identifies $v_k$
   with the generation-indexed candidate when $k$ splits precede its split mark.
-* `lintegral_firstSuccessfulTrial_root_positive_le` bounds the positive
-  position of the first successful root on ${kappale K}$ by
-  $mathbb E[Y_+]/(p_0p_1)+KM$ in expectation.
+* `exists_firstSuccessfulTrial_root_integrable_majorant` bounds the
+  first successful root among the first $K$ trials by an integrable
+  variable of mean at most $\mathbb E[Y_+]/(p_0p_1)+KM$.
+* `firstOrBelowPotential_field_marks_ae` records that slot $0$ is retained
+  and both displacements at a split are at most $M$.
 * `exists_firstSuccessfulTrial_position_upperTail` bounds
   $e^{\lambda x}\mathbb P(\kappa\le K,
     V(\rho_\kappa)\ge x+(K-1)M)$ by $\sum_{k=1}^K m_\lambda^k$,
@@ -50,6 +52,92 @@ open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coo
 open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 open SelectedPath.GrowthTrial
 open Combinatorics.Branching.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath
+
+/-- The path selector keeps slot zero; at a split both retained
+displacements are bounded by the cutoff. -/
+lemma firstOrBelowPotential_field_marks_ae
+    {ι X : Type*} [MeasurableSpace X]
+    (L : StepLaw ι ℕ X) [IsProbabilityMeasure L.raw]
+    (hnonempty : L.raw nonemptySupport = 1) (M : ℝ) :
+    let μ := L.sortedPotentialImage
+    let R := firstOrBelowPotential (firstNBySlotOrder (α := ℕ) (X := ℝ) 2) realPotential M
+    μ {ξ | (R ξ).Nonempty} = 1 ∧
+    ∀ᵐ ω ∂offspringFieldLaw μ, ∀ u,
+      (R (ω u)).Nonempty ∧ firstSelectedSlot R (ω u) = 0 ∧
+        (2 ≤ (R (ω u)).card → value' (ω u) (firstSelectedSlot R (ω u)) ≤ M ∧
+          value' (ω u) (secondSelectedSlot R (ω u)) ≤ M) := by
+  classical
+  intro μ R
+  let B := firstNBySlotOrder (α := ℕ) (X := ℝ) 2
+  have hordered : ∀ᵐ ξ ∂μ, ξ.IsOrderedBy realPotential := by
+    apply (ae_mem_iff_measure_eq (orderedBySteps_measurable realPotential).nullMeasurableSet).2
+    rw [show μ = L.sortedPotentialImage from rfl, L.sortedPotentialImage_orderedBy]
+    simp
+  have hsupport : ∀ᵐ ξ ∂μ, ξ ∈ nonemptySupport := by
+    apply (ae_mem_iff_measure_eq nonemptySupport_measurable.nullMeasurableSet).2
+    rw [show μ = L.sortedPotentialImage from rfl, L.sortedPotentialImage_nonemptySupport,
+      L.sorted_nonemptySupport, hnonempty]
+    exact measure_univ.symm
+  have hzero : ∀ᵐ ξ ∂μ, 0 ∈ R ξ := by
+    filter_upwards [hordered, hsupport] with ξ hord hs
+    obtain ⟨i, hi⟩ := hs
+    have hsurvive : survive ξ 0 :=
+      (survive_map_iff realPotential ξ 0).mp
+        (orderedSteps_survive_of_le (ξ.map realPotential) hord (Nat.zero_le i)
+          ((survive_map_iff realPotential ξ i).mpr hi))
+    have hless : {j : ℕ | j ∈ support ξ ∧
+        valueKey (fun i : ℕ => i) j < valueKey (fun i : ℕ => i) 0} = ∅ := by
+      ext j
+      simp [valueKey, Prod.Lex.lt_iff]
+    have hB0 : 0 ∈ B ξ := (firstNBySlotOrder_spec 2 ξ).mem_iff_ncard_lt 0 |>.mpr
+      ⟨hsurvive, by simp [hless], by simp [hless]⟩
+    have hBfirst : firstSelectedSlot B ξ = 0 := by
+      have hb : (B ξ).Nonempty := ⟨0, hB0⟩
+      unfold firstSelectedSlot
+      rw [dite_eq_left hb]
+      exact Nat.eq_zero_of_le_zero (Finset.min'_le _ _ hB0)
+    have hz : 0 ∈ firstOnlySelectedChild B ξ := by
+      rw [firstOnlySelectedChild, Step.FiniteSelection.mem_filter]
+      exact ⟨hB0, hBfirst.symm⟩
+    exact (@Finset.mem_union ℕ (Classical.decEq ℕ)
+      (firstOnlySelectedChild B ξ) (B.belowPotential realPotential M ξ) 0).2 (Or.inl hz)
+  have hfirst : ∀ᵐ ξ ∂μ, firstSelectedSlot R ξ = 0 := by
+    filter_upwards [hzero] with ξ hξ
+    have hr : (R ξ).Nonempty := ⟨0, hξ⟩
+    unfold firstSelectedSlot
+    rw [dite_eq_left hr]
+    exact Nat.eq_zero_of_le_zero (Finset.min'_le _ _ hξ)
+  have hcut : ∀ᵐ ξ ∂μ, 2 ≤ (R ξ).card →
+      value' ξ (firstSelectedSlot R ξ) ≤ M ∧ value' ξ (secondSelectedSlot R ξ) ≤ M := by
+    filter_upwards [hordered] with ξ hξ
+    intro hs
+    have hbound := firstOrBelowPotential_edgePotentials_le_of_ordered B
+      (firstNBySlotOrder_isBoundedBy 2) realPotential M ξ hξ hs
+    have heq (j : ℕ) : ξ.potentialValue' realPotential j = value' ξ j := by
+      simp [Step.potentialValue', Step.potentialAt?, realPotential, value']
+    rw [← heq, ← heq]
+    exact hbound
+  have hnonemptyR : ∀ᵐ ξ ∂μ, (R ξ).Nonempty :=
+    hzero.mono fun _ hξ => ⟨0, hξ⟩
+  have hne : μ {ξ | (R ξ).Nonempty} = 1 := by
+    have heq : {ξ | (R ξ).Nonempty} =ᵐ[μ] Set.univ := by
+      filter_upwards [hnonemptyR] with ξ hξ
+      simp [hξ]
+    rw [measure_congr heq, measure_univ]
+  have hall : ∀ᵐ ω ∂offspringFieldLaw μ, ∀ u,
+      (R (ω u)).Nonempty ∧ firstSelectedSlot R (ω u) = 0 ∧
+        (2 ≤ (R (ω u)).card → value' (ω u) (firstSelectedSlot R (ω u)) ≤ M ∧
+        value' (ω u) (secondSelectedSlot R (ω u)) ≤ M) := by
+    apply ae_all_iff.2
+    intro u
+    have hmeas : Measurable (fun ω : Mark ℕ (Step ℕ ℝ) => ω u) := measurable_pi_apply u
+    have hallμ : ∀ᵐ ξ ∂μ, (R ξ).Nonempty ∧ firstSelectedSlot R ξ = 0 ∧
+        (2 ≤ (R ξ).card → value' ξ (firstSelectedSlot R ξ) ≤ M ∧
+          value' ξ (secondSelectedSlot R ξ) ≤ M) := by
+      filter_upwards [hnonemptyR, hfirst, hcut] with ξ h₁ h₂ h₃
+      exact ⟨h₁, h₂, h₃⟩
+    exact ae_of_ae_map hmeas.aemeasurable (by rwa [offspringFieldLaw_coordinate μ u])
+  exact ⟨hne, hall⟩
 
 /-- Absolute address of the split parent, following the second child to each
 subsequent candidate on the pre-sampled tree. -/
@@ -292,78 +380,11 @@ lemma exists_firstSuccessfulTrial_position_upperTail
   let B := firstNBySlotOrder (α := ℕ) (X := ℝ) 2
   have hR : Measurable R.select :=
     firstOrBelowPotential_measurable B firstTwoBySlotOrder_measurable realPotential M
-  have hordered : ∀ᵐ ξ ∂μ, ξ.IsOrderedBy realPotential := by
-    apply (ae_mem_iff_measure_eq (orderedBySteps_measurable realPotential).nullMeasurableSet).2
-    rw [show μ = L.sortedPotentialImage from rfl, L.sortedPotentialImage_orderedBy]
-    simp
-  have hsupport : ∀ᵐ ξ ∂μ, ξ ∈ nonemptySupport := by
-    apply (ae_mem_iff_measure_eq nonemptySupport_measurable.nullMeasurableSet).2
-    rw [show μ = L.sortedPotentialImage from rfl, L.sortedPotentialImage_nonemptySupport,
-      L.sorted_nonemptySupport, hnonempty]
-    exact measure_univ.symm
-  have hzero : ∀ᵐ ξ ∂μ, 0 ∈ R ξ := by
-    filter_upwards [hordered, hsupport] with ξ hord hs
-    obtain ⟨i, hi⟩ := hs
-    have hsurvive : survive ξ 0 :=
-      (survive_map_iff realPotential ξ 0).mp
-        (orderedSteps_survive_of_le (ξ.map realPotential) hord (Nat.zero_le i)
-          ((survive_map_iff realPotential ξ i).mpr hi))
-    have hless : {j : ℕ | j ∈ support ξ ∧
-        valueKey (fun i : ℕ => i) j < valueKey (fun i : ℕ => i) 0} = ∅ := by
-      ext j
-      simp [valueKey, Prod.Lex.lt_iff]
-    have hB0 : 0 ∈ B ξ := (firstNBySlotOrder_spec 2 ξ).mem_iff_ncard_lt 0 |>.mpr
-      ⟨hsurvive, by simp [hless], by simp [hless]⟩
-    have hBfirst : firstSelectedSlot B ξ = 0 := by
-      have hb : (B ξ).Nonempty := ⟨0, hB0⟩
-      unfold firstSelectedSlot
-      rw [dite_eq_left hb]
-      exact Nat.eq_zero_of_le_zero (Finset.min'_le _ _ hB0)
-    have hz : 0 ∈ firstOnlySelectedChild B ξ := by
-      rw [firstOnlySelectedChild, Step.FiniteSelection.mem_filter]
-      exact ⟨hB0, hBfirst.symm⟩
-    exact (@Finset.mem_union ℕ (Classical.decEq ℕ)
-      (firstOnlySelectedChild B ξ) (B.belowPotential realPotential M ξ) 0).2 (Or.inl hz)
-  have hfirst : ∀ᵐ ξ ∂μ, firstSelectedSlot R ξ = 0 := by
-    filter_upwards [hzero] with ξ hξ
-    have hr : (R ξ).Nonempty := ⟨0, hξ⟩
-    unfold firstSelectedSlot
-    rw [dite_eq_left hr]
-    exact Nat.eq_zero_of_le_zero (Finset.min'_le _ _ hξ)
-  have hcut : ∀ᵐ ξ ∂μ, 2 ≤ (R ξ).card →
-      value' ξ (firstSelectedSlot R ξ) ≤ M ∧ value' ξ (secondSelectedSlot R ξ) ≤ M := by
-    filter_upwards [hordered] with ξ hξ
-    intro hs
-    have hbound := firstOrBelowPotential_edgePotentials_le_of_ordered B
-      (firstNBySlotOrder_isBoundedBy 2) realPotential M ξ hξ hs
-    have heq (j : ℕ) : ξ.potentialValue' realPotential j = value' ξ j := by
-      simp [Step.potentialValue', Step.potentialAt?, realPotential, value']
-    rw [← heq, ← heq]
-    exact hbound
-  have hnonemptyR : ∀ᵐ ξ ∂μ, (R ξ).Nonempty :=
-    hzero.mono fun _ hξ => ⟨0, hξ⟩
-  have hne : μ {ξ | (R ξ).Nonempty} = 1 := by
-    have heq : {ξ | (R ξ).Nonempty} =ᵐ[μ] Set.univ := by
-      filter_upwards [hnonemptyR] with ξ hξ
-      simp [hξ]
-    rw [measure_congr heq, measure_univ]
+  obtain ⟨hne, hall⟩ := firstOrBelowPotential_field_marks_ae L hnonempty M
   obtain ⟨lam, hlam, hA, hm, hfin⟩ :=
     exists_splitWaitingDisplacement_exponentialMoment L hexp R hR hne hp
   have hfinite := selectedPopulationSplitCompletion_ae_finite_of_nonempty_and_split_pos
     μ R hR hne (splitBy_measurable R hR) hp
-  have hall : ∀ᵐ ω ∂offspringFieldLaw μ, ∀ u,
-      (R (ω u)).Nonempty ∧ firstSelectedSlot R (ω u) = 0 ∧
-        (2 ≤ (R (ω u)).card → value' (ω u) (firstSelectedSlot R (ω u)) ≤ M ∧
-        value' (ω u) (secondSelectedSlot R (ω u)) ≤ M) := by
-    apply ae_all_iff.2
-    intro u
-    have hmeas : Measurable (fun ω : Mark ℕ (Step ℕ ℝ) => ω u) := measurable_pi_apply u
-    have hallμ : ∀ᵐ ξ ∂μ, (R ξ).Nonempty ∧ firstSelectedSlot R ξ = 0 ∧
-        (2 ≤ (R ξ).card → value' ξ (firstSelectedSlot R ξ) ≤ M ∧
-          value' ξ (secondSelectedSlot R ξ) ≤ M) := by
-      filter_upwards [hnonemptyR, hfirst, hcut] with ξ h₁ h₂ h₃
-      exact ⟨h₁, h₂, h₃⟩
-    exact ae_of_ae_map hmeas.aemeasurable (by rwa [offspringFieldLaw_coordinate μ u])
   refine ⟨lam, hlam, hne, hA, hfin, ?_⟩
   intro lower upper duration x K G
   have htail := measure_firstSuccessfulSplitCycle_partialSum_ge_le
@@ -390,7 +411,7 @@ attribute [local instance] Classical.propDecidable
 first $K$ trials, has positive mean at most the stopped positive waiting
 sum plus $KM$. This is the entrance-position term in Wang Yiyang,
 Theorem 1.2. -/
-lemma lintegral_firstSuccessfulTrial_root_positive_le
+lemma exists_firstSuccessfulTrial_root_integrable_majorant
     {ι X E : Type*} [Countable ι] [MeasurableSpace X] [MeasurableSpace E]
     (L : StepLaw ι ℕ X) [IsProbabilityMeasure L.raw]
     (hboundary : HasBoundaryNormalization L.potential L.raw) (hfirst : HasLeftmostFirstMoment L)
@@ -408,12 +429,13 @@ lemma lintegral_firstSuccessfulTrial_root_positive_le
     let μ := L.sortedPotentialImage
     let ν := offspringFieldLaw μ
     let D := splitCycle R (splitWaitingDisplacement R) G
-    (∫⁻ ω, ⨆ k : Fin K,
-      (if (D k.val ω).2 ∈ success ∧ ∀ j < k.val, (D j ω).2 ∉ success
-        then ENNReal.ofReal (max (Spine.pathPotential realPotential ω (trialGrowthRoot R k.val ω)) 0)
-        else 0) ∂ν) ≤
-      ENNReal.ofReal (((∫ ξ, max (value' ξ 0) 0 ∂μ) / μ.real (splitBy R)) /
-        ν.real (G ⁻¹' success) + K * M) := by
+    ∃ Z : Mark ℕ (Step ℕ ℝ) → ℝ,
+      Integrable Z ν ∧ (∀ ω, 0 ≤ Z ω) ∧
+      (∫ ω, Z ω ∂ν) ≤ ((∫ ξ, max (value' ξ 0) 0 ∂μ) / μ.real (splitBy R)) /
+        ν.real (G ⁻¹' success) + K * M ∧
+      ∀ᵐ ω ∂ν, ∀ k : Fin K, (D k.val ω).2 ∈ success →
+        (∀ j < k.val, (D j ω).2 ∉ success) →
+        Spine.pathPotential realPotential ω (trialGrowthRoot R k.val ω) ≤ Z ω := by
   classical
   intro μ ν D
   let B : Set (ℝ × E) := Prod.snd ⁻¹' success
@@ -438,16 +460,11 @@ lemma lintegral_firstSuccessfulTrial_root_positive_le
       ((∫ ξ, max (value' ξ 0) 0 ∂μ) / μ.real (splitBy R)) / ν.real (G ⁻¹' success) := by
     rw [hZmean]
     exact div_le_div_of_nonneg_right hXpos hprob.le
-  have hpoint : ∀ᵐ ω ∂ν, (⨆ k : Fin K,
-      (if (D k.val ω).2 ∈ success ∧ ∀ j < k.val, (D j ω).2 ∉ success
-        then ENNReal.ofReal (max (Spine.pathPotential realPotential ω (trialGrowthRoot R k.val ω)) 0)
-        else 0)) ≤ ENNReal.ofReal (Z ω + K * M) := by
-    filter_upwards [hmarks] with ω hω
-    apply iSup_le
-    intro k
-    split_ifs with hk
-    swap
-    · exact bot_le
+  have hi : Integrable (fun ω => Z ω + K * M) ν := hZi.add (integrable_const _)
+  refine ⟨fun ω => Z ω + K * M, hi, fun ω => add_nonneg (hpos ω) (by positivity), ?_, ?_⟩
+  · rw [integral_add hZi (integrable_const (K * M)), integral_const, probReal_univ, one_smul]
+    exact add_le_add hZbound le_rfl
+  · filter_upwards [hmarks] with ω hω k hsuccessₖ hprevious
     have hsum : Z ω = ∑ j ∈ Finset.range (k.val + 1), Y (D j ω) := by
       unfold Z
       rw [tsum_eq_sum (s := Finset.range (k.val + 1))]
@@ -456,28 +473,19 @@ lemma lintegral_firstSuccessfulTrial_root_positive_le
         have hj' := Finset.mem_range.mp hj
         have hprefix : ω ∈ geometricFailurePrefix D B j := by
           simp only [geometricFailurePrefix, Set.mem_iInter, Set.mem_preimage, Finset.mem_range]
-          exact fun i hi => hk.2 i (by omega)
+          exact fun i hi => hprevious i (by omega)
         simp [geometricPrefixRewardTerm, hprefix]
       · intro j hj
         have hprefix : ω ∉ geometricFailurePrefix D B j := by
           simp only [geometricFailurePrefix, Set.mem_iInter, Set.mem_preimage, Finset.mem_range]
           intro h
-          exact h k.val (Nat.lt_of_succ_le (Nat.le_of_not_gt (Finset.mem_range.not.mp hj))) hk.1
+          exact h k.val (Nat.lt_of_succ_le (Nat.le_of_not_gt (Finset.mem_range.not.mp hj))) hsuccessₖ
         simp [geometricPrefixRewardTerm, hprefix]
     have hr := (trialPositions_le R G M hM k.val ω hω).2
     have hwaiting : (∑ j ∈ Finset.range (k.val + 1), (D j ω).1) ≤ Z ω := by
       rw [hsum]
       exact Finset.sum_le_sum fun j _ => le_max_left _ _
-    apply ENNReal.ofReal_le_ofReal
-    apply max_le
-    · exact hr.trans (add_le_add hwaiting
-        (mul_le_mul_of_nonneg_right (by exact_mod_cast Nat.succ_le_of_lt k.isLt) hM))
-    · exact add_nonneg (hpos ω) (mul_nonneg (Nat.cast_nonneg K) hM)
-  apply (lintegral_mono_ae hpoint).trans
-  have hi : Integrable (fun ω => Z ω + K * M) ν := hZi.add (integrable_const _)
-  rw [← ofReal_integral_eq_lintegral_ofReal hi
-    (Filter.Eventually.of_forall fun ω => add_nonneg (hpos ω) (by positivity)),
-    integral_add hZi (integrable_const (K * M)), integral_const, probReal_univ, one_smul]
-  exact ENNReal.ofReal_le_ofReal (add_le_add hZbound le_rfl)
+    exact hr.trans (add_le_add hwaiting
+      (mul_le_mul_of_nonneg_right (by exact_mod_cast Nat.succ_le_of_lt k.isLt) hM))
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Completion.Lemmas
