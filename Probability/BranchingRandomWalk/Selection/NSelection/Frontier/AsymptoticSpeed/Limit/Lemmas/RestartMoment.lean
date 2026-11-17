@@ -24,6 +24,8 @@ import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Basic
 
 ## Internal proof declarations
 
+* `firstTwo_positive_eq_slotZero_ae`: on the sorted mark law, the first
+  selected child's positive potential equals the positive part of slot zero.
 * `restartEndpoint_memLp_two_and_eLpNorm_le`: for the first-split selector
   and the bounded growth selector, the real endpoint on the original stopped
   roots is in $L^2$ and satisfies $\|M_H^{\mathrm b}\|_2\le CH$ for $H\ge1$.
@@ -158,11 +160,11 @@ private lemma stoppedPositive_secondMoment
   simp only [Set.univ_inter] at hb
   exact hb.trans (mul_le_of_le_one_left (by positivity) measureReal_le_one)
 
-private lemma firstTwo_positive_memLp
-    (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
-    (hfour : HasLeftmostFourthMoment L) :
+lemma firstTwo_positive_eq_slotZero_ae
+    (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw] :
     let B := firstNBySlotOrder (α := ℕ) (X := ℝ) 2
-    MemLp (firstSelectedSlotPositivePotential B realPotential) 2 L.sortedPotentialImage := by
+    firstSelectedSlotPositivePotential B realPotential =ᵐ[L.sortedPotentialImage]
+      fun ξ => max (value' ξ 0) 0 := by
   intro B
   let μ := L.sortedPotentialImage
   have hordered : μ orderedSteps = 1 := by
@@ -171,25 +173,32 @@ private lemma firstTwo_positive_memLp
       simp [orderedBySteps, Step.IsOrderedBy, realPotential]]
     rw [L.sortedPotentialImage_orderedBy]
     simp
-  have heq : firstSelectedSlotPositivePotential B realPotential =ᵐ[μ]
-      fun ξ => max (value' ξ 0) 0 := by
-    filter_upwards [(ae_mem_iff_measure_eq orderedSteps_measurable.nullMeasurableSet).2
-      (hordered.trans measure_univ.symm)] with ξ hξ
-    have hzero : firstSelectedSlot B ξ = 0 := by
-      by_cases hne : (B ξ).Nonempty
-      · obtain ⟨j, hj⟩ := hne
-        have hspec := firstNBySlotOrder_spec (α := ℕ) (X := ℝ) 2 ξ
-        have hs : survive ξ 0 :=
-          orderedSteps_survive_of_le ξ hξ (Nat.zero_le j) (hspec.subset hj)
-        have hmem : 0 ∈ B ξ := by
-          by_cases hj0 : j = 0
-          · simpa [hj0] using hj
-          · exact hspec.lower j hj 0 hs (Prod.Lex.left _ _ (Nat.pos_of_ne_zero hj0))
-        rw [firstSelectedSlot, dite_eq_left (show (B ξ).Nonempty from ⟨j, hj⟩)]
-        exact Nat.le_zero.mp (Finset.min'_le _ _ hmem)
-      · simp [firstSelectedSlot, hne]
-    simp [firstSelectedSlotPositivePotential, hzero, realPotential, max_comm,
-      Step.potentialValue', Step.potentialAt?, value']
+  filter_upwards [(ae_mem_iff_measure_eq orderedSteps_measurable.nullMeasurableSet).2
+    (hordered.trans measure_univ.symm)] with ξ hξ
+  have hzero : firstSelectedSlot B ξ = 0 := by
+    by_cases hne : (B ξ).Nonempty
+    · obtain ⟨j, hj⟩ := hne
+      have hspec := firstNBySlotOrder_spec (α := ℕ) (X := ℝ) 2 ξ
+      have hs : survive ξ 0 :=
+        orderedSteps_survive_of_le ξ hξ (Nat.zero_le j) (hspec.subset hj)
+      have hmem : 0 ∈ B ξ := by
+        by_cases hj0 : j = 0
+        · simpa [hj0] using hj
+        · exact hspec.lower j hj 0 hs (Prod.Lex.left _ _ (Nat.pos_of_ne_zero hj0))
+      rw [firstSelectedSlot, dite_eq_left (show (B ξ).Nonempty from ⟨j, hj⟩)]
+      exact Nat.le_zero.mp (Finset.min'_le _ _ hmem)
+    · simp [firstSelectedSlot, hne]
+  simp [firstSelectedSlotPositivePotential, hzero, realPotential, max_comm,
+    Step.potentialValue', Step.potentialAt?, value']
+
+private lemma firstTwo_positive_memLp
+    (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
+    (hfour : HasLeftmostFourthMoment L) :
+    let B := firstNBySlotOrder (α := ℕ) (X := ℝ) 2
+    MemLp (firstSelectedSlotPositivePotential B realPotential) 2 L.sortedPotentialImage := by
+  intro B
+  let μ := L.sortedPotentialImage
+  have heq := firstTwo_positive_eq_slotZero_ae L
   have hm : Measurable (fun ξ : Step ℕ ℝ => max (value' ξ 0) 0) :=
     (value'_measurable (0 : ℕ)).max measurable_const
   have hint := square_of_fourthMoment hm.aestronglyMeasurable
