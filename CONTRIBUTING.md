@@ -37,6 +37,17 @@ are all useful contributions.
    [`FORMALIZATION_CHECKLIST.md`](FORMALIZATION_CHECKLIST.md) before describing
    a result as complete.
 
+## Formalizing proofs from references
+
+Follow the mathematical argument of the referenced work. Check that each Lean
+step proves the corresponding claim on the same objects, with the same
+hypotheses and parameter choices. A local correction can repair a bound,
+index, or missing justification while preserving the proof strategy. Record
+the discrepancy and make the local correction in any maintained exposition.
+If a demonstrated error cannot be repaired within that strategy, document the
+obstruction and obtain the maintainer's agreement before adopting a different
+proof.
+
 ## Pull requests
 
 Keep a pull request focused on one mathematical or architectural change.
