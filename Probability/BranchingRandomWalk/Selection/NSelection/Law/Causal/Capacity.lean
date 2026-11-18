@@ -44,7 +44,7 @@ theorem RootIndexed.selectedPopulationCoupling_of_capacity_le_ae
     [Countable (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]
     (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
-    (hnorm : HasBoundaryNormalization realPotential μ)
+    (hleftFinite : ∀ᵐ ξ ∂μ, ξ.IsLeftLocallyFinite)
     (N₁ N₂ : ℕ) (hN₂ : 0 < N₂) (hcapacity : N₁ ≤ N₂)
     (roots₁ roots₂ : Finset Root) (hroots : roots₁.card ≤ N₂)
     (initialPosition : Root → ℝ)
@@ -116,7 +116,8 @@ theorem RootIndexed.selectedPopulationCoupling_of_capacity_le_ae
   obtain ⟨hm, hlaw, hleft, _, hcompare⟩ :=
     RootIndexed.restartedRealPositionComparison_throughOverflow_ae
       μ N₂ hN₂ roots₂ initialPosition
-      (RootIndexed.selectedPopulationTotalized_admissible_ae μ hnorm N₂ roots₂ initialPosition)
+      (RootIndexed.selectedPopulationTotalized_admissible_ae_of_leftLocallyFinite
+        μ hleftFinite N₂ roots₂ initialPosition)
       population finiteSlices hinit
   refine ⟨?_, ?_, hleft, ?_⟩
   · simpa only [hslices] using hm

@@ -95,7 +95,7 @@ theorem RootIndexed.measure_selectedPopulationEndpointAtLeast_le_of_initialEmbed
     [MeasurableSpace (RootIndexed.TreeNode Root α)] [Countable (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]
     (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
-    (hnorm : HasBoundaryNormalization realPotential μ)
+    (hleftFinite : ∀ᵐ ξ ∂μ, ξ.IsLeftLocallyFinite)
     (N : ℕ) (hN : 0 < N) (roots₁ roots₂ : Finset Root) (hsize : roots₁.card ≤ N)
     (initial : Root → ℝ) (matchRoot : Root → Root)
     (hmap : Set.MapsTo matchRoot (↑roots₁ : Set Root) ↑roots₂)
@@ -107,7 +107,7 @@ theorem RootIndexed.measure_selectedPopulationEndpointAtLeast_le_of_initialEmbed
     RootIndexed.stepFieldLaw (Root := Root) μ
       (RootIndexed.selectedPopulationEndpointAtLeast N roots₁ initial H x) := by
   obtain ⟨hm, hright, hleft, hcompare⟩ :=
-    RootIndexed.selectedPopulationCoupling_of_capacity_le_ae μ hnorm
+    RootIndexed.selectedPopulationCoupling_of_capacity_le_ae μ hleftFinite
       N N hN le_rfl roots₁ roots₂ hsize initial matchRoot hmap hinj hpos
   let P := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
   let L : RootIndexed.StepField (Root ⊕ Root) α ℝ → RootIndexed.StepField Root α ℝ :=
@@ -210,7 +210,7 @@ theorem RootIndexed.measure_selectedPopulationEndpointAtLeast_le_of_cloudEmbeddi
     [MeasurableSpace (RootIndexed.TreeNode κ₂ α)] [Countable (RootIndexed.TreeNode κ₂ α)]
     [LinearOrder (RootIndexed.TreeNode κ₁ α)] [LinearOrder (RootIndexed.TreeNode κ₂ α)]
     (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
-    (hnorm : HasBoundaryNormalization realPotential μ)
+    (hleftFinite : ∀ᵐ ξ ∂μ, ξ.IsLeftLocallyFinite)
     (N : ℕ) (hN : 0 < N) (hsize : Fintype.card κ₁ ≤ N)
     (x₁ : κ₁ → ℝ) (x₂ : κ₂ → ℝ) (matchRoot : κ₁ ↪ κ₂)
     (hpos : ∀ i, x₂ (matchRoot i) ≤ x₁ i) (H : ℕ) (x : ℝ) :
@@ -248,7 +248,7 @@ theorem RootIndexed.measure_selectedPopulationEndpointAtLeast_le_of_cloudEmbeddi
       RootIndexed.measure_selectedPopulationEndpointAtLeast_relabel μ Sum.inr Sum.inr_injective hr N initial H x]
   let assign : κ₁ ⊕ κ₂ → κ₁ ⊕ κ₂ := Sum.elim (Sum.inr ∘ matchRoot) Sum.inr
   refine RootIndexed.measure_selectedPopulationEndpointAtLeast_le_of_initialEmbedding
-    μ hnorm N hN _ _ ?_ initial assign ?_ ?_ ?_ H x
+    μ hleftFinite N hN _ _ ?_ initial assign ?_ ?_ ?_ H x
   · simpa [Finset.card_image_of_injective _ Sum.inl_injective] using hsize
   · rintro _ hp
     obtain ⟨i, _, rfl⟩ := Finset.mem_image.mp hp

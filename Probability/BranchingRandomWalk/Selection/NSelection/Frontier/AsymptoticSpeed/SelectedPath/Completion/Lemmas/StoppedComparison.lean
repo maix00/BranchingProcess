@@ -198,7 +198,7 @@ lemma measure_stoppedEndpointAtLeast_le_on_cell
     filter_upwards [ae_restrict_mem hAfull] with ω hω
     obtain ⟨e, he⟩ := hgood ω hω
     exact RootIndexed.measure_selectedPopulationEndpointAtLeast_le_of_cloudEmbedding
-      μ hnorm N hN (by simpa using hm) (fun _ : Fin m => 0) (Y ω) e
+      μ hnorm.ae_isLeftLocallyFinite N hN (by simpa using hm) (fun _ : Fin m => 0) (Y ω) e
       (fun i => sub_nonpos.mpr (he i)) k x
   rw [hcompare, Set.inter_comm, ← Measure.restrict_apply' hAfull,
     ← Measure.map_apply_of_aemeasurable hmeas.aemeasurable hB, hlaw, Measure.prod_apply hB]
@@ -333,7 +333,7 @@ lemma measure_stoppedEndpointAtLeast_le_reset_on_cell
   filter_upwards [ae_restrict_mem (((𝔽).le n) _ hA)] with ω hω
   obtain ⟨e, he⟩ := hgood ω hω
   exact RootIndexed.measure_selectedPopulationEndpointAtLeast_le_of_cloudEmbedding
-    μ hnorm N hN (by simpa using hm) (C ω) (X ω) e he k x
+    μ hnorm.ae_isLeftLocallyFinite N hN (by simpa using hm) (C ω) (X ω) e he k x
 
 lemma measure_stoppedEndpointAtLeast_le_of_remainingHorizon
     {m : ℕ} [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]

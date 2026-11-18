@@ -109,7 +109,7 @@ public theorem RootIndexed.integral_selectedPopulationEndpointWithParameter_le_a
     change P {field | z ≤ RootIndexed.selectedPopulationEndpointWithParameter s N H (x, field)} ≤ _
     rw [measure_endpoint_ge_eq μ hboundary hne N H hN hs x z]
     have hc := RootIndexed.measure_selectedPopulationEndpointAtLeast_le_of_cloudEmbedding μ
-      hboundary N hN (by simpa using hmN) (fun _ => (0 : ℝ) + c) x e (by simpa using hx)
+      hboundary.ae_isLeftLocallyFinite N hN (by simpa using hmN) (fun _ => (0 : ℝ) + c) x e (by simpa using hx)
       H ((z - c) + c)
     rw [RootIndexed.selectedPopulationEndpointAtLeast_add_initial] at hc
     simp only [sub_add_cancel] at hc
