@@ -20,6 +20,11 @@ generation.
 
 ## Public declarations
 
+- `measurable_observedPositionAtGeneration_withInitialPosition` proves joint
+  measurability of the generation position \(x_u\) in the initial vector and field.
+- `measurable_selectedPopulationTotalized_withInitialPosition` proves joint
+  measurability of \(Z_n^N\) from any fixed finite set of initial roots.
+
 - `ProbabilityTheory.BranchingRandomWalk.RootIndexed.selectedPopulationWithParameter`
   maps an initial position vector and root-indexed field to the totalized
   first-$N$ population at generation $n$.
@@ -53,49 +58,48 @@ noncomputable def selectedPopulationWithParameter
       Finset (RootIndexed.TreeNode (Fin m) ℕ) :=
   fun p => RootIndexed.selectedPopulationTotalized N Finset.univ p.1 id id n p.2
 
-private lemma measurable_observedPositionWithParameter
-    (m n : ℕ)
-    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
-    [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
-    (q : RootIndexed.TreeNode (Fin m) ℕ) :
-    Measurable (fun p : (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ =>
+/-- The position observable is jointly measurable in the initial positions and step field. -/
+theorem measurable_observedPositionAtGeneration_withInitialPosition
+    {Root α : Type*} (n : ℕ)
+    (q : RootIndexed.TreeNode Root α) :
+    Measurable (fun p : (Root → ℝ) × RootIndexed.StepField Root α ℝ =>
       RootIndexed.observedPositionAtGeneration p.1 id id n p.2 q) := by
   classical
-  let F := RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)
+  let F := RootIndexed.stepFiltration (Root := Root) (α := α) (X := ℝ)
   by_cases hdepth : q.2.length = n
-  · have hdisp : Measurable (fun field : RootIndexed.StepField (Fin m) ℕ ℝ =>
+  · have hdisp : Measurable (fun field : RootIndexed.StepField Root α ℝ =>
         Combinatorics.Branching.displaceWith (fun x : ℝ => x)
           (field q.1) [] q.2) := by
       have h := RootIndexed.displace_measurable (fun x : ℝ => x) measurable_id
         q.1 [] q.2 n (by simp [hdepth])
       exact h.mono (F.le n) le_rfl
     have hdisp' : Measurable (fun p :
-        (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ =>
+        (Root → ℝ) × RootIndexed.StepField Root α ℝ =>
           Combinatorics.Branching.displaceWith (fun x : ℝ => x)
             (p.2 q.1) [] q.2) := hdisp.comp measurable_snd
     have hinitial : Measurable (fun p :
-        (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ => p.1 q.1) :=
+        (Root → ℝ) × RootIndexed.StepField Root α ℝ => p.1 q.1) :=
       (measurable_pi_apply q.1).comp measurable_fst
     change Measurable (fun p :
-      (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ =>
+      (Root → ℝ) × RootIndexed.StepField Root α ℝ =>
       RootIndexed.positionAtGeneration p.1 id n q.1 q.2 p.2)
     simp only [RootIndexed.positionAtGeneration, hdepth, ite_eq_left,
       RootIndexed.position]
     exact hinitial.add hdisp'
   · change Measurable (fun p :
-      (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ =>
+      (Root → ℝ) × RootIndexed.StepField Root α ℝ =>
       RootIndexed.positionAtGeneration p.1 id n q.1 q.2 p.2)
     simp [RootIndexed.positionAtGeneration, hdepth]
 
 private lemma measurable_childrenAtGenerationWithParameter
-    (m n : ℕ)
-    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
-    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
-    [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
-    (parents : ((Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ) →
-      Finset (RootIndexed.TreeNode (Fin m) ℕ))
+    {Root α : Type*} (n : ℕ)
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    [Countable (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)]
+    (parents : ((Root → ℝ) × RootIndexed.StepField Root α ℝ) →
+      Finset (RootIndexed.TreeNode Root α))
     (hparents : Measurable parents) :
-    Measurable (fun p : (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ =>
+    Measurable (fun p : (Root → ℝ) × RootIndexed.StepField Root α ℝ =>
       Combinatorics.Branching.Population.childrenAtGeneration n (parents p) p.2) := by
   classical
   rw [measurable_set_iff]
@@ -108,77 +112,88 @@ private lemma measurable_childrenAtGenerationWithParameter
     have hlast : q.2.getLast? = some j :=
       List.getLast?_eq_some_getLast hnonempty
     have hparent : Measurable (fun p :
-        (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ =>
+        (Root → ℝ) × RootIndexed.StepField Root α ℝ =>
           RootIndexed.parent q ∈ parents p) :=
       (measurable_finset_mem (RootIndexed.parent q)).comp hparents
     have hmark : Measurable (fun p :
-        (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ =>
+        (Root → ℝ) × RootIndexed.StepField Root α ℝ =>
           p.2 (RootIndexed.parent q).1 (RootIndexed.parent q).2) :=
       (measurable_pi_apply (RootIndexed.parent q).2).comp
         ((measurable_pi_apply (RootIndexed.parent q).1).comp measurable_snd)
     have hsurvive : MeasurableSet {p :
-        (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ |
+        (Root → ℝ) × RootIndexed.StepField Root α ℝ |
           survive (p.2 (RootIndexed.parent q).1 (RootIndexed.parent q).2) j} :=
       (survive_measurableSet j).preimage hmark
     change Measurable (fun p :
-        (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ =>
+        (Root → ℝ) × RootIndexed.StepField Root α ℝ =>
           q ∈ Combinatorics.Branching.Population.childrenAtGeneration n (parents p) p.2)
     simp only [Combinatorics.Branching.Population.childrenAtGeneration, Set.mem_ofPred_eq, hdepth, hlast]
     simp only [true_and]
     exact hparent.and (measurableSet_setOfPred.mp hsurvive)
   · change Measurable (fun p :
-      (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ =>
+      (Root → ℝ) × RootIndexed.StepField Root α ℝ =>
         q ∈ Combinatorics.Branching.Population.childrenAtGeneration n (parents p) p.2)
     simp [Combinatorics.Branching.Population.childrenAtGeneration, Set.mem_ofPred_eq, hdepth]
 
 /-- The totalized selected population is measurable jointly in its initial
 position vector and the pre-sampled field, at every finite generation. -/
+theorem measurable_selectedPopulationTotalized_withInitialPosition
+    {Root α : Type*} (N : ℕ) (roots : Finset Root)
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    [Countable (RootIndexed.TreeNode Root α)]
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    [treeOrder : LinearOrder (RootIndexed.TreeNode Root α)] :
+    ∀ n, Measurable (fun sample : (Root → ℝ) × RootIndexed.StepField Root α ℝ =>
+      RootIndexed.selectedPopulationTotalized N roots sample.1 id id n sample.2) := by
+  letI : LinearOrder (RootIndexed.TreeNode Root α) := treeOrder
+  letI : Preorder (RootIndexed.TreeNode Root α) := treeOrder.toPreorder
+  intro n
+  induction n with
+  | zero => exact measurable_const
+  | succ n ih =>
+      let parents := fun sample : (Root → ℝ) × RootIndexed.StepField Root α ℝ =>
+        RootIndexed.selectedPopulationTotalized N roots sample.1 id id n sample.2
+      have hchildren := measurable_childrenAtGenerationWithParameter
+        n parents ih
+      let value : ((Root → ℝ) × RootIndexed.StepField Root α ℝ) →
+          RootIndexed.TreeNode Root α → ℝ := fun p =>
+        RootIndexed.observedPositionAtGeneration p.1 id id (n + 1) p.2
+      have hvalue (q : RootIndexed.TreeNode Root α) :
+          Measurable (fun p : (Root → ℝ) × RootIndexed.StepField Root α ℝ =>
+            value p q) := by
+        simpa [value] using measurable_observedPositionAtGeneration_withInitialPosition (n + 1) q
+      have hkey (p q : RootIndexed.TreeNode Root α) : Measurable
+          (fun x : (Root → ℝ) × RootIndexed.StepField Root α ℝ =>
+            valueKey (value x) q < valueKey (value x) p) := by
+        exact @Combinatorics.Selection.NSelection.measurable_valueKey_lt
+          ((Root → ℝ) × RootIndexed.StepField Root α ℝ)
+          (RootIndexed.TreeNode Root α) ℝ _ _ _ _ _ _ _ _ treeOrder
+          value hvalue p q
+      have hselected :=
+        @Combinatorics.Selection.NSelection.measurable_selectFirstNFromSetTotalized
+        ((Root → ℝ) × RootIndexed.StepField Root α ℝ)
+        (RootIndexed.TreeNode Root α) ℝ inferInstance inferInstance
+        treeOrder inferInstance N value
+        (fun x => Combinatorics.Branching.Population.childrenAtGeneration n (parents x) x.2)
+        hchildren hkey
+      change Measurable (fun p :
+        (Root → ℝ) × RootIndexed.StepField Root α ℝ =>
+        Combinatorics.Selection.NSelection.selectFirstNFromSetTotalized N
+          (fun p => RootIndexed.observedPositionAtGeneration p.1 id id
+            (n + 1) p.2)
+          (fun p => Combinatorics.Branching.Population.childrenAtGeneration n
+            (RootIndexed.selectedPopulationTotalized N roots
+              p.1 id id n p.2) p.2) p)
+      exact hselected
+
 theorem measurable_selectedPopulationWithParameter
     (m N : ℕ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
     [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
-    [treeOrder : LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
-    ∀ n, Measurable (selectedPopulationWithParameter m N n) := by
-  letI : LinearOrder (RootIndexed.TreeNode (Fin m) ℕ) := treeOrder
-  letI : Preorder (RootIndexed.TreeNode (Fin m) ℕ) := treeOrder.toPreorder
-  intro n
-  induction n with
-  | zero => exact measurable_const
-  | succ n ih =>
-      let parents := selectedPopulationWithParameter m N n
-      have hchildren := measurable_childrenAtGenerationWithParameter
-        m n parents ih
-      let value : ((Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ) →
-          RootIndexed.TreeNode (Fin m) ℕ → ℝ := fun p =>
-        RootIndexed.observedPositionAtGeneration p.1 id id (n + 1) p.2
-      have hvalue (q : RootIndexed.TreeNode (Fin m) ℕ) :
-          Measurable (fun p : (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ =>
-            value p q) := by
-        simpa [value] using measurable_observedPositionWithParameter m (n + 1) q
-      have hkey (p q : RootIndexed.TreeNode (Fin m) ℕ) : Measurable
-          (fun x : (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ =>
-            valueKey (value x) q < valueKey (value x) p) := by
-        exact @Combinatorics.Selection.NSelection.measurable_valueKey_lt
-          ((Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ)
-          (RootIndexed.TreeNode (Fin m) ℕ) ℝ _ _ _ _ _ _ _ _ treeOrder
-          value hvalue p q
-      have hselected :=
-        @Combinatorics.Selection.NSelection.measurable_selectFirstNFromSetTotalized
-        ((Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ)
-        (RootIndexed.TreeNode (Fin m) ℕ) ℝ inferInstance inferInstance
-        treeOrder inferInstance N value
-        (fun x => Combinatorics.Branching.Population.childrenAtGeneration n (parents x) x.2)
-        hchildren hkey
-      change Measurable (fun p :
-        (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ =>
-        Combinatorics.Selection.NSelection.selectFirstNFromSetTotalized N
-          (fun p => RootIndexed.observedPositionAtGeneration p.1 id id
-            (n + 1) p.2)
-          (fun p => Combinatorics.Branching.Population.childrenAtGeneration n
-            (RootIndexed.selectedPopulationTotalized N Finset.univ
-              p.1 id id n p.2) p.2) p)
-      exact hselected
+    [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)] :
+    ∀ n, Measurable (selectedPopulationWithParameter m N n) :=
+  measurable_selectedPopulationTotalized_withInitialPosition N Finset.univ
 
 /-- The leftmost position in a totalized selected population, set to zero
 when the selected set is empty. This endpoint is measurable jointly in the
@@ -212,7 +227,7 @@ theorem measurable_selectedPopulationEndpointWithParameter
   have hvalue (q : RootIndexed.TreeNode (Fin m) ℕ) :
       Measurable (fun p : (Fin m → ℝ) × RootIndexed.StepField (Fin m) ℕ ℝ =>
         value p q) := by
-    simpa [value] using measurable_observedPositionWithParameter m n q
+    simpa [value] using measurable_observedPositionAtGeneration_withInitialPosition n q
   apply measurable_of_Iic
   intro x
   have hbelow : {p | selectedPopulationEndpointWithParameter m N n p ≤ x} =

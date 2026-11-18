@@ -27,20 +27,20 @@ open Combinatorics.UlamHarris Combinatorics.Branching
 open _root_.Combinatorics.Selection.NSelection
 open ProbabilityTheory.BranchingRandomWalk.Coupling
 
-/-- For a real-valued offspring law with boundary normalization, the
-rank-installed first-`N` population satisfies the first-`N` specification
-almost surely. Consequently the restarted selected-population injection is
-available almost surely on the capacity event. Raw fields with infinitely many
-low-position children are handled by the totalized selector and lie in the
-null exceptional set supplied by `Admissible.Real`. -/
+/-- Lower finiteness on the original field transfers to the installed field,
+which has the same law. -/
 lemma installedFirstN_spec_ae
     {Root α : Type*} [Countable α]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
     [Countable (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]
     (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
-    (hnorm : HasBoundaryNormalization realPotential μ)
     (N : ℕ) (roots : Finset Root) (initialPosition : Root → ℝ)
+    (admissible : ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) μ, ∀ k,
+      IsLowerFiniteBy
+        (RootIndexed.observedPositionAtGeneration initialPosition id id (k + 1) field)
+        (Combinatorics.Branching.Population.childrenAtGeneration k
+          (RootIndexed.selectedPopulationTotalized N roots initialPosition id id k field) field))
     (selectedBRWPopulation : RootIndexed.CausalPopulation
       (RootIndexed.StepField (Root ⊕ Root) α ℝ) Root α ℝ
       (RootIndexed.stepFiltration
@@ -62,8 +62,15 @@ lemma installedFirstN_spec_ae
           (k + 1) (RootIndexed.restartedRealPositionNSelectedBRWField N roots
             initialPosition id (hselectedBRWPopulationFiniteSlices.toFinset) (k + 1) field)) := by
   let P := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
-  have hspec := RootIndexed.selectedPopulationTotalized_succ_spec_ae
-    μ hnorm N roots initialPosition
+  have hspec : ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) μ, ∀ k,
+      IsFirstNBy N
+        (RootIndexed.observedPositionAtGeneration initialPosition id id (k + 1) field)
+        (Combinatorics.Branching.Population.childrenAtGeneration k
+          (RootIndexed.selectedPopulationTotalized N roots initialPosition id id k field) field)
+        (RootIndexed.selectedPopulationTotalized N roots initialPosition id id (k + 1) field) := by
+    filter_upwards [admissible] with field hfield
+    exact fun k => RootIndexed.selectedPopulationTotalized_succ_spec
+      N roots initialPosition id id k field (hfield k)
   apply ae_all_iff.2
   intro k
   let nSelectedBRWField := RootIndexed.restartedRealPositionNSelectedBRWField N roots

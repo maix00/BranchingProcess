@@ -284,7 +284,9 @@ theorem Coupling.selectedToNSelectedBRWInjection_ae
       ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Population.leftBRWFamily_initialInjection R growth hR hgrowth
         cap duration r N initialPosition field
   have hgeneric := RootIndexed.restartedRealPositionCoupledInjection_ae
-    μ hnorm N {r} initialPosition ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Population.family hrestartedPopulation hinitial n
+    μ N {r} initialPosition
+    (RootIndexed.selectedPopulationTotalized_admissible_ae μ hnorm N {r} initialPosition)
+    ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.Population.family hrestartedPopulation hinitial n
   filter_upwards [hgeneric] with field hgood
   have hcapacity' : ∀ k < n, (hrestartedPopulation.toFinset (k + 1) field).card ≤ N := by
     intro k hk

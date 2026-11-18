@@ -115,7 +115,9 @@ theorem RootIndexed.selectedPopulationCoupling_of_capacity_le_ae
       simpa [RootIndexed.position] using horder r hr
   obtain ⟨hm, hlaw, hleft, _, hcompare⟩ :=
     RootIndexed.restartedRealPositionComparison_throughOverflow_ae
-      μ hnorm N₂ hN₂ roots₂ initialPosition population finiteSlices hinit
+      μ N₂ hN₂ roots₂ initialPosition
+      (RootIndexed.selectedPopulationTotalized_admissible_ae μ hnorm N₂ roots₂ initialPosition)
+      population finiteSlices hinit
   refine ⟨?_, ?_, hleft, ?_⟩
   · simpa only [hslices] using hm
   · simpa only [hslices] using hlaw

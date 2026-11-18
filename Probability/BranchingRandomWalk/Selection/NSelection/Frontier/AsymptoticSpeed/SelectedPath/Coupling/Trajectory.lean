@@ -67,8 +67,9 @@ theorem Coupling.selectedToNSelectedBRWTrajectory_ae
   dsimp only
   have hN : 0 < N := by omega
   obtain ⟨hm, hlaw, _, _, hcomp⟩ :=
-    RootIndexed.restartedRealPositionComparison_throughOverflow_ae μ hnorm N hN {r}
-      initialPosition (Population.leftBRWFamily R growth hR hgrowth cap duration r)
+    RootIndexed.restartedRealPositionComparison_throughOverflow_ae μ N hN {r} initialPosition
+      (RootIndexed.selectedPopulationTotalized_admissible_ae μ hnorm N {r} initialPosition)
+      (Population.leftBRWFamily R growth hR hgrowth cap duration r)
       (Population.leftBRWFamily_finiteSlices R growth hR hgrowth cap duration r)
       (Population.leftBRWFamily_initialInjection R growth hR hgrowth cap duration r N initialPosition)
   refine ⟨hm, hlaw, ?_⟩
