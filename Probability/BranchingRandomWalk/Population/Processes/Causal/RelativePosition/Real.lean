@@ -22,8 +22,8 @@ import Combinatorics.UlamHarris.Relation
   constructs a real-valued restarted population when the negative-exponential
   offspring weight is finite at every parent.
 - `RootIndexed.CausalPopulation.ofRestartedRealPositionSets`: a total
-  construction that kills children at parents with infinite negative-exponential
-  weight; it has finite slices for countable child labels.
+  construction that selects the empty set of children at a parent with infinite
+  negative-exponential weight; it has finite slices for countable child labels.
 - `ofRestartedRealPositionSets_finiteSlices`: each generation of that total
   construction is finite.
 - `mem_ofRestartedRealPositionSets_window` and

@@ -87,7 +87,7 @@ and remaining-work statement is in the final section of this file.
 | `Probability/Process/RandomWalk/Fluctuation/SparreAndersen` | Reusable finite IID fluctuation identities and survival estimates | `Rotation/` contains the cyclic cover and probability inequality; `Composition/` contains the probability identities and endpoint expansions; `Combinatorics/Sequence/CyclicGap/` owns the generic cyclic-gap data and weighted composition reindexing, with its inverse proof under `Lemmas/`. `Survival/` contains the coefficient recurrence and finite-variance lower bound; their one-use proof chains are under `Survival/Lemmas/`. |
 | `Probability/Process/RandomWalk/Rademacher` | Results for the simple symmetric random walk | `Basic.lean`, `ConditionedPathLaw.lean`, and `LastSignChange.lean` are peer interfaces for the walk, its conditioned path law, and its last-sign-change index; `FiniteInterval/` owns the killed finite-interval model and its lattice path/range coordinates. `FiniteInterval/Range/Probability.lean` gives the finite-time oscillation-to-interval-survival bounds, and `FiniteInterval/Range/Corridor/Survival.lean` gives the rounded-corridor path and spectral estimates. `FiniteInterval/Spectral/Survival/Asymptotics/` groups variable-width survival log limits for arbitrary interior starts and centered tubes. `Terminal/` groups the terminal-path construction and convergence steps. Generic centered-lattice rounding used by these variable-scale results is owned by `Analysis/Asymptotics/Scale/CenteredInterval.lean`. |
 | `BranchingRandomWalk/Selection/NSelection/AsymptoticSpeed/InitialPopulation` | Initial-population inputs to selected-walk speed estimates | `Basic.lean` gives repeated split events and transfers the exact-$N$ speed to an initial position vector. `Trajectory/Population.lean` defines the selected population; `Trajectory/Hitting.lean` is the capacity-hitting entry theorem; `Trajectory/Basic.lean` identifies the re-rooted subtree population and field after the hit; `Trajectory/RunBridge.lean` compares that trajectory with the ranked-batch recursion. `Field/{Fresh,Independence}.lean` give the stopped descendant-field law and its factorization from hit positions; `Speed/Transport.lean` transfers the speed to a random initial-position law. The one-use split-mark and growth arguments remain in `Trajectory/Lemmas/CapacityHit/`. |
-| `Selection/NSelection/EndpointDeviation` | Endpoint deviations of the selected population, including estimates that admit reflection | `Endpoint/` separates minimum, positive-moment, and sequence results. `Endpoint/Minimum/Basic.lean` owns the totalized endpoint-minimum observable and its measurability; `Address.lean` owns the canonical measurable minimizing address, also consumed by the initial-population trajectory theorem; `CountableRoots.lean` exposes the countable-root observable and its pushforward-law identity. Sublevel, integral, and centered-moment equalities follow from that law identity and are obtained from the generic measure-preserving interface at their use sites. The one-use predictable-lineage and fourth-moment argument is grouped under `Endpoint/Minimum/Lemmas/Lineage.lean`. `Roots/Monotonicity.lean` is the nested-root probability entry; its one-use event-transfer argument is a private lemma in that file. `Drawdown/` and `Rate/` group population/spine drawdown bounds and rate budgets. The reusable measurable, measure-preserving prefix restriction of root-indexed product laws belongs to `Genealogy/RootIndexed/Law/FiniteRestriction.lean`. `FirstStage/Cutoff.lean` owns the logarithmic cutoff and its scale laws; the first-stage tilted-corridor specialization used only by the PZ chain is in `FirstStage/Lemmas/CorridorLowerBound.lean`. `FirstStage/LowCountPower.lean` states the low-count estimate, while its one-use corridor budget and PZ rate assembly are under `FirstStage/Lemmas/`. `Population/RestartedWindow.lean` defines the drift and windows for the restarted two-stage population and proves their local measurability and upper-bound facts. `Drawdown/Spine/` now contains the drawdown-dependent capacity and failure estimates with their internal reductions under `Lemmas/`. `FirstStage/` and `SecondStage/` name proof stages directly instead of encoding the positive exponent parameter in a folder name; `Population/` identifies the killed-population construction, without imposing a right-hand orientation. |
+| `Selection/NSelection/EndpointDeviation` | Endpoint deviations of the selected population, including estimates that admit reflection | `Endpoint/` separates minimum, positive-moment, and sequence results. `Endpoint/Minimum/Basic.lean` owns the totalized endpoint-minimum observable and its measurability; `Address.lean` owns the canonical measurable minimizing address, also consumed by the initial-population trajectory theorem; `CountableRoots.lean` exposes the countable-root observable and its pushforward-law identity. Sublevel, integral, and centered-moment equalities follow from that law identity and are obtained from the generic measure-preserving interface at their use sites. The one-use predictable-lineage and fourth-moment argument is grouped under `Endpoint/Minimum/Lemmas/Lineage.lean`. `Roots/Monotonicity.lean` is the nested-root probability entry; its one-use event-transfer argument is a private lemma in that file. `Drawdown/` and `Rate/` group population/spine drawdown bounds and rate budgets. The reusable measurable, measure-preserving prefix restriction of root-indexed product laws belongs to `Genealogy/RootIndexed/Law/FiniteRestriction.lean`. `FirstStage/Cutoff.lean` owns the logarithmic cutoff and its scale laws; the first-stage tilted-corridor specialization used only by the PZ chain is in `FirstStage/Lemmas/CorridorLowerBound.lean`. `FirstStage/LowCountPower.lean` states the low-count estimate, while its one-use corridor budget and PZ rate assembly are under `FirstStage/Lemmas/`. `Population/RestartedWindow.lean` defines the drift and windows for the restarted two-stage population and proves their local measurability and upper-bound facts. `Drawdown/Spine/` now contains the drawdown-dependent capacity and failure estimates with their internal reductions under `Lemmas/`. `FirstStage/` and `SecondStage/` name proof stages directly instead of encoding the positive exponent parameter in a folder name; `Population/` identifies the selected-population construction, without imposing a right-hand orientation. |
 | `Selection/NSelection/AsymptoticSpeed` | Speed-limit statements and the selected-population speed proof | `Limit/` groups the almost-sure product and subadditive limit results; `Selection/PopulationBatch.lean` owns the ranked-batch field law, while `Selection/FixedOffspring.lean` and `Selection/InfiniteOffspring/` own the model-specific ranked transitions and arrays. The generic IID block comparison is in `Probability/Sequence/IID/Blocks/SpeedComparison.lean`. `InitialPopulation/Basic.lean` is the entry module for the initial-population argument; `Field/`, `Trajectory/`, and `Speed/Transport.lean` group its field, hitting-time, and speed-transfer interfaces. Generic finite-ranking and candidate-bijection facts live with the N-selection mechanism. `Environment/` and `Selection/` hold the remaining supporting constructions. |
 | `Selection/NSelection/Law` | Product-law preservation and pathwise coupling for the ranked first-`N` population | `SelectedPopulation.lean` is the concrete product-law entry; `Causal/` gives generic causal-source, finite step-selection, nested-root, and restarted-source consequences. The restarted source and matched target are in `Causal/Restarted/Basic.lean`, its product-law coupling and almost-sure injection results are in `Coupling.lean`, and the one-use finite-stage induction is isolated in `Lemmas/Coupling.lean`. These conclusions use the branching step-field law, generation filtration, and offspring geometry, so the family remains in `Probability/BranchingRandomWalk/`. |
 | `Mogulskii/Stable/Discrete` | Discrete random-walk small-deviation and endpoint results in the stable-domain route | `Bridge/`, `Endpoint/`, `Partition/`, `PathClass/`, and `TerminalLeft/` separate the endpoint conventions and probability tasks; `FromIncrementLaw/{Normal,Path,Stable}/` expose the corresponding results from raw increment-law assumptions. `PathClass/{Rate,Regimes,InnerOuter}.lean` are peer theorem interfaces for the discrete M₂-to-M₃/M transfer, its stable-index regimes, and the common inner/outer rate; they are complete results, so they do not belong under `Lemmas/`. Their one-use discrete partition-limit dependency remains an ordinary import. `EscapeRateLowerBound.lean` exposes the complete transfer from a stable-process escape rate to a discrete horizontal-tube lower bound. Its one-use real-log positivity consequence is under `Lemmas/EscapeRateTubeLower.lean`; the reserved-terminal-bridge block-count specialization is under `Lemmas/Partition/BalancedCoreCount.lean`, while generic quotient estimates remain at `Analysis/Asymptotics/Scale/Block/Count.lean`. Within `Partition/`, `Lower/` contains the endpoint-core lower-rate proof, while `Upper.lean`, `EnergyUpper.lean`, and `Limit.lean` own the matching upper and limit statements. The generic clipped source-grid and selected-cell APIs live under `RandomWalk/Path/Skorokhod/TerminalLeft/Partition/`; theorem-specific lower assembly remains under `Mogulskii/Lemmas/TerminalLeft/Partition/`. Stable scale normalization and block counts stay under `Mogulskii/Stable/Scale/`. The terminal-left path encoding and continuous-boundary measurability API live under `RandomWalk/Path/Skorokhod/TerminalLeft/`. |
@@ -1040,7 +1040,7 @@ their process law and scaling assumptions belong.
 The proof family had been grouped in a directory named after its parameter
 condition rather than the mathematics in the files. It now lives under
 `EndpointDeviation/FirstStage/`: the entry proves an
-exponential low-count bound for the first-stage killed population, and its
+exponential low-count bound for the first-stage selected population, and its
 first-stage cutoff itself does not depend on that exponent, so its definition
 and scale-property declarations now use the semantic name
 `positiveAFirstStageCutoff`.
@@ -1910,7 +1910,7 @@ The second-stage affine-corridor estimate is organized by semantic role:
 finite-variance affine-corridor composition; its moving-entrance and
 endpoint-corridor inputs remain in the random-walk small-deviation modules.
 `TubeParameters.lean` owns the reusable $D^{1/3}$ width and $D^{-2/3}$ slope,
-and `SurvivalEmbedding.lean` owns the killed-population construction and its
+and `SurvivalEmbedding.lean` owns the selected-population construction and its
 rank-root success interface. The five one-use proof stages are grouped under
 `SecondStage/Lemmas/`: `Bridge.lean` multiplies the entrance and bridge block
 probabilities and proves their deterministic splice,
@@ -5618,7 +5618,7 @@ proves the event splice from the moving entrance block and downward bridge;
 it obtains probability multiplication from the general IID prefix/next-block
 factorization in `Probability/Sequence/IID/Blocks/Prefix.lean`. The scalar
 splice itself is specific to the affine corridor. `Embedding.lean` applies
-the general subtree-potential identity to the restarted killed population's
+the general subtree-potential identity to the restarted selected population's
 second-stage event. `Parameterization.lean` chooses the entrance and bridge
 scales, then calls the general finite-variance affine-corridor lower bound;
 its remaining-length and power identities are local scale calculations.
@@ -5643,7 +5643,7 @@ its `Roots/Fresh` client also rebuild successfully (4,744 jobs).
 theorem. The exponential all-avoid estimate
 `eventually_measure_secondStageEnoughRoots_allAvoid_le` is a
 specialization of the predictable-root estimate to the first-`K` roots of
-this particular killed population, and its only caller is
+this particular selected population, and its only caller is
 `SecondStage/Failure/Bound.lean`. It therefore moved to
 `SecondStage/Roots/Lemmas/AllAvoid.lean` as a `lemma`; the direct caller uses
 `import all`. The population module no longer reexports the fresh-root module
@@ -5657,7 +5657,7 @@ The two terminal-failure decomposition statements are used only by the
 quantitative bound, so they now live as ordinary lemmas in
 `SecondStage/Failure/Lemmas/Decomposition.lean`; `Failure/Bound.lean` consumes
 them with `import all`. The bound module imports the semantic interfaces it
-mentions directly. This keeps the public surface at the killed-population
+mentions directly. This keeps the public surface at the selected-population
 entry and its quantitative estimate, with the one-use event decomposition
 inside the proof layer.
 
@@ -6287,7 +6287,7 @@ affected Lean files and this audit record.
 
 The `EndpointDeviation/Population/` directory contains two complete
 population-level results: `Embedding.lean` transfers a successful root path
-to the restarted killed population and proves the pathwise and almost-sure
+to the restarted selected population and proves the pathwise and almost-sure
 cardinality inequalities; `LowCount.lean` transfers a one-root
 Paley--Zygmund estimate to an exponentially small population low-count
 probability for any supplied drawdown bounds. Both statements have hypotheses
@@ -7961,13 +7961,13 @@ the public failure-bound statement. They now live together in
 parameters. `Roots/Population.lean` owns the restarted field and population
 types together with the finite-slice threshold event; `Roots/Selection.lean`
 owns the predictable root constructor and its measurable, injective-family
-interface. The public killed population and its finite-slice theorem now live
+interface. The public selected population and its finite-slice theorem now live
 at `SecondStage/Population.lean`; the one-use pathwise success implication is
 in `SecondStage/Lemmas/Population/Transfer.lean` and is imported by the failure
 decomposition rather than re-exported as an entry theorem.
 
 The estimate for an arbitrary measurable, injective family of same-generation
-roots and its specialization to the finite killed-population threshold form
+roots and its specialization to the finite selected-population threshold form
 one proof chain. They are grouped in
 `EndpointDeviation/SecondStage/Roots/Lemmas/AllAvoid.lean`; the former
 standalone `PredictableFailure.lean` support file was removed. This keeps the
@@ -23723,7 +23723,7 @@ walk, which adds offspring sets and generation populations, stays in
 ``Combinatorics/BranchingWalk/Selection/`NSelection/Walk/`. This split keeps the
 operator at its reusable level and the process semantics with BranchingWalk.
 
-The converse between restarted path windows and killed-population membership
+The converse between restarted path windows and selected-population membership
 is a general causal-population fact, so
 `mem_ofRestartedRealPositionSets_of_path` now lives beside the forward
 implication in `Probability/BranchingRandomWalk/Population/Processes/Causal/Path/Window.lean`.
@@ -24522,7 +24522,7 @@ progress.
 
 The 15 modules under `EndpointDeviation/SecondStage/` now have a semantic
 owner audit. `TubeParameters.lean`, `Tube.lean`, and `Population.lean` define
-the second-stage scales, corridor/failure/PZ objects, and killed population.
+the second-stage scales, corridor/failure/PZ objects, and selected population.
 `Roots/Population.lean` defines the restarted field and threshold event;
 `Roots/Selection.lean` owns the predictable rank-root family; and
 `Roots/CountLowerBound.lean` gives the first-stage enough-roots probability
@@ -24847,7 +24847,7 @@ local slot selector at each parent. The former therefore remains a separate
 process-level abstraction under `Probability/BranchingRandomWalk/Population/Processes/Causal/`.
 Its `Capacity/`, `Path/`, and `RelativePosition/` subdirectories each hold a
 coherent family: finite-horizon overflow estimates, ancestral path bounds and
-window identities, and relative-position killed populations with finiteness
+window identities, and relative-position selected populations with finiteness
 and real-weight specializations. These are complete interfaces and estimates,
 so the group does not need a `Lemmas/` directory. The reviewed files were
 already recorded as Lake-build passing; no source changes were required. The
@@ -25872,9 +25872,9 @@ Lake builds recorded in the ledger.
 The ledger now records 982 reviewed and 647 pending production modules out of
 1,629.
 
-## First-stage, killed-population, and root-event review (2026-10-31)
+## First-stage, selected-population, and root-event review (2026-10-31)
 
-Reviewed the first-stage cutoff and low-count modules, the killed-population
+Reviewed the first-stage cutoff and low-count modules, the selected-population
 embedding and restarted-window modules, and the endpoint root-event modules.
 `FirstStage/Cutoff.lean` defines the scale used by both the first-stage bound
 and the drawdown estimates. `FirstStage/LowCountPower.lean` is the public
@@ -25885,7 +25885,7 @@ proof-chain clients import them with `import all`.
 
 `Population/RestartedWindow.lean` is shared by first-stage, second-stage, and
 drawdown estimates, so its window schedule belongs at the population subject
-level. `Population/LowCount.lean` exposes the killed-population count estimate;
+level. `Population/LowCount.lean` exposes the selected-population count estimate;
 its corridor-success embedding has only this proof-chain client and remains in
 `Population/Lemmas/`. `Roots/Monotonicity.lean` owns the measurable
 endpoint-below event and root-set monotonicity, while `Roots/Nonempty.lean`
