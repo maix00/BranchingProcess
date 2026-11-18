@@ -46,7 +46,7 @@ the same offspring law; no reflected-law or symmetry assumption is intended.
 
 | Package | Status after audit | Deliverable and owner |
 |---|---|---|
-| API0: model and assumption boundary | **Ownership audit mostly clear; final theorem API open** | General/random mechanisms stay in `Selection/`; deterministic first-`N` results stay in `Selection/NSelection/`; generic killed causal populations stay in `Population/Processes/Causal/`. Keep `Potential` and separate assumption predicates. The final adapters must expose the assumptions of Wang Yiyang's Theorems 1.1–1.3 flatly. Formulate the right-oriented result through `OrderDual` using the same law's right-side conditions; when the corresponding left and right condition families hold, derive both conclusions. No offspring-law reflection symmetry is assumed. |
+| API0: model and assumption boundary | **Ownership audit mostly clear; final theorem API open** | General/random mechanisms stay in `Selection/`; deterministic first-`N` results stay in `Selection/NSelection/`; generic causally selected populations stay in `Population/Processes/Causal/`. Keep `Potential` and separate assumption predicates. The final adapters must expose the assumptions of Wang Yiyang's Theorems 1.1–1.3 flatly. Formulate the right-oriented result through `OrderDual` using the same law's right-side conditions; when the corresponding left and right condition families hold, derive both conclusions. No offspring-law reflection symmetry is assumed. |
 | T11-positive-a: positive-start endpoint estimate, `0 < a < 1` | **Polynomial upper tail and `L²` convergence proved** | `Endpoint/Sequence/PositiveInitialExponent.lean` combines the capacity bound in `SecondStage/Capacity/Bound.lean` and terminal survival in `SecondStage/Failure/Critical.lean` using the fixed-horizon coupling in `SecondStage/Lemmas/Population/Embedding.lean`. The two stages follow Wang Yiyang, Chapter 4, proof of Theorem 1.1, with Lemma 3.7 for the critical corridor. `Endpoint/Sequence/L2Limit.lean` gives convergence with the raw-law cross-weight condition, transported by `StepLaw.sortedPotentialImage_hasFiniteCrossWeight`. The endpoint law starts from exactly $\lfloor N_n^a\rfloor$ roots and allows any horizon $H_n/(\log N_n)^3\to t>0$. |
 | T11-a-one: endpoint `a = 1` | **\(L^2\) convergence proved** | `Roots/Monotonicity.lean` identifies the finite-root endpoint law with the endpoint law for the first roots in a common forest. The nested-root coupling compares the sublevel probabilities. `Endpoint/Sequence/L2Limit.lean` chooses $b<1$ close to $1$ and transfers the positive-exponent upper tail to the full-capacity start as in Wang Yiyang, Chapter 4, Theorem 1.1. |
 | T11-a-zero: zero-start endpoint estimate | **Polynomial upper tail and $L^2$ convergence proved** | `SelectedPath/Completion/Lemmas/EntranceProbability.lean` chooses the logarithmic trial count, growth duration and clock window together and bounds $\mathbb P(G_N^c)$ by a negative power of $N$. `Population/Processes/Selected/Continuation.lean` and `Law/Causal/Restarted/Continuation.lean` identify the actual stopped continuation and its product law. `SelectedPath/Completion/Lemmas/StoppedComparison.lean` and `ResetEndpoint.lean` apply initial-cloud monotonicity, common translation, and the positive-exponent estimate at $H_N-\tau_N$. `Endpoint/Sequence/SingleRoot.lean` gives the single-root upper tail under the raw-law assumptions, and `Endpoint/Sequence/L2Limit.lean` combines it with the lower tail and fourth moment as in Wang Yiyang, Chapter 4, Theorem 1.1. |
@@ -94,7 +94,7 @@ The package boundaries follow the library ownership map: random-walk corridor
 probability estimates remain in `Probability/Process/RandomWalk/`; BRW path
 counts and their MRCA decomposition live in `Probability/BranchingRandomWalk/Spine/Path/`;
 affine-tube applications and their fixed-depth second-moment bounds live in
-`Probability/BranchingRandomWalk/Spine/Tube/`; generic killed populations
+`Probability/BranchingRandomWalk/Spine/Tube/`; generic selected populations
 remain in `Probability/BranchingRandomWalk/Population/`; and first-`N` endpoint
 and speed applications remain in `Probability/BranchingRandomWalk/Selection/NSelection/`.
 `Selection/` is not used as a synonym for deterministic first-`N` selection.
@@ -925,7 +925,7 @@ proof chain.
    ordinary selected-walk estimates do not automatically transfer to restart.
    Waiting displacements are coupled to non-split events; their joint
    transform, rather than a product of marginal transforms, is required.
-9. Aïdékon--Hu Lemma 4.8 applies to a killed process selected by a rule
+9. Aïdékon--Hu Lemma 4.8 applies to a branching process with a selection rule
    adapted to the natural generation filtration. Its separate $a=0$ shortcut
    uses the always-binary child law assumed by Aïdékon and Hu in Lemma 4.8 and does not extend to
    the present general point process. The current retrospective reserve

@@ -121,7 +121,7 @@ event remain under `Probability/Process/RandomWalk/Path/Restart/`.
 `FirstMoment.lean` there owns the law-generic exponentially weighted
 restarted-window integral and its bound by the endpoint factor times the
 ordinary restarted-window probability; its horizontal-tube specialization is
-the random-walk interface consumed by killed branching-population estimates.
+the random-walk interface consumed by estimates for selected branching populations.
 Generic conditional-probability integration and successive-block product
 bounds belong to `Probability/Process/Filtration/ConditionalBlocks.lean`;
 the conditional expectation of a measurable event of an independent pair,
