@@ -29,8 +29,8 @@ import Probability.BranchingRandomWalk.Coupling.Field.Position
 
 For the selected-population slice \(P_n(\omega)\), matched field
 \(V_n(\omega)\), and first-\(N\) slice \(P_n^{(N)}(\omega)\), the coupling
-has both marginals equal to the step-field law. Under boundary normalization
-and \(\#P_{k+1}(\omega)\le N\) for \(k<n\), almost surely there is an
+has both marginals equal to the step-field law. Under lower finiteness
+of the first-\(N\) candidate sets and \(\#P_{k+1}(\omega)\le N\) for \(k<n\), almost surely there is an
 injection \(\iota_n:P_n(\omega)\to P_n^{(N)}(\omega)\) satisfying
 \[
   \operatorname{position}_{V_n(\omega)}(\iota_n(p))
@@ -85,8 +85,12 @@ theorem RootIndexed.restartedRealPositionCoupledInjection_ae
     [Countable (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]
     (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
-    (hnorm : HasBoundaryNormalization realPotential μ)
     (N : ℕ) (roots : Finset Root) (initialPosition : Root → ℝ)
+    (admissible : ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) μ, ∀ k,
+      IsLowerFiniteBy
+        (RootIndexed.observedPositionAtGeneration initialPosition id id (k + 1) field)
+        (Combinatorics.Branching.Population.childrenAtGeneration k
+          (RootIndexed.selectedPopulationTotalized N roots initialPosition id id k field) field))
     (selectedBRWPopulation : RootIndexed.CausalPopulation
       (RootIndexed.StepField (Root ⊕ Root) α ℝ) Root α ℝ
       (RootIndexed.stepFiltration
@@ -117,7 +121,7 @@ theorem RootIndexed.restartedRealPositionCoupledInjection_ae
                 initialPosition id (hselectedBRWPopulationFiniteSlices.toFinset) n field))
             (RootIndexed.restartedRealPositionNSelectedBRWPopulation N roots
               initialPosition id (hselectedBRWPopulationFiniteSlices.toFinset) n field)) ()) := by
-  have hspecField := installedFirstN_spec_ae μ hnorm N roots initialPosition
+  have hspecField := installedFirstN_spec_ae μ N roots initialPosition admissible
     selectedBRWPopulation hselectedBRWPopulationFiniteSlices
   filter_upwards [hspecField] with field hspecField
   intro hselectedBRWPopulationCapacity
@@ -214,7 +218,9 @@ theorem RootIndexed.restartedRealPositionCoupledInjectionOnRoots_ae
         id id initialPosition roots roots (by intro r hr; exact hr)
         (RootIndexed.StepField.left field) (RootIndexed.StepField.right field))
   have hgeneric := RootIndexed.restartedRealPositionCoupledInjection_ae
-    μ hnorm N roots initialPosition selectedBRWPopulation hselectedBRWPopulationFiniteSlices hinitialInjection n
+    μ N roots initialPosition
+      (RootIndexed.selectedPopulationTotalized_admissible_ae μ hnorm N roots initialPosition)
+      selectedBRWPopulation hselectedBRWPopulationFiniteSlices hinitialInjection n
   dsimp only
   filter_upwards [hgeneric] with field hgood
   intro hselectedBRWPopulationCapacity

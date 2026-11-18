@@ -158,8 +158,10 @@ lemma finiteRootStepFieldLaw_endpointMinimum_pos_sq_le
       simp [RootIndexed.position]
   obtain ⟨hV, hmap, -, -, hcomp⟩ :=
     RootIndexed.restartedRealPositionComparison_throughOverflow_ae μ
-      (L.sortedPotentialImage_hasBoundaryNormalization hnorm) N (by omega)
-      (Finset.univ : Finset Root) initial S hS hinit
+      N (by omega) (Finset.univ : Finset Root) initial
+      (@RootIndexed.selectedPopulationTotalized_admissible_ae Root ℕ inferInstance
+        LinearOrder.toDecidableEq inferInstance μ inferInstance
+        (L.sortedPotentialImage_hasBoundaryNormalization hnorm) N Finset.univ initial) S hS hinit
   let V := RootIndexed.restartedRealPositionTrajectoryField N (Finset.univ : Finset Root)
     initial id pop
   have hcard (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) ℕ ℝ) :

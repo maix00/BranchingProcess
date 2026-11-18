@@ -128,7 +128,9 @@ theorem RootIndexed.selectedPopulationNestedRootsCoupledInjection_ae
         (α := α) (Mark := ℝ) id id initialPosition subsetBRWRoots supersetBRWRoots
         hroots (RootIndexed.StepField.left field) (RootIndexed.StepField.right field))
   have hgeneric := RootIndexed.restartedRealPositionCoupledInjection_ae
-    μ hnorm N supersetBRWRoots initialPosition subsetNSelectedBRWPopulation hsubsetNSelectedBRWPopulationFiniteSlices hinitial n
+    μ N supersetBRWRoots initialPosition
+    (RootIndexed.selectedPopulationTotalized_admissible_ae μ hnorm N supersetBRWRoots initialPosition)
+    subsetNSelectedBRWPopulation hsubsetNSelectedBRWPopulationFiniteSlices hinitial n
   filter_upwards [hgeneric] with field hgood
   have hcapacity : ∀ k < n, (hsubsetNSelectedBRWPopulationFiniteSlices.toFinset (k + 1) field).card ≤ N := by
     intro k hk

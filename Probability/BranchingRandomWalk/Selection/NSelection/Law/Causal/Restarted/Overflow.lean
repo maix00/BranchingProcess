@@ -7,9 +7,11 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.WithTop
+public import Mathlib.MeasureTheory.Measure.Prod
 public import MeasureTheory.Measure.LowerTail
 public import Probability.Process.HittingTime.PopulationOverflow
 public import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Trajectory
+import Probability.BranchingRandomWalk.Population.Processes.Selected.ParameterizedRootIndexed
 import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Coupling
 import all Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Lemmas.Coupling
 import all Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Lemmas.FirstNSpec
@@ -26,9 +28,13 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Resta
   The leftmost first-$N$ position is at most the leftmost retained position
   for $n\le\tau$, with the empty minimum taken to be $+\infty$.
 - `RootIndexed.restartedRealPositionMinimum_lowerTailDominates`: under the
-  same initial order, the original endpoint laws satisfy
+  same initial order and lower-finite candidate sets, the original endpoint laws satisfy
   $\mathbb P(M_n^{\mathrm s,\tau}\le x)\le\mathbb P(M_n^N\le x)$, with
   $M_n^{\mathrm s,\tau}=+\infty$ after the selected population overflows.
+- `RootIndexed.restartedRealPositionCoupling_of_randomInitial`: under a coupled
+  initial law independent of the offspring fields, a single installed field
+  gives $M_n^N\le M_n^{\mathrm s,\tau}$ for all $n$ almost surely. In particular
+  the original endpoint laws satisfy the same lower-tail comparison.
 -/
 
 @[expose] public section
@@ -52,8 +58,12 @@ private theorem stageComparison_throughOverflow_ae
     [Countable (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]
     (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
-    (hnorm : HasBoundaryNormalization realPotential μ)
     (N : ℕ) (hN : 0 < N) (roots : Finset Root) (initialPosition : Root → ℝ)
+    (admissible : ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) μ, ∀ k,
+      IsLowerFiniteBy
+        (RootIndexed.observedPositionAtGeneration initialPosition id id (k + 1) field)
+        (Combinatorics.Branching.Population.childrenAtGeneration k
+          (RootIndexed.selectedPopulationTotalized N roots initialPosition id id k field) field))
     (selectedBRWPopulation : RootIndexed.CausalPopulation
       (RootIndexed.StepField (Root ⊕ Root) α ℝ) Root α ℝ
       (RootIndexed.stepFiltration
@@ -103,9 +113,9 @@ private theorem stageComparison_throughOverflow_ae
     exact (measurable_of_countable
       (fun s : Finset (RootIndexed.TreeNode Root α) => (↑s : Set (RootIndexed.TreeNode Root α)))).comp hm
   have hall := ae_all_iff.2 (fun n => RootIndexed.restartedRealPositionCoupledInjection_ae
-    μ hnorm N roots initialPosition selectedBRWPopulation
+    μ N roots initialPosition admissible selectedBRWPopulation
     hselectedBRWPopulationFiniteSlices initialInjection n)
-  have hspec := installedFirstN_spec_ae μ hnorm N roots initialPosition
+  have hspec := installedFirstN_spec_ae μ N roots initialPosition admissible
     selectedBRWPopulation hselectedBRWPopulationFiniteSlices
   filter_upwards [hall, hspec] with field hmatch hspec
   have hbefore (n : ℕ) (hn : (n : WithTop ℕ) < τ field) :
@@ -146,8 +156,12 @@ theorem RootIndexed.restartedRealPositionComparison_throughOverflow_ae
     [Countable (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]
     (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
-    (hnorm : HasBoundaryNormalization realPotential μ)
     (N : ℕ) (hN : 0 < N) (roots : Finset Root) (initialPosition : Root → ℝ)
+    (admissible : ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) μ, ∀ k,
+      IsLowerFiniteBy
+        (RootIndexed.observedPositionAtGeneration initialPosition id id (k + 1) field)
+        (Combinatorics.Branching.Population.childrenAtGeneration k
+          (RootIndexed.selectedPopulationTotalized N roots initialPosition id id k field) field))
     (selectedBRWPopulation : RootIndexed.CausalPopulation
       (RootIndexed.StepField (Root ⊕ Root) α ℝ) Root α ℝ
       (RootIndexed.stepFiltration
@@ -192,8 +206,8 @@ theorem RootIndexed.restartedRealPositionComparison_throughOverflow_ae
   dsimp only
   obtain ⟨hm, hlaw⟩ := RootIndexed.restartedRealPositionTrajectoryField_measurable_law
     μ N roots initialPosition selectedBRWPopulation hselectedBRWPopulationFiniteSlices
-  obtain ⟨hstop, hcompare⟩ := stageComparison_throughOverflow_ae μ hnorm N hN roots
-    initialPosition selectedBRWPopulation hselectedBRWPopulationFiniteSlices initialInjection
+  obtain ⟨hstop, hcompare⟩ := stageComparison_throughOverflow_ae μ N hN roots
+    initialPosition admissible selectedBRWPopulation hselectedBRWPopulationFiniteSlices initialInjection
   refine ⟨hm, hlaw, RootIndexed.stepFieldLaw_reindex μ Sum.inl Sum.inl_injective, hstop, ?_⟩
   filter_upwards [hcompare] with field hcompare
   intro n
@@ -264,8 +278,12 @@ theorem RootIndexed.restartedRealPositionMinimum_lowerTailDominates
     [Countable (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]
     (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
-    (hnorm : HasBoundaryNormalization realPotential μ)
     (N : ℕ) (hN : 0 < N) (roots : Finset Root) (initialPosition : Root → ℝ)
+    (admissible : ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) μ, ∀ k,
+      IsLowerFiniteBy
+        (RootIndexed.observedPositionAtGeneration initialPosition id id (k + 1) field)
+        (Combinatorics.Branching.Population.childrenAtGeneration k
+          (RootIndexed.selectedPopulationTotalized N roots initialPosition id id k field) field))
     (selectedPopulation : RootIndexed.CausalPopulation
       (RootIndexed.StepField Root α ℝ) Root α ℝ
       (RootIndexed.stepFiltration (Root := Root) (α := α) (X := ℝ)) id)
@@ -327,7 +345,7 @@ theorem RootIndexed.restartedRealPositionMinimum_lowerTailDominates
     simpa [RootIndexed.position, hr] using f.dominates p hp
   obtain ⟨hV, hVlaw, hleftLaw, _, hcompare⟩ :=
     RootIndexed.restartedRealPositionComparison_throughOverflow_ae
-      μ hnorm N hN roots initialPosition lifted liftedFinite hinit
+      μ N hN roots initialPosition admissible lifted liftedFinite hinit
   let V := RootIndexed.restartedRealPositionTrajectoryField N roots initialPosition id
     liftedFinite.toFinset
   let P := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
@@ -376,6 +394,254 @@ theorem RootIndexed.restartedRealPositionMinimum_lowerTailDominates
   apply measure_mono_ae
   filter_upwards [hle] with field hfield hmem
   exact hfield.trans hmem
+
+/-- Lemma 3.15 of Wang Yiyang, *Asymptotic Speed of the N-Branching Random
+Walk with Infinite Offspring* (Fudan University, 2026), Chapter 3, for coupled
+random initial positions. The product measure samples the initial pair
+independently of the offspring field. Each section at a fixed initial pair
+uses the same offspring-sharing construction. -/
+theorem RootIndexed.restartedRealPositionCoupling_of_randomInitial
+    {Initial Root α : Type*} [MeasurableSpace Initial] [Countable α]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    [Countable (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)]
+    (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
+    (initialLaw : Measure Initial) [IsProbabilityMeasure initialLaw]
+    (N : ℕ) (hN : 0 < N) (roots : Finset Root)
+    (initialPosition : Initial → Root → ℝ) (hposition : Measurable initialPosition)
+    (selectedPopulation : Initial → RootIndexed.CausalPopulation
+      (RootIndexed.StepField Root α ℝ) Root α ℝ
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := ℝ)) id)
+    (finiteSlices : ∀ x, (selectedPopulation x).FiniteSlices)
+    (hpopulation : ∀ n, Measurable
+      (fun sample : Initial × RootIndexed.StepField Root α ℝ =>
+        (finiteSlices sample.1).toFinset n sample.2))
+    (admissible : ∀ᵐ x ∂initialLaw, ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) μ,
+      ∀ k, IsLowerFiniteBy
+        (RootIndexed.observedPositionAtGeneration (initialPosition x) id id (k + 1) field)
+        (Combinatorics.Branching.Population.childrenAtGeneration k
+          (RootIndexed.selectedPopulationTotalized N roots (initialPosition x) id id k field)
+          field))
+    (initialOrder : ∀ᵐ x ∂initialLaw, ∀ field, Nonempty (Order.DominatingMap
+      (↑((finiteSlices x).toFinset 0 field) : Set (RootIndexed.TreeNode Root α))
+      (↑(RootIndexed.initialPopulation (α := α) roots) : Set (RootIndexed.TreeNode Root α))
+      (fun p => initialPosition x p.1) (fun q => initialPosition x q.1)))
+    :
+    let Q := RootIndexed.stepFieldLaw (Root := Root) μ
+    let P := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
+    let originalLaw := initialLaw.prod Q
+    let couplingLaw := initialLaw.prod P
+    let slices := fun k (sample : Initial × RootIndexed.StepField Root α ℝ) =>
+      (finiteSlices sample.1).toFinset k sample.2
+    let τ := finsetPopulationOverflowTime slices N
+    let selectedMinimum := fun (n : ℕ) sample =>
+      if (n : WithTop ℕ) ≤ τ sample then
+        (slices n sample).inf fun p =>
+          ((RootIndexed.position (initialPosition sample.1) id sample.2 p.1 p.2 : ℝ) : WithTop ℝ)
+      else ⊤
+    let nSelectedMinimum := fun (n : ℕ) (sample : Initial × RootIndexed.StepField Root α ℝ) =>
+      (RootIndexed.selectedPopulationTotalized N roots (initialPosition sample.1)
+        id id n sample.2).inf fun q =>
+        ((RootIndexed.position (initialPosition sample.1) id sample.2 q.1 q.2 : ℝ) : WithTop ℝ)
+    ∃ V : Initial × RootIndexed.StepField (Root ⊕ Root) α ℝ → RootIndexed.StepField Root α ℝ,
+      Measurable V ∧ couplingLaw.map (fun sample => (sample.1, V sample)) = originalLaw ∧
+      couplingLaw.map (Prod.map id RootIndexed.StepField.left) = originalLaw ∧
+      (∀ᵐ sample ∂couplingLaw, ∀ n,
+        nSelectedMinimum n (sample.1, V sample) ≤
+          selectedMinimum n (sample.1, RootIndexed.StepField.left sample.2)) ∧
+      ∀ n, (originalLaw.map (selectedMinimum n)).LowerTailDominates
+        (originalLaw.map (nSelectedMinimum n)) := by
+  intro Q P originalLaw couplingLaw slices τ F G
+  let input := fun sample : Initial × RootIndexed.StepField Root α ℝ =>
+    (initialPosition sample.1, sample.2)
+  have hinput : Measurable input :=
+    (hposition.comp measurable_fst).prodMk measurable_snd
+  have hpos (p : RootIndexed.TreeNode Root α) :
+      Measurable (fun sample : Initial × RootIndexed.StepField Root α ℝ =>
+        RootIndexed.position (initialPosition sample.1) id sample.2 p.1 p.2) := by
+    simpa [input, Function.comp_def, RootIndexed.observedPositionAtGeneration,
+      RootIndexed.positionAtGeneration]
+      using (RootIndexed.measurable_observedPositionAtGeneration_withInitialPosition p.2.length p
+        |>.comp hinput)
+  have hstop : IsStoppingTime (⊤ : Filtration ℕ inferInstance) τ := by
+    apply populationOverflowTime_isStoppingTime_of_countable
+    intro k
+    change Measurable (fun sample => (↑(slices k sample) : Set (RootIndexed.TreeNode Root α)))
+    exact (measurable_of_countable
+      (fun s : Finset (RootIndexed.TreeNode Root α) => (↑s : Set (RootIndexed.TreeNode Root α)))).comp
+      (hpopulation k)
+  have hF (n : ℕ) : Measurable (F n) :=
+    (measurable_finsetMinimum (hpopulation n) hpos).piecewise
+      ((⊤ : Filtration ℕ _).le n _ (hstop.measurableSet_ge_of_countable n)) measurable_const
+  have hG (n : ℕ) : Measurable (G n) := measurable_finsetMinimum
+    ((RootIndexed.measurable_selectedPopulationTotalized_withInitialPosition N roots n).comp
+      hinput) hpos
+  let left : RootIndexed.StepField (Root ⊕ Root) α ℝ → RootIndexed.StepField Root α ℝ :=
+    RootIndexed.StepField.left
+  let right : RootIndexed.StepField (Root ⊕ Root) α ℝ → RootIndexed.StepField Root α ℝ :=
+    RootIndexed.StepField.right
+  have hleft : Measurable left := measurable_pi_iff.mpr
+    fun r => measurable_pi_apply (Sum.inl r)
+  have hright : Measurable right := measurable_pi_iff.mpr
+    fun r => measurable_pi_apply (Sum.inr r)
+  let leftPair : Initial × RootIndexed.StepField (Root ⊕ Root) α ℝ →
+      Initial × RootIndexed.StepField Root α ℝ := Prod.map id left
+  have hleftPair : Measurable leftPair :=
+    measurable_fst.prodMk (hleft.comp measurable_snd)
+  have hleftLaw : P.map left = Q :=
+    RootIndexed.stepFieldLaw_reindex μ Sum.inl Sum.inl_injective
+  have hleftPairLaw : couplingLaw.map leftPair = originalLaw := by
+    rw [show couplingLaw = initialLaw.prod P from rfl,
+      show leftPair = Prod.map id left from rfl,
+      ← Measure.map_prod_map initialLaw P measurable_id hleft, Measure.map_id, hleftLaw]
+  let leftPosition := fun n (sample : Initial × RootIndexed.StepField (Root ⊕ Root) α ℝ) p =>
+    RootIndexed.observedPositionAtGeneration (initialPosition sample.1) id id n
+      (left sample.2) p
+  let rightPosition := fun n (sample : Initial × RootIndexed.StepField (Root ⊕ Root) α ℝ)
+      (field : RootIndexed.StepField Root α ℝ) p =>
+    RootIndexed.observedPositionAtGeneration (initialPosition sample.1) id id n field p
+  let rightPopulation := fun n (sample : Initial × RootIndexed.StepField (Root ⊕ Root) α ℝ)
+      (field : RootIndexed.StepField Root α ℝ) =>
+    RootIndexed.selectedPopulationTotalized N roots (initialPosition sample.1) id id n field
+  let stage := RootIndexed.rankInstalledField leftPosition rightPosition
+    (fun n sample => slices n (leftPair sample)) rightPopulation (left ∘ Prod.snd) (right ∘ Prod.snd)
+  let V : Initial × RootIndexed.StepField (Root ⊕ Root) α ℝ → RootIndexed.StepField Root α ℝ :=
+    fun sample r u => stage (u.length + 1) sample r u
+  have hstage (k : ℕ) : Measurable (stage k) := by
+    apply RootIndexed.rankInstalledField_measurable
+    · intro n s
+      exact ((hpopulation n).comp hleftPair) (measurableSet_singleton s)
+    · intro n
+      exact Set.to_countable _
+    · intro n prior hprior s
+      exact ((RootIndexed.measurable_selectedPopulationTotalized_withInitialPosition N roots n).comp
+        ((hposition.comp measurable_fst).prodMk hprior)) (measurableSet_singleton s)
+    · intro n prior hprior
+      exact Set.to_countable _
+    · intro n p q
+      apply measurable_valueKey_lt
+      intro r
+      exact (RootIndexed.measurable_observedPositionAtGeneration_withInitialPosition n r).comp
+        (hinput.comp hleftPair)
+    · intro n prior hprior p q
+      apply measurable_valueKey_lt
+      intro r
+      exact (RootIndexed.measurable_observedPositionAtGeneration_withInitialPosition n r).comp
+        ((hposition.comp measurable_fst).prodMk hprior)
+    · exact hleft.comp measurable_snd
+    · exact hright.comp measurable_snd
+  have hV : Measurable V := by
+    apply measurable_pi_iff.mpr
+    intro r
+    apply measurable_pi_iff.mpr
+    intro u
+    exact ((measurable_pi_apply u).comp (measurable_pi_apply r)).comp (hstage (u.length + 1))
+  let rightPair := fun (sample : Initial × RootIndexed.StepField (Root ⊕ Root) α ℝ) => (sample.1, V sample)
+  have hrightPair : Measurable rightPair := measurable_fst.prodMk hV
+  let lift (x : Initial) := (selectedPopulation x).pullback left
+    (fun k => RootIndexed.StepField.reindex_filtration_measurable (X := ℝ) Sum.inl k) rfl
+  let liftedFinite (x : Initial) := (finiteSlices x).pullback left
+    (fun k => RootIndexed.StepField.reindex_filtration_measurable (X := ℝ) Sum.inl k) rfl
+  have hslice (x : Initial) (k : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α ℝ) :
+      (liftedFinite x).toFinset k field = slices k (x, left field) := by
+    apply Finset.coe_injective
+    simp only [slices, RootIndexed.CausalPopulation.FiniteSlices.coe_toFinset]
+    rfl
+  have hfixedV (x : Initial) :
+      (fun field => V (x, field)) = RootIndexed.restartedRealPositionTrajectoryField
+        N roots (initialPosition x) id (liftedFinite x).toFinset := by
+    have hstageEq (k : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α ℝ) :
+        stage k (x, field) = RootIndexed.restartedRealPositionNSelectedBRWField N roots
+          (initialPosition x) id (liftedFinite x).toFinset k field := by
+      induction k generalizing field with
+      | zero => rfl
+      | succ k ih =>
+        simp only [stage, RootIndexed.restartedRealPositionNSelectedBRWField,
+          RootIndexed.rankInstalledField_succ]
+        congr 1
+        · have hprior := ih field
+          unfold stage RootIndexed.restartedRealPositionNSelectedBRWField at hprior
+          simp only [leftPosition, rightPosition, rightPopulation, leftPair, Prod.map, id_eq,
+            ← hslice, left, right] at hprior
+          funext r u
+          simp only [RootIndexed.rankInstalledStepField, valueAtMatchedRank,
+            ProbabilityTheory.BranchingRandomWalk.Coupling.valueAtObjectPreimage,
+            Function.comp_apply, leftPair, Prod.map, id_eq, leftPosition, rightPosition,
+            rightPopulation, ← hslice, left, right, hprior]
+        · exact ih field
+    funext field r u
+    exact congrFun (congrFun (hstageEq (u.length + 1) field) r) u
+  have hrightPairLaw : couplingLaw.map rightPair = originalLaw := by
+    ext S hS
+    rw [Measure.map_apply hrightPair hS, Measure.prod_apply (hS.preimage hrightPair),
+      Measure.prod_apply hS]
+    apply lintegral_congr
+    intro x
+    obtain ⟨hm, hlaw⟩ := RootIndexed.restartedRealPositionTrajectoryField_measurable_law
+      μ N roots (initialPosition x) (lift x) (liftedFinite x)
+    let Sx := (fun f : RootIndexed.StepField Root α ℝ => (x, f)) ⁻¹' S
+    have hSx : MeasurableSet Sx := hS.preimage (measurable_const.prodMk measurable_id)
+    change P ((fun field => V (x, field)) ⁻¹' Sx) = Q Sx
+    rw [hfixedV x, ← Measure.map_apply hm hSx, hlaw]
+  have hcompare : ∀ᵐ sample ∂couplingLaw, ∀ n, G n (rightPair sample) ≤ F n (leftPair sample) := by
+    have hmeas : MeasurableSet {sample | ∀ n, G n (rightPair sample) ≤ F n (leftPair sample)} := by
+      rw [show {sample | ∀ n, G n (rightPair sample) ≤ F n (leftPair sample)} =
+          ⋂ n, {sample | G n (rightPair sample) ≤ F n (leftPair sample)} by ext; simp]
+      exact MeasurableSet.iInter fun n =>
+        measurableSet_le ((hG n).comp hrightPair) ((hF n).comp hleftPair)
+    apply (Measure.ae_prod_iff_ae_ae (μ := initialLaw) (ν := P) hmeas).2
+    filter_upwards [admissible, initialOrder] with x hfinite hinit
+    have hbase : ∀ field, Cloud.SliceDominatingMap id
+        (Combinatorics.Branching.Selection.Coupling.populationCloud id
+          (RootIndexed.BranchingWalk.ofStepField (initialPosition x) (left field))
+          ((liftedFinite x).toFinset 0 field))
+        (Combinatorics.Branching.Selection.Coupling.populationCloud id
+          (RootIndexed.BranchingWalk.ofStepField (initialPosition x) (right field))
+          (RootIndexed.restartedRealPositionNSelectedBRWPopulation N roots (initialPosition x)
+            id (liftedFinite x).toFinset 0 field)) () := by
+      intro field
+      rw [hslice]
+      let f := (hinit (left field)).some
+      refine ⟨f.toFun, f.mapsTo, f.injOn, ?_⟩
+      intro p hp
+      have hp' : p.2 = [] := List.length_eq_zero_iff.mp
+        ((selectedPopulation x).depth 0 (left field) p
+          (((finiteSlices x).mem_toFinset 0 (left field) p).mp hp))
+      obtain ⟨r, _, hr⟩ := RootIndexed.mem_initialPopulation_iff.mp (f.mapsTo hp)
+      change RootIndexed.position (initialPosition x) id (right field) (f.toFun p).1 (f.toFun p).2 ≤
+        RootIndexed.position (initialPosition x) id (left field) p.1 p.2
+      rw [hr, hp']
+      simpa [RootIndexed.position, hr] using f.dominates p hp
+    obtain ⟨_, _, _, _, hbound⟩ := RootIndexed.restartedRealPositionComparison_throughOverflow_ae
+      μ N hN roots (initialPosition x) hfinite (lift x) (liftedFinite x) hbase
+    filter_upwards [hbound] with field hfield n
+    change G n (x, V (x, field)) ≤ F n (x, left field)
+    by_cases hn : (n : WithTop ℕ) ≤ τ (x, left field)
+    · have hτ : finsetPopulationOverflowTime (liftedFinite x).toFinset N field =
+          τ (x, left field) := by
+        apply WithTop.eq_of_forall_le_coe_iff
+        intro k
+        calc
+          _ ↔ ∃ j ≤ k, N < ((liftedFinite x).toFinset j field).card :=
+            finsetPopulationOverflowTime_le_iff (liftedFinite x).toFinset N k field
+          _ ↔ ∃ j ≤ k, N < (slices j (x, left field)).card := by simp only [hslice]
+          _ ↔ _ := (finsetPopulationOverflowTime_le_iff slices N k (x, left field)).symm
+      rw [show F n (x, left field) = (slices n (x, left field)).inf (fun p =>
+          ((RootIndexed.position (initialPosition x) id (left field) p.1 p.2 : ℝ) :
+            WithTop ℝ)) by simp [F, hn], ← hslice, congrFun (hfixedV x) field]
+      exact (hfield n).2 (hτ.symm ▸ hn)
+    · simp [F, hn]
+  refine ⟨V, hV, hrightPairLaw, hleftPairLaw, hcompare, ?_⟩
+  intro n a
+  have hFmap : couplingLaw.map (F n ∘ leftPair) = originalLaw.map (F n) := by
+    rw [← Measure.map_map (hF n) hleftPair, hleftPairLaw]
+  have hGmap : couplingLaw.map (G n ∘ rightPair) = originalLaw.map (G n) := by
+    rw [← Measure.map_map (hG n) hrightPair, hrightPairLaw]
+  rw [← hFmap, ← hGmap, Measure.map_apply ((hF n).comp hleftPair) measurableSet_Iic,
+    Measure.map_apply ((hG n).comp hrightPair) measurableSet_Iic]
+  apply measure_mono_ae
+  filter_upwards [hcompare] with sample hsample hmem
+  exact (hsample n).trans hmem
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
