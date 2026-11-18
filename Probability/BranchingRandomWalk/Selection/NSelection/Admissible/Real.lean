@@ -16,6 +16,15 @@ public import Probability.BranchingRandomWalk.Population.Processes.Selected.Root
 
 ## Public declarations
 
+- `ae_isLeftLocallyFinite_of_exponentialMoment`: a finite mean
+  $\mathbb E[\sum_i e^{-\beta\Xi_i}]$ for $\beta>0$ implies almost-sure
+  left local finiteness of the offspring configurations.
+- `HasBoundaryNormalization.ae_isLeftLocallyFinite`: specialization to
+  $\mathbb E[\sum_i e^{-\Xi_i}]=1$.
+- `RootIndexed.selectedPopulationTotalized_admissible_ae_of_leftLocallyFinite`:
+  if the offspring configurations are almost surely locally finite on the left,
+  then every candidate set of a finite first-$N$ population is lower finite.
+
 - `ProbabilityTheory.BranchingRandomWalk.RootIndexed.stepFieldLaw_ae_real_weight_finite_on_roots`:
   boundary normalization implies that, almost surely, each of finitely many
   roots has finite negative exponential weight at every address.
@@ -45,6 +54,23 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 open _root_.Combinatorics.Selection.NSelection
+
+/-- The positive-exponent moment condition in Zhan Shi, *Branching Random
+Walks* (Springer, 2015), Chapter 1, §§1.3 and 1.6,
+DOI 10.1007/978-3-319-25372-5, implies left local finiteness. -/
+theorem ae_isLeftLocallyFinite_of_exponentialMoment {α : Type*} [Countable α]
+    (μ : Measure (Step α ℝ)) {β : ℝ} (hβ : 0 < β)
+    (hweight : (∫⁻ ξ, totalPotentialWeight realPotential (-β) ξ ∂μ) ≠ ∞) :
+    ∀ᵐ ξ ∂μ, ξ.IsLeftLocallyFinite := by
+  filter_upwards [ae_lt_top (totalPotentialWeight_measurable realPotential (-β)) hweight]
+    with ξ hξ
+  exact ξ.isLeftLocallyFinite_of_totalPotentialWeight_ne_top hβ hξ.ne
+
+theorem HasBoundaryNormalization.ae_isLeftLocallyFinite {α : Type*} [Countable α]
+    {μ : Measure (Step α ℝ)} (h : HasBoundaryNormalization realPotential μ) :
+    ∀ᵐ ξ ∂μ, ξ.IsLeftLocallyFinite := by
+  filter_upwards [HasBoundaryNormalization.ae_totalPotentialWeight_ne_top realPotential μ h] with ξ hξ
+  exact ξ.isLeftLocallyFinite_of_totalPotentialWeight_ne_top (β := 1) zero_lt_one hξ
 
 theorem RootIndexed.stepFieldLaw_ae_real_weight_finite_on_roots
     {Root α : Type*} [Countable α]
@@ -92,6 +118,32 @@ theorem RootIndexed.stepFieldLaw_ae_real_weight_finite_on_roots
   have hi : index i = r := by simp [index, i]
   change field r u ∈ s
   simpa only [restrict, RootIndexed.StepField.reindex, hi] using hfield i u
+
+theorem RootIndexed.selectedPopulationTotalized_admissible_ae_of_leftLocallyFinite
+    {Root α : Type*} [Countable α]
+    [Countable (RootIndexed.TreeNode Root α)]
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)]
+    (μ : Measure (Combinatorics.Branching.Step α ℝ)) [IsProbabilityMeasure μ]
+    (hleft : ∀ᵐ ξ ∂μ, ξ.IsLeftLocallyFinite)
+    (N : ℕ) (roots : Finset Root) (initial : Root → ℝ) :
+    ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) μ,
+      ∀ n, IsLowerFiniteBy
+        (RootIndexed.observedPositionAtGeneration initial id id (n + 1) field)
+        (Combinatorics.Branching.Population.childrenAtGeneration n
+          (RootIndexed.selectedPopulationTotalized N roots initial id id n field)
+          field) := by
+  have : Countable Root := (show Function.Injective (fun r : Root => (r, ([] : TreeNode α)))
+    from fun _ _ h => congrArg Prod.fst h).countable
+  have hμ : μ {ξ | ξ.IsLeftLocallyFinite} = 1 := by
+    simpa using (ae_mem_iff_measure_eq
+      Step.measurableSet_isLeftLocallyFinite.nullMeasurableSet).mp hleft
+  filter_upwards [RootIndexed.stepFieldLaw_ae_all_of_measure_one (Root := Root)
+    Step.measurableSet_isLeftLocallyFinite μ hμ] with field hfield
+  intro n
+  exact RootIndexed.childrenAtGeneration_isLowerFiniteBy_of_leftLocallyFinite n
+    (RootIndexed.selectedPopulationTotalized N roots initial id id n field)
+    field initial (fun p _ => hfield p.1 p.2)
 
 theorem RootIndexed.selectedPopulationTotalized_admissible_ae
     {Root α : Type*} [Countable α]
