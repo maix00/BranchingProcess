@@ -11,6 +11,14 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Branching/State.lean"): (
+        "Combinatorics.Branching.stateAlong_add",
+        "Combinatorics.Branching.RootIndexed.BranchingWalk.state_measurable",
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.stateAlong_filtration_measurable",
+        "ProbabilityTheory.BranchingProcess.offspringStateKernel_apply",
+        "ProbabilityTheory.BranchingProcess.branchingPointMeasureKernel_apply",
+        "Combinatorics.Branching.RootIndexed.BranchingWalk.stateMarkedTree_measurable",
+    ),
     Path("BranchingProcessTest/Probability/Distributions/Stable/Gaussian.lean"): (
         "ProbabilityTheory.IsStrictlyAlphaStable.exists_gaussianReal_zero",
     ),

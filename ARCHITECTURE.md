@@ -17,6 +17,29 @@ than the application that first needs it.
 | `Probability` | Laws, filtrations, independence, random processes, and almost-everywhere statements | IID sequences, random walks, Lévy and stable processes |
 | `Probability/BranchingRandomWalk` | Random branching models and their bridges to general process and measure interfaces | offspring fields, spines, selection and coupling |
 
+`Combinatorics/BranchingWalk/Basic/State.lean` owns general state evolution
+along child marks, with update `F : State → Mark → State`. Marks record the
+information used for one parent-to-child evolution; states record the
+particle's current position, type, or other state. The two spaces need no
+algebraic structure. The existing additive interpretation is the specialization
+`F s e = s + d e`, proved by `stateAlong_add`, which connects to the existing
+displacement and position results. `MarkedTree/State.lean` constructs the corresponding
+realized state-marked tree. These are reusable constructions outside `Lemmas/`.
+`MeasureTheory/BranchingWalk/State.lean` owns coordinate measurability for
+arbitrary measurable initial states and mark fields.
+`MeasureTheory/BranchingWalk/MarkedTree.lean` proves measurability of the
+entire realized state-marked tree representation. Only the generation
+observability result belongs in
+`Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field/State.lean`.
+The existing additive `position_measurable` specializes this update result.
+This deterministic interpretation does not impose a probability law or
+independence; a state-dependent branching kernel is a separate probabilistic
+model, not implied by the update map.
+`Probability/BranchingProcess/Offspring/Kernel.lean` owns the state-dependent
+indexed offspring kernel and its state-update and point-measure images. It
+uses Mathlib `Kernel` and `IsMarkovKernel` and the existing generic offspring
+point-measure interface, without depending on random-walk probability modules.
+
 The selected-path construction used for the asymptotic speed of the frontier is owned by
 `Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/SelectedPath/`.
 Its root `selectedPath` follows the second selected child at each split while
