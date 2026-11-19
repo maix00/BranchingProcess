@@ -131,12 +131,10 @@ theorem limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube
       (fun _ => iidSequenceLaw ν) (P.map (Skorokhod.scalePath c)))
     (hc : 0 < c) (hmargin : 0 < margin) :
     atTop.limsup (fun n => iidSequenceLaw ν
-      {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
-        (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)}) ≤
+      {increment | (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) ∈ blockOscillationLTEvent (width * scale n) (blockLength n)}) ≤
       P (stableProcessTube ((width + margin) / (2 * c))) := by
   let finiteBlockProbability : ℕ → ENNReal := fun n => iidSequenceLaw ν
-    {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
-      (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)}
+    {increment | (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) ∈ blockOscillationLTEvent (width * scale n) (blockLength n)}
   let pathOscillationProbability : ℕ → ENNReal := fun n =>
     RandomWalk.normalizedStepBlockPathLaw ν scale blockLength n
       (Skorokhod.rangeOscillationLe width)
@@ -190,8 +188,7 @@ theorem eventually_openHorizontalTubeProbability_le_pow_of_blockPathLimit
       openHorizontalTubeProbability (iidSequenceLaw ν) (1 / 2)
         (width * scale n) (horizon n) ≤ q ^ (horizon n / blockLength n) := by
   let finiteBlockProbability : ℕ → ENNReal := fun n => iidSequenceLaw ν
-    {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
-      (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)}
+    {increment | (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) ∈ blockOscillationLTEvent (width * scale n) (blockLength n)}
   have hlimsup := limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube
     (width := width) hP hscale hlimit hc hmargin
   have hprobabilityBounded :
@@ -247,8 +244,7 @@ theorem eventually_partialSumRangeOscillationLTProbability_le_pow_of_blockPathLi
         (width * scale n) (horizon n) ≤
           q ^ (horizon n / blockLength n) := by
   let finiteBlockProbability : ℕ → ENNReal := fun n => iidSequenceLaw ν
-    {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
-      (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)}
+    {increment | (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) ∈ blockOscillationLTEvent (width * scale n) (blockLength n)}
   have hlimsup := limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube
     (width := width) hP hscale hlimit hc hmargin
   have hprobabilityBounded :

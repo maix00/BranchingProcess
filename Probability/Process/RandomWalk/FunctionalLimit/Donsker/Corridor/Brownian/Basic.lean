@@ -10,7 +10,7 @@ public import Mathlib.Topology.UnitInterval
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Probability.Distributions.Moments.Real
 public import Probability.Process.Brownian.PathLaw.ContinuousModification
-public import Probability.Process.Brownian.Construction.PreBrownianModification
+public import BrownianMotion.Gaussian.BrownianMotion
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Path.Skorokhod
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Basic
 
@@ -60,18 +60,18 @@ theorem brownian_skorokhodCorridor_le_liminf_strictTube
     {a : ℝ} (ha : 0 < a) (haOne : a < 1) :
     P.map (Skorokhod.ofContinuousMap ∘
         continuousunitIntervalPath
-          (hB.toIsPreBrownianReal.continuousModification)
-          (hB.toIsPreBrownianReal.continuous_continuousModification))
+          (hB.toIsPreBrownianReal.mk B)
+          (hB.toIsPreBrownianReal.continuous_mk))
         (Skorokhod.rangeInOpenInterval (-a) (1 - a)) ≤
       atTop.liminf (fun n : ℕ =>
         iidSequenceLaw nu
           {increment | InOpenHorizontalTube a (Real.sqrt n) n increment}) := by
-  let Bc := hB.toIsPreBrownianReal.continuousModification
-  have hBc := hB.toIsPreBrownianReal.isBrownianReal_continuousModification
+  let Bc := hB.toIsPreBrownianReal.mk B
+  have hBc := hB.toIsPreBrownianReal.isBrownianReal_mk
   have hBccontinuous : ∀ ω, Continuous (Bc · ω) :=
-    hB.toIsPreBrownianReal.continuous_continuousModification
+    hB.toIsPreBrownianReal.continuous_mk
   have hBcmeasurable : ∀ t, Measurable (Bc t) :=
-    hB.toIsPreBrownianReal.measurable_continuousModification
+    hB.toIsPreBrownianReal.measurable_mk
   apply measure_skorokhodCorridor_le_liminf_strictTube_of_functionalLimit
     P nu (fun n => Real.sqrt n)
     (limit := Skorokhod.ofContinuousMap ∘
@@ -93,19 +93,19 @@ theorem brownian_centeredSkorokhodCorridor_le_liminf_strictTube
     {width : ℝ} (hwidth : 0 < width) :
     P.map (Skorokhod.ofContinuousMap ∘
         continuousunitIntervalPath
-          (hB.toIsPreBrownianReal.continuousModification)
-          (hB.toIsPreBrownianReal.continuous_continuousModification))
+          (hB.toIsPreBrownianReal.mk B)
+          (hB.toIsPreBrownianReal.continuous_mk))
         (Skorokhod.rangeInOpenInterval (-(width / 2)) (width / 2)) ≤
       atTop.liminf (fun n : ℕ =>
         iidSequenceLaw nu
           {increment | InOpenHorizontalTube (1 / 2)
             (width * Real.sqrt n) n increment}) := by
-  let Bc := hB.toIsPreBrownianReal.continuousModification
-  have hBc := hB.toIsPreBrownianReal.isBrownianReal_continuousModification
+  let Bc := hB.toIsPreBrownianReal.mk B
+  have hBc := hB.toIsPreBrownianReal.isBrownianReal_mk
   have hBccontinuous : ∀ ω, Continuous (Bc · ω) :=
-    hB.toIsPreBrownianReal.continuous_continuousModification
+    hB.toIsPreBrownianReal.continuous_mk
   have hBcmeasurable : ∀ t, Measurable (Bc t) :=
-    hB.toIsPreBrownianReal.measurable_continuousModification
+    hB.toIsPreBrownianReal.measurable_mk
   apply measure_centeredSkorokhodCorridor_le_liminf_strictTube_of_functionalLimit
     P nu (fun n => Real.sqrt n)
     (limit := Skorokhod.ofContinuousMap ∘
@@ -131,15 +131,15 @@ theorem limsup_weakTube_le_brownian_skorokhodCorridor
           {increment | InHorizontalTube a (Real.sqrt n) n increment}) ≤
       P.map (Skorokhod.ofContinuousMap ∘
         continuousunitIntervalPath
-          (hB.toIsPreBrownianReal.continuousModification)
-          (hB.toIsPreBrownianReal.continuous_continuousModification))
+          (hB.toIsPreBrownianReal.mk B)
+          (hB.toIsPreBrownianReal.continuous_mk))
         (Skorokhod.rangeInClosedInterval (-a) (1 - a)) := by
-  let Bc := hB.toIsPreBrownianReal.continuousModification
-  have hBc := hB.toIsPreBrownianReal.isBrownianReal_continuousModification
+  let Bc := hB.toIsPreBrownianReal.mk B
+  have hBc := hB.toIsPreBrownianReal.isBrownianReal_mk
   have hBccontinuous : ∀ ω, Continuous (Bc · ω) :=
-    hB.toIsPreBrownianReal.continuous_continuousModification
+    hB.toIsPreBrownianReal.continuous_mk
   have hBcmeasurable : ∀ t, Measurable (Bc t) :=
-    hB.toIsPreBrownianReal.measurable_continuousModification
+    hB.toIsPreBrownianReal.measurable_mk
   apply limsup_weakTube_le_measure_skorokhodCorridor_of_functionalLimit
     P nu (fun n => Real.sqrt n)
     (limit := Skorokhod.ofContinuousMap ∘

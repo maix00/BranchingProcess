@@ -151,8 +151,7 @@ theorem eventually_horizontalTubeProbability_le_pow_fixedCover_uniformOffset
     ν ha0 ha1 hscalePos.le (Asymptotics.diffusiveBlockLength constant scale n) n
   have hpow :
       (iidSequenceLaw ν {increment : ℕ → ℝ |
-        blockOscillationEvent (scale n) (Asymptotics.diffusiveBlockLength constant scale n)
-          (Combinatorics.Sequence.blockCoordinates 0 (Asymptotics.diffusiveBlockLength constant scale n) increment)}) ^
+        (Combinatorics.Sequence.blockCoordinates 0 (Asymptotics.diffusiveBlockLength constant scale n) increment) ∈ blockOscillationEvent (scale n) (Asymptotics.diffusiveBlockLength constant scale n)}) ^
           (n / Asymptotics.diffusiveBlockLength constant scale n) ≤
         ENNReal.ofReal (2 * finiteCoverRangeBound count
           ((1 + enlargement) / Real.sqrt constant)) ^

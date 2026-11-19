@@ -42,9 +42,9 @@ public import Mathlib.MeasureTheory.Measure.Map
   identify the increment-path realization and its survival consequences.
 
 A random walk is exactly the singleton child-slot specialization of a
-branching random walk. The unique possible child may be absent, so this basic
-notion also permits killing or extinction. Laws obtained from an increment
-sequence form the everywhere-present special case used by the spine.
+branching random walk. The unique possible child may be absent, so the lineage
+may become extinct. Laws obtained from an increment sequence form the
+everywhere-present special case used by the spine.
 -/
 
 open MeasureTheory
@@ -69,7 +69,8 @@ def law {Mark Position : Type*}
     Measure (BranchingWalk PUnit Mark Position) := walk
 
 /-- Almost-sure permanent survival is an additional property of a random
-walk. It is not built into `RandomWalk`: a singleton-slot walk may be killed. -/
+walk. It is not built into `RandomWalk`: the singleton child slot may be
+empty. -/
 def SurvivesForever {Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]
     (walk : RandomWalk Mark Position) : Prop :=
@@ -143,9 +144,9 @@ noncomputable def ofIncrementLaw
     (ofIncrementLaw initial incrementLaw : RandomWalk Mark Position).law =
       incrementLaw.map (Walk.ofIncrements initial) := rfl
 
-/-- An arbitrary sample of a possibly killed random walk, viewed as a standard
+/-- An arbitrary sample of a singleton-slot walk, viewed as a standard
 `Time → Sample → Option State` process. `none` records that the unique lineage
-has died before the requested time. -/
+has no position at the requested time. -/
 noncomputable def process
     {Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]
@@ -156,8 +157,8 @@ noncomputable def process
     if surviveAlong (walk.step PUnit.unit) [] (Walk.lineNode n)
       then some (walk.position d PUnit.unit (Walk.lineNode n)) else none
 
-/-- Every time coordinate of the possibly killed random walk is measurable.
-This includes both survival and the accumulated abstract position. -/
+/-- Every time coordinate of the singleton-slot walk is measurable. This
+includes both lineage presence and its accumulated abstract position. -/
 theorem process_measurable
     {Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]
@@ -212,7 +213,7 @@ theorem process_measurable
 
 /-- The property that a random-walk law is realized by an everywhere-present
 increment path. It is additional structure, rather than part of the basic
-(possibly killed) random-walk definition. -/
+singleton-slot random-walk definition, where the child slot may be empty. -/
 def IsIncrementPathRealization
     {Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]

@@ -17,6 +17,71 @@ than the application that first needs it.
 | `Probability` | Laws, filtrations, independence, random processes, and almost-everywhere statements | IID sequences, random walks, Lévy and stable processes |
 | `Probability/BranchingRandomWalk` | Random branching models and their bridges to general process and measure interfaces | offspring fields, spines, selection and coupling |
 
+`Combinatorics/BranchingWalk/Basic/State.lean` owns general state evolution
+along child marks, with update `F : State → Mark → State`. Marks record the
+information used for one parent-to-child evolution; states record the
+particle's current position, type, or other state. The two spaces need no
+algebraic structure. The existing additive interpretation is the specialization
+`F s e = s + d e`, proved by `stateAlong_add`, which connects to the existing
+displacement and position results. `MarkedTree/State.lean` constructs the corresponding
+realized state-marked tree. These are reusable constructions outside `Lemmas/`.
+`MeasureTheory/BranchingWalk/State.lean` owns coordinate measurability for
+arbitrary measurable initial states and mark fields.
+`MeasureTheory/BranchingWalk/MarkedTree.lean` proves measurability of the
+entire realized state-marked tree representation. Only the generation
+observability result belongs in
+`Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field/State.lean`.
+The existing additive `position_measurable` specializes this update result.
+This deterministic interpretation does not impose a probability law or
+independence; a state-dependent branching kernel is a separate probabilistic
+model, not implied by the update map.
+`Probability/BranchingProcess/Offspring/Kernel.lean` owns the state-dependent
+indexed offspring kernel and its state-update and point-measure images. It
+uses Mathlib `Kernel` and `IsMarkovKernel` and the existing generic offspring
+point-measure interface, without depending on random-walk probability modules.
+
+The selected-path construction used for the asymptotic speed of the frontier is owned by
+`Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/SelectedPath/`.
+Its root `selectedPath` follows the second selected child at each split while
+the first selected child starts a growth trial. Trial populations, completion,
+and coupling are grouped beneath `SelectedPath/GrowthTrial/`,
+`SelectedPath/Completion/`, and `SelectedPath/Coupling/`; one-use steps for the
+construction are under the sibling `AsymptoticSpeed/Lemmas/`.
+
+The deterministic rule assigning a child slot to the continuation path is in
+`Combinatorics.Branching.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath`.
+The generic first and second slot operations are methods of `Step.FiniteSelection`.
+`Asymptotics.HasAsymptoticSpeed` describes a limit of position sequences, and
+`Combinatorics.Branching.Selection.NSelection.Walk.Frontier` applies it to the
+least and greatest position paths of a deterministic selected walk.
+
+The first observable split of a selected population is a reusable process fact
+owned by the `BranchingRandomWalk.Selection.Stepwise.SplitTime` namespace. Its
+files are under `Probability/BranchingRandomWalk/Population/Processes/StepSelection/SplitTime/`.
+The fixed-root time shift belongs beside it in `RootIndexed.lean`. The
+almost-sure finite completion is in `SplitTime/Finite.lean`, with its proof
+helpers in `SplitTime/Lemmas/FiniteCompletion.lean`. The
+two-sibling stopped subtree factorization used by the selected-path construction is in
+`AsymptoticSpeed/Lemmas/FirstSplit/`. Generic selected-subtree integration is
+owned by `Genealogy/Exploration/IndependentSubtreeIntegration.lean`, and the
+independent eventwise integral bound is at
+`Probability/Independence/Integration/IndependentUpperBound.lean`.
+
+`AsymptoticSpeed/Limit/EndpointExpectation.lean` uses the public stopped
+endpoint law to transfer the expectation of a terminal payoff on finite
+completion to a fresh descendant field and the stopped endpoint data.
+
+Generic process interfaces stay separate by role: observable candidate
+completion and success are in the `ProbabilityTheory.Trial` namespace under `Probability/Process/HittingTime/`, while
+i.i.d. geometric reward belongs under `Probability/Sequence/IID/GeometricReward/`.
+These cover distinct trial protocols, so no umbrella `Probability/Process/Restart/`
+module is introduced. `Probability/Process/Path/Restart/` retains its own
+path-rebasing and relative-window meaning. The branching-step split event and
+its measurability belong to `Combinatorics/BranchingWalk/Step/Selection/Split.lean`
+and `MeasureTheory/BranchingWalk/Step/Selection/Split.lean`; the general
+positive-probability bounded-split estimate belongs to
+`Probability/BranchingRandomWalk/Step/Selection/BoundedSplit.lean`.
+
 `Probability/Process/Path/Representation/Continuous.lean` owns both the
 bundling and measurability interfaces for continuous sample paths and the
 generic extraction of a measurable continuous-path-valued version from
@@ -79,7 +144,7 @@ event remain under `Probability/Process/RandomWalk/Path/Restart/`.
 `FirstMoment.lean` there owns the law-generic exponentially weighted
 restarted-window integral and its bound by the endpoint factor times the
 ordinary restarted-window probability; its horizontal-tube specialization is
-the random-walk interface consumed by killed branching-population estimates.
+the random-walk interface consumed by estimates for selected branching populations.
 Generic conditional-probability integration and successive-block product
 bounds belong to `Probability/Process/Filtration/ConditionalBlocks.lean`;
 the conditional expectation of a measurable event of an independent pair,
@@ -139,12 +204,15 @@ Selection modules are placed by the data they take as input:
   ([`Finset.filter`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Filter.html),
   [`Finset.sort`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Sort.html));
   the capacity-$N$ interface composes those operations for this project.
-- `Combinatorics/Matching/LowerTail.lean` owns the finite ordered-value
-  matching theorem: lower-tail count inequalities yield an injective map whose
-  target value is at most the source value. It is independent of `NSelection`;
-  `Combinatorics/Selection/NSelection/Matching/Hall.lean` specializes it to
-  capacity-constrained selections. Mathlib provides the underlying general
-  finite Hall theorem in `Mathlib/Combinatorics/Hall/Basic.lean`.
+- `Combinatorics/Matching/ThresholdCount.lean` owns the generic
+  threshold-count matching theorem. If every order-key threshold count of
+  `objectsToMatch` is bounded by the corresponding count in
+  `availablePartners`, it constructs an injection whose partner order key is
+  at most the matched object's order key. The theorem is independent of
+  `NSelection`; `Combinatorics/Selection/NSelection/Matching/SelectedPopulation.lean`
+  applies it to the population selected by the first-`N` rule. Mathlib provides
+  the underlying relation-based finite Hall theorem in
+  `Mathlib/Combinatorics/Hall/Basic.lean`.
 - `Combinatorics/BranchingWalk/Step/Selection/` owns selectors whose input is
   an offspring step. `Combinatorics/BranchingWalk/Selection/NSelection/Walk/`
   owns the generation recursion
@@ -160,7 +228,7 @@ Selection modules are placed by the data they take as input:
   measurability theorem belongs to
   `MeasureTheory/BranchingWalk/Step/Selection/FiniteSlot.lean`, and the
   pushforward offspring law and supercriticality criterion belong to
-  `Probability/BranchingRandomWalk/Restart/RootedTrial/FiniteSlot/Offspring.lean`.
+  `Probability/BranchingRandomWalk/Step/Selection/BinaryOffspringLaw.lean`.
 - `MeasureTheory/Selection/` owns measurable selector realizations and their
   measurability results. Measurability results whose input is a branching step
   belong to `MeasureTheory/BranchingWalk/Step/Selection/`. The generation
