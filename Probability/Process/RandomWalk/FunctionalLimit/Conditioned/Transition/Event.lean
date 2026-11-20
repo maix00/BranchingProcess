@@ -46,7 +46,7 @@ $\sigma\sqrt N$ and writing $s=\Delta/\sqrt N$. This is the transition
 event in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with
 Infinite Offspring* (master's thesis, Fudan University, 2026), Chapter 3,
 Lemma 3.5, and Appendix A.2, Lemma A.7. -/
-def normalizedTransitionCorridor (sigma scale : ℝ) :
+noncomputable def normalizedTransitionCorridor (sigma scale : ℝ) :
     Set (CadlagPath unitInterval ℝ) :=
   Skorokhod.rangeInClosedIntervalEndsIn
     0 ((5 / 6 * scale) / sigma)

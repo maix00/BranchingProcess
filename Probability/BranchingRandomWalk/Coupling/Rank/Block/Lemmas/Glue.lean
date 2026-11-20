@@ -48,22 +48,22 @@ lemma RootIndexed.glue_rankBlockChoice_eq_updateGeneration
     {Root α X Value : Type*}
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (n : ℕ)
-    (sourceValue targetValue :
+    (objectOrderKey partnerOrderKey :
       RootIndexed.StepField (Root ⊕ Root) α X →
         RootIndexed.TreeNode Root α → Value)
-    (source target : RootIndexed.StepField (Root ⊕ Root) α X →
+    (objectsToMatch availablePartners : RootIndexed.StepField (Root ⊕ Root) α X →
       Finset (RootIndexed.TreeNode Root α))
     (base : RootIndexed.StepField (Root ⊕ Root) α X)
     (prior : RootIndexed.StepField Root α X)
     (hprior : ∀ r u, n ≤ u.length → prior r u = base (Sum.inr r) u) :
     RootIndexed.StepField.glue n (prior.past n)
         (RootIndexed.selectedCoordinateField
-          (RootIndexed.rankBlockChoice n sourceValue targetValue source target)
+          (RootIndexed.rankBlockChoice n objectOrderKey partnerOrderKey objectsToMatch availablePartners)
           base) =
       Combinatorics.Branching.RootIndexed.StepField.updateGeneration n
         (RootIndexed.rankInstalledStepField
-          (fun _ => sourceValue base) (fun _ => targetValue base)
-          (fun _ => source base) (fun _ => target base)
+          (fun _ => objectOrderKey base) (fun _ => partnerOrderKey base)
+          (fun _ => objectsToMatch base) (fun _ => availablePartners base)
           (fun sample r u => sample (Sum.inl r) u)
           (fun _ => prior) base)
         prior := by
@@ -84,9 +84,9 @@ lemma RootIndexed.glue_rankBlockChoice_eq_updateGeneration
       unfold RootIndexed.rankChoice
         RootIndexed.rankPreimage RootIndexed.StepField.pasteCoordinate
       unfold RootIndexed.rankInstalledStepField valueAtMatchedRank
-        Coupling.valueAtPreimage
-      cases hpre : preimageByRank (sourceValue base) (targetValue base)
-          (source base) (target base) (r, u) with
+        Coupling.valueAtObjectPreimage
+      cases hpre : objectAtPartnerRankBy (objectOrderKey base) (partnerOrderKey base)
+          (objectsToMatch base) (availablePartners base) (r, u) with
       | some p => simp [hpre]
       | none => simp [hpre, hprior r u hle]
     · have hgt : n < u.length := lt_of_le_of_ne hle (Ne.symm heq)

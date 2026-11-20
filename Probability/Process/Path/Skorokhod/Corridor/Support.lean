@@ -59,7 +59,6 @@ theorem measure_fullSegmentCorridorReturnEvent_pos_of_path_support
   have heq : F ⁻¹' A =ᵐ[P] fullSegmentCorridorReturnEvent X 0 1
       lower upper endpointLower endpointUpper := by
     filter_upwards [hpath] with ω hω
-    apply propext
     simp only [Set.mem_preimage, fullSegmentCorridorReturnEvent]
     constructor
     · rintro ⟨⟨margin, hmargin, hcorridor⟩, hendω⟩
