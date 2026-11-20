@@ -11,6 +11,17 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Branching/State/Kernel.lean"): (
+        "ProbabilityTheory.Kernel.infinitePi_compProd",
+        "ProbabilityTheory.Kernel.trajMeasure_infinitePi",
+        "ProbabilityTheory.Kernel.map_traj_eq_trajMeasure",
+        "ProbabilityTheory.Kernel.condExp_of_jointLaw",
+        "ProbabilityTheory.BranchingProcess.State.generationPathLaw_oneStep",
+        "ProbabilityTheory.BranchingProcess.State.traj_descendantTrees",
+        "ProbabilityTheory.BranchingProcess.State.condExp_descendantTrees",
+        "ProbabilityTheory.BranchingProcess.State.condExp_selectedDescendantTrees",
+        "ProbabilityTheory.BranchingProcess.State.stopped_descendantTrees_condExp",
+    ),
     Path("BranchingProcessTest/Branching/State.lean"): (
         "Combinatorics.Branching.stateAlong_add",
         "Combinatorics.Branching.RootIndexed.BranchingWalk.state_measurable",

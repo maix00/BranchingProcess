@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Probability.ConditionalProbability
-public import Probability.BranchingProcess.State.BranchingProperty
+public import Probability.BranchingProcess.State.IndependentMarks
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Law
 
 /-!

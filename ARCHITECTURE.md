@@ -40,27 +40,73 @@ indexed offspring kernel and its state-update and point-measure images. It
 uses Mathlib `Kernel` and `IsMarkovKernel` and the existing generic offspring
 point-measure interface, without depending on random-walk probability modules.
 
-`Probability/BranchingProcess/State/BranchingProperty.lean` owns the single-root
-state-tree kernel $P_s$, its independent-family product law, and conditional
-integration for arbitrary past-measurable root states and a fresh independent
-field vector. The optional-state representation `stateTree` retains the
-survival domain, so the law is for the whole realized state tree, not just its
-values on a selected path. `Combinatorics/BranchingWalk/Basic/State.lean`
-owns its deterministic subtree identity and additive translation special case;
-`MeasureTheory/BranchingWalk/MarkedTree.lean` owns joint measurability.
-The fixed-generation and stopping-generation field adapters remain under
-`Genealogy/Exploration/Abstract/State.lean`. These are reusable branching
-properties and belong outside `Lemmas/`. The stopped adapter also allows
-infinite stopping times by working on the finite-time event. The model here
-uses a fixed independent offspring-mark law; merely defining a state-dependent
-single-generation kernel does not construct its full branching-process law.
-The abstraction follows the branching Markov property in Bitseki Penda--Delmas,
-*Central limit theorem for bifurcating Markov chains*, Definition 2.1
-(https://cermics.gitlab.enpc.fr/delmas/Publi/clt-bmc-ptw.pdf), and reuses the local
-`IndepFun.condExp_prod_ae_eq_integral_map` bridge and Mathlib's
-`Measure.infinitePi_map_pi` (pinned Mathlib
-`26573066084e6e2aa8526ea358bc43b66d96f970`). No new process wrapper or
-compatibility alias is introduced.
+`Probability/BranchingProcess/State/Generation.lean` constructs the actual
+state-dependent process by applying the offspring-state kernel independently
+to the present parents, then using Mathlib's Ionescu--Tulcea law. The root
+initial law is an arbitrary joint distribution, not necessarily a product.
+`State/Kernel.lean` constructs the single-root path and whole-tree kernels.
+`State/BranchingProperty.lean` is the public entry for complete descendant-tree
+independence conditional on the observed generation. It accepts any
+state-valued Markov offspring kernel $K$; the original mark-valued kernel
+and update enter through $K=Q^F$ in `Offspring/Kernel.lean`.
+`State/Descendants/Generation.lean` and `Path.lean` identify its one-generation
+and complete-path descendant projections. These are reusable transition and
+path-law identities, rather than theorem-specific proof support.
+`State/Descendants/Observed.lean` handles history-measurable choices of distinct
+nodes and the finite-time event of a possibly infinite stopping generation.
+Countable address spaces with measurable singletons suffice for random-address
+evaluation; the state space needs neither an order, algebraic structure,
+standard-Borel structure, nor moment conditions.
+
+The fixed independent offspring-mark representation is kept in
+`State/IndependentMarks.lean`. It constructs state trees directly from a fresh
+raw field and is used by the existing field adapters in
+`Genealogy/Exploration/Abstract/State.lean`. Those adapters have different
+input data from the canonical state-dependent process; they do not replace
+its general branching property. The deterministic `stateTree_subtree` and
+`stateTree_add` identities remain in the combinatorial owner, and the joint
+measurability of that representation remains in
+`MeasureTheory/BranchingWalk/MarkedTree.lean`. No old-path alias is retained.
+
+### State-dependent branching: upstream reuse audit (2026-11-20)
+
+The dependency audit checked pinned Mathlib
+`26573066084e6e2aa8526ea358bc43b66d96f970`, pinned BrownianMotion
+`baaa2468da869e15e1654cbe416e55a5dc9d08b5`, and the official Mathlib kernel
+source tree at upstream master `5f78f9ce46fc85fa3cb45561d47b489c4c98cd04`.
+The relevant existing APIs and the local additions have separate roles:
+
+| Existing dependency API | Use in this library |
+| --- | --- |
+| `Measure.infinitePi`, `infinitePi_map_pi`, `infinitePi_map_curry`, `map_infinitePi_infinitePi_of_inj` | Construct and reindex independent coordinate measures; no replacement product-measure object. |
+| `Measurable.measure_of_isPiSystem_of_isProbabilityMeasure` | Prove parameter measurability of the product probability kernel from finite cylinders. |
+| `Kernel.traj`, `trajMeasure`, `partialTraj`, `partialTraj_compProd_traj` | Construct and disintegrate the full process; no new extension theorem. |
+| `Kernel.eq_traj`, `eq_traj'`, projective-limit uniqueness | Existing finite-prefix uniqueness. The local `eq_trajMeasure` derives those prefixes from the initial and one-step joint laws by induction. |
+| `Measure.compProd_map` | Change the future coordinate of a joint law. `Composition/Map.lean` supplies the first-coordinate identity and its conditional-kernel observation consequence. |
+| `condExp_stopping_time_ae_eq_restrict_eq_of_countable` | Assemble deterministic-time conditional laws on the cells $\{\tau=n\}$; no replacement stopping-time definition. |
+| `Kernel.exists_measurable_map_eq_unitInterval` | A possible standard-Borel realization of a kernel, unnecessary here: direct products and Ionescu--Tulcea preserve arbitrary measurable state spaces. |
+
+The local `Probability/Kernel/Composition/InfinitePi.lean` packages the native
+product measures as a common-input probability kernel and proves coordinatewise
+composition. `Kernel/IonescuTulcea/Independent.lean` identifies independent
+products of complete history-dependent process laws. The local conditional
+integration statements derive the conditional expectation from an explicit
+joint law, without constructing a regular conditional distribution. These
+are independently meaningful operations on kernels and processes, outside
+`Lemmas/`; the one-use address calculation is a private lemma in its caller.
+
+Official references checked:
+[Mathlib Ionescu--Tulcea](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Kernel/IonescuTulcea/Traj.html),
+[infinite product measures](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/ProductMeasure.html),
+and [Giry measurability](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/GiryMonad.html).
+The branching transition follows the parent-conditioned reproduction property
+in S. Valère Bitseki Penda and J.-F. Delmas, *Central limit theorem for
+bifurcating Markov chains*, Definition 2.1 (binary families),
+https://cermics.gitlab.enpc.fr/delmas/Publi/clt-bmc-ptw.pdf. Sibling dependence
+is retained inside each joint offspring family; distinct parents reproduce
+conditionally independently. Mathlib's extension proof cites O. Kallenberg,
+*Foundations of Modern Probability*, third edition (2021), Theorem 8.24,
+DOI 10.1007/978-3-030-61871-1.
 
 The selected-path construction used for the asymptotic speed of the frontier is owned by
 `Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/SelectedPath/`.
