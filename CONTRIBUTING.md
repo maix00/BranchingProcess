@@ -52,6 +52,17 @@ If a demonstrated error cannot be repaired locally within the source's proof
 strategy, document the obstruction and obtain the maintainer's agreement
 before changing the strategy.
 
+## Generalizations and special cases
+
+Use one fundamental implementation when generalizing a construction. Define
+additive, fixed-law, or other special cases from that implementation. Proving
+an equality between two independently maintained interfaces does not finish
+the migration: update clients and remove the replaced definitions and aliases.
+A concrete probability-space realization may remain when a construction needs
+its underlying randomness, but identify its pushforward with the canonical
+law rather than define a second law interface. Keep its model-specific
+conditional-law adapters in a namespace that names that model or realization.
+
 ## Pull requests
 
 Keep a pull request focused on one mathematical or architectural change.
