@@ -62,7 +62,7 @@ C.\operatorname{Dominates}D
 `Cloud.dominates_iff` unfolds the slice-wise definition, while
 `Cloud.dominates_of_particles_eq_empty` states
 `(∀ t, C.particles t = ∅) → C.Dominates D`. The rankwise transfer laws conclude
-`C.Dominates D` from `∀ t, C.RankwiseDominates D t` when each source rank map
+`C.Dominates D` from `∀ t, C.RankwiseDominates D t` when the object-cloud rank map
 is injective on its slice, and conclude `C.DominatesBy φ D` from the analogous
 observed-position comparison. Their exact declarations are
 `Cloud.dominates_of_rankwiseDominates_of_countable` and

@@ -114,9 +114,9 @@ theorem iidUnitPathBlockProcess_ae_start_eq_zero
     rw [ae_all_iff]
     intro n
     let hEval := measurePreserving_eval_infinitePi (fun _ : ℕ => P) n
-    have hEvalQP : Measure.QuasiMeasurePreserving (Function.eval n)
+    have hEvalQP : MeasureTheory.QuasiMeasurePreserving (Function.eval n)
         (iidUnitPathBlockLaw P) P := by
-      refine ⟨hEval.measurable, ?_⟩
+      refine ⟨hEval.aemeasurable, ?_⟩
       unfold iidUnitPathBlockLaw
       rw [hEval.map_eq]
     exact hEvalQP.tendsto_ae hP.ae_start_eq_zero
@@ -141,9 +141,9 @@ theorem iidUnitPathBlockLaw_ae_blocks_start_eq_zero
   rw [ae_all_iff]
   intro n
   let hEval := measurePreserving_eval_infinitePi (fun _ : ℕ => P) n
-  have hEvalQP : Measure.QuasiMeasurePreserving (Function.eval n)
+  have hEvalQP : MeasureTheory.QuasiMeasurePreserving (Function.eval n)
       (iidUnitPathBlockLaw P) P := by
-    refine ⟨hEval.measurable, ?_⟩
+    refine ⟨hEval.aemeasurable, ?_⟩
     unfold iidUnitPathBlockLaw
     rw [hEval.map_eq]
   exact hEvalQP.tendsto_ae hP.ae_start_eq_zero

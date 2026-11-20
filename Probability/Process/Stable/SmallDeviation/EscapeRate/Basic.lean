@@ -173,7 +173,7 @@ private lemma tendsto_rangeScaleFactor
   filter_upwards [hfactorEq] with a ha
   exact ha.symm
 
-private def referenceEndpointProbability
+private noncomputable def referenceEndpointProbability
     {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) (X : ℝ≥0 → Ω → ℝ) (β : ℝ) (i : Fin 7) : ℝ≥0∞ :=
   P (fullSegmentCorridorIocReturnEvent X 0 1 (-β) β

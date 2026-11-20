@@ -40,7 +40,7 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown
 
 /-- For a fixed candidate jump set, impose the rounded-maximum tube on each
 block outside that set and leave the jump blocks unrestricted. -/
-def drawdownJumpPatternTubeEvent {q : ℕ}
+noncomputable def drawdownJumpPatternTubeEvent {q : ℕ}
     (remainder blockLength : ℕ) (pattern : Finset (Fin q))
     (upper binWidth tubeWidth : ℝ) (n : ℕ) : Set (ℕ → ℝ) :=
   if hn : n < q then
@@ -59,7 +59,7 @@ def drawdownJumpPatternBound {q : ℕ}
 
 /-- The tube events selected by a fixed jump pattern, intersected over the
 first `q` blocks. -/
-def drawdownJumpPatternTubeIntersection {q : ℕ}
+noncomputable def drawdownJumpPatternTubeIntersection {q : ℕ}
     (remainder blockLength : ℕ) (pattern : Finset (Fin q))
     (upper binWidth tubeWidth : ℝ) : Set (ℕ → ℝ) :=
   ProbabilityTheory.conditionalBlockIntersection

@@ -65,8 +65,8 @@ def filter (keep : Ω → Set ι) (hkeep : Measurable keep) :
   measurable_select := by
     rw [measurable_set_iff]
     intro q
-    exact ((measurable_pi_apply q).comp measurable_snd).and
-      ((measurable_pi_apply q).comp (hkeep.comp measurable_fst))
+    exact ((measurable_set_mem q).comp measurable_snd).and
+      ((measurable_set_mem q).comp (hkeep.comp measurable_fst))
 
 @[simp] theorem mem_filter (keep : Ω → Set ι) (hkeep : Measurable keep)
     (ω : Ω) (s : Set ι) (q : ι) :

@@ -42,6 +42,9 @@ f\text{ measurable}\Longrightarrow
   `o ↦ o.elim none some` is measurable when `some` is measurable.
 * `MeasureTheory.measurableSet_option_isSome` states that
   `{o : Option X | o.isSome}` is measurable.
+* `Measurable.option_elim` allows the absent value and the present branch
+  to depend measurably on a parameter: if $o$, $g$ and $(w,e)\mapsto f(w,e)$
+  are measurable, then $w\mapsto o(w).\mathrm{elim}(g(w),f(w,\cdot))$ is measurable.
 -/
 
 public section
@@ -111,5 +114,31 @@ theorem measurableSet_option_isSome {X : Type*} [MeasurableSpace X] :
   exact measurableSet_option_some_image MeasurableSet.univ
 
 end MeasureTheory
+
+/-- Eliminate a random optional value with measurably varying branches. -/
+theorem Measurable.option_elim {Ω X Y : Type*}
+    [MeasurableSpace Ω] [MeasurableSpace X] [MeasurableSpace Y]
+    {o : Ω → Option X} {g : Ω → Y} {f : Ω → X → Y}
+    (ho : Measurable o) (hg : Measurable g)
+    (hf : Measurable (fun p : Ω × X => f p.1 p.2)) :
+    Measurable (fun w => (o w).elim (g w) (f w)) := by
+  classical
+  by_cases hX : Nonempty X
+  · obtain ⟨x⟩ := hX
+    have hsome := hf.comp
+      (measurable_id.prodMk ((MeasureTheory.measurable_optionGetD x).comp ho))
+    have hset := MeasureTheory.measurableSet_option_isSome.preimage ho
+    have hpiece : Measurable
+        (Set.piecewise {w | (o w).isSome} (fun w => f w ((o w).getD x)) g) :=
+      hsome.piecewise hset hg
+    convert hpiece using 1
+    ext w
+    cases h : o w <;> simp [h, Set.piecewise]
+  · have heq : o = fun _ => none := by
+      funext w
+      cases h : o w with
+      | none => rfl
+      | some x => exact (hX ⟨x⟩).elim
+    simpa [heq] using hg
 
 end
