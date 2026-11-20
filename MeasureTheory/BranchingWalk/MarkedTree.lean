@@ -15,6 +15,8 @@ public import MeasureTheory.BranchingWalk.State
 
 ## Public declarations
 
+* `Combinatorics.Branching.stateTree_measurable` states joint measurability
+  of $(s,\omega)\mapsto V_s(\omega)$, including absence of descendants.
 * `Combinatorics.Branching.surviveAlong_measurableSet` states that presence
   of a fixed finite path is a measurable event in the branching field.
 * `Combinatorics.Branching.RootIndexed.BranchingWalk.markedTreeWith_measurable`
@@ -45,6 +47,19 @@ theorem surviveAlong_measurableSet {α Mark : Type*} [MeasurableSpace Mark]
   | cons j p ih =>
       exact ((survive_measurableSet j).preimage (measurable_pi_apply v)).inter
         (ih (v ++ [j]))
+
+/-- The realized optional state tree depends jointly measurably on its root
+state and complete offspring field. -/
+theorem stateTree_measurable {α Mark State : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace State]
+    (F : State → Mark → State) (hF : Measurable (Function.uncurry F)) :
+    Measurable (fun p : State × StepField α Mark ↦ stateTree F p.1 p.2) := by
+  apply measurable_pi_iff.mpr
+  intro u
+  exact (measurable_option_some.comp (stateAlong_measurable F hF Prod.snd Prod.fst [] u
+    measurable_fst (fun k _ ↦ (measurable_pi_apply (u[k])).comp
+      ((measurable_pi_apply ([] ++ u.take k)).comp measurable_snd)))).ite
+        ((surviveAlong_measurableSet [] u).preimage measurable_snd) measurable_const
 
 namespace RootIndexed.BranchingWalk
 

@@ -30,6 +30,26 @@ The LaTeX proof is not counted as a Lean proof.
 
 ## Work-package status index
 
+## General state-update branching property (2026-11-20)
+
+The fixed independent offspring-mark model now has its full state-tree
+conditional law for any jointly measurable update $F:S\times E\to S$.
+`Probability/BranchingProcess/State/BranchingProperty.lean` constructs $P_s$
+and proves the product-family law and conditional integration for arbitrary
+past-measurable random root states. `Genealogy/Exploration/Abstract/State.lean`
+connects it to selected fixed and stopping generations, including the
+finite-time event of a possibly infinite stopping time. The deterministic
+`stateTree_subtree` identity identifies those continuations with the original
+realized descendants; `stateTree_add` recovers translation in the additive
+special case. Section 2.1 retains a fixed offspring-mark law and states this
+arbitrary-update extension, with an affine nonadditive example.
+
+The separate state-dependent offspring kernel $Q(s,\cdot)$ and its image
+$Q^F(s,\cdot)$ are implemented in `Offspring/Kernel.lean`. Constructing the
+whole process for that general kernel and proving its subtree branching
+property remain open; the fixed-law state-update result does not close that
+obligation.
+
 ## Integrated work packages for Theorems 1.1 and 1.2 (2026-10-11 audit)
 
 The theorem proofs are being advanced as dependency packages rather than by

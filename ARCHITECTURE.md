@@ -40,6 +40,28 @@ indexed offspring kernel and its state-update and point-measure images. It
 uses Mathlib `Kernel` and `IsMarkovKernel` and the existing generic offspring
 point-measure interface, without depending on random-walk probability modules.
 
+`Probability/BranchingProcess/State/BranchingProperty.lean` owns the single-root
+state-tree kernel $P_s$, its independent-family product law, and conditional
+integration for arbitrary past-measurable root states and a fresh independent
+field vector. The optional-state representation `stateTree` retains the
+survival domain, so the law is for the whole realized state tree, not just its
+values on a selected path. `Combinatorics/BranchingWalk/Basic/State.lean`
+owns its deterministic subtree identity and additive translation special case;
+`MeasureTheory/BranchingWalk/MarkedTree.lean` owns joint measurability.
+The fixed-generation and stopping-generation field adapters remain under
+`Genealogy/Exploration/Abstract/State.lean`. These are reusable branching
+properties and belong outside `Lemmas/`. The stopped adapter also allows
+infinite stopping times by working on the finite-time event. The model here
+uses a fixed independent offspring-mark law; merely defining a state-dependent
+single-generation kernel does not construct its full branching-process law.
+The abstraction follows the branching Markov property in Bitseki Penda--Delmas,
+*Central limit theorem for bifurcating Markov chains*, Definition 2.1
+(https://cermics.gitlab.enpc.fr/delmas/Publi/clt-bmc-ptw.pdf), and reuses the local
+`IndepFun.condExp_prod_ae_eq_integral_map` bridge and Mathlib's
+`Measure.infinitePi_map_pi` (pinned Mathlib
+`26573066084e6e2aa8526ea358bc43b66d96f970`). No new process wrapper or
+compatibility alias is introduced.
+
 The selected-path construction used for the asymptotic speed of the frontier is owned by
 `Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/SelectedPath/`.
 Its root `selectedPath` follows the second selected child at each split while
