@@ -37,6 +37,21 @@ are all useful contributions.
    [`FORMALIZATION_CHECKLIST.md`](FORMALIZATION_CHECKLIST.md) before describing
    a result as complete.
 
+## Formalizing proofs from references
+
+Identify the source for the result being formalized, whether it is an article,
+thesis, book, or another reference. Cite the specific theorem, lemma, or proof
+that the implementation follows. Check that the Lean proof follows that
+argument on the same mathematical objects, with the corresponding hypotheses
+and parameter choices.
+
+A local correction may fix a bound, index, or missing justification while
+preserving the proof strategy. Document the discrepancy and apply the same
+correction to any corresponding exposition maintained in this repository.
+If a demonstrated error cannot be repaired locally within the source's proof
+strategy, document the obstruction and obtain the maintainer's agreement
+before changing the strategy.
+
 ## Pull requests
 
 Keep a pull request focused on one mathematical or architectural change.

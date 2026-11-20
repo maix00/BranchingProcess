@@ -54,7 +54,7 @@ abbrev RestartedPopulation (m : ℕ) :=
   RootIndexed.CausalPopulation (RestartedField m) (Fin m) ℕ ℝ
     (RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := ℝ)) id
 
-/-- The event that the actual finite killed slice contains at least `K`
+/-- The event that the actual finite selected BRW slice contains at least `K`
 particles. -/
 def secondStageEnoughRoots
     {m K : ℕ} (P : ℕ → RestartedPopulation m)

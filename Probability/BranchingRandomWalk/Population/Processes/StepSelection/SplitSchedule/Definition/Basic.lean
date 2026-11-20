@@ -56,7 +56,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
-namespace StepSelection
+namespace Selection.Stepwise
 namespace SplitSchedule
 
 open Combinatorics.UlamHarris Combinatorics.Branching
@@ -68,7 +68,7 @@ noncomputable def candidate
     {Root α X : Type*} (R : Step.FiniteSelection α X)
     (root : ℕ → Root) (i : ℕ) (_start age : ℕ)
     (ω : RootIndexed.StepField Root α X) : Finset (TreeNode α) :=
-  RootIndexed.StepSelection.population R age ω (root i)
+  RootIndexed.Selection.Stepwise.population R age ω (root i)
 
 /-- One trial population embedded into the global clock at `start`. -/
 noncomputable def component
@@ -92,7 +92,7 @@ theorem candidate_adapted
       (Root := Root) (α := α) (X := X) age]
       (candidate R root i start age) :=
     (measurable_pi_apply (root i)).comp
-      (RootIndexed.StepSelection.population_adapted R hR age)
+      (RootIndexed.Selection.Stepwise.population_adapted R hR age)
   exact h.mono
     ((RootIndexed.stepFiltration (Root := Root) (α := α) (X := X)).mono
       (Nat.le_add_left age start)) le_rfl
@@ -316,6 +316,6 @@ theorem concurrentPopulation_adapted_of_countable
     enabled henabled henabledRange
 
 end SplitSchedule
-end StepSelection
+end Selection.Stepwise
 end RootIndexed
 end ProbabilityTheory.BranchingRandomWalk
