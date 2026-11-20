@@ -56,9 +56,10 @@ example : Measurable (Function.uncurry (fun (s : ℝ) (e : ℝ × ℝ) ↦ e.1 *
 
 example (μ : Measure (Step Bool (ℝ × ℝ))) [IsProbabilityMeasure μ] :
     ProbabilityTheory.IsMarkovKernel
-      (ProbabilityTheory.BranchingProcess.stateTreeKernel μ
-        (fun (s : ℝ) (e : ℝ × ℝ) ↦ e.1 * s + e.2) (by fun_prop)) :=
-  ProbabilityTheory.BranchingProcess.stateTreeKernel.isMarkovKernel μ _ _
+      (ProbabilityTheory.BranchingProcess.State.treeKernel
+        (ProbabilityTheory.BranchingProcess.offspringStateKernel
+          (fun (s : ℝ) (e : ℝ × ℝ) ↦ e.1 * s + e.2) (by fun_prop)
+          (ProbabilityTheory.Kernel.const ℝ μ))) := inferInstance
 
 -- A real, nonadditive update: two affine steps multiply the root state and
 -- transform the first offset before adding the second one.
@@ -88,9 +89,30 @@ example {α Mark State : Type*} (F : State → Mark → State)
 #print axioms Combinatorics.Branching.stateTree_add
 #print axioms Combinatorics.Branching.stateTree_measurable
 #print axioms ProbabilityTheory.Indep.condExp_prod_ae_eq_integral_map
-#print axioms ProbabilityTheory.BranchingProcess.stateTreeKernel_apply
-#print axioms ProbabilityTheory.BranchingProcess.stateTreeKernel_family
-#print axioms ProbabilityTheory.BranchingProcess.condExp_stateTree_family
-#print axioms ProbabilityTheory.BranchingRandomWalk.selected_stateTree_family_condExp
-#print axioms ProbabilityTheory.BranchingRandomWalk.stopped_stateTree_family_condExp
-#print axioms ProbabilityTheory.BranchingRandomWalk.stopped_stateTree_family_condExp_on_finite
+#print axioms ProbabilityTheory.BranchingProcess.State.map_stateTree_offspringFieldLaw
+#print axioms ProbabilityTheory.BranchingRandomWalk.Exploration.State.condExp_selectedTrees
+#print axioms ProbabilityTheory.BranchingRandomWalk.Exploration.State.condExp_stoppedTrees
+#print axioms ProbabilityTheory.BranchingRandomWalk.Exploration.State.condExp_stoppedTrees_on_finite
+
+-- Additive observations are definitionally instances of the common update
+-- recursion; this guards the dependency direction, including noncommutative monoids.
+example {α X : Type*} [AddMonoid X] (β : StepField α X) (v p : List α) :
+    displace β v p = stateAlong (fun s e ↦ s + e) β 0 v p := rfl
+
+example {α X : Type*} [AddMonoid X] (β : StepField α X) (v p : List α) :
+    displace? β v p = stateAlong? (fun s e ↦ s + e) β 0 v p := rfl
+
+-- Presence inspection requires no equality or inhabitance of either index or mark type.
+example {α Mark : Type*} (β : StepField α Mark) (v p : List α) :
+    Decidable (surviveAlong β v p) := surviveAlong.decidable β v p
+
+-- A field realization is identified with the one canonical state kernel,
+-- for arbitrary jointly measurable updates and probability offspring laws.
+example {α Mark S : Type*} [MeasurableSpace Mark] [MeasurableSpace S]
+    (μ : Measure (Step α Mark)) [IsProbabilityMeasure μ]
+    (F : S → Mark → S) (hF : Measurable (Function.uncurry F)) (s : S) :
+    (ProbabilityTheory.BranchingProcess.offspringFieldLaw μ).map (stateTree F s) =
+      ProbabilityTheory.BranchingProcess.State.treeKernel
+        (ProbabilityTheory.BranchingProcess.offspringStateKernel F hF
+          (ProbabilityTheory.Kernel.const S μ)) (some s) :=
+  ProbabilityTheory.BranchingProcess.State.map_stateTree_offspringFieldLaw μ F hF s

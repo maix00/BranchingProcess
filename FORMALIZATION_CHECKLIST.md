@@ -53,16 +53,19 @@ order, normalization, or moment assumptions. Conditional formulas assume
 integrability of the tested payoff; the stopped formula also assumes each
 fixed-generation payoff is integrable, as holds for bounded tests.
 
-The fixed independent offspring-mark representation and its fresh-field
-conditional integration are in `State/IndependentMarks.lean`.
-`Genealogy/Exploration/Abstract/State.lean` retains the corresponding field
-adapters. Its deterministic subtree and additive-specialization identities
-remain `stateTree_subtree` and `stateTree_add`. This raw-field representation
-and the canonical general-kernel path construction have different input data;
-the latter's branching property is proved from its transitions, not assumed
-from independence of a state-dependent raw field. Section 2.1's general
-branching statement is thus covered, rather than only its fixed-law case.
-The upstream reuse audit is recorded in `ARCHITECTURE.md`.
+The independent mark-field realization is identified with this same kernel
+by `State/FieldLaw.lean`, `map_stateTree_offspringFieldLaw`. The proof derives
+its initial and successive conditional generation laws before applying
+Ionescu--Tulcea uniqueness. The former separate independent-mark kernel and
+its public family interface are removed, with no old-name aliases.
+`Genealogy/Exploration/Abstract/State.lean` specializes the canonical law to
+conditioning on the full pre-sampled mark-field past. Its integration helper
+is private. The deterministic additive displacement and its optional version
+are defined from the single general state-update recursion; their observability
+proofs use the general state-update measurability theorem.
+Section 2.1's general branching statement and the fixed-law field realization
+thus share one tree-law interface. The upstream reuse audit is recorded in
+`ARCHITECTURE.md`.
 
 ## Integrated work packages for Theorems 1.1 and 1.2 (2026-10-11 audit)
 

@@ -139,7 +139,7 @@ theorem pathPotential_cons
       Combinatorics.Branching.StepField.map φ
         (subtreeStepField [i] ω) := rfl
   rw [hmap]
-  simp [displace, Combinatorics.Branching.StepField.map_apply,
+  simp [displace_cons, Combinatorics.Branching.StepField.map_apply,
     Step.potentialValue', Step.potentialAt?, value']
 
 /-- Splitting an address into a prefix and a suffix splits its potential into

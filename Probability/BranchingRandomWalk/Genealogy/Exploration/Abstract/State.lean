@@ -7,7 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Probability.ConditionalProbability
-public import Probability.BranchingProcess.State.IndependentMarks
+public import Probability.BranchingProcess.State.FieldLaw
+import Probability.Independence.ConditionalIntegral
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Law
 
 /-!
@@ -15,23 +16,24 @@ public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Sto
 
 ## Public declarations
 
-In namespace `ProbabilityTheory.BranchingRandomWalk`:
+In namespace `ProbabilityTheory.BranchingRandomWalk.Exploration.State`:
 
-* `selected_stateTree_family_condExp` gives the full conditional state-subtree
+* `condExp_selectedTrees` gives the full conditional state-subtree
   law at a generation-measurably selected family of distinct roots:
   $E[g((V_{S_i}(\omega_{u_i}))_i)\mid\mathcal F_n]
    =\int g\,d\bigotimes_i P_{S_i}$.
-* `stopped_stateTree_family_condExp_on_finite` gives the same conditional
+* `condExp_stoppedTrees_on_finite` gives the same conditional
   law under $P(\cdot\mid\tau<\infty)$, allowing positive probability of
   infinite stopping time. If the finite-time event has probability zero,
   its asserted branching identity is vacuous.
-* `stopped_stateTree_family_condExp` gives the same identity with
+* `condExp_stoppedTrees` gives the same identity with
   $\mathcal F_n$ replaced by $\mathcal F_\tau$ for an everywhere-finite
   stopping generation. Root states $S_i$ may be arbitrary stopped-measurable
   random variables. The selected root-family map has countable range and
   measurable singleton fibres.
 
-Here $P_s$ is `BranchingProcess.stateTreeKernel μ F hF s`. The update $F$ is
+Here $P_s$ is the canonical `BranchingProcess.State.treeKernel` at
+`some s`, with state kernel `offspringStateKernel F hF (Kernel.const State μ)`. The update $F$ is
 jointly measurable, with no additive structure, and the offspring-mark law
 $\mu$ is fixed. On surviving selected roots, `stateTree_subtree` identifies
 these updated trees with the original descendants.
@@ -49,10 +51,56 @@ measurable state-tree map; it never translates states to an origin.
 open MeasureTheory Combinatorics.Branching Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingProcess
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.Exploration.State
+
+/-- Conditional law of a family of state subtrees, with arbitrary past-measurable
+root states. The entire realized state trees, including absence, are tested. -/
+private lemma condExp_realizedTrees {Ω ι α Mark State : Type*}
+    (past : MeasurableSpace Ω) [mΩ : MeasurableSpace Ω]
+    [MeasurableSpace Mark] [MeasurableSpace State]
+    (P : Measure Ω) [IsProbabilityMeasure P] (hpast : past ≤ mΩ)
+    (μ : Measure (Step α Mark)) [IsProbabilityMeasure μ]
+    (F : State → Mark → State) (hF : Measurable (Function.uncurry F))
+    (s : Ω → ι → State) (hs : Measurable[past] s)
+    (fields : Ω → ι → StepField α Mark) (hfields : Measurable fields)
+    (hind : Indep past (MeasurableSpace.comap fields inferInstance) P)
+    (hlaw : P.map fields = Measure.infinitePi (fun _ : ι ↦ offspringFieldLaw μ))
+    (g : (ι → TreeNode α → Option State) → ℝ) (hg : Measurable g)
+    (hgi : Integrable (fun w ↦ g (fun i ↦ stateTree F (s w i) (fields w i))) P) :
+    condExp past P (fun w ↦ g (fun i ↦ stateTree F (s w i) (fields w i))) =ᵐ[P]
+      fun w ↦ ∫ trees, g trees ∂Measure.infinitePi
+        (fun i ↦ BranchingProcess.State.treeKernel
+          (offspringStateKernel F hF (Kernel.const State μ)) (some (s w i))) := by
+  have hrealize : Measurable (fun p : (ι → State) × (ι → StepField α Mark) ↦
+      fun i ↦ stateTree F (p.1 i) (p.2 i)) := by
+    apply measurable_pi_iff.mpr
+    intro i
+    have hpair : Measurable (fun p : (ι → State) × (ι → StepField α Mark) ↦
+        (p.1 i, p.2 i)) := by fun_prop
+    exact (stateTree_measurable (α := α) F hF).comp hpair
+  have hc := hind.condExp_prod_ae_eq_integral_map past hpast hs hfields
+    (hg.comp hrealize).stronglyMeasurable hgi
+  change condExp past P (fun w ↦ g (fun i ↦ stateTree F (s w i) (fields w i))) =ᵐ[P]
+    (fun w ↦ ∫ ys, g (fun i ↦ stateTree F (s w i) (ys i)) ∂P.map fields) at hc
+  have hfamily (x : ι → State) :
+      (Measure.infinitePi (fun _ : ι ↦ offspringFieldLaw μ)).map
+        (fun ys i ↦ stateTree F (x i) (ys i)) =
+      Measure.infinitePi (fun i ↦ BranchingProcess.State.treeKernel
+        (offspringStateKernel F hF (Kernel.const State μ)) (some (x i))) := by
+    have hm (i : ι) : Measurable (stateTree (α := α) F (x i)) :=
+      (stateTree_measurable F hF).comp (measurable_const.prodMk measurable_id)
+    rw [Measure.infinitePi_map_pi _ hm]
+    congr 1
+    funext i
+    exact BranchingProcess.State.map_stateTree_offspringFieldLaw μ F hF (x i)
+  filter_upwards [hc] with w hw
+  rw [hw, hlaw, ← hfamily (s w)]
+  exact (integral_map ((hrealize.comp (measurable_const.prodMk measurable_id)).aemeasurable)
+    hg.aestronglyMeasurable).symm
+
 
 /-- Branching at a measurably selected generation for any measurable state update. -/
-theorem selected_stateTree_family_condExp {ι α Mark State : Type*}
+theorem condExp_selectedTrees {ι α Mark State : Type*}
     [MeasurableSpace Mark] [MeasurableSpace State]
     (μ : Measure (Step α Mark)) [IsProbabilityMeasure μ]
     (F : State → Mark → State) (hF : Measurable (Function.uncurry F)) (n : ℕ)
@@ -72,15 +120,16 @@ theorem selected_stateTree_family_condExp {ι α Mark State : Type*}
         (fun ω ↦ g (fun i ↦ stateTree F (s ω i)
           (selectedSubtreeStepFieldVector roots ω i))) =ᵐ[offspringFieldLaw μ]
       fun ω ↦ ∫ trees, g trees ∂Measure.infinitePi
-        (fun i ↦ stateTreeKernel μ F hF (s ω i)) := by
-  exact condExp_stateTree_family _ _ (generationFiltration (M := Step α Mark) |>.le n)
+        (fun i ↦ BranchingProcess.State.treeKernel
+          (offspringStateKernel F hF (Kernel.const State μ)) (some (s ω i))) := by
+  exact condExp_realizedTrees _ _ (generationFiltration (M := Step α Mark) |>.le n)
     μ F hF s hs _ (selectedSubtreeStepFieldVector_measurable roots hroots hcount)
     (selectedSubtreeStepFieldVector_independent μ roots hroots hcount hfiber hdepth hinj)
     (selectedSubtreeStepFieldVector_law μ roots hroots hcount hfiber hdepth hinj) g hg hgi
 
 /-- State subtrees at a finite stopping generation retain their current states
 and have conditionally independent continuation laws. -/
-theorem stopped_stateTree_family_condExp {ι α Mark State : Type*}
+theorem condExp_stoppedTrees {ι α Mark State : Type*}
     [MeasurableSpace Mark] [MeasurableSpace State]
     (μ : Measure (Step α Mark)) [IsProbabilityMeasure μ]
     (F : State → Mark → State) (hF : Measurable (Function.uncurry F))
@@ -101,8 +150,9 @@ theorem stopped_stateTree_family_condExp {ι α Mark State : Type*}
         (fun ω ↦ g (fun i ↦ stateTree F (s ω i)
           (selectedSubtreeStepFieldVector roots ω i))) =ᵐ[offspringFieldLaw μ]
       fun ω ↦ ∫ trees, g trees ∂Measure.infinitePi
-        (fun i ↦ stateTreeKernel μ F hF (s ω i)) := by
-  exact condExp_stateTree_family _ _ hτ.measurableSpace_le μ F hF s hs _
+        (fun i ↦ BranchingProcess.State.treeKernel
+          (offspringStateKernel F hF (Kernel.const State μ)) (some (s ω i))) := by
+  exact condExp_realizedTrees _ _ hτ.measurableSpace_le μ F hF s hs _
     (selectedSubtreeStepFieldVector_measurable_of_measurable roots
       (hroots.mono hτ.measurableSpace_le le_rfl) hcount)
     (stopped_selectedSubtreeStepFieldVector_independent μ τ hτ hfinite roots hroots
@@ -114,7 +164,7 @@ theorem stopped_stateTree_family_condExp {ι α Mark State : Type*}
 /-- Branching on the finite-time event, which may have probability less than one.
 Conditioning first on this stopped-measurable event preserves the same state
 continuation laws. The zero-probability case is vacuous. -/
-theorem stopped_stateTree_family_condExp_on_finite {ι α Mark State : Type*}
+theorem condExp_stoppedTrees_on_finite {ι α Mark State : Type*}
     [MeasurableSpace Mark] [MeasurableSpace State]
     (μ : Measure (Step α Mark)) [IsProbabilityMeasure μ]
     (F : State → Mark → State) (hF : Measurable (Function.uncurry F))
@@ -136,7 +186,8 @@ theorem stopped_stateTree_family_condExp_on_finite {ι α Mark State : Type*}
         (fun ω ↦ g (fun i ↦ stateTree F (s ω i)
           (selectedSubtreeStepFieldVector roots ω i))) =ᵐ[P]
       fun ω ↦ ∫ trees, g trees ∂Measure.infinitePi
-        (fun i ↦ stateTreeKernel μ F hF (s ω i)) := by
+        (fun i ↦ BranchingProcess.State.treeKernel
+          (offspringStateKernel F hF (Kernel.const State μ)) (some (s ω i))) := by
   let P := offspringFieldLaw μ
   let E := {ω | τ ω ≠ ⊤}
   let C := P[|E]
@@ -177,6 +228,6 @@ theorem stopped_stateTree_family_condExp_on_finite {ι α Mark State : Type*}
     exact hfactor A hA B hB
   have hi : Integrable (fun ω ↦ g (fun i ↦ stateTree F (s ω i) (Y ω i))) C :=
     hgi.integrableOn.smul_measure (ENNReal.inv_ne_top.mpr hpositive)
-  exact condExp_stateTree_family _ C hτ.measurableSpace_le μ F hF s hs Y hY hind hlaw g hg hi
+  exact condExp_realizedTrees _ C hτ.measurableSpace_le μ F hF s hs Y hY hind hlaw g hg hi
 
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory.BranchingRandomWalk.Exploration.State

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.BranchingWalk
+public import Combinatorics.BranchingWalk.Basic.State.Recursion
 public import Combinatorics.BranchingWalk.Basic.Position.DisplacementMap
 
 /-!
@@ -52,40 +52,6 @@ namespace Combinatorics.Branching
 
 open Combinatorics.UlamHarris
 
-/-- Follow marked edges using an arbitrary state update. An absent slot leaves
-the state unchanged; the value on unrealized paths is only a total extension. -/
-def stateAlong {α Mark State : Type*} (F : State → Mark → State)
-    (β : StepField α Mark) (s : State) (v : TreeNode α) : TreeNode α → State
-  | [] => s
-  | j :: p => stateAlong F β ((β v j).elim s (F s)) (v ++ [j]) p
-
-@[simp] theorem stateAlong_nil {α Mark State : Type*} (F : State → Mark → State)
-    (β : StepField α Mark) (s : State) (v : TreeNode α) :
-    stateAlong F β s v [] = s := rfl
-
-theorem stateAlong_cons {α Mark State : Type*} (F : State → Mark → State)
-    (β : StepField α Mark) (s : State) (v : TreeNode α) (j : α) (p : TreeNode α) :
-    stateAlong F β s v (j :: p) =
-      stateAlong F β ((β v j).elim s (F s)) (v ++ [j]) p := rfl
-
-/-- State evolution composes when a path is split into two segments. -/
-theorem stateAlong_append {α Mark State : Type*} (F : State → Mark → State)
-    (β : StepField α Mark) (s : State) (v p q : TreeNode α) :
-    stateAlong F β s v (p ++ q) =
-      stateAlong F β (stateAlong F β s v p) (v ++ p) q := by
-  induction p generalizing s v with
-  | nil => simp
-  | cons j p ih =>
-      simpa [stateAlong, List.append_assoc] using
-        ih ((β v j).elim s (F s)) (v ++ [j])
-
-theorem stateAlong_append_singleton {α Mark State : Type*} (F : State → Mark → State)
-    (β : StepField α Mark) (s : State) (v p : TreeNode α) (j : α) :
-    stateAlong F β s v (p ++ [j]) =
-      (β (v ++ p) j).elim (stateAlong F β s v p) (F (stateAlong F β s v p)) := by
-  rw [stateAlong_append]
-  rfl
-
 /-- Additive displacement is a specialization of general state evolution. -/
 theorem stateAlong_add {α Mark State : Type*} [AddMonoid State]
     (d : Mark → State) (β : StepField α Mark) (s : State) (v p : TreeNode α) :
@@ -97,43 +63,6 @@ theorem stateAlong_add {α Mark State : Type*} [AddMonoid State]
       rw [ih]
       cases h : β v j <;> simp [Step.map, value', h, add_assoc, displaceWith]
 
-/-- Rebase an arbitrary state update at a descendant address. -/
-theorem stateAlong_rebase {α Mark State : Type*} (F : State → Mark → State)
-    (β : StepField α Mark) (s : State) (u v p : TreeNode α) :
-    stateAlong F (fun w ↦ β (u ++ w)) s v p = stateAlong F β s (u ++ v) p := by
-  induction p generalizing v s with
-  | nil => rfl
-  | cons j p ih =>
-      simp only [stateAlong_cons]
-      rw [ih, List.append_assoc]
-
-/-- The state at each realized descendant, with `none` at absent addresses. -/
-noncomputable def stateTree {α Mark State : Type*} (F : State → Mark → State)
-    (s : State) (β : StepField α Mark) : TreeNode α → Option State :=
-  fun u ↦ @ite _ (surviveAlong β [] u) (Classical.propDecidable _)
-    (some (stateAlong F β s [] u)) none
-
-@[simp] theorem stateTree_root {α Mark State : Type*} (F : State → Mark → State)
-    (s : State) (β : StepField α Mark) : stateTree F s β [] = some s := by
-  simp [stateTree, surviveAlong, stateAlong]
-
-/-- A surviving root's state subtree is the original state tree restricted
-at that root. No translation or algebraic structure is required. -/
-theorem stateTree_subtree {α Mark State : Type*} (F : State → Mark → State)
-    (s : State) (β : StepField α Mark) (u v : TreeNode α)
-    (hu : surviveAlong β [] u) :
-    stateTree F (stateAlong F β s [] u) (fun w ↦ β (u ++ w)) v =
-      stateTree F s β (u ++ v) := by
-  have hs := surviveAlong_rebase β u [] v
-  simp only [List.append_nil] at hs
-  have ht := surviveAlong_append β [] u v
-  simp only [List.nil_append, hu, true_and] at ht
-  by_cases hv : surviveAlong β u v
-  · simp only [stateTree, hs.mpr hv, ht.mpr hv, ite_true]
-    rw [stateAlong_rebase, stateAlong_append]
-    simp only [List.append_nil, List.nil_append]
-  · simp only [stateTree, mt hs.mp hv, mt ht.mp hv, ite_false]
-
 /-- In the additive case, all realized states are translations of the states
 started at zero; absent nodes remain absent. -/
 theorem stateTree_add {α Mark State : Type*} [AddMonoid State]
@@ -141,7 +70,7 @@ theorem stateTree_add {α Mark State : Type*} [AddMonoid State]
     stateTree (fun x e ↦ x + d e) s β =
       fun u ↦ (stateTree (fun x e ↦ x + d e) 0 β u).map (fun x ↦ s + x) := by
   funext u
-  by_cases hu : surviveAlong β [] u <;> simp [stateTree, hu, stateAlong_add]
+  by_cases hu : surviveAlong β [] u <;> simp [stateTree, stateAlong?, hu, stateAlong_add]
 
 namespace RootIndexed.BranchingWalk
 

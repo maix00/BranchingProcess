@@ -17,14 +17,19 @@ than the application that first needs it.
 | `Probability` | Laws, filtrations, independence, random processes, and almost-everywhere statements | IID sequences, random walks, Lévy and stable processes |
 | `Probability/BranchingRandomWalk` | Random branching models and their bridges to general process and measure interfaces | offspring fields, spines, selection and coupling |
 
-`Combinatorics/BranchingWalk/Basic/State.lean` owns general state evolution
-along child marks, with update `F : State → Mark → State`. Marks record the
-information used for one parent-to-child evolution; states record the
-particle's current position, type, or other state. The two spaces need no
-algebraic structure. The existing additive interpretation is the specialization
-`F s e = s + d e`, proved by `stateAlong_add`, which connects to the existing
-displacement and position results. `MarkedTree/State.lean` constructs the corresponding
-realized state-marked tree. These are reusable constructions outside `Lemmas/`.
+`Combinatorics/BranchingWalk/Basic/State/Recursion.lean` owns the single
+state-update recursion `stateAlong F β s v p`, with update
+`F : State → Mark → State`. Its optional observation `stateAlong?` uses the
+same recursion and the finite-path survival predicate; `stateTree` is the
+root-based observation. Finite-path survival is constructively decidable
+without any equality assumptions on the mark or child-index types.
+`Position/Displace.lean` defines both `displace` and `displace?` by the
+specialization $F(s,e)=s+e$, $s=0$. `DisplacementMap.lean` first maps marks
+by $d$ and uses those same definitions. There is no separate additive path
+recursor. The entry `Basic/State.lean` proves the additive interpretation
+`stateAlong_add` and gives the bundled walk's state operation.
+`MarkedTree/State.lean` constructs the realized state-marked tree. These are
+reusable constructions outside `Lemmas/`.
 `MeasureTheory/BranchingWalk/State.lean` owns coordinate measurability for
 arbitrary measurable initial states and mark fields.
 `MeasureTheory/BranchingWalk/MarkedTree.lean` proves measurability of the
@@ -58,15 +63,22 @@ Countable address spaces with measurable singletons suffice for random-address
 evaluation; the state space needs neither an order, algebraic structure,
 standard-Borel structure, nor moment conditions.
 
-The fixed independent offspring-mark representation is kept in
-`State/IndependentMarks.lean`. It constructs state trees directly from a fresh
-raw field and is used by the existing field adapters in
-`Genealogy/Exploration/Abstract/State.lean`. Those adapters have different
-input data from the canonical state-dependent process; they do not replace
-its general branching property. The deterministic `stateTree_subtree` and
-`stateTree_add` identities remain in the combinatorial owner, and the joint
-measurability of that representation remains in
-`MeasureTheory/BranchingWalk/MarkedTree.lean`. No old-path alias is retained.
+`State/FieldLaw.lean` proves `map_stateTree_offspringFieldLaw`: the realized
+state tree on the independent mark field has exactly the canonical `treeKernel`
+law with $Q(x)=\mu$. Its proof identifies the initial state and each
+past/next joint law and invokes the existing Ionescu--Tulcea uniqueness.
+The former independent-mark kernel definition and its public parallel family
+interface have been removed, without aliases.
+`Genealogy/Exploration/Abstract/State.lean` retains only the concrete raw-field
+conditional-law adapters, whose conclusions now use that same canonical kernel.
+Their namespace is `ProbabilityTheory.BranchingRandomWalk.Exploration.State`,
+with names `condExp_selectedTrees`, `condExp_stoppedTrees`, and
+`condExp_stoppedTrees_on_finite`. They condition on the full mark-field past,
+not only the state path, so their
+input data remain with the concrete model. Their single-file integration helper
+is private and uses the field-law identification and native product pushforwards.
+The additive and potential-displacement measurability proofs likewise invoke
+`stateAlong_measurable`; they do not implement separate induction schemes.
 
 ### State-dependent branching: upstream reuse audit (2026-11-20)
 
