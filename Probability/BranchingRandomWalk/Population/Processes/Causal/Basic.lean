@@ -40,7 +40,7 @@ generation domain and may vary by generation.  The only structural requirement i
 that every successor is a genuine child of a retained parent in the supplied
 pre-sampled step field.
 
-This is the process-level abstraction for killed branching random walks.
+This is the process-level abstraction for branching random walks with causal selection.
 Local, time-homogeneous `Step.FiniteSelection` processes are a special case.
 The index is the intrinsic natural-number generation of the branching tree;
 it is not a separate discrete-time dynamics layered over the tree.

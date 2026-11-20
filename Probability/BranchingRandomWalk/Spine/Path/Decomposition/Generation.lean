@@ -186,7 +186,7 @@ theorem pathGeneration_joint_measurable
   classical
   rw [weightedPathGeneration, tsum_eq_single ([] : TreeNode ι)]
   · rw [weightedPathGenerationTerm, Set.indicator_of_mem]
-    · simp only [pathPotential, displaceWith, displace, neg_zero,
+    · simp only [pathPotential_nil, neg_zero,
         Real.exp_zero, ENNReal.ofReal_one, one_mul]
       congr 1
       funext k
