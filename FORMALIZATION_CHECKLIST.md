@@ -32,25 +32,37 @@ The LaTeX proof is not counted as a Lean proof.
 
 ## General state-update branching property (2026-11-20)
 
-The fixed independent offspring-mark model now has its full state-tree
-conditional law for any jointly measurable update $F:S\times E\to S$.
-`Probability/BranchingProcess/State/BranchingProperty.lean` constructs $P_s$
-and proves the product-family law and conditional integration for arbitrary
-past-measurable random root states. `Genealogy/Exploration/Abstract/State.lean`
-connects it to selected fixed and stopping generations, including the
-finite-time event of a possibly infinite stopping time. The deterministic
-`stateTree_subtree` identity identifies those continuations with the original
-realized descendants; `stateTree_add` recovers translation in the additive
-special case. Section 2.1 states the general state-dependent-kernel branching
-property by finite-depth induction and a monotone class argument. The Lean
-results currently cover its fixed offspring-mark-law specialization. The
-nonadditive examples remain in Lean tests, outside the LaTeX exposition.
+The general state-dependent model is constructed from the offspring-state
+kernel $K=Q^F$ in `Offspring/Kernel.lean`, arbitrary measurable states, and an
+arbitrary joint initial root-state law. `State/Generation.lean` constructs the
+actual generation sequence using native independent products and
+Ionescu--Tulcea extension. `State/Kernel.lean` constructs its single-root path
+and complete state-tree laws.
 
-The separate state-dependent offspring kernel $Q(s,\cdot)$ and its image
-$Q^F(s,\cdot)$ are implemented in `Offspring/Kernel.lean`. Constructing the
-whole process for that general kernel and proving its subtree branching
-property remain open; the fixed-law state-update result does not close that
-obligation.
+`State/BranchingProperty.lean` proves the conditional product law of complete
+descendant trees from distinct current addresses, and its conditional-integral
+form under the actual random-initial process law.
+`State/Descendants/Observed.lean` permits addresses chosen measurably from the
+observed history and proves branching on the finite-time event of a possibly
+infinite stopping generation. These use finite-depth one-step identities,
+finite-history induction and native projective-limit uniqueness, followed by
+Mathlib's stopping-time conditional-expectation identity on $\{\tau=n\}$.
+Countable root and child address spaces with measurable singletons are required
+only for the random-address variants; states need no standard-Borel, additive,
+order, normalization, or moment assumptions. Conditional formulas assume
+integrability of the tested payoff; the stopped formula also assumes each
+fixed-generation payoff is integrable, as holds for bounded tests.
+
+The fixed independent offspring-mark representation and its fresh-field
+conditional integration are in `State/IndependentMarks.lean`.
+`Genealogy/Exploration/Abstract/State.lean` retains the corresponding field
+adapters. Its deterministic subtree and additive-specialization identities
+remain `stateTree_subtree` and `stateTree_add`. This raw-field representation
+and the canonical general-kernel path construction have different input data;
+the latter's branching property is proved from its transitions, not assumed
+from independence of a state-dependent raw field. Section 2.1's general
+branching statement is thus covered, rather than only its fixed-law case.
+The upstream reuse audit is recorded in `ARCHITECTURE.md`.
 
 ## Integrated work packages for Theorems 1.1 and 1.2 (2026-10-11 audit)
 
