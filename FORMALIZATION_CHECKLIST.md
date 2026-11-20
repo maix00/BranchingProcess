@@ -41,8 +41,10 @@ connects it to selected fixed and stopping generations, including the
 finite-time event of a possibly infinite stopping time. The deterministic
 `stateTree_subtree` identity identifies those continuations with the original
 realized descendants; `stateTree_add` recovers translation in the additive
-special case. Section 2.1 retains a fixed offspring-mark law and states this
-arbitrary-update extension, with an affine nonadditive example.
+special case. Section 2.1 states the general state-dependent-kernel branching
+property by finite-depth induction and a monotone class argument. The Lean
+results currently cover its fixed offspring-mark-law specialization. The
+nonadditive examples remain in Lean tests, outside the LaTeX exposition.
 
 The separate state-dependent offspring kernel $Q(s,\cdot)$ and its image
 $Q^F(s,\cdot)$ are implemented in `Offspring/Kernel.lean`. Constructing the
