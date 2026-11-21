@@ -201,7 +201,7 @@ lemma measure_gaussianBlockBox_eq_prod
   apply measure_congr
   filter_upwards [] with x
   simp only [Set.mem_preimage, Set.mem_Ioo]
-  exact propext ⟨fun h => ⟨(div_lt_iff₀ hsqrt).2 h.1,
+  exact ⟨fun h => ⟨(div_lt_iff₀ hsqrt).2 h.1,
       (lt_div_iff₀ hsqrt).2 h.2⟩,
     fun h => ⟨(div_lt_iff₀ hsqrt).1 h.1,
       (lt_div_iff₀ hsqrt).1 h.2⟩⟩

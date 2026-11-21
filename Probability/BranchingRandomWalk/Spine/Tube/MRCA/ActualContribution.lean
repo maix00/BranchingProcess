@@ -106,28 +106,16 @@ private lemma displaceWith_measurable_generation_actual
     Measurable[generationFiltration (M := Step ℕ X) n]
       (fun ω : StepField ℕ X =>
         Combinatorics.Branching.displaceWith φ ω v p) := by
-  induction p generalizing v with
-  | nil => exact measurable_const
-  | cons i p ih =>
-      have hparent : v.length < n := by
-        simp only [List.length_cons] at hvp
-        omega
-      have hstep : Measurable[generationFiltration (M := Step ℕ X) n]
-          (fun ω : StepField ℕ X =>
-            value' ((ω v).map φ) i) := by
-        exact (value'_measurable i).comp
-          ((Step.map_measurable φ.measurable_toFun).comp
-            (mark_measurable_of_depth_lt (M := Step ℕ X) v n hparent))
-      have htailBound : (v ++ [i]).length + p.length ≤ n := by
-        simp only [List.length_append, List.length_cons, List.length_nil]
-        simp only [List.length_cons] at hvp
-        omega
-      have htail := ih (v := v ++ [i]) htailBound
-      change Measurable[generationFiltration (M := Step ℕ X) n]
-        (fun ω : StepField ℕ X =>
-          value' ((ω v).map φ) i +
-            Combinatorics.Branching.displaceWith φ ω (v ++ [i]) p)
-      exact hstep.add htail
+  let : MeasurableSpace (StepField ℕ X) := generationFiltration (M := Step ℕ X) n
+  have h := stateAlong_measurable
+    (fun (x : ℝ) (e : X) ↦ x + φ e)
+    (measurable_fst.add (φ.measurable_toFun.comp measurable_snd))
+    (fun ω : StepField ℕ X ↦ ω) (fun _ ↦ 0) v p measurable_const
+    (fun k hk ↦ (measurable_pi_apply (p[k])).comp
+      (mark_measurable_of_depth_lt (M := Step ℕ X) (v ++ p.take k) n (by
+        simp only [List.length_append, List.length_take]
+        omega)))
+  simpa only [stateAlong_add, zero_add] using h
 
 private lemma pathHistory_measurable_generation_actual
     {X : Type*} [MeasurableSpace X]

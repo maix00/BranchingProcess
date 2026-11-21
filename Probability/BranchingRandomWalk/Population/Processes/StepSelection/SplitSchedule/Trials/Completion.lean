@@ -45,7 +45,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
-namespace StepSelection
+namespace Selection.Stepwise
 namespace SplitSchedule
 
 open Combinatorics.UlamHarris Combinatorics.Branching
@@ -118,18 +118,18 @@ theorem firstSuccessfulCompletion_isStoppingTime
     IsStoppingTime
       (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
       (firstDeclaredSuccess
-        (orderedCandidateDeclarationWithin
+        (ProbabilityTheory.Trial.orderedCandidateDeclarationWithin
           (completion R root initial threshold duration)
-          (fun i => successAtCompletion
+          (fun i => ProbabilityTheory.Trial.successAtCompletion
             (completion R root initial threshold duration i) (test i))
           candidates (fun j i => j < i))) := by
   let F := RootIndexed.stepFiltration
     (Root := Root) (α := α) (X := X)
-  have hobservable := successAtCompletion_observable F
+  have hobservable := ProbabilityTheory.Trial.successAtCompletion_observable F
     (completion R root initial threshold duration) test hcompletion htest
-  exact firstOrderedCandidateCompletionWithin_isStoppingTime F
+  exact ProbabilityTheory.Trial.firstOrderedCandidateCompletionWithin_isStoppingTime F
     (completion R root initial threshold duration)
-    (fun i => successAtCompletion
+    (fun i => ProbabilityTheory.Trial.successAtCompletion
       (completion R root initial threshold duration i) (test i))
     hobservable candidates
       (Set.Countable.mono (Set.subset_univ candidates) Set.countable_univ) _
@@ -149,9 +149,9 @@ theorem firstSuccessfulCompletion_isStoppingTime_of_countable
     IsStoppingTime
       (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
       (firstDeclaredSuccess
-        (orderedCandidateDeclarationWithin
+        (ProbabilityTheory.Trial.orderedCandidateDeclarationWithin
           (completion R root initial threshold duration)
-          (fun i => successAtCompletion
+          (fun i => ProbabilityTheory.Trial.successAtCompletion
             (completion R root initial threshold duration i) (test i))
           candidates (fun j i => j < i))) := by
   apply firstSuccessfulCompletion_isStoppingTime R root initial
@@ -168,18 +168,18 @@ theorem mem_orderedDeclaration_iff
     (success : ℕ → Set (RootIndexed.StepField Root α X))
     (candidates : Set ℕ) (n : ℕ)
     (ω : RootIndexed.StepField Root α X) :
-    ω ∈ orderedCandidateDeclarationWithin
+    ω ∈ ProbabilityTheory.Trial.orderedCandidateDeclarationWithin
         (completion R root initial threshold duration) success candidates
         (fun j i => j < i) n ↔
       ∃ i ∈ candidates,
         completion R root initial threshold duration i ω = n ∧
           ω ∈ success i ∧
           ∀ j ∈ candidates, j < i → ω ∉ success j := by
-  exact ProbabilityTheory.mem_orderedDeclaration_iff
+  exact ProbabilityTheory.Trial.mem_orderedDeclaration_iff
     (completion R root initial threshold duration) success candidates
     (fun ω' => completion_mono R root initial threshold duration ω') n ω
 
 end SplitSchedule
-end StepSelection
+end Selection.Stepwise
 end RootIndexed
 end ProbabilityTheory.BranchingRandomWalk
