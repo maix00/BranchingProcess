@@ -10,6 +10,7 @@ public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Core
 public import Probability.Distributions.Moments.Real
 public import Probability.Sequence.IID.Basic
 import Mathlib.Probability.BrownianMotion.Basic
+public import BrownianMotion.Gaussian.BrownianMotion
 import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Corridor.Brownian.Basic
 import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Basic
 
@@ -75,8 +76,8 @@ theorem ofReal_exp_neg_pi_sq_div_two_rho_sq_innerWidth_sq_le_liminf_centeredStri
         (-(Real.pi ^ 2) / (2 * rho ^ 2 * innerWidth ^ 2))) ≤
         P.map (Skorokhod.ofContinuousMap ∘
           continuousunitIntervalPath
-            (hB.toIsPreBrownianReal.continuousModification)
-            (hB.toIsPreBrownianReal.continuous_continuousModification))
+            (hB.toIsPreBrownianReal.mk B)
+            (hB.toIsPreBrownianReal.continuous_mk))
           (Skorokhod.rangeInOpenInterval (-(width / 2)) (width / 2)) := by
     refine hclosed.trans (measure_mono ?_)
     intro path hpath

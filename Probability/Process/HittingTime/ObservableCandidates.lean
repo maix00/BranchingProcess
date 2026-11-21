@@ -36,7 +36,7 @@ open MeasureTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory
+namespace ProbabilityTheory.Trial
 
 variable {Ω : Type*} {m : MeasurableSpace Ω}
 
@@ -257,6 +257,6 @@ theorem first_successful_candidate_isStoppingTime
     (fun i => successAtCompletion (completion i) (test i))
     (successAtCompletion_observable F completion test hcompletion htest)
 
-end ProbabilityTheory
+end ProbabilityTheory.Trial
 
 end

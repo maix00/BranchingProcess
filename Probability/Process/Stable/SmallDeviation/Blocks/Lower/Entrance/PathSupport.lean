@@ -54,7 +54,6 @@ theorem IsStableLevyProcess.linearPath_zero_mem_segmentLaw_support
   have heq : F ⁻¹' Skorokhod.rangeInOpenInterval (-δ) δ =ᵐ[P]
       fullSegmentCorridorEvent X 0 1 (-δ) δ := by
     filter_upwards [hpath] with ω hω
-    apply propext
     simp only [Set.mem_preimage, Skorokhod.rangeInOpenInterval,
       fullSegmentCorridorEvent, Set.mem_ofPred_eq]
     constructor

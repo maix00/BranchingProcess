@@ -53,7 +53,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
-namespace StepSelection
+namespace Selection.Stepwise
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 
@@ -64,13 +64,13 @@ noncomputable def population
     {Root α X : Type*} (R : Step.FiniteSelection α X) (n : ℕ)
     (ω : RootIndexed.StepField Root α X) :
     Root → Finset (TreeNode α) :=
-  fun r => ProbabilityTheory.BranchingRandomWalk.StepSelection.population R n (ω r)
+  fun r => ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.population R n (ω r)
 
 @[simp] theorem population_apply
     {Root α X : Type*} (R : Step.FiniteSelection α X) (n : ℕ)
     (ω : RootIndexed.StepField Root α X) (r : Root) :
     population R n ω r =
-      ProbabilityTheory.BranchingRandomWalk.StepSelection.population R n (ω r) :=
+      ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.population R n (ω r) :=
   rfl
 
 @[simp] theorem population_zero
@@ -85,7 +85,7 @@ theorem population_depth
     (ω : RootIndexed.StepField Root α X) {r : Root} {n : ℕ}
     {u : TreeNode α} (hu : u ∈ population R n ω r) :
     u.length = n :=
-  ProbabilityTheory.BranchingRandomWalk.StepSelection.population_depth
+  ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.population_depth
     R (ω r) n u hu
 
 theorem population_succ_parent
@@ -94,7 +94,7 @@ theorem population_succ_parent
     (q : TreeNode α) (hq : q ∈ population R (n + 1) ω r) :
     ∃ u ∈ population R n ω r, ∃ i,
       survive (ω r u) i ∧ q = u ++ [i] :=
-  ProbabilityTheory.BranchingRandomWalk.StepSelection.population_succ_parent
+  ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.population_succ_parent
     R (ω r) n q hq
 
 /-- All root populations are observable at generation `n`. Both the root and
@@ -110,7 +110,7 @@ theorem population_adapted
     RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n
   apply Measurable.of_eval
   intro r
-  exact (ProbabilityTheory.BranchingRandomWalk.StepSelection.population_adapted
+  exact (ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.population_adapted
     R hR n).comp
       (ProbabilityTheory.BranchingRandomWalk.RootIndexed.field_measurable
         (X := X) r n)
@@ -120,7 +120,7 @@ theorem population_card_le
     (hR : R.IsBoundedBy N) (ω : RootIndexed.StepField Root α X)
     (r : Root) (n : ℕ) :
     (population R n ω r).card ≤ N ^ n :=
-  ProbabilityTheory.BranchingRandomWalk.StepSelection.population_card_le
+  ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.population_card_le
     R N hR (ω r) n
 
 /-- Attach a root label to every particle in that root's selected
@@ -182,7 +182,7 @@ theorem labelledPopulation_succ_subset
   rcases hmem with ⟨hs, hqpop⟩
   subst s
   obtain ⟨u, hu, i, hi, rfl⟩ :=
-    ProbabilityTheory.BranchingRandomWalk.StepSelection.population_succ_selectedParent
+    ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.population_succ_selectedParent
       R (ω r) n q hqpop
   apply Combinatorics.Branching.Population.mem_offspringAddressSet.mpr
   exact ⟨(r, u), by simpa using hu, i, by simpa using hi, rfl⟩
@@ -190,7 +190,7 @@ theorem labelledPopulation_succ_subset
 /-! ## A finite family of labelled roots -/
 
 /-- Combine the selected descendants of a finite set of roots while retaining
-their root labels.  This is the multi-root source population used by spatial
+their root labels.  This is the multi-root step-selected BRW population used by spatial
 couplings; the ambient root type itself remains arbitrary. -/
 noncomputable def labelledPopulationOn
     {Root α X : Type*} [DecidableEq (RootIndexed.TreeNode Root α)]
@@ -317,6 +317,6 @@ theorem labelledPopulationOn_adapted
     rw [hempty]
     exact measurable_const
 
-end StepSelection
+end Selection.Stepwise
 end RootIndexed
 end ProbabilityTheory.BranchingRandomWalk

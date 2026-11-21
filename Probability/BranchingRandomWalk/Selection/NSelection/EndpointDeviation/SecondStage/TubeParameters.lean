@@ -17,20 +17,6 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
   \(d_D=\kappa c^{-2}D^{-2/3}\).
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveASecondStageWidth`:
   \(w_D=cD^{1/3}\).
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveASecondStageEntranceScale`:
-  the entrance margin \(e_D=(5\kappa/c^2+v)D^{1/3}/2\).
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.positiveASecondStageBridgeScale`:
-  the bridge displacement scale \(b_k=(v-\kappa/c^2)k^{1/3}/24\).
-
-The public definitions are
-\[
-  d_D=\frac{\kappa}{c^2}D^{-2/3},\qquad
-  w_D=cD^{1/3},\qquad
-  e_D=\frac{5\kappa/c^2+v}{2}D^{1/3},\qquad
-  b_k=\frac{v-\kappa/c^2}{24}k^{1/3}.
-\]
-They give the slope, width, entrance scale, and stable bridge scale used by the
-second-stage corridor.
 -/
 
 @[expose] public section
@@ -46,18 +32,5 @@ noncomputable def positiveASecondStageSlope
 noncomputable def positiveASecondStageWidth
     (c : ℝ) (D : ℕ) : ℝ :=
   c * ((D : ℝ) ^ ((1 : ℝ) / 3))
-
-/-- The entrance scale used to join a finite-variance entrance block to the
-downward bridge in the second-stage tube. -/
-noncomputable def positiveASecondStageEntranceScale
-    (κ c v : ℝ) (D : ℕ) : ℝ :=
-  ((5 * (κ / c ^ 2) + v) / 2) * ((D : ℝ) ^ ((1 : ℝ) / 3))
-
-/-- The stable endpoint-bridge scale used by the second-stage corridor
-estimate. -/
-noncomputable def positiveASecondStageBridgeScale
-    (κ c v : ℝ) (k : ℕ) : ℝ :=
-  ((v - κ / c ^ 2) / 24) * ((k : ℝ) ^ ((1 : ℝ) / 3))
-
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

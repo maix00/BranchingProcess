@@ -26,13 +26,10 @@ import Probability.MeasureTheory.Moments.PaleyZygmund
   $M_{n+1}=\rho^2M_n+v\rho^n$ and $M_0=1$, then
   `normalizedSecondMoment_le_of_recursion` proves
   $M_n/\rho^{2n}\le K(\rho,v)$.
-- `measure_ge_half_mean_of_moment_recursion` applies this estimate and the
+- `measure_ge_fraction_mean_of_moment_recursion` applies this estimate and the
   Paley--Zygmund inequality to a nonnegative square-integrable random-variable
   sequence with mean $\rho^n$ and the stated second-moment recursion. It gives
-  a uniform positive lower bound for reaching half the mean.
-- `measure_ge_floor_rpow_of_moment_recursion` chooses the horizon
-  $h=\lceil(a\log N+\log 2)/\log\rho\rceil_+$ and gives the same uniform
-  lower bound for reaching $\lfloor N^a\rfloor_+$.
+  a uniform positive lower bound for reaching the fraction $1/\rho$ of the mean.
 
 The probability-space statements apply to any sequence satisfying the listed
 moment identities. Finite-slot Galton--Watson applications are in
@@ -128,8 +125,8 @@ private theorem rho_pow_sq_le_secondMoment_of_recursion
 /-- For any nonnegative, square-integrable real-valued random-variable sequence
 with mean $\rho^n$ and second-moment recursion
 $M_{n+1}=\rho^2M_n+v\rho^n$, Paley--Zygmund gives a uniform lower bound
-on the probability of reaching half the mean. -/
-theorem measure_ge_half_mean_of_moment_recursion
+on the probability of reaching the fraction $1/\rho$ of the mean. -/
+theorem measure_ge_fraction_mean_of_moment_recursion
     {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
     (ρ variance : ℝ) (hρ : 1 < ρ) (hvariance : 0 ≤ variance)
     (Z : ℕ → Ω → ℝ) (m₂ : ℕ → ℝ)
@@ -142,9 +139,9 @@ theorem measure_ge_half_mean_of_moment_recursion
     (hsecond : ∀ n, ∫ ω, Z n ω ^ 2 ∂μ = m₂ n)
     (hm₂_succ : ∀ n, m₂ (n + 1) = ρ ^ 2 * m₂ n + variance * ρ ^ n)
     (n : ℕ) (threshold : ℝ) (hthreshold : 0 ≤ threshold)
-    (hthreshold_le : 2 * threshold ≤ ρ ^ n) :
+    (hthreshold_le : ρ * threshold ≤ ρ ^ n) :
     (μ.real {ω | threshold ≤ Z n ω}) ≥
-      1 / (4 * normalizedSecondMomentConstant ρ variance) := by
+      ((ρ - 1) / ρ) ^ 2 / normalizedSecondMomentConstant ρ variance := by
   have hρpos : 0 < ρ := by linarith
   have hsecond_lower := rho_pow_sq_le_secondMoment_of_recursion ρ variance hρ
     hvariance m₂ hm₂_zero hm₂_succ n
@@ -161,55 +158,29 @@ theorem measure_ge_half_mean_of_moment_recursion
   have hCpos : 0 < normalizedSecondMomentConstant ρ variance := by
     dsimp [normalizedSecondMomentConstant]
     positivity
-  exact measure_ge_threshold_of_secondMoment_le μ (Z n) (hZmeas n)
+  have hmeanPos : 0 < ρ ^ n := pow_pos hρpos _
+  have hfrac : threshold ≤ ρ ^ n / ρ :=
+    (le_div_iff₀ hρpos).mpr (by simpa [mul_comm] using hthreshold_le)
+  have hlt : threshold < ρ ^ n := hfrac.trans_lt ((div_lt_iff₀ hρpos).mpr
+    (lt_mul_of_one_lt_right hmeanPos hρ))
+  have hgap : ((ρ - 1) / ρ) * ρ ^ n ≤ ρ ^ n - threshold := by
+    have heq : ((ρ - 1) / ρ) * ρ ^ n = ρ ^ n - ρ ^ n / ρ := by
+      field_simp
+    rw [heq]
+    exact sub_le_sub_left hfrac _
+  have hgapSq := pow_le_pow_left₀
+    (mul_nonneg (div_nonneg (sub_nonneg.mpr hρ.le) hρpos.le) hmeanPos.le) hgap 2
+  have hPZ := measure_ge_threshold_of_moments μ (Z n) (hZmeas n)
     (hZ_nonneg n) (hZ_integrable n) (hZ_memLp n) (ρ ^ n) (m₂ n) threshold
-    (normalizedSecondMomentConstant ρ variance) (hmean n) (hsecond n)
-    hthreshold (pow_pos hρpos n) hthreshold_le hsecond_pos hCpos hsecond_upper'
-
-/-- The explicit threshold version of the geometric second-moment growth
-bound. If a random-variable sequence satisfies the stated moment recursion,
-then at
-`h_N = ceil ((a log N + log 2) / log ρ)` the population reaches
-`floor (N^a)` with a probability bounded away from zero. -/
-theorem measure_ge_floor_rpow_of_moment_recursion
-    {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (ρ variance : ℝ) (hρ : 1 < ρ) (hvariance : 0 ≤ variance)
-    (Z : ℕ → Ω → ℝ) (m₂ : ℕ → ℝ)
-    (hZmeas : ∀ n, Measurable (Z n))
-    (hZ_nonneg : ∀ n, 0 ≤ᵐ[μ] Z n)
-    (hZ_integrable : ∀ n, Integrable (Z n) μ)
-    (hZ_memLp : ∀ n, MemLp (Z n) 2 μ)
-    (hmean : ∀ n, ∫ ω, Z n ω ∂μ = ρ ^ n)
-    (hm₂_zero : m₂ 0 = 1)
-    (hsecond : ∀ n, ∫ ω, Z n ω ^ 2 ∂μ = m₂ n)
-    (hm₂_succ : ∀ n, m₂ (n + 1) = ρ ^ 2 * m₂ n + variance * ρ ^ n)
-    (N : ℕ) (a : ℝ) (hN : 1 ≤ N) :
-    (μ.real {ω | (⌊(N : ℝ) ^ a⌋₊ : ℝ) ≤
-      Z ⌈(a * Real.log N + Real.log 2) / Real.log ρ⌉₊ ω}) ≥
-      1 / (4 * normalizedSecondMomentConstant ρ variance) := by
-  have hNpow_nonneg : 0 ≤ (N : ℝ) ^ a :=
-    Real.rpow_nonneg (by positivity : 0 ≤ (N : ℝ)) a
-  have hfloor_le : (⌊(N : ℝ) ^ a⌋₊ : ℝ) ≤ (N : ℝ) ^ a := Nat.floor_le hNpow_nonneg
-  have hscale : 2 * (⌊(N : ℝ) ^ a⌋₊ : ℝ) ≤
-      ρ ^ ⌈(a * Real.log N + Real.log 2) / Real.log ρ⌉₊ := by
-    have hNpos : 0 < (N : ℝ) := by
-      exact_mod_cast (Nat.lt_of_lt_of_le Nat.zero_lt_one hN)
-    have htarget_pos : 0 < 2 * (N : ℝ) ^ a := by positivity
-    have hlog : Real.log (2 * (N : ℝ) ^ a) =
-        Real.log 2 + a * Real.log N := by
-      rw [Real.log_mul (by norm_num) (Real.rpow_pos_of_pos hNpos a).ne',
-        Real.log_rpow hNpos]
-    have hlogb : Real.logb ρ (2 * (N : ℝ) ^ a) =
-        (a * Real.log N + Real.log 2) / Real.log ρ := by
-      rw [Real.logb, hlog]
-      ring
-    have hlarge := Real.le_pow_natCeil_logb hρ htarget_pos
-    rw [hlogb] at hlarge
-    exact (mul_le_mul_of_nonneg_left hfloor_le (by norm_num)).trans
-      hlarge
-  exact measure_ge_half_mean_of_moment_recursion μ ρ variance hρ
-    hvariance Z m₂ hZmeas hZ_nonneg hZ_integrable hZ_memLp hmean hm₂_zero
-    hsecond hm₂_succ _ _ (Nat.cast_nonneg _) hscale
+    (hmean n) (hsecond n) hthreshold hlt hsecond_pos
+  refine le_trans ((le_div_iff₀ hsecond_pos).mpr ?_) hPZ
+  calc
+    _ ≤ (((ρ - 1) / ρ) ^ 2 / normalizedSecondMomentConstant ρ variance) *
+        (normalizedSecondMomentConstant ρ variance * (ρ ^ n) ^ 2) :=
+      mul_le_mul_of_nonneg_left hsecond_upper' (by positivity)
+    _ = (((ρ - 1) / ρ) * ρ ^ n) ^ 2 := by
+      field_simp
+    _ ≤ _ := hgapSq
 
 end ProbabilityTheory
 

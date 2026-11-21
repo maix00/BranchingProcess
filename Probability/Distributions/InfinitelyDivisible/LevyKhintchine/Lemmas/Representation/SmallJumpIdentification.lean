@@ -482,7 +482,8 @@ private lemma scaled_smallBall_remainder_tendsto
     refine setIntegral_mono_set (sq_integrableOn_ball_levy hν r)
       (ae_restrict_of_forall_mem
         ((isOpen_lt continuous_abs continuous_const).measurableSet) (fun x _ => sq_nonneg x))
-      (LE.le.eventuallyLE (fun x hx => lt_trans hx (hδ_ltr m)))
+      (Filter.Eventually.of_forall (fun x hx => Set.mem_setOf_eq.mpr
+        (lt_trans (Set.mem_setOf_eq.mp hx) (hδ_ltr m))))
   -- Use the `Metric` characterisation of convergence in `ℂ`.
   rw [Metric.tendsto_atTop]
   intro ε hε
@@ -564,7 +565,8 @@ private lemma scaled_smallBall_remainder_tendsto
                     (ae_restrict_of_forall_mem
                       ((isOpen_lt continuous_abs continuous_const).measurableSet)
                       (fun x _ => sq_nonneg x))
-                    (LE.le.eventuallyLE (fun x hx => lt_trans hx (hδ_ltr m)))
+                    (Filter.Eventually.of_forall (fun x hx => Set.mem_setOf_eq.mpr
+        (lt_trans (Set.mem_setOf_eq.mp hx) (hδ_ltr m))))
               _ ≤ C := hC k
     -- ν-side inner ball.
     have hν_norm : ‖iν‖ ≤ (2 / 9 : ℝ) * |ξ| ^ 3 * δ m * Bν := by
