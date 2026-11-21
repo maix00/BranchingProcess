@@ -30,6 +30,39 @@ objects and results. `BranchingWalk/Population/Line.lean` instantiates them
 for actual population generations. Random optional/stopping-line measurability
 conditions belong in the probability layer and are not part of `IsLine`.
 
+`Probability/Process/Tree/Line/` owns random-line observation conditions,
+under the namespace `ProbabilityTheory.Tree`, independently of BRW dynamics.
+`Basic.lean` uses Mathlib's membership-generated measurable space on sets and
+reuses `RootIndexed.IsLine`; membership in a realized random tree is a separate
+containment condition. `Optional.lean` tests `{L ≼ ℓ}` against an explicitly
+supplied deterministic-line information family. `Ancestral.lean` instead tests
+`{u ∈ L}` against explicitly supplied nodewise history. The information
+conventions are distinguished in `Information/Coordinates.lean`: `linePast`
+excludes the stopping nodes and their descendants, `ancestralPast` uses
+strict ancestors, and `ancestralHistory` includes the node itself. All retain
+initial information as an explicit sigma algebra. Coordinate observations
+enter through native `MeasurableSpace.comap`; their fixed-generation past is
+identified with the existing `Filtration.generatedByCoordinates` construction.
+The implication from ancestral decisions to optionality has an explicit
+information-containment hypothesis; its coordinate specialization uses strict
+ancestors and countable roots and child indices. No implication from arbitrary
+inclusive histories is assumed. `Information/Stopped.lean` constructs the
+sigma algebra at an optional random line from stopped events, following the
+construction of Mathlib `IsStoppingTime.measurableSpace`. These reusable
+objects and theorems stay outside `Lemmas/`. The coin and mixed-generation
+examples live only in `BranchingProcessTest/Branching/RandomLine.lean`.
+
+The upstream audit checked Mathlib `26573066084e6e2aa8526ea358bc43b66d96f970`:
+`Set.instMeasurableSpace`, `measurable_set_iff`, set-valued measurable
+intersection and union, and `IsStoppingTime.measurableSpace` supply the base
+interfaces. The current official Mathlib documentation for
+`MeasureTheory.MeasurableSpace.Constructions` was also checked. The tree-line
+information conventions follow Kyprianou (2000), *Martingale convergence and
+the stopped branching random walk*, §2, p. 408, Definition 1 and its comparison
+with Jagers' optional-line definition (DOI:10.1007/s004409900036). Definitions
+require neither a branching law nor countability; countability is used only
+where the proof forms intersections over all nodes of a test line.
+
 `Combinatorics/BranchingWalk/Basic/State/Recursion.lean` owns the single
 state-update recursion `stateAlong F β s v p`, with update
 `F : State → Mark → State`. Its optional observation `stateAlong?` uses the
