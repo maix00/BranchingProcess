@@ -11,6 +11,20 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Branching/TreeTopology.lean"): (
+        "Combinatorics.UlamHarris.Tree.expTreeMetricTopology_eq_treeMetricTopology",
+        "Combinatorics.UlamHarris.Tree.completeSpace_treeMetricSpace",
+        "Combinatorics.UlamHarris.Tree.completeSpace_expTreeMetricSpace",
+        "Combinatorics.UlamHarris.Tree.LocallyFinite.completeSpace_expMetricSpace",
+        "Combinatorics.UlamHarris.Tree.LocallyFinite.finiteTrees_denseRange",
+        "Combinatorics.UlamHarris.Tree.LocallyFinite.borel_expMetricTopology_eq_measurableSpace",
+        "Combinatorics.UlamHarris.Tree.cylinder_lt_borel_expTreeMetricTopology",
+    ),
+    Path("BranchingProcessTest/Branching/Frontier.lean"): (
+        "Combinatorics.Branching.CloudSet.lowerFrontier_mapOrderDual",
+        "Combinatorics.Branching.Cloud.lowerFrontierBy_state_eq",
+        "Combinatorics.Branching.Selection.NSelection.Walk.lowerFrontier_eq_lowerPoint",
+    ),
     Path("BranchingProcessTest/Branching/State/Kernel.lean"): (
         "ProbabilityTheory.Kernel.infinitePi_compProd",
         "ProbabilityTheory.Kernel.trajMeasure_infinitePi",
