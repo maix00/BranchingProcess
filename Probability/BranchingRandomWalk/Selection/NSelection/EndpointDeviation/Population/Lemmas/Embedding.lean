@@ -16,7 +16,7 @@ import Probability.BranchingRandomWalk.Population.Processes.Causal.Path.Window
 import Probability.Process.Path.Restart.Basic
 
 /-!
-# Embedding first-stage corridor successes into the killed population
+# Embedding first-stage corridor successes into the selected BRW population
 
 This module provides the pathwise population embedding used in Chapter 3,
 Lemma 3.5 of WANG Yiyang, *Asymptotic Speed of the N-Branching Random Walk
@@ -60,8 +60,8 @@ Explicitly,
       F(r)\in\operatorname{hasPathHistoryIn}_{\mathbb N}
         (\mathrm{realPotential},\ell,0,C_{\ell})\}.
   \]
-* `positiveA_successfulRoots_card_le_killedPopulation` and
-  `ae_positiveA_successfulRoots_card_le_killedPopulation` give,
+* `positiveA_successfulRoots_card_le_selectedBRWPopulation` and
+  `ae_positiveA_successfulRoots_card_le_selectedBRWPopulation` give,
   respectively, the pathwise and almost-sure inequalities
   \[
     \#R_{m,\ell}(F)\le\#K_{\ell}(F).
@@ -128,7 +128,7 @@ lemma positiveA_corridorPath_mem_restartedWindow
     simpa [positiveARestartedWindow] using hbounds
 
 /-- Distinct successful initial root labels produce distinct particles in the
-actual generation-`ell` restarted killed population. -/
+actual generation-`ell` restarted selected BRW population. -/
 noncomputable def positiveASuccessfulRoots
     (m ell : ℕ) (logN b v : ℝ)
     (field : RootIndexed.StepField (Fin m) ℕ ℝ) : Finset (Fin m) := by
@@ -138,7 +138,7 @@ noncomputable def positiveASuccessfulRoots
       (affineCorridorThrough ell (-b * logN) 0 (b * logN)
         ((-b + v) * logN))
 
-lemma positiveA_successfulRoots_card_le_killedPopulation
+lemma positiveA_successfulRoots_card_le_selectedBRWPopulation
     (m ell ellN : ℕ) (logN b v c κ : ℝ)
     [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
     [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
@@ -246,7 +246,7 @@ lemma positiveA_successfulRoots_card_le_killedPopulation
 
 /-- Boundary normalization makes the pathwise successful-root embedding hold
 almost surely on the pre-sampled finite-root environment. -/
-lemma ae_positiveA_successfulRoots_card_le_killedPopulation
+lemma ae_positiveA_successfulRoots_card_le_selectedBRWPopulation
     (m ell ellN : ℕ) (logN b v c κ : ℝ)
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization realPotential μ)
@@ -272,7 +272,7 @@ lemma ae_positiveA_successfulRoots_card_le_killedPopulation
     [RootIndexed.stepFieldLaw_ae_real_weight_finite_on_roots
       (μ := μ) hboundary (Finset.univ : Finset (Fin m))]
     with field hweight
-  exact positiveA_successfulRoots_card_le_killedPopulation
+  exact positiveA_successfulRoots_card_le_selectedBRWPopulation
     m ell ellN logN b v c κ field
     (fun r u => hweight r (Finset.mem_univ r) u)
 

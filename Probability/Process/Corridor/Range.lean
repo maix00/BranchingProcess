@@ -190,7 +190,7 @@ def expandedCenteredCorridorProbability {Ω : Type*} [MeasurableSpace Ω]
   P (fullSegmentCorridorEvent X 0 1 (-(1 + ε) * a) ((1 + ε) * a))
 
 /-- Probability of the `j`th translated corridor in a finite range cover. -/
-def rangeCoverCorridorProbability {Ω : Type*} [MeasurableSpace Ω]
+noncomputable def rangeCoverCorridorProbability {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) (X : ℝ≥0 → Ω → ℝ) (a : ℝ) (k j : ℕ) : ℝ≥0∞ :=
   P (fullSegmentCorridorEvent X 0 1
     (a * (((j : ℝ) / k - 1) - (1 + 2 / k)))

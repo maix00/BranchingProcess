@@ -34,7 +34,7 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
-namespace StepSelection
+namespace Selection.Stepwise
 namespace SplitSchedule
 
 open Combinatorics.UlamHarris Combinatorics.Branching
@@ -98,6 +98,6 @@ theorem freshField_independent
     (roots_injective N R root duration target fallback hfallbackInjective)
 
 end SplitSchedule
-end StepSelection
+end Selection.Stepwise
 end RootIndexed
 end ProbabilityTheory.BranchingRandomWalk
