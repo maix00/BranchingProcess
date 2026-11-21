@@ -11,6 +11,12 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Branching/Line.lean"): (
+        "Combinatorics.UlamHarris.RootIndexed.IsLine.appendAddresses_injective",
+        "Combinatorics.UlamHarris.RootIndexed.Line.Precedes.antisymm",
+        "Combinatorics.UlamHarris.RootIndexed.Line.Precedes.meetsEveryRay",
+        "Combinatorics.Branching.Population.meetsEveryRay",
+    ),
     Path("BranchingProcessTest/Branching/TreeTopology.lean"): (
         "Combinatorics.UlamHarris.Tree.expTreeMetricTopology_eq_treeMetricTopology",
         "Combinatorics.UlamHarris.Tree.completeSpace_treeMetricSpace",
