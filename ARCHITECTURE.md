@@ -17,6 +17,19 @@ than the application that first needs it.
 | `Probability` | Laws, filtrations, independence, random processes, and almost-everywhere statements | IID sequences, random walks, Lévy and stable processes |
 | `Probability/BranchingRandomWalk` | Random branching models and their bridges to general process and measure interfaces | offspring fields, spines, selection and coupling |
 
+`Combinatorics/UlamHarris/Relation.lean` owns structural root-preserving
+ancestry (same root, prefix address), without a survival hypothesis.
+`UlamHarris/Line/Basic.lean` defines lines directly with Mathlib `IsAntichain`,
+including their root-fiber and generation characterizations. `Ray.lean` owns
+the single infinite-path prefix construction, also used by branching-walk
+survival. `Line/Coverage.lean` separates meeting every infinite realized path
+from being a line; `Line/Order.lean` owns ancestral precedence and descendant
+closure. These definitions impose no finite-branching, local-finiteness, or
+probability assumptions. They belong outside `Lemmas/` as reusable tree
+objects and results. `BranchingWalk/Population/Line.lean` instantiates them
+for actual population generations. Random optional/stopping-line measurability
+conditions belong in the probability layer and are not part of `IsLine`.
+
 `Combinatorics/BranchingWalk/Basic/State/Recursion.lean` owns the single
 state-update recursion `stateAlong F β s v p`, with update
 `F : State → Mark → State`. Its optional observation `stateAlong?` uses the
