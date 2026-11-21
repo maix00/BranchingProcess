@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.UlamHarris.Tree.Topology.Borel
-public import Combinatorics.UlamHarris.Tree.Topology.Metric
+public import Combinatorics.UlamHarris.Tree.Topology.Metric.Reciprocal
 
 /-!
 # The single-root specialization of root-indexed trees
