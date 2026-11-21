@@ -11,6 +11,15 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Branching/RandomLine.lean"): (
+        "ProbabilityTheory.Tree.linePast_generation_eq_generatedByCoordinates",
+        "ProbabilityTheory.Tree.IsOptionalLine.measurableSpace_mono",
+        "ProbabilityTheory.Tree.IsAncestralStoppingLine.isOptionalLine_linePast",
+        "ProbabilityTheory.Tree.isOptionalLine_ite_of_precedes",
+        "RandomLineExamples.optional_globalLine",
+        "RandomLineExamples.not_ancestral_globalLine",
+        "RandomLineExamples.ancestral_rightLine",
+    ),
     Path("BranchingProcessTest/Branching/Line.lean"): (
         "Combinatorics.UlamHarris.RootIndexed.IsLine.appendAddresses_injective",
         "Combinatorics.UlamHarris.RootIndexed.Line.Precedes.antisymm",

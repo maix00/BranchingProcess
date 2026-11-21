@@ -18,10 +18,13 @@ In `Combinatorics.UlamHarris.RootIndexed.Line`:
 * `Precedes L M` means `∀ v ∈ M, ∃ u ∈ L, IsAncestor u v`.
   `Precedes.refl` and `Precedes.trans` prove reflexivity and transitivity on
   arbitrary node sets; `Precedes.antisymm` proves antisymmetry on lines.
+* `precedes_iff_prefix` states `L ≼ M ↔ ∀ v ∈ M, ∃ n ≤ |v.2|,
+  (v.1, v.2.take n) ∈ L`, using the finite ancestral path of each node.
 * `descendantClosure L = {v | ∃ u ∈ L, IsAncestor u v}` includes `L` itself;
   `subset_descendantClosure` states this inclusion.
   `precedes_iff_subset_descendantClosure` identifies precedence with
   `M ⊆ descendantClosure L`.
+* `mem_descendantClosure_generation_iff` states `v ∈ D_{generation n} ↔ n ≤ |v.2|`.
 * `Precedes.meetsEveryRay` states that if `M` meets every realized infinite
   path and `L` precedes `M`, then `L` also meets every such path.
 
@@ -63,6 +66,20 @@ theorem Precedes.antisymm (hLM : Precedes L M) (hML : Precedes M L)
     exact (hcb.antisymm hba) ▸ hb
   exact Set.Subset.antisymm (incl hLM hML hL) (incl hML hLM hM)
 
+/-- Precedence can be checked using the finite list of prefixes of each tested node. -/
+theorem precedes_iff_prefix : Precedes L M ↔
+    ∀ v ∈ M, ∃ n ≤ v.2.length, (v.1, v.2.take n) ∈ L := by
+  constructor
+  · intro h v hv
+    obtain ⟨u, hu, huv⟩ := h v hv
+    refine ⟨u.2.length, huv.2.length_le, ?_⟩
+    have heq : (v.1, v.2.take u.2.length) = u :=
+      Prod.ext huv.1.symm (List.prefix_iff_eq_take.mp huv.2).symm
+    exact heq.symm ▸ hu
+  · intro h v hv
+    obtain ⟨n, hn, hu⟩ := h v hv
+    exact ⟨(v.1, v.2.take n), hu, rfl, List.take_prefix n v.2⟩
+
 /-- The union of descendant subtrees, including their roots on the line. -/
 def descendantClosure (L : Set (TreeNode Root α)) : Set (TreeNode Root α) :=
   {v | ∃ u ∈ L, IsAncestor u v}
@@ -72,6 +89,16 @@ theorem subset_descendantClosure (L : Set (TreeNode Root α)) :
 
 theorem precedes_iff_subset_descendantClosure :
     Precedes L M ↔ M ⊆ descendantClosure L := Iff.rfl
+
+/-- A generation cuts precisely the addresses of at least that depth. -/
+theorem mem_descendantClosure_generation_iff (n : ℕ) (v : TreeNode Root α) :
+    v ∈ descendantClosure {u | u.2.length = n} ↔ n ≤ v.2.length := by
+  constructor
+  · rintro ⟨u, hu, huv⟩
+    exact hu ▸ huv.2.length_le
+  · intro hn
+    refine ⟨(v.1, v.2.take n), ?_, rfl, List.take_prefix _ _⟩
+    simp [List.length_take, Nat.min_eq_left hn]
 
 /-- An earlier line covers every infinite path covered by a later line. -/
 theorem Precedes.meetsEveryRay (hLM : Precedes L M) {C : Set (TreeNode Root α)}
