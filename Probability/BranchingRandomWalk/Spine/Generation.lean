@@ -8,6 +8,7 @@ module
 
 public import Probability.BranchingRandomWalk.Spine.ManyToOne.EndpointManyToOne
 public import Combinatorics.BranchingWalk.Basic.Position.DisplacementMap
+public import MeasureTheory.BranchingWalk.State
 public import Combinatorics.BranchingWalk.Basic.Map
 public import Probability.BranchingProcess.Offspring.FieldLaw
 public import Combinatorics.BranchingWalk.StepField
@@ -95,8 +96,8 @@ def pathPotential {ι X : Type*} [MeasurableSpace X]
 @[simp] theorem pathPotential_singleton {ι X : Type*} [MeasurableSpace X]
     (φ : Potential X) (ω : StepField ι X) (i : ι) :
     pathPotential φ ω [i] = (ω []).potentialValue' φ i := by
-  simp [pathPotential, displaceWith, displace, StepField.map,
-    Step.potentialValue', Step.potentialAt?, value']
+  simp [pathPotential, displaceWith_cons, Step.potentialValue',
+    Step.potentialAt?, value']
 
 /-- Survival of a fixed address is measurable on the full step field. -/
 theorem measurableSet_surviveAlong
@@ -119,15 +120,12 @@ theorem pathPotential_measurable
     {ι X : Type*} [MeasurableSpace X]
     (φ : Potential X) (v p : TreeNode ι) :
     Measurable (fun ω : StepField ι X => displaceWith φ ω v p) := by
-  induction p generalizing v with
-  | nil => exact measurable_const
-  | cons i p ih =>
-      change Measurable
-        ((fun ω : StepField ι X => value' ((ω v).map φ) i) +
-          fun ω => displaceWith φ ω (v ++ [i]) p)
-      exact ((value'_measurable i).comp
-          ((Step.map_measurable φ.measurable_toFun).comp (measurable_pi_apply v))).add
-        (ih (v := v ++ [i]))
+  have h := stateAlong_measurable
+    (fun (x : ℝ) (e : X) ↦ x + φ e)
+    (measurable_fst.add (φ.measurable_toFun.comp measurable_snd))
+    (fun ω : StepField ι X ↦ ω) (fun _ ↦ 0) v p measurable_const
+    (fun k _ ↦ (measurable_pi_apply (p[k])).comp (measurable_pi_apply _))
+  simpa only [stateAlong_add, zero_add] using h
 
 /-- Exponentially weighted contribution of one address at generation `n`. -/
 noncomputable def weightedGenerationTerm

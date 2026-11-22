@@ -37,6 +37,32 @@ are all useful contributions.
    [`FORMALIZATION_CHECKLIST.md`](FORMALIZATION_CHECKLIST.md) before describing
    a result as complete.
 
+## Formalizing proofs from references
+
+Identify the source for the result being formalized, whether it is an article,
+thesis, book, or another reference. Cite the specific theorem, lemma, or proof
+that the implementation follows. Check that the Lean proof follows that
+argument on the same mathematical objects, with the corresponding hypotheses
+and parameter choices.
+
+A local correction may fix a bound, index, or missing justification while
+preserving the proof strategy. Document the discrepancy and apply the same
+correction to any corresponding exposition maintained in this repository.
+If a demonstrated error cannot be repaired locally within the source's proof
+strategy, document the obstruction and obtain the maintainer's agreement
+before changing the strategy.
+
+## Generalizations and special cases
+
+Use one fundamental implementation when generalizing a construction. Define
+additive, fixed-law, or other special cases from that implementation. Proving
+an equality between two independently maintained interfaces does not finish
+the migration: update clients and remove the replaced definitions and aliases.
+A concrete probability-space realization may remain when a construction needs
+its underlying randomness, but identify its pushforward with the canonical
+law rather than define a second law interface. Keep its model-specific
+conditional-law adapters in a namespace that names that model or realization.
+
 ## Pull requests
 
 Keep a pull request focused on one mathematical or architectural change.

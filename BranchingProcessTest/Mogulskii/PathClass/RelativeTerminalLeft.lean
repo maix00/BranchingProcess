@@ -55,7 +55,7 @@ private noncomputable def unitOpenCorridorUnion : FiniteCorridorUnion 2 := by
 
 /-- The source's strict unit corridor, restricted to its terminal-left path
 space. -/
-private def unitSourceCorridor : Set (CadlagPath unitInterval ℝ) :=
+private noncomputable def unitSourceCorridor : Set (CadlagPath unitInterval ℝ) :=
   terminalLeftPathSpace ∩ unitOpenCorridor.toSet
 
 private noncomputable def unitSourceCorridorApproximation :

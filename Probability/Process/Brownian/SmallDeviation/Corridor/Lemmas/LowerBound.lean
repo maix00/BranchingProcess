@@ -9,7 +9,7 @@ import Mathlib.Topology.UnitInterval
 import Mathlib.Probability.BrownianMotion.Basic
 import Probability.Process.Path.Scaling.UnitInterval
 import Probability.Process.Path.Representation.Skorokhod
-import Probability.Process.Brownian.Construction.PreBrownianModification
+import BrownianMotion.Gaussian.BrownianMotion
 import Topology.Cadlag.Skorokhod.Corridor.Basic
 import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Corridor.Brownian.Endpoint
 import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Corridor.Brownian.Basic
@@ -59,8 +59,8 @@ lemma closedUnitCorridorLowerBoundOfRhoCore
     ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / (2 * rho ^ 2))) ≤
       P.map (Skorokhod.ofContinuousMap ∘
         continuousunitIntervalPath
-          (hB.toIsPreBrownianReal.continuousModification)
-          (hB.toIsPreBrownianReal.continuous_continuousModification))
+          (hB.toIsPreBrownianReal.mk B)
+          (hB.toIsPreBrownianReal.continuous_mk))
         (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2)) := by
   let scale : ℕ → ℝ := fun n => rho * Real.sqrt n
   let radius : ℕ → ℕ := centeredLatticeRadius scale
@@ -215,8 +215,8 @@ lemma closedCorridorLowerBoundOfRhoWidthCore
       (-(Real.pi ^ 2) / (2 * rho ^ 2 * width ^ 2))) ≤
       P.map (Skorokhod.ofContinuousMap ∘
         continuousunitIntervalPath
-          (hB.toIsPreBrownianReal.continuousModification)
-          (hB.toIsPreBrownianReal.continuous_continuousModification))
+          (hB.toIsPreBrownianReal.mk B)
+          (hB.toIsPreBrownianReal.continuous_mk))
         (Skorokhod.rangeInClosedInterval (-(width / 2)) (width / 2)) := by
   let effectiveWidth : ℝ := rho * width
   let scale : ℕ → ℝ := fun n => effectiveWidth * Real.sqrt n
@@ -380,14 +380,14 @@ lemma closedUnitCorridorLowerBoundCore
     ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2)) ≤
       P.map (Skorokhod.ofContinuousMap ∘
         continuousunitIntervalPath
-          (hB.toIsPreBrownianReal.continuousModification)
-          (hB.toIsPreBrownianReal.continuous_continuousModification))
+          (hB.toIsPreBrownianReal.mk B)
+          (hB.toIsPreBrownianReal.continuous_mk))
         (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2)) := by
   let rho : ℕ → ℝ := fun n ↦ (n : ℝ) / ((n : ℝ) + 1)
   let mass := P.map (Skorokhod.ofContinuousMap ∘
     continuousunitIntervalPath
-      (hB.toIsPreBrownianReal.continuousModification)
-      (hB.toIsPreBrownianReal.continuous_continuousModification))
+      (hB.toIsPreBrownianReal.mk B)
+      (hB.toIsPreBrownianReal.continuous_mk))
     (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2))
   have hrho : Tendsto rho atTop (nhds 1) := by
     simpa [rho] using (tendsto_natCast_div_add_atTop (1 : ℝ))
@@ -429,8 +429,8 @@ lemma openCorridorLowerBoundCore
     ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2)) ≤
       P.map (Skorokhod.ofContinuousMap ∘
         continuousunitIntervalPath
-          (hB.toIsPreBrownianReal.continuousModification)
-          (hB.toIsPreBrownianReal.continuous_continuousModification))
+          (hB.toIsPreBrownianReal.mk B)
+          (hB.toIsPreBrownianReal.continuous_mk))
         (Skorokhod.rangeInOpenInterval (-(width / 2)) (width / 2)) := by
   refine (closedUnitCorridorLowerBoundCore
     hB).trans (measure_mono ?_)
@@ -447,8 +447,8 @@ lemma closedUnitCorridorNeZeroCore
     (hB : IsBrownianReal B P) :
     P.map (Skorokhod.ofContinuousMap ∘
         continuousunitIntervalPath
-          (hB.toIsPreBrownianReal.continuousModification)
-          (hB.toIsPreBrownianReal.continuous_continuousModification))
+          (hB.toIsPreBrownianReal.mk B)
+          (hB.toIsPreBrownianReal.continuous_mk))
         (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2)) ≠ 0 := by
   intro hzero
   have h := closedUnitCorridorLowerBoundCore

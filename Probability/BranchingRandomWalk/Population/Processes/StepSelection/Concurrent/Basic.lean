@@ -46,7 +46,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
-namespace StepSelection
+namespace Selection.Stepwise
 namespace Concurrent
 
 open Combinatorics.UlamHarris Combinatorics.Branching
@@ -61,7 +61,7 @@ noncomputable def candidate
     (root : I → Root) (i : I) (_start age : ℕ)
     (ω : RootIndexed.StepField Root α X) :
     Finset (RootIndexed.TreeNode Root α) :=
-  (RootIndexed.StepSelection.population R age ω (root i)).image
+  (RootIndexed.Selection.Stepwise.population R age ω (root i)).image
     fun u => (root i, u)
 
 theorem mem_candidate_iff
@@ -71,7 +71,7 @@ theorem mem_candidate_iff
     (q : RootIndexed.TreeNode Root α) :
     q ∈ candidate R root i start age ω ↔
       q.1 = root i ∧
-        q.2 ∈ RootIndexed.StepSelection.population R age ω (root i) := by
+        q.2 ∈ RootIndexed.Selection.Stepwise.population R age ω (root i) := by
   simp [candidate, Prod.ext_iff, eq_comm, and_comm]
 
 /-- A candidate of age `age` is observable by global generation
@@ -86,9 +86,9 @@ theorem candidate_adapted
       (candidate R root i start age) := by
   have hpopulation : Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) age]
-      (fun ω => RootIndexed.StepSelection.population R age ω (root i)) :=
+      (fun ω => RootIndexed.Selection.Stepwise.population R age ω (root i)) :=
     (measurable_pi_apply (root i)).comp
-      (RootIndexed.StepSelection.population_adapted R hR age)
+      (RootIndexed.Selection.Stepwise.population_adapted R hR age)
   have hcandidate : Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) age]
       (candidate R root i start age) := by
@@ -165,6 +165,6 @@ theorem population_adapted
     (component_adapted R hR root start hstart)
 
 end Concurrent
-end StepSelection
+end Selection.Stepwise
 end RootIndexed
 end ProbabilityTheory.BranchingRandomWalk

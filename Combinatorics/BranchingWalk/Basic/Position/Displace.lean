@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.BranchingWalk
+public import Combinatorics.BranchingWalk.Basic.State.Recursion
 public import Mathlib.Algebra.BigOperators.Fin
 
 /-!
@@ -32,14 +32,14 @@ records whether every edge is present:
 slot at the address it is met at. The current address is carried along
 explicitly, so no index arithmetic (`take`, `getElem!`) is needed. Absent slots
 contribute zero, so it is the algebraic extension of the displacement.
-The recursive definition, partial result, and append/rebase identities need
+The additive specialization, partial observation, and append/rebase identities need
 only an `AddMonoid`; the unordered finite-sum formulas below require an
 `AddCommMonoid`.
 
 The root displacement is `displace β [] u`, written out at the call sites
 rather than packaged in a second definition. The sum over prefixes
 is kept as a bridge lemma, in a `Finset.range` and a `Fin` form. The partial
-recursion that records absence is `displace? β v p`, with the root form
+observation that records absence is `displace? β v p`, with the root form
 `displace? β [] u`. Root-indexed displacement is the single-root displacement
 read at one fixed root, so it is not defined here either: the
 `ProbabilityTheory.BranchingRandomWalk.RootIndexed` layer wraps these
@@ -47,7 +47,7 @@ definitions root by root.
 
 The public declarations are:
 
-- `displace β v p` recursively sums zero-defaulted marks, reading each edge
+- `displace β v p` specializes `stateAlong` to $F(s,e)=s+e$, reading each edge
   at the address reached so far. `displace_nil` gives `displace β v [] = 0`,
   and `displace_cons` gives
   `displace β v (i :: p) = value' (β v) i + displace β (v ++ [i]) p`.
@@ -72,13 +72,11 @@ The public declarations are:
 /-!
 # The partial displacement
 
-`displace? β v p` is the same path recursion as
-`displace`, but it computes in `Option X`: as soon
-as one slot on the path is absent it returns `none`. Being a direct recursion,
-it needs neither `classical` nor a decision procedure for
-`surviveAlong β v p`. The main lemma binds the three readings — the partial
-mark has a value, the path is realized, and that value is the total mark — and
-prefix sums are kept as bridge lemmas in both indexings.
+`displace? β v p` specializes `stateAlong?` to the additive update.
+The latter observes the same state recursion and returns `none` when the
+path is absent. Survival is constructively decidable by inspecting optional
+child slots. The realized-path and prefix-sum identities follow from these
+definitions.
 -/
 
 namespace Combinatorics
@@ -93,10 +91,18 @@ open Combinatorics.UlamHarris
 current address is carried along explicitly, so no index arithmetic (`take`,
 `getElem!`) is needed. -/
 def displace {α : Type*} {X : Type*} [AddMonoid X]
-    (β : StepField α X) : TreeNode α → TreeNode α → X
-  | _, [] => 0
-  | v, i :: p => value' (β v) i +
-      displace β (v ++ [i]) p
+    (β : StepField α X) (v p : TreeNode α) : X :=
+  stateAlong (fun s e ↦ s + e) β 0 v p
+
+private lemma stateAlong_add_initial {α X : Type*} [AddMonoid X]
+    (β : StepField α X) (s : X) (v p : TreeNode α) :
+    stateAlong (fun x e ↦ x + e) β s v p = s + displace β v p := by
+  induction p generalizing s v with
+  | nil => simp [displace]
+  | cons i p ih =>
+      simp only [stateAlong_cons, displace]
+      rw [ih, ih (s := (β v i).elim 0 (fun e ↦ 0 + e))]
+      cases β v i <;> simp [add_assoc]
 
 @[simp] theorem displace_nil {α : Type*} {X : Type*}
     [AddMonoid X] (β : StepField α X) (v : TreeNode α) :
@@ -106,7 +112,10 @@ theorem displace_cons {α : Type*} {X : Type*} [AddMonoid X]
     (β : StepField α X) (v : TreeNode α) (i : α) (p : TreeNode α) :
     displace β v (i :: p) =
       value' (β v) i +
-        displace β (v ++ [i]) p := rfl
+        displace β (v ++ [i]) p := by
+  change stateAlong (fun s e ↦ s + e) β 0 v (i :: p) = _
+  rw [stateAlong_cons, stateAlong_add_initial]
+  cases h : β v i <;> simp [h, value']
 
 /-- The displacement splits an appended path, moving the starting address by
 the first part. -/
@@ -175,6 +184,7 @@ theorem displace_eq_sum_fin {α : Type*} {X : Type*}
   induction p generalizing v with
   | nil => simp [displace]
   | cons i p ih =>
+      rw [displace_cons]
       change value' (β v) i +
           displace β (v ++ [i]) p =
         ∑ j : Fin (p.length + 1),
@@ -222,53 +232,46 @@ open Combinatorics.UlamHarris
 
 
 
-/-- The partial displacement along the remaining path `p` from the address
-`v`; `none` as soon as one slot on the path is absent. -/
+/-- The optional state-update observation for addition, started at zero. -/
 def displace? {α X : Type*} [AddMonoid X]
-    (β : StepField α X) : TreeNode α → TreeNode α → Option X
-  | _, [] => some 0
-  | v, i :: p =>
-      (β v i).bind fun x =>
-        (displace? β (v ++ [i]) p).map fun y => x + y
+    (β : StepField α X) (v p : TreeNode α) : Option X :=
+  stateAlong? (fun s e ↦ s + e) β 0 v p
 
 @[simp] theorem displace?_nil {α X : Type*} [AddMonoid X]
     (β : StepField α X) (v : TreeNode α) :
-    displace? β v [] = some 0 := rfl
+    displace? β v [] = some 0 := by simp [displace?]
 
 theorem displace?_cons {α X : Type*} [AddMonoid X]
     (β : StepField α X) (v : TreeNode α) (i : α) (p : TreeNode α) :
     displace? β v (i :: p) =
       (β v i).bind fun x =>
-        (displace? β (v ++ [i]) p).map fun y => x + y := rfl
+        (displace? β (v ++ [i]) p).map fun y => x + y := by
+  classical
+  simp only [displace?, stateAlong?, surviveAlong_cons, stateAlong_cons]
+  cases h : β v i with
+  | none => simp [h, survive]
+  | some x =>
+    have hs : survive (β v) i := ⟨x, h⟩
+    by_cases hp : surviveAlong β (v ++ [i]) p
+    · simp only [Option.bind_some, Option.elim_some, zero_add, hs, true_and,
+        hp, ite_true, Option.map_some]
+      exact congrArg some (stateAlong_add_initial β x (v ++ [i]) p)
+    · simp [hs, hp]
 
 theorem displace?_eq_none_iff {α X : Type*} [AddMonoid X]
     (β : StepField α X) (v p : TreeNode α) :
     displace? β v p = none ↔
       ¬ surviveAlong β v p := by
-  induction p generalizing v with
-  | nil => simp [surviveAlong]
-  | cons i p ih =>
-      rw [displace?_cons, surviveAlong_cons]
-      cases h : β v i with
-      | none => simp [h, survive]
-      | some x =>
-          have hp : survive (β v) i := ⟨x, h⟩
-          simp [hp, ih (v := v ++ [i]), Option.map_eq_none_iff]
+  classical
+  simp [displace?, stateAlong?]
 
 /-- On a realized path the partial recursion returns the total displacement
 mark. -/
 private lemma displace?_eq_some_of_survive {α X : Type*}
-    [AddMonoid X] (β : StepField α X) :
-    ∀ (v p : TreeNode α), surviveAlong β v p →
-      displace? β v p =
-        some (displace β v p)
-  | v, [], _ => rfl
-  | v, i :: p, h => by
-      obtain ⟨x, hx⟩ := h.1
-      have ih := displace?_eq_some_of_survive β (v ++ [i]) p h.2
-      rw [displace?_cons, displace_cons,
-        value'_some (β v) i x hx, hx, ih]
-      simp
+    [AddMonoid X] (β : StepField α X) (v p : TreeNode α)
+    (h : surviveAlong β v p) :
+    displace? β v p = some (displace β v p) := by
+  simp [displace?, stateAlong?, h, displace]
 
 /-- The three readings of the partial mark — it has a value, the path is
 realized, and that value is the total displacement — are one statement. -/

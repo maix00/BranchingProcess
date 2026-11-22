@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Walk.Basic
+public import Combinatorics.UlamHarris.Ray
 public import Mathlib.Order.KonigLemma
 
 /-!
@@ -25,8 +26,6 @@ depth is weaker.
   \operatorname{surviveAlong}(\operatorname{step}(\operatorname{walk},r),[],u)$.
 * `Combinatorics.Branching.RootIndexed.BranchingWalk.HasArbitrarilyDeepDescendant`:
   $\forall n,\ \operatorname{SurvivesToGeneration}(\operatorname{walk},r,n)$.
-* `Combinatorics.Branching.RootIndexed.BranchingWalk.lineagePrefix` gives the
-  length-`n` prefix of an infinite sequence of child slots.
 * `Combinatorics.Branching.RootIndexed.BranchingWalk.HasInfiniteLineage`:
   $\exists \ell:\mathbb N\to\alpha,\ \forall n,\
   \operatorname{surviveAlong}(\operatorname{step}(\operatorname{walk},r),[],
@@ -80,12 +79,6 @@ def HasArbitrarilyDeepDescendant {Root α Mark Position : Type*}
     (root : Root) : Prop :=
   ∀ n, walk.SurvivesToGeneration root n
 
-/-- The first `n` entries of an infinite sequence of child slots. -/
-def lineagePrefix {α : Type*} (lineage : ℕ → α) (n : ℕ) : TreeNode α :=
-  match n with
-  | 0 => []
-  | n + 1 => lineagePrefix lineage n ++ [lineage n]
-
 /-- A specified root has a single infinite lineage all of whose finite
 prefixes survive. -/
 def HasInfiniteLineage {Root α Mark Position : Type*}
@@ -107,11 +100,8 @@ theorem HasInfiniteLineage.hasArbitrarilyDeepDescendant
     walk.HasArbitrarilyDeepDescendant root := by
   obtain ⟨lineage, hlineage⟩ := h
   intro n
-  have hlen : (lineagePrefix lineage n).length = n := by
-    induction n with
-    | zero => rfl
-    | succ n ih => simp [lineagePrefix, ih]
-  exact ⟨lineagePrefix lineage n, hlen, hlineage n⟩
+
+  exact ⟨lineagePrefix lineage n, length_lineagePrefix lineage n, hlineage n⟩
 
 /-- In a walk whose surviving prefixes have finitely many children, descendants
 at every depth yield one infinite surviving lineage.
@@ -294,7 +284,7 @@ theorem ofIncrements_survivesForever {Mark Position : Type*}
   refine ⟨fun _ => PUnit.unit, ?_⟩
   intro n
   change surviveAlong (stepFieldOfIncrements increment) []
-    (RootIndexed.BranchingWalk.lineagePrefix (fun _ : ℕ => PUnit.unit) n)
+    (UlamHarris.lineagePrefix (fun _ : ℕ => PUnit.unit) n)
   exact surviveAlong_stepFieldOfIncrements increment [] _
 
 end Walk
