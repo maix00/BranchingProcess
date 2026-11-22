@@ -16,7 +16,7 @@ public import Combinatorics.BranchingWalk.Basic.Survival.SurviveAlong
 
 `StepField α X = TreeNode α → Step α X` is the raw field of branching steps,
 one at every address. `RootIndexed.BranchingWalk Root α Mark Position`
-bundles one mark-valued step field and one position-valued initial population
+bundles one mark-valued step field and one initial state per root
 for every initial ancestor. `BranchingWalk α Mark Position` is its
 single-ancestor case.
 
@@ -62,7 +62,8 @@ theorem isParentClosed_of_surviveAlong_prefix
 namespace RootIndexed
 
 /-- A branching walk for every initial ancestor: one step field and one initial
-position per root. -/
+state per root. General state updates are in `Basic/State.lean`; additive
+displacements are an interpretation requiring extra algebraic structure. -/
 @[ext]
 structure BranchingWalk (Root α Mark Position : Type*) where
   /-- The step field of every initial ancestor. -/

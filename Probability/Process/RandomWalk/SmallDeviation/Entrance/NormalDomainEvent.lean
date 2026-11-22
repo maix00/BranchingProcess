@@ -102,6 +102,7 @@ theorem measurableSet_finiteMovingEntranceEvent
     dsimp [finiteNormalizedStepKnots]
     exact measurable_const.mul (hpartial j)
   unfold finiteMovingEntranceEvent
+  rw [Set.ofPred_and]
   apply MeasurableSet.inter
   · have hEq :
         {x : Fin n → ℝ |

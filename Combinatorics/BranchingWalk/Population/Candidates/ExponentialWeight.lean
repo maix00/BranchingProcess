@@ -6,9 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Basic.Position.Basic
-public import Combinatorics.BranchingWalk.Population.Candidates.Generation
-public import Combinatorics.BranchingWalk.Step.Measure.ExponentialWeight
+public import Combinatorics.BranchingWalk.Population.Candidates.RealPosition
 
 /-!
 # Lower-finite offspring populations from exponential weights
@@ -46,32 +44,10 @@ theorem childrenAtGeneration_isLowerFiniteBy_real
         (RootIndexed.BranchingWalk.ofStepField initial field).position
           id p.1 p.2)
       (childrenAtGeneration n parents field) := by
-  let β := RootIndexed.BranchingWalk.ofStepField initial field
-  let value : RootIndexed.TreeNode Root α → ℝ := fun q =>
-    β.position id q.1 q.2
-  change IsLowerFiniteBy value (childrenAtGeneration n parents field)
-  apply childrenAtGeneration_isLowerFiniteBy n parents field value
-  intro p hp a
-  let ξ := field p.1 p.2
-  have hfinite := Combinatorics.Branching.finite_realized_children_potential_below
-    Combinatorics.Branching.realPotential ξ (hweight p hp)
-      (a - value p)
-  apply hfinite.subset
-  intro i hi
-  refine ⟨hi.1, ?_⟩
-  have hchildpos : value (RootIndexed.childAddress p i) =
-      value p + value' (ξ.map id) i := by
-    simpa [value, β, RootIndexed.childAddress] using
-      (Combinatorics.Branching.RootIndexed.BranchingWalk.position_child id
-        (RootIndexed.BranchingWalk.ofStepField initial field) p.1 p.2 i)
-  have hpotential : ξ.potentialValue' Combinatorics.Branching.realPotential i =
-      value' (ξ.map id) i := by
-    cases hslot : ξ i <;>
-      simp [Step.map, value', Step.potentialValue', Step.potentialAt?,
-        Combinatorics.Branching.realPotential, ξ, hslot]
-  rw [hpotential]
-  exact (le_sub_iff_add_le).2 (by
-    simpa [add_comm, hchildpos] using hi.2)
+  apply childrenAtGeneration_isLowerFiniteBy_of_leftLocallyFinite
+  intro p hp
+  exact (field p.1 p.2).isLeftLocallyFinite_of_totalPotentialWeight_ne_top
+    (β := 1) zero_lt_one (hweight p hp)
 
 end Combinatorics.Branching.Population
 

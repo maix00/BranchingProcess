@@ -10,10 +10,10 @@ public import Probability.BranchingRandomWalk.Selection.NSelection.Law.SelectedP
 public import MeasureTheory.Selection.Process
 
 /-!
-# Product law for a causal selected source
+# Product law for a causal selected population
 
 This file connects recursive equal-rank matching to the general causal
-finite-selection interface.  The source rule may depend on the whole
+finite-selection interface.  The selection rule may depend on the whole
 generation domain and may vary with time.  In particular, it need not be a
 time-homogeneous rule applied separately to each branching step.
 
@@ -21,8 +21,8 @@ time-homogeneous rule applied separately to each branching step.
 ## Public declarations
 
 For every stage \(n\), recursive rank installation from a measurable causal
-finite-selection source gives a measurable field with the original product
-step-field law:
+finite selected population gives a measurable first-\(N\) field with the
+original product step-field law:
 
 \[
 \operatorname{Measurable}(V_n),\qquad
@@ -49,12 +49,12 @@ open ProbabilityTheory.BranchingRandomWalk.Coupling
 open Combinatorics.UlamHarris Combinatorics.Branching
 open _root_.Combinatorics.Selection.NSelection
 
-/-- Equal-rank installation couples any causal finite selected source to the
-concrete first-`N` target while preserving the target product-field law.
+/-- Equal-rank installation couples any causal finite selected population to
+the concrete first-`N` population while preserving the product-field law.
 
 The candidate process may itself be recursively generated.  Its adaptation
 is the only measurability premise needed here; the causal mechanism then
-supplies adaptation of the retained source population. -/
+supplies adaptation of the retained population. -/
 theorem RootIndexed.rankInstalledField_causalSelection_law
     {Root α Mark Position Value : Type*}
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
@@ -79,44 +79,44 @@ theorem RootIndexed.rankInstalledField_causalSelection_law
       Finset (RootIndexed.TreeNode Root α))
     (hcandidates : ∀ k, Measurable[RootIndexed.stepFiltration
       (Root := Root ⊕ Root) (α := α) (X := Mark) k] (candidates k))
-    (sourceValue : ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
+    (selectedBRWPopulationOrderKey : ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
       RootIndexed.TreeNode Root α → Value)
-    (hsourceDepth : ∀ k field p,
+    (hselectedBRWPopulationDepth : ∀ k field p,
       p ∈ R.population candidates k field → p.2.length = k)
-    (hsourceKey : ∀ k p q, Measurable[RootIndexed.stepFiltration
+    (hselectedBRWPopulationOrderKeyMeasurable : ∀ k p q, Measurable[RootIndexed.stepFiltration
       (Root := Root ⊕ Root) (α := α) (X := Mark) k]
-      fun field => valueKey (sourceValue k field) q <
-        valueKey (sourceValue k field) p) :
-    let targetValue := fun k
+      fun field => valueKey (selectedBRWPopulationOrderKey k field) q <
+        valueKey (selectedBRWPopulationOrderKey k field) p) :
+    let nSelectedBRWPopulationOrderKey := fun k
         (_ : RootIndexed.StepField (Root ⊕ Root) α Mark)
         (field : RootIndexed.StepField Root α Mark) =>
       RootIndexed.observedPositionAtGeneration initial d φ k field
-    let target := fun k
+    let nSelectedBRWPopulation := fun k
         (_ : RootIndexed.StepField (Root ⊕ Root) α Mark)
         (field : RootIndexed.StepField Root α Mark) =>
       RootIndexed.selectedPopulationTotalized N roots initial d φ k field
     ∀ n,
       (RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ).map
-          (RootIndexed.rankInstalledField sourceValue targetValue
-            (R.population candidates) target RootIndexed.StepField.left
+          (RootIndexed.rankInstalledField selectedBRWPopulationOrderKey nSelectedBRWPopulationOrderKey
+            (R.population candidates) nSelectedBRWPopulation RootIndexed.StepField.left
             RootIndexed.StepField.right n) =
         RootIndexed.stepFieldLaw (Root := Root) μ := by
   dsimp only
-  have hsourceFiber : ∀ k s,
+  have hselectedBRWPopulationFiber : ∀ k s,
       MeasurableSet[RootIndexed.stepFiltration
         (Root := Root ⊕ Root) (α := α) (X := Mark) k]
         {field | R.population candidates k field = s} := by
     intro k s
     exact (R.measurable_population candidates hcandidates k)
       (measurableSet_singleton s)
-  have hsourceRange : ∀ k,
+  have hselectedBRWPopulationRange : ∀ k,
       (Set.range (R.population candidates k)).Countable :=
     fun _ => Set.to_countable _
   exact fun n =>
     (RootIndexed.rankInstalledField_totalizedSelectedPopulation_measurable_law
-      μ N roots initial d hd φ hφ sourceValue
-      (R.population candidates) hsourceDepth hsourceFiber hsourceRange
-      hsourceKey n).2
+      μ N roots initial d hd φ hφ selectedBRWPopulationOrderKey
+      (R.population candidates) hselectedBRWPopulationDepth hselectedBRWPopulationFiber hselectedBRWPopulationRange
+      hselectedBRWPopulationOrderKeyMeasurable n).2
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 

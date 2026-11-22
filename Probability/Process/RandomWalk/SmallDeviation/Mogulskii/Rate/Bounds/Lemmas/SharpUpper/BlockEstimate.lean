@@ -68,9 +68,8 @@ lemma eventually_diffusiveBlockOscillationProbability_le_of_fixedCover
       ((1 + enlargement) / Real.sqrt constant) < 1 / 2) :
     ∀ᶠ n : ℕ in atTop,
       iidSequenceLaw ν {increment : ℕ → ℝ |
-        blockOscillationEvent (scale n)
-          (Asymptotics.diffusiveBlockLength constant scale n)
-          (Combinatorics.Sequence.blockCoordinates 0 (Asymptotics.diffusiveBlockLength constant scale n) increment)} ≤
+        (Combinatorics.Sequence.blockCoordinates 0 (Asymptotics.diffusiveBlockLength constant scale n) increment) ∈ blockOscillationEvent (scale n)
+          (Asymptotics.diffusiveBlockLength constant scale n)} ≤
       ENNReal.ofReal (2 * finiteCoverRangeBound count
         ((1 + enlargement) / Real.sqrt constant)) := by
   let blockWidth : ℝ := (1 + enlargement) / Real.sqrt constant
