@@ -66,6 +66,35 @@ multi-type branching populations* (1996), §2, p. 41, use measurable carriers
 for individual life records. Including a node's birth state does not entail
 including its own future reproduction record.
 
+`Line/FirstEntrance.lean` in the combinatorial layer defines first entrance
+using native `Minimal` for ancestry; its restriction theorem uses native
+`IsLowerSet` for ancestor-closed carriers. `Line/Truncation.lean` defines a
+bounded generation cut from this same construction. Actual realized-tree
+cuts are restrictions to the realized carrier; a depth bound does not assert
+that an address is alive. The probability-layer `FirstEntrance.lean` and
+`Truncation.lean` add observability and optionality under explicit ancestral
+membership hypotheses. Neither theorem asserts the full simple-line
+truncation result of Biggins–Kyprianou (2004), Lemma 14.3.
+`PathHitting.lean` identifies finite-path entrance events with native Mathlib
+`hittingAfter` events; it introduces no parallel stopping-time object.
+`Pasting.lean` owns the ordered optional-line pasting theorem and derives the
+deterministic-line case from it. These are reusable constructions, outside
+`Lemmas/`; no branching law is needed for these information-theoretic results.
+`BranchingRandomWalk/Spine/StoppingLine/FirstEntrance.lean` owns the weighted
+first-entry identity for the existing boundary-normalized i.i.d. BRW law.
+It sums the existing weighted path many-to-one formula over disjoint entrance
+generations and identifies its mass with the deterministic first-entrance
+line. This is a model-specific theorem outside the generic tree-information
+layer; it does not introduce another branching law or replace the missing
+general-state stopping-line theorem.
+The still-missing state-kernel spine measure change is a branching-process
+object and should be owned by `Probability/BranchingProcess/Spine/`. Its
+augmented-tree law and tree marginal are distinct from a tilted one-step
+increment law. Fixed-law and exponential BRW specializations should reuse
+that construction and its density theorem, with no parallel legacy law.
+The current implementation and source obligations are listed separately in
+`FORMALIZATION_CHECKLIST.md`.
+
 `Information/Stopped.lean` constructs the sigma algebra at an optional
 random line from stopped events, following Mathlib
 `IsStoppingTime.measurableSpace`. The upstream audit at Mathlib
@@ -92,8 +121,8 @@ reusable constructions outside `Lemmas/`.
 `MeasureTheory/BranchingWalk/State.lean` owns coordinate measurability for
 arbitrary measurable initial states and mark fields.
 `MeasureTheory/BranchingWalk/MarkedTree.lean` proves measurability of the
-entire realized state-marked tree representation. Only the generation
-observability result belongs in
+entire realized state-marked tree representation. Generation and ancestral-information
+observability bridges belong in
 `Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field/State.lean`.
 The existing additive `position_measurable` specializes this update result.
 This deterministic interpretation does not impose a probability law or
