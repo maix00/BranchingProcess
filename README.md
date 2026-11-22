@@ -35,14 +35,17 @@ obligations are recorded in the [formalization checklist](FORMALIZATION_CHECKLIS
 | Object | Main results available | Lean entry |
 | --- | --- | --- |
 | State-dependent branching process | A native offspring kernel `Q(s)` and measurable update `F(s,e)` induce the offspring-state kernel. The process admits arbitrary joint initial states; descendant trees have the conditional product law at fixed generations and at observed stopping generations | [`Offspring/Kernel`](Probability/BranchingProcess/Offspring/Kernel.lean), [`State/BranchingProperty`](Probability/BranchingProcess/State/BranchingProperty.lean), [`State/Descendants/Observed`](Probability/BranchingProcess/State/Descendants/Observed.lean) |
+| Harmonic spine bias | For a general mean-harmonic state kernel, the joint law is `Q(s,dξ) h(ξ_i)/h(s)`. Its family marginal has total-weight density; its selected-state marginal is the Doob transform. Conditional child weights are `h(ξ_i)/∑_j h(ξ_j)` | [`Family/Marginals`](Probability/BranchingProcess/Spine/Family/Marginals.lean), [`Family/Conditional`](Probability/BranchingProcess/Spine/Family/Conditional.lean) |
 | Branching random walk and tilted path | Many-to-one formulas turn generation sums of endpoint or ancestral-path functionals into tilted-spine expectations | [`EndpointManyToOne`](Probability/BranchingRandomWalk/Spine/ManyToOne/EndpointManyToOne.lean), [`Path/ManyToOne/Identity`](Probability/BranchingRandomWalk/Spine/Path/ManyToOne/Identity.lean) |
 | Selection and capacity `N` | Threshold-count domination gives an injective order-preserving matching. Adapted selection and first-`N` populations admit pathwise and probabilistic coupling | [`ThresholdCount`](Combinatorics/Matching/ThresholdCount.lean), [`SelectedPopulation`](Combinatorics/Selection/NSelection/Matching/SelectedPopulation.lean), [`Causal/Restarted/Coupling`](Probability/BranchingRandomWalk/Selection/NSelection/Law/Causal/Restarted/Coupling.lean) |
 | Selected-population endpoint | From `⌊Nᵃ⌋` initial particles, `a ∈ [0,1]`, at times `n_N/log³ N → t > 0`, the normalized minimum converges in `L²` to `−a + π²σ²t/2`, under the stated branching and moment conditions | [`L2Limit`](Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/Endpoint/Sequence/L2Limit.lean) |
 | Asymptotic speed | For each positive capacity, every deterministic nonempty initial cloud of size at most `N` has the same almost-sure and `L¹` speed; `v_N log² N → π²σ²/2` under the theorem's first-moment assumptions | [`Limit/Speed`](Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/Limit/Speed.lean) |
 
-The tilted one-step and path laws do not yet constitute a joint tree-and-spine
-measure change. The augmented-tree construction and its Radon–Nikodym theorem
-remain open; see the [proof checklist](FORMALIZATION_CHECKLIST.md#stopping-and-optional-lines).
+The joint normal/distinguished tree law is constructed using the existing
+state process in [`Spine/Tree/Construction`](Probability/BranchingProcess/Spine/Tree/Construction.lean).
+Its finite-generation tree-density theorem and full conditional spine/path
+decomposition remain open; the one-generation identities above do not assert
+them. See the [proof checklist](FORMALIZATION_CHECKLIST.md#shis-general-spinal-decomposition).
 
 The endpoint and speed results formalize Theorems 1.1 and 1.2 (including the
 first-moment formulation) in Wang Yiyang, *Asymptotic Speed of the N-Branching

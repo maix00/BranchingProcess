@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Basic.State
+public import Combinatorics.BranchingWalk.Step.DistinguishedChild
 public import MeasureTheory.MeasurableSpace.Option
 
 /-!
@@ -24,9 +25,14 @@ public import MeasureTheory.MeasurableSpace.Option
 * `Combinatorics.Branching.RootIndexed.BranchingWalk.state_measurable`
   states that $β\mapsto β.\operatorname{state}(F,r,u)$ is measurable on the
   bundled walk space when $F$ is jointly measurable.
+* `Combinatorics.Branching.Step.distinguishChild_measurable` states that
+  distinguishing an eligible selected child is jointly measurable in the
+  family and selected index, for a measurable eligibility set and measurable
+  index singletons.
 
 The state and mark spaces are arbitrary measurable spaces. No additive,
-topological, countability, or probability-law assumptions are used.
+topological or probability-law assumptions are used. The selected-index
+operation additionally uses measurable singletons in the index space.
 -/
 
 @[expose] public section
@@ -36,6 +42,30 @@ open MeasureTheory
 namespace Combinatorics.Branching
 
 open Combinatorics.UlamHarris
+
+open scoped Classical in
+/-- A measurable eligibility predicate gives a measurable distinguished-child assignment. -/
+theorem Step.distinguishChild_measurable {ι S : Type*}
+    [MeasurableSpace S] [MeasurableSpace ι] [MeasurableSingletonClass ι]
+    {P : S → Prop} (hP : MeasurableSet {s | P s}) :
+    Measurable (fun p : Step ι S × ι => Step.distinguishChild P p.1 p.2) := by
+  let tag (s : S) : S ⊕ {s // P s} :=
+    if hs : P s then Sum.inr ⟨s, hs⟩ else Sum.inl s
+  have htag : Measurable tag :=
+    Measurable.dite measurable_inr (measurable_inl.comp measurable_subtype_coe) hP
+  apply Measurable.of_eval
+  intro j
+  have heq : (fun p : Step ι S × ι => Step.distinguishChild P p.1 p.2 j) =
+      (fun p => if p.2 = j then (p.1 j).map tag else (p.1 j).map Sum.inl) := by
+    funext ⟨ξ, i⟩
+    by_cases hij : i = j
+    · subst i
+      cases he : ξ j <;> simp [Step.distinguishChild, tag, he]
+    · cases he : ξ j <;> simp [Step.distinguishChild, he, hij, Ne.symm hij]
+  rw [heq]
+  exact ((measurable_option_map htag).comp ((measurable_pi_apply j).comp measurable_fst)).ite
+    ((MeasurableSet.singleton j).preimage measurable_snd)
+    ((measurable_option_map measurable_inl).comp ((measurable_pi_apply j).comp measurable_fst))
 
 /-- Updating every present child mark by the parent state is jointly measurable. -/
 theorem Step.map_state_measurable {α Mark State : Type*}

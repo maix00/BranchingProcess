@@ -87,17 +87,22 @@ generations and identifies its mass with the deterministic first-entrance
 line. This is a model-specific theorem outside the generic tree-information
 layer; it does not introduce another branching law or replace the missing
 general-state stopping-line theorem.
-The still-missing state-kernel spine measure change is a branching-process
-object and should be owned by `Probability/BranchingProcess/Spine/`. Its
-augmented-tree law and tree marginal are distinct from a tilted one-step
-increment law. Fixed-law and exponential BRW specializations should reuse
-that construction and its density theorem, with no parallel legacy law.
-The current implementation and source obligations, including Shi's Chapter 4
-Doob-transform and biased-family constructions, are listed separately in
-`FORMALIZATION_CHECKLIST.md`. Harmonic kernel transforms and the joint
-family/selected-child bias are general state-kernel operations. The
-exponential and renewal-function barrier cases must derive from them.
-A barrier constraint on the spine does not restrict ordinary side branches.
+The state-kernel spine construction belongs to
+`Probability/BranchingProcess/Spine/`. `Family/Joint.lean` owns the single
+joint family/selected-child bias; `Family/Marginals.lean` derives both
+marginals and `Family/Conditional.lean` derives conditional child selection.
+`Offspring/Mean.lean` owns the mean child kernel, and the independent native
+kernel density operation lives in `Probability/Kernel/DoobTransform/Basic.lean`.
+`Spine/Tree/Construction.lean` augments states by the ordinary/distinguished
+role and applies the existing `State.treeKernel`; it does not implement
+another branching process. Normal states can have zero harmonic weight;
+only distinguished states require finite positive weight. A barrier on the
+spine therefore leaves ordinary side branches unrestricted.
+These are reusable constructions, outside `Lemmas/`. The finite-generation
+tree-density identification, conditional spine law, and full path decomposition
+remain obligations in `FORMALIZATION_CHECKLIST.md`. Fixed-law and exponential
+BRW specializations must derive from these general results, without a parallel
+joint law. Existing tilted increment laws are not counted as tree-density proofs.
 
 `Information/Stopped.lean` constructs the sigma algebra at an optional
 random line from stopped events, following Mathlib
