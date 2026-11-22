@@ -65,7 +65,7 @@ theorem ContinuousAdmissibleStepCorridor.nullMeasurableSet_preimage_toSet_of_aem
   have hQfinite : IsFiniteMeasure Q := Measure.isFiniteMeasure_map P X'
   letI : IsFiniteMeasure Q := hQfinite
   have hcorridor : NullMeasurableSet c.toSet Q := c.nullMeasurableSet_toSet Q
-  have hqmp : MeasureTheory.Measure.QuasiMeasurePreserving X' P Q := by
+  have hqmp : MeasureTheory.QuasiMeasurePreserving X' P Q := by
     simpa [Q] using hX.measurable_mk.quasiMeasurePreserving P
   have hpreimage : NullMeasurableSet (X' ⁻¹' c.toSet) P := hcorridor.preimage hqmp
   have hae : X ⁻¹' c.toSet =ᵐ[P] X' ⁻¹' c.toSet := by

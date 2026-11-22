@@ -49,13 +49,11 @@ partial-sum range probability over the same number of increments. -/
 theorem iidSequenceLaw_blockOscillationLTEvent_eq_partialSumRangeProbability
     (ν : Measure ℝ) [IsProbabilityMeasure ν] (width : ℝ) (length : ℕ) :
     iidSequenceLaw ν {increment : ℕ → ℝ |
-      blockOscillationLTEvent width length
-        (Combinatorics.Sequence.blockCoordinates 0 length increment)} =
+      (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationLTEvent width length} =
       partialSumRangeOscillationLTProbability (iidSequenceLaw ν) width length := by
   change iidSequenceLaw ν
       {increment : ℕ → ℝ |
-        blockOscillationLTEvent width length
-          (Combinatorics.Sequence.blockCoordinates 0 length increment)} =
+        (Combinatorics.Sequence.blockCoordinates 0 length increment) ∈ blockOscillationLTEvent width length} =
     iidSequenceLaw ν (partialSumRangeOscillationLTEvent width length)
   congr 1
   ext increment
@@ -94,8 +92,8 @@ theorem iidSequenceLaw_blockOscillationPrefixLTEvent_eq_partialSumRangeProbabili
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {width : ℝ} {length : ℕ} (hlength : 0 < length) :
     iidSequenceLaw ν {increment : ℕ → ℝ |
-      blockOscillationPrefixLTEvent width length
-        (Combinatorics.Sequence.blockCoordinates 0 length increment)} =
+      Combinatorics.Sequence.blockCoordinates 0 length increment ∈
+        blockOscillationPrefixLTEvent width length} =
       partialSumRangeOscillationLTProbability (iidSequenceLaw ν) width (length - 1) := by
   have hpred : length - 1 + 1 = length := Nat.sub_add_cancel (by omega)
   change iidSequenceLaw ν

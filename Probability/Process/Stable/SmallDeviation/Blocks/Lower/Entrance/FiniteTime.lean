@@ -94,7 +94,7 @@ private lemma measure_firstUniformBlockEndpoint_eq_full
       simpa [t, RationalCoordinate.toNNReal_top] using congrFun hfirstω ⊤
     rw [hfirstω, hend]
     simp only [zero_add] at *
-    exact propext (and_congr hcorr.symm Iff.rfl)
+    exact and_congr hcorr.symm Iff.rfl
   exact measure_congr heq
 
 private lemma rationalUniformPrefixBlockBounds

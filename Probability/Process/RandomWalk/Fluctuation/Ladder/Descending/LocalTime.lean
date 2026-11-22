@@ -183,7 +183,7 @@ theorem survivesNonnegative_iff_strictDescendingLocalTime_eq_zero
           0 ≤ AdditivePath.displacement j increment := by
       intro j
       induction j using Nat.strong_induction_on with
-      | h j ih =>
+      | ind j ih =>
           intro hj
           by_cases hjzero : j = 0
           · subst j

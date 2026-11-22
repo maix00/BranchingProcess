@@ -79,8 +79,7 @@ for the corresponding normalized càdlàg block path. -/
 theorem blockOscillationLTEvent_subset_normalizedStepBlockRangeOscillation
     (scale : ℕ → ℝ) (blockLength : ℕ → ℕ) (n : ℕ)
     (hscale : 0 < scale n) (width : ℝ) :
-    {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
-      (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)} ⊆
+    {increment | (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) ∈ blockOscillationLTEvent (width * scale n) (blockLength n)} ⊆
     {increment | RandomWalk.normalizedStepBlockCadlagPathIcc
         scale blockLength n increment ∈ Skorokhod.rangeOscillationLe width} := by
   intro increment hosc
@@ -131,8 +130,7 @@ theorem iidSequenceLaw_measure_blockOscillationLT_le_normalizedStepBlockPathLaw
     (scale : ℕ → ℝ) (blockLength : ℕ → ℕ) (n : ℕ)
     (hscale : 0 < scale n) (width : ℝ) :
     iidSequenceLaw ν
-        {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
-          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)} ≤
+        {increment | (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) ∈ blockOscillationLTEvent (width * scale n) (blockLength n)} ≤
       RandomWalk.normalizedStepBlockPathLaw ν scale blockLength n
         (Skorokhod.rangeOscillationLe width) := by
   have hmeas : Measurable
