@@ -1,5 +1,5 @@
 import Probability.Process.Tree.Line.Ancestral
-import Probability.Process.Tree.Line.Information.Stopped
+import Probability.Process.Tree.Line.Pasting
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.State
 
 open MeasureTheory Combinatorics.UlamHarris ProbabilityTheory.Tree

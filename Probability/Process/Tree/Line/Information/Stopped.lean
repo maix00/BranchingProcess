@@ -21,6 +21,11 @@ In `ProbabilityTheory.Tree`:
   `IsOptionalLine.measurableSpace_le` states `F_L ≤ F`.
 * `IsOptionalLine.measurableSpace_mono` states `L ≼ M` pointwise implies
   `F_L ≤ F_M`, for optional `L` and `M` with the same deterministic-line past.
+* `IsOptionalLine.initial_le_measurableSpace` states `initial ≤ F_L` if
+  `initial` is contained in the ambient space and every deterministic-line past.
+* `IsOptionalLine.measurableSpace_const` identifies the stopped information
+  of a constant line `ℓ` with `past ℓ`, assuming ancestry monotonicity of
+  `past` and that `past ℓ` is contained in the ambient space.
 
 This is the tree-order version of Mathlib's stopped-information construction
 `MeasureTheory.IsStoppingTime.measurableSpace` in
@@ -92,6 +97,34 @@ theorem IsOptionalLine.measurableSpace_mono
     · exact fun hω => ⟨hω.1.1, hω.2⟩
   rw [heq]
   exact (hA.2 ℓ hℓ).inter (hM.measurableSet_precedes ℓ hℓ)
+
+/-- Information known before every deterministic cut is known at any optional cut. -/
+theorem IsOptionalLine.initial_le_measurableSpace (h : IsOptionalLine past L)
+    (initial : MeasurableSpace Ω) (hi : initial ≤ mΩ)
+    (hp : ∀ ℓ, RootIndexed.IsLine ℓ → initial ≤ past ℓ) :
+    initial ≤ @IsOptionalLine.measurableSpace Ω Root α mΩ past L h := by
+  intro A hA
+  exact ⟨hi _ hA, fun ℓ hℓ => (hp ℓ hℓ _ hA).inter
+    (@IsOptionalLine.measurableSet_precedes Ω Root α mΩ past L h ℓ hℓ)⟩
+
+/-- Stopping at a fixed line recovers its deterministic information. -/
+theorem IsOptionalLine.measurableSpace_const
+    (hmono : ∀ {a b}, RootIndexed.IsLine a → RootIndexed.IsLine b →
+      RootIndexed.Line.Precedes a b → past a ≤ past b)
+    {ℓ : Set (RootIndexed.TreeNode Root α)} (hℓ : RootIndexed.IsLine ℓ)
+    (hp : past ℓ ≤ mΩ) :
+    (IsOptionalLine.const past hℓ : IsOptionalLine past (fun _ : Ω => ℓ)).measurableSpace =
+      past ℓ := by
+  apply le_antisymm
+  · intro A hA
+    have hm := hA.2 ℓ hℓ
+    simpa only [RootIndexed.Line.Precedes.refl, Set.ofPred_true, Set.inter_univ] using hm
+  · intro A hA
+    refine ⟨hp _ hA, fun q hq => ?_⟩
+    by_cases hℓq : RootIndexed.Line.Precedes ℓ q
+    · simpa only [hℓq, Set.ofPred_true, Set.inter_univ] using hmono hℓ hq hℓq _ hA
+    · simp only [hℓq, Set.ofPred_false, Set.inter_empty]
+      exact @MeasurableSet.empty Ω (past q)
 
 end ProbabilityTheory.Tree
 

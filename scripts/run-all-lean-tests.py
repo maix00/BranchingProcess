@@ -11,6 +11,22 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Branching/LineConstructions.lean"): (
+        "ProbabilityTheory.BranchingRandomWalk.Spine.firstEntranceWeight_eq_tsum",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_firstEntranceWeight_eq",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_firstEntranceWeight_le_one",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_firstEntranceWeight_eq_one_iff",
+
+        "Combinatorics.UlamHarris.RootIndexed.Line.descendantClosure_firstEntrance",
+        "Combinatorics.UlamHarris.RootIndexed.Line.firstEntrance_inter_of_ancestorClosed",
+        "Combinatorics.UlamHarris.RootIndexed.Line.truncate_mono",
+        "Combinatorics.UlamHarris.RootIndexed.Line.truncate_meetsEveryRay",
+        "ProbabilityTheory.Tree.isOptionalLine_firstEntrance",
+        "ProbabilityTheory.Tree.isOptionalLine_truncate_of_ancestral_mem",
+        "ProbabilityTheory.Tree.firstEntrance_precedes_ray_iff_hittingAfter_le",
+        "ProbabilityTheory.Tree.IsOptionalLine.ite_of_precedes",
+        "ProbabilityTheory.Tree.IsOptionalLine.measurableSpace_const",
+    ),
     Path("BranchingProcessTest/Branching/RandomLine.lean"): (
         "ProbabilityTheory.Tree.linePast_generation_eq_generatedByCoordinates",
         "ProbabilityTheory.Tree.IsOptionalLine.measurableSpace_mono",

@@ -67,6 +67,76 @@ Section 2.1's general branching statement and the fixed-law field realization
 thus share one tree-law interface. The upstream reuse audit is recorded in
 `ARCHITECTURE.md`.
 
+## Stopping and optional lines
+
+This is a source audit and proof boundary, not a claim to cover all published
+stopping-line results. The literature includes discrete genealogical cuts,
+continuous-time branching cuts, and fragmentation stopping families. Their
+information conventions and model assumptions must be matched before reuse.
+
+| Source / result | Content | Verified Lean boundary |
+| --- | --- | --- |
+| Biggins–Kyprianou (2004), §6, pp. 556–557 | Lines, ancestral precedence, optionality, and simple / very-simple subclasses | Line and optional-line objects, deterministic-line past, stopped information, and the implication from ancestrally measurable membership are proved. Inclusive state observations are compared with strict-ancestor reproduction, rather than identified with own reproduction. |
+| Biggins–Kyprianou (2004), §6, `I[t]` before Proposition 6.1 | First entry into nested target regions gives increasing lines | `Line/FirstEntrance.lean` proves first entry, target-set monotonicity, descendant coverage and restriction to ancestor-closed trees. The probability-layer module proves optionality under ancestral observability. |
+| Optional-line definition and stopped-information construction, same §6 | Information increases with the line; an observed decision can paste ordered lines | `Information/Stopped.lean` and `Pasting.lean`: stopped-information monotonicity, deterministic-cut identity, preservation of initial information, and optional pasting. Pasting is a direct consequence of the definition, not a separately numbered source theorem. |
+| Biggins–Kyprianou (2004), §14, p. 578, construction preceding Lemma 14.2 | Generation truncation `L_n` | Deterministic truncation is proved increasing, bounded in depth, covering all infinite address paths, and equal to the original line below the cut. Its optionality is proved under ancestral membership observability. **The full simple-optional-line assertion in Lemma 14.3 remains open.** |
+| Biggins–Kyprianou (2004), §12, Lemmas 12.1–12.3 and Proposition 12.1 | Joint tree/trunk measures, finite-generation density, conditional trunk selection, and tree-marginal density `W_n/H(s)` | **The joint construction and these density identities are open.** `Spine/Tilted/Law.lean` constructs the one-step weighted potential measure, and `Spine/RandomWalk/` its product path law. They are not the augmented-tree measure change. Native kernels, Ionescu–Tulcea, `withDensity` and Radon–Nikodym APIs must be reused. |
+| Biggins–Kyprianou (2004), Lemmas 6.1 and 14.1 | Weighted mass at a very-simple / simple line and spine hitting probability | The line/path entrance event is identified with native Mathlib `hittingAfter`; `Spine/StoppingLine/FirstEntrance.lean` proves the Borel first-entry specialization for a boundary-normalized i.i.d. BRW: `E[W_B] = P̂(∃ n, S_n ∈ B) ≤ 1`, and expectation is one iff spine entrance is almost sure. Its generation-sum implementation is proved equal to the mass on the existing `Line.firstEntrance`. The **general state-dependent / simple-line identities remain open**. |
+| Jagers (1989), Theorem 4.14, as explicitly restated in Biggins–Kyprianou (2004), §6, p. 557 | Conditional independence of descendant trees at an optional line | **Open for arbitrary optional lines.** `BranchingProcess/State/Descendants/Observed.lean` proves observed stopping-generation versions; it is not a proof for nonconstant-depth lines. The Jagers full text has not been obtained in this audit. |
+| Biggins–Kyprianou (2004), Lemmas 14.2–14.4 | Conditional expectation at a line, truncated-line martingales, optional sampling between simple lines | **Open.** Requires the line branching theorem and the published integrability / expectation-preservation hypotheses. Native conditional expectation and martingale APIs are to be reused. |
+| Biggins–Kyprianou (2004), Theorem 6.1, Lemma 6.2, Proposition 6.1; Theorem 14.1 | Almost-sure and mean convergence along increasing line families, threshold-line specialization | **Open.** Mean convergence and non-UI cases have different hypotheses; neither follows just from the deterministic truncation theorem. |
+| Kyprianou (2000), §2 and martingale convergence results | Stopping-line / spine-time relation, dissection and increasing-line convergence | Definitions and conventions audited; **the stochastic limit results remain open**. Own reproduction and current birth state must remain distinct. |
+| Chauvin (1991), *Product Martingales and Stopping Lines for Branching Brownian Motion* | Strong branching and product martingales for continuous-time spatial cuts | **Open; separate continuous-time model required.** Bibliographic record and abstract audited, not a full-text proof audit. |
+| Kyprianou–Pardo (2012), §2, Definition 1 and Lemma 1 | Fragmentation stopping families, extended fragmentation property, many-to-one | **Open; separate partition / fragment model required.** The family of local stopping times has a consistency requirement along a common fragment; it is not a new name for our random address sets. |
+| Kharroubi–Ocello, arXiv:2401.12811v2 (2024), stopping-line construction, Theorems 5.2–5.4 | Optimal branching-diffusion stopping, verification and viscosity-solution characterization | **Open; depends on continuous-time diffusion, reward and PDE interfaces.** It does not supply an assumption-free optional-line closure theorem. |
+
+Primary references checked online on 2026-11-22:
+
+- J. D. Biggins and A. E. Kyprianou, *Measure change in multitype branching*,
+  Advances in Applied Probability 36 (2004), 544–581,
+  [DOI:10.1239/aap/1086957585](https://doi.org/10.1239/aap/1086957585).
+  The published author PDF was read in full for §§6 and 14.
+- P. Jagers, *General branching processes as Markov fields*, Stochastic
+  Processes and their Applications 32 (1989), 183–212,
+  [DOI:10.1016/0304-4149(89)90075-6](https://doi.org/10.1016/0304-4149(89)90075-6).
+- A. E. Kyprianou, *Martingale convergence and the stopped branching random
+  walk* (2000), 116, 405–419,
+  [author PDF](https://warwick.ac.uk/fac/sci/statistics/staff/academic-research/kyprianou/K2000.pdf).
+  The PDF prints DOI `10.1007/s004409900036`; the Bath publication record gives
+  `10.1007/s004400050256`. The existing citation follows the printed article.
+- B. Chauvin, *Product Martingales and Stopping Lines for Branching Brownian
+  Motion*, Annals of Probability 19 (1991), 1195–1205,
+  [DOI:10.1214/aop/1176990340](https://doi.org/10.1214/aop/1176990340).
+- A. E. Kyprianou and J. C. Pardo, *An optimal stopping problem for
+  fragmentation processes*, Stochastic Processes and their Applications 122
+  (2012), 1210–1225, [author preprint](https://www.cimat.mx/~jcpardo/kp2.pdf).
+- I. Kharroubi and A. Ocello, *Optimal Stopping of Branching Diffusion
+  Processes*, [arXiv:2401.12811v2](https://arxiv.org/abs/2401.12811v2).
+- B. Chauvin and A. Rouault, *Connecting Yule process, Bisection and Binary
+  Search Tree via martingales*, [arXiv:math/0410318](https://arxiv.org/abs/math/0410318),
+  discussion of the distinction between optional and ancestral stopping rules.
+
+The general spine construction belongs to a state-kernel branching-process
+module, rather than to an additive BRW-specific interface. A mean-harmonic
+state weight supplies the family bias and trunk-selection distribution.
+The exponential BRW weight and existing tilted random walk must be derived
+specializations. The intended dependency order is: native kernel density
+identities; joint tree/trunk construction; its finite-generation and marginal
+density theorems; general stopped-line identities; model-specific corollaries.
+Existing elementary generation identities may serve the general proof, but
+public corollaries must not retain separate parallel constructions or proofs
+once that migration is complete.
+
+Reuse audit: the pinned Mathlib revision is
+`26573066084e6e2aa8526ea358bc43b66d96f970`; neither its sources nor the pinned
+BrownianMotion source contains a stopping-line interface. `Minimal`,
+`IsAntichain`, set-valued measurability, `comap`, `hittingAfter`, and
+`Adapted.isStoppingTime_hittingAfter` are reused directly. Existing local
+state-update, field and stopped-descendant interfaces are retained. New tree
+constructions are reusable and belong outside `Lemmas/`. The native
+stopping-time APIs were checked against the official
+[Mathlib documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/HittingTime.html).
+
 ## Integrated work packages for Theorems 1.1 and 1.2 (2026-10-11 audit)
 
 The theorem proofs are being advanced as dependency packages rather than by
