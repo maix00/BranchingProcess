@@ -92,8 +92,12 @@ object and should be owned by `Probability/BranchingProcess/Spine/`. Its
 augmented-tree law and tree marginal are distinct from a tilted one-step
 increment law. Fixed-law and exponential BRW specializations should reuse
 that construction and its density theorem, with no parallel legacy law.
-The current implementation and source obligations are listed separately in
-`FORMALIZATION_CHECKLIST.md`.
+The current implementation and source obligations, including Shi's Chapter 4
+Doob-transform and biased-family constructions, are listed separately in
+`FORMALIZATION_CHECKLIST.md`. Harmonic kernel transforms and the joint
+family/selected-child bias are general state-kernel operations. The
+exponential and renewal-function barrier cases must derive from them.
+A barrier constraint on the spine does not restrict ordinary side branches.
 
 `Information/Stopped.lean` constructs the sigma algebra at an optional
 random line from stopped events, following Mathlib
