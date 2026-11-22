@@ -31,6 +31,16 @@ FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
 GENERAL_LAYER_BOUNDARIES = {
+    "Probability.BranchingProcess.State.Support": (
+        "Probability.BranchingProcess.Spine",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.Ray": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.FirstGeneration": (
+        "Probability.BranchingRandomWalk",
+    ),
     "Probability.Kernel.DoobTransform.Basic": (
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",

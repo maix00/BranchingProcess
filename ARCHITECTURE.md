@@ -98,10 +98,19 @@ role and applies the existing `State.treeKernel`; it does not implement
 another branching process. Normal states can have zero harmonic weight;
 only distinguished states require finite positive weight. A barrier on the
 spine therefore leaves ordinary side branches unrestricted.
-These are reusable constructions, outside `Lemmas/`. The finite-generation
-tree-density identification, conditional spine law, and full path decomposition
-remain obligations in `FORMALIZATION_CHECKLIST.md`. Fixed-law and exponential
-BRW specializations must derive from these general results, without a parallel
+`State/Support.lean` transfers any jointly measurable almost-sure local
+reproduction rule to all nodes of the canonical tree, using one-step laws and
+product marginals. It has no dependency on the spine modules.
+`Spine/Tree/Ray.lean` applies it to the normal/distinguished rules and derives
+a unique realized infinite ray; its carrier is exactly all distinguished nodes.
+The deterministic unique-continuation arguments belong to `UlamHarris/Ray.lean`.
+`Spine/Tree/FirstGeneration.lean` derives the root-family density directly from
+the same canonical tree; it defines no alternative tilted tree law.
+These are reusable constructions, outside `Lemmas/`. Countable-uniqueness
+measurability helpers used only in the ray proof remain private in that file.
+The higher-generation tree-density induction, conditional spine law, and full
+path decomposition remain obligations in `FORMALIZATION_CHECKLIST.md`.
+Fixed-law and exponential BRW specializations must derive from these general results, without a parallel
 joint law. Existing tilted increment laws are not counted as tree-density proofs.
 
 `Information/Stopped.lean` constructs the sigma algebra at an optional

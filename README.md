@@ -41,11 +41,12 @@ obligations are recorded in the [formalization checklist](FORMALIZATION_CHECKLIS
 | Selected-population endpoint | From `⌊Nᵃ⌋` initial particles, `a ∈ [0,1]`, at times `n_N/log³ N → t > 0`, the normalized minimum converges in `L²` to `−a + π²σ²t/2`, under the stated branching and moment conditions | [`L2Limit`](Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/Endpoint/Sequence/L2Limit.lean) |
 | Asymptotic speed | For each positive capacity, every deterministic nonempty initial cloud of size at most `N` has the same almost-sure and `L¹` speed; `v_N log² N → π²σ²/2` under the theorem's first-moment assumptions | [`Limit/Speed`](Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/Limit/Speed.lean) |
 
-The joint normal/distinguished tree law is constructed using the existing
-state process in [`Spine/Tree/Construction`](Probability/BranchingProcess/Spine/Tree/Construction.lean).
-Its finite-generation tree-density theorem and full conditional spine/path
-decomposition remain open; the one-generation identities above do not assert
-them. See the [proof checklist](FORMALIZATION_CHECKLIST.md#shis-general-spinal-decomposition).
+The canonical normal/distinguished tree has almost surely one realized
+infinite spine, and its distinguished nodes are exactly that ray's prefixes:
+[`Spine/Tree/Ray`](Probability/BranchingProcess/Spine/Tree/Ray.lean).
+The root-family density is derived from this same tree. The higher-generation
+tree-density theorem and full conditional spine/path decomposition remain open;
+the first-generation identity does not assert them. See the [proof checklist](FORMALIZATION_CHECKLIST.md#shis-general-spinal-decomposition).
 
 The endpoint and speed results formalize Theorems 1.1 and 1.2 (including the
 first-moment formulation) in Wang Yiyang, *Asymptotic Speed of the N-Branching

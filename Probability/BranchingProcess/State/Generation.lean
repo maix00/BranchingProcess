@@ -26,6 +26,8 @@ In namespace `ProbabilityTheory.BranchingProcess.State`:
 * `generationKernel.isMarkovKernel` proves that this is a probability kernel.
 * `generationKernel_broods` groups children by parent and recovers the law
   $\bigotimes_p K_\bot(s_p)$, including empty branches for absent parents.
+* `generationKernel_childFamily` recovers the one-parent marginal
+  `Law((X_{pj})_j | X_n=s) = K_⊥(s_p)`, including absent parents.
 * `generationHistoryKernel` takes a finite history and applies
   `generationKernel` to its last population state vector.
 * `generationHistoryKernel.isMarkovKernel` proves it is a probability kernel.
@@ -115,6 +117,17 @@ theorem generationKernel_broods {Root α S : Type*} [MeasurableSpace S]
     (Measure.infinitePi (fun p ↦
       (Kernel.optionElim (Measure.dirac (fun _ : α ↦ (none : Option S))) K) (s p))) = _
   rw [heq, Measure.map_id]
+
+/-- Reading one parent's entire family recovers its optional-state offspring law. -/
+theorem generationKernel_childFamily {Root α S : Type*} [MeasurableSpace S]
+    (K : Kernel S (Step α S)) [IsMarkovKernel K] (n : ℕ)
+    (s : (Root × (Fin n → α)) → Option S) (p : Root × (Fin n → α)) :
+    (generationKernel K n s).map (fun next j => next (p.1, Fin.snoc p.2 j)) =
+      (Kernel.optionElim (Measure.dirac (fun _ : α => (none : Option S))) K) (s p) := by
+  have he := congrArg (fun μ => μ.map (fun broods => broods p))
+    (generationKernel_broods K n s)
+  rw [Measure.map_map (by fun_prop) (by fun_prop), Measure.infinitePi_map_eval] at he
+  exact he
 
 /-- The next generation uses the last state vector in the observed history. -/
 noncomputable def generationHistoryKernel {Root α S : Type*} [MeasurableSpace S]
