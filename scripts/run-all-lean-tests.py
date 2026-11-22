@@ -11,6 +11,19 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Branching/SpinalBias.lean"): (
+        "ProbabilityTheory.Kernel.lintegral_doobTransform",
+        "ProbabilityTheory.Kernel.doobTransform_isProbabilityMeasure",
+        "ProbabilityTheory.Kernel.ae_doobTransform_weight_ne_top",
+        "ProbabilityTheory.BranchingProcess.lintegral_meanChildKernel",
+        "ProbabilityTheory.BranchingProcess.Spine.biasedFamilyChild_isProbabilityMeasure",
+        "ProbabilityTheory.BranchingProcess.Spine.spineChildKernel_eq_doobTransform",
+        "ProbabilityTheory.BranchingProcess.Spine.lintegral_biasedFamilyChild_eq_conditional",
+        "ProbabilityTheory.BranchingProcess.Spine.ae_biasedFamily_totalWeight",
+        "ProbabilityTheory.BranchingProcess.Spine.ae_biasedFamilyChild_eligible",
+        "ProbabilityTheory.BranchingProcess.Spine.reproductionKernel_distinguished_map",
+        "ProbabilityTheory.BranchingProcess.Spine.treeKernel_root",
+    ),
     Path("BranchingProcessTest/Branching/LineConstructions.lean"): (
         "ProbabilityTheory.BranchingRandomWalk.Spine.firstEntranceWeight_eq_tsum",
         "ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_firstEntranceWeight_eq",

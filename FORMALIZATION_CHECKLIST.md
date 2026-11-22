@@ -121,21 +121,36 @@ Primary references checked online on 2026-11-22:
 Zhan Shi, *Branching Random Walks*, Lecture Notes in Mathematics 2151
 (Springer, 2015), Chapter 4; the checked
 [author lecture PDF](https://igor-kortchemski.perso.math.cnrs.fr/MAP575/docs/brw.pdf)
-has §§4.1–4.7 on printed pp. 33–46. The following are separate **open**
-objects/results, not consequences already supplied by `tiltedIncrementFieldLaw`:
+has §§4.1–4.7 on printed pp. 33–46. Status below distinguishes constructed
+laws from their still-open density and decomposition theorems. None of the
+open results is supplied by `tiltedIncrementFieldLaw`.
+
+**Implemented foundation:** `Probability/Kernel/DoobTransform/Basic.lean`
+constructs the general density kernel and proves local normalization and
+positive finite-weight support. `BranchingProcess/Offspring/Mean.lean`
+constructs the mean child kernel. `BranchingProcess/Spine/Family/` constructs
+the joint family/child bias, proves its probability normalization, derives
+both marginals, and proves conditional child selection. `Spine/Tree/Construction.lean`
+uses this bias for distinguished parents and the original offspring law for
+normal parents in the existing canonical state-tree process. Erasing the
+role in one distinguished family gives exactly its total-weight-biased law.
+The Bool regression example retains an ordinary zero-weight side child.
+
+**Remaining source obligations:**
 
 1. §4.1: augment the tree by a distinguished realized infinite ray, with
    information on the tree alone distinguished from information including the ray.
-2. §4.2, (4.3)–(4.4): for a region `D` and a positive killed-kernel harmonic
-   function `h`, construct the Doob transform
-   `pʰ(u,dv) = 1_D(v) h(v)/h(u) p(u,dv)`.
+2. §4.2, (4.3)–(4.4): the kernel construction is implemented. Instantiate it
+   with Shi's killed transition and identify the resulting tilted BRW path.
 3. §4.3, Lemma 4.1 and (4.5)–(4.6): prove the harmonic additive martingale
    `M_nʰ = ∑_|u|=n h(V(u)) exp(−V(u)) 1_{ancestry in D}` and construct the
    consistent changed tree law with generation density `M_nʰ/(h(a)exp(−a))`.
-4. §4.4, (4.8): construct the joint system by biasing the spine parent's
-   whole offspring family, choosing its next spine child by normalized
-   harmonic weights, and leaving normal parents under the original law.
-   Theorem 4.3 identifies this construction's tree marginal with the changed law.
+4. §4.4, (4.8): the joint bias and normal/special canonical tree law are
+   constructed. Prove the almost-sure unique distinguished infinite ray and
+   Theorem 4.3's identification of the tree marginal with the changed law.
+   With harmonicity imposed only on the eligible region, finite-generation
+   mass must retain the ancestry-in-region indicator: an ordinary branch may
+   leave and later reenter the region.
 5. Theorem 4.4(i), (4.9): identify the conditional location of the spine given
    the generation tree. Part (ii), (4.10), identifies its path law with the
    Doob-transformed chain.
