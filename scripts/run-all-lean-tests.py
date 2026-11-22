@@ -14,7 +14,12 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/Branching/RandomLine.lean"): (
         "ProbabilityTheory.Tree.linePast_generation_eq_generatedByCoordinates",
         "ProbabilityTheory.Tree.IsOptionalLine.measurableSpace_mono",
-        "ProbabilityTheory.Tree.IsAncestralStoppingLine.isOptionalLine_linePast",
+        "ProbabilityTheory.Tree.IsRandomLine.isOptionalLine_of_ancestral_mem",
+        "ProbabilityTheory.Tree.ancestralStateInformation_le_ancestralPast",
+        "ProbabilityTheory.Tree.linePast_observation_equiv",
+        "ProbabilityTheory.Tree.linePast_observation_map_le",
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.state_measurable_ancestralPast",
+        "RandomLineExamples.not_optional_after_erasing",
         "ProbabilityTheory.Tree.isOptionalLine_ite_of_precedes",
         "RandomLineExamples.optional_globalLine",
         "RandomLineExamples.not_ancestral_globalLine",
