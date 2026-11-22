@@ -50,7 +50,7 @@ noncomputable def positiveADrift
     (ell ellN : ℕ) (κ c : ℝ) (j : ℕ) : ℝ :=
   κ / c ^ 2 * (((ellN - ell : ℕ) : ℝ) ^ ((-2 : ℝ) / 3)) * (j : ℝ)
 
-/-- Restarted path windows for the killed population used in the proof of
+/-- Restarted path windows for the selected BRW population used in the proof of
 (4.15). Up to `ell`, paths remain in `[-b logN, 0]`, with a narrower window
 at `ell`. The next stage uses the tilted tube, with a narrower terminal
 window at `ellN`. -/

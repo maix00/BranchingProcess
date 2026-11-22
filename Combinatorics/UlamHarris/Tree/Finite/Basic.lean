@@ -8,6 +8,7 @@ module
 
 public import Combinatorics.UlamHarris.Tree.LocallyFinite.Basic
 public import Mathlib.Data.Set.Finite.Basic
+public import Mathlib.Data.Set.Countable
 
 /-!
 # Finite Ulam--Harris trees
@@ -20,6 +21,9 @@ The type `FiniteTree α` is the subtype of `Tree α` consisting of finite trees.
 Its topology, measurable structure, and metric are in `Tree/Finite/Space.lean`.
 
 ## Public declarations
+
+- `Tree.finiteTree_countable`: finite rooted trees over a countable
+  child-label type form a countable type, by their finite address carriers.
 
 - `Tree.IsFinite T` is `\(T.carrier.Finite\)`, and
   `Tree.FiniteTree α := \{T : Tree\ α \mid T.carrier.Finite\}`.
@@ -69,6 +73,16 @@ theorem toLocallyFinite_injective (α : Type*) [LT α] :
   intro T S h
   apply Subtype.ext
   exact congrArg (fun X : LocallyFiniteTree α => X.1) h
+
+/-- The set of finite trees over countably many labels is countable. -/
+theorem finiteTree_countable [Countable α] : Countable (FiniteTree α) := by
+  have : Countable {s : Set (List α) // s.Finite} :=
+    Set.countable_coe_iff.mpr Set.Countable.ofPred_finite
+  apply Function.Injective.countable (f := fun T : FiniteTree α ↦
+    (⟨T.1.carrier, T.2⟩ : {s : Set (List α) // s.Finite}))
+  intro T S h
+  apply Subtype.ext
+  exact Tree.ext (congrArg Subtype.val h)
 
 end Tree
 

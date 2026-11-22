@@ -23,6 +23,9 @@ public import Probability.Sequence.IID.GeometricReward.Definitions
 
 - `geometricFailureExponentialTerm` is the $n$th term: the first $n$ marks
   carry $e^{\theta Y}$ on failure and mark $n$ contributes the success event.
+- `geometricFailureExponentialTerm_tsum_eq_of_first_success`: if the first
+  success is at $n$, the series evaluates to $e^{\theta\sum_{i<n}Y(X_i)}$
+  on that sample.
 - `iidGeometricFailureExponentialTransform` states that if
   $p=\nu(B)$ and $A=\int e^{\theta Y}\mathbf 1_{B^c}\,d\nu$, then
   \[
@@ -60,6 +63,32 @@ noncomputable def geometricFailureExponentialTerm
       ENNReal.ofReal (Real.exp (θ * Y (X i ω))) *
         Bᶜ.indicator (fun _ => (1 : ℝ≥0∞)) (X i ω)
     else B.indicator (fun _ => (1 : ℝ≥0∞)) (X i ω))
+
+/-- If the first successful mark occurs at index `n`, the exponential
+series for this sample equals the exponential of the first `n` rewards. -/
+theorem geometricFailureExponentialTerm_tsum_eq_of_first_success
+    (X : ℕ → Ω → α) (B : Set α) (Y : α → ℝ) (θ : ℝ)
+    (ω : Ω) (n : ℕ) (hn : X n ω ∈ B) (hearly : ∀ i < n, X i ω ∉ B) :
+    (∑' k, geometricFailureExponentialTerm X B Y θ k ω) =
+      ENNReal.ofReal (Real.exp (θ * ∑ i ∈ Finset.range n, Y (X i ω))) := by
+  let terms k := geometricFailureExponentialTerm X B Y θ k ω
+  have hzero (k : ℕ) (hk : k ≠ n) : terms k = 0 := by
+    unfold terms geometricFailureExponentialTerm
+    by_cases hkn : k < n
+    · rw [Finset.prod_range_succ, ite_eq_right (Nat.lt_irrefl _),
+        Set.indicator_of_notMem (hearly k hkn), mul_zero]
+    · have hnk : n < k := by omega
+      apply Finset.prod_eq_zero (Finset.mem_range.mpr (by omega) : n ∈ Finset.range (k + 1))
+      rw [ite_eq_left hnk, Set.indicator_of_notMem (show X n ω ∉ Bᶜ from fun h => h hn), mul_zero]
+  change (∑' k, terms k) = _
+  rw [tsum_eq_single n hzero]
+  unfold terms geometricFailureExponentialTerm
+  rw [Finset.prod_range_succ, ite_eq_right (Nat.lt_irrefl _), Set.indicator_of_mem hn, mul_one,
+    Finset.mul_sum, Real.exp_sum, ENNReal.ofReal_prod_of_nonneg (fun _ _ => (Real.exp_pos _).le)]
+  apply Finset.prod_congr rfl
+  intro i hi
+  have h := Finset.mem_range.mp hi
+  rw [ite_eq_left h, Set.indicator_of_mem (show X i ω ∈ Bᶜ from hearly i h), mul_one]
 
 /-- Geometric exponential-transform identity for the failure-only cycle.
 The left side sums over the disjoint events “the first success occurs at `n`”;

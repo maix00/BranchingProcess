@@ -15,6 +15,12 @@ public import Combinatorics.UlamHarris.Basic
 
 * `Combinatorics.UlamHarris.TreeNode.IsChild parent child` means
   `∃ i, child = parent ++ [i]`.
+* `Combinatorics.UlamHarris.RootIndexed.IsAncestor p q` means
+  `p.1 = q.1 ∧ p.2 <+: q.2`.
+  `Combinatorics.UlamHarris.RootIndexed.IsAncestor.refl`,
+  `Combinatorics.UlamHarris.RootIndexed.IsAncestor.trans`, and
+  `Combinatorics.UlamHarris.RootIndexed.IsAncestor.antisymm` give
+  reflexivity, transitivity, and antisymmetry. No survival condition is imposed.
 * `Combinatorics.UlamHarris.RootIndexed.parent p` keeps the root of a
   root-indexed address and removes the final child label; roots are fixed.
 * `Combinatorics.UlamHarris.RootIndexed.childAddress p i` appends the child
@@ -57,6 +63,22 @@ def TreeNode.IsChild {α : Type*} (parent child : TreeNode α) : Prop :=
   ∃ i : α, child = parent ++ [i]
 
 namespace RootIndexed
+
+variable {Root α : Type*}
+
+/-- Structural ancestry: the same root and a prefix of the descendant address. -/
+def IsAncestor (p q : TreeNode Root α) : Prop := p.1 = q.1 ∧ p.2 <+: q.2
+
+theorem IsAncestor.refl (p : TreeNode Root α) : IsAncestor p p :=
+  ⟨rfl, List.prefix_rfl⟩
+
+theorem IsAncestor.trans {p q r : TreeNode Root α}
+    (hpq : IsAncestor p q) (hqr : IsAncestor q r) : IsAncestor p r :=
+  ⟨hpq.1.trans hqr.1, hpq.2.trans hqr.2⟩
+
+theorem IsAncestor.antisymm {p q : TreeNode Root α}
+    (hpq : IsAncestor p q) (hqp : IsAncestor q p) : p = q :=
+  Prod.ext hpq.1 (hpq.2.eq_of_length_le hqp.2.length_le)
 
 /-- The structural parent of a root-indexed address, obtained by deleting its
 last child label while keeping its root. A root is fixed. -/
