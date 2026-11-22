@@ -10,36 +10,32 @@ public import Probability.Process.Tree.Line.Optional
 public import Probability.Process.Tree.Line.Information.Coordinates
 
 /-!
-# Stopping lines decided along ancestral paths
+# Optionality from observable ancestral membership decisions
 
 ## Public declarations
 
 In `ProbabilityTheory.Tree`:
 
-* `IsAncestralStoppingLine history L` is a random line with `{ω | u ∈ L ω}`
-  measurable in the explicitly supplied ancestral information `history u`.
-* `IsAncestralStoppingLine.const` constructs constant stopping lines;
-  `IsAncestralStoppingLine.mono` enlarges the nodewise information.
-* `IsAncestralStoppingLine.inter` and `IsAncestralStoppingLine.restrict`
-  preserve the property under intersection with another such line or a fixed set.
-* `IsAncestralStoppingLine.measurableSet_precedes` proves measurability of
-  `{L ≼ ℓ}` for a countable test set `ℓ`, if `history u ≤ past` for every
-  ancestor `u` of each `v ∈ ℓ`. Each node has finitely many ancestors, so no
-  countability assumption on the whole address space is needed here.
-* `IsAncestralStoppingLine.isOptionalLine` assembles this criterion for all
-  test lines when `Root` and `α` are countable.
-* `IsAncestralStoppingLine.isOptionalLine_linePast` specializes it to
-  `history = ancestralPast initial coordinate` and
-  `past = linePast initial coordinate`, with countable roots and child indices.
+* `measurableSet_precedes_of_mem` proves `{L ≼ ℓ}` measurable
+  for a countable test set `ℓ`, provided `{u ∈ L}` is measurable in `history u`
+  and `history u ≤ past` whenever `u ≼ v ∈ ℓ`. A node has finitely many
+  ancestors, so the whole address space need not be countable here.
+* `IsRandomLine.isOptionalLine_of_mem` applies this criterion to every
+  deterministic line, assuming the address space itself is countable and
+  the corresponding information-containment hypothesis.
+* `IsRandomLine.isOptionalLine_of_ancestral_mem` specializes it to membership
+  observable from strict ancestors' reproduction information and the initial
+  information: `∀ u, {u ∈ L} ∈ ancestralPast initial coordinate u` implies
+  `IsOptionalLine (linePast initial coordinate) L` for a countable address space.
 
-A. E. Kyprianou, *Martingale convergence and the stopped branching random walk*
-(2000), §2, Definition 1, p. 408,
-[DOI:10.1007/s004409900036](https://doi.org/10.1007/s004409900036), uses an
-inclusive ancestral history. It is instantiated here by `ancestralHistory`.
-The last theorem instead explicitly uses strict ancestral information
-`ancestralPast`, available before the stopping node reproduces. It makes no
-claim that adding the node's own future reproduction preserves optionality.
-No probability law, moment, or independence assumptions are imposed.
+Membership measurability is a hypothesis about the single random-line object,
+not a separate stopping-line type. The public stopping criterion is
+`IsOptionalLine`, following the optional-line convention in J. D. Biggins and
+A. E. Kyprianou, *Measure change in multitype branching* (2004), §6, pp. 556–557,
+[DOI:10.1239/aap/1086957585](https://doi.org/10.1239/aap/1086957585).
+The observation conventions and state interpretation are specified in
+`Information/Coordinates.lean` and `Information/Observations.lean`.
+No implication from a node's complete post-reproduction information is assumed.
 -/
 
 @[expose] public section
@@ -50,46 +46,12 @@ open MeasureTheory Combinatorics.UlamHarris
 
 variable {Ω Root α : Type*} [mΩ : MeasurableSpace Ω]
 
-/-- Nodewise stopping decisions with the available ancestral information stated explicitly. -/
-structure IsAncestralStoppingLine
-    (history : RootIndexed.TreeNode Root α → MeasurableSpace Ω)
-    (L : Ω → Set (RootIndexed.TreeNode Root α)) : Prop extends IsRandomLine L where
-  measurableSet_mem : ∀ u, MeasurableSet[history u] {ω | u ∈ L ω}
-
-theorem IsAncestralStoppingLine.const
-    (history : RootIndexed.TreeNode Root α → MeasurableSpace Ω)
-    {ℓ : Set (RootIndexed.TreeNode Root α)} (hℓ : RootIndexed.IsLine ℓ) :
-    IsAncestralStoppingLine history (fun _ : Ω => ℓ) :=
-  ⟨IsRandomLine.const hℓ, fun _ => MeasurableSet.const _⟩
-
-theorem IsAncestralStoppingLine.mono
-    {history history' : RootIndexed.TreeNode Root α → MeasurableSpace Ω}
-    {L : Ω → Set (RootIndexed.TreeNode Root α)} (h : IsAncestralStoppingLine history L)
-    (hle : ∀ u, history u ≤ history' u) : IsAncestralStoppingLine history' L :=
-  ⟨h.toIsRandomLine, fun u => hle u _ (h.measurableSet_mem u)⟩
-
-theorem IsAncestralStoppingLine.inter
-    {history : RootIndexed.TreeNode Root α → MeasurableSpace Ω}
-    {L M : Ω → Set (RootIndexed.TreeNode Root α)}
-    (hL : IsAncestralStoppingLine history L) (hM : IsAncestralStoppingLine history M) :
-    IsAncestralStoppingLine history (fun ω => L ω ∩ M ω) :=
-  ⟨hL.toIsRandomLine.inter hM.toIsRandomLine,
-    fun u => (hL.measurableSet_mem u).inter (hM.measurableSet_mem u)⟩
-
-theorem IsAncestralStoppingLine.restrict
+omit mΩ in
+/-- Countably many tested paths, each with finitely many possible stopping ancestors. -/
+theorem measurableSet_precedes_of_mem
     {history : RootIndexed.TreeNode Root α → MeasurableSpace Ω}
     {L : Ω → Set (RootIndexed.TreeNode Root α)}
-    (hL : IsAncestralStoppingLine history L) (C : Set (RootIndexed.TreeNode Root α)) :
-    IsAncestralStoppingLine history (fun ω => L ω ∩ C) := by
-  refine ⟨hL.toIsRandomLine.restrict C, fun u => ?_⟩
-  by_cases hu : u ∈ C
-  · simpa only [Set.mem_inter_iff, hu, and_true] using hL.measurableSet_mem u
-  · simp only [Set.mem_inter_iff, hu, and_false, Set.ofPred_false, MeasurableSet.empty]
-
-/-- Countably many tested paths, each with finitely many possible stopping ancestors. -/
-theorem IsAncestralStoppingLine.measurableSet_precedes
-    {history : RootIndexed.TreeNode Root α → MeasurableSpace Ω}
-    {L : Ω → Set (RootIndexed.TreeNode Root α)} (h : IsAncestralStoppingLine history L)
+    (hmem : ∀ u, MeasurableSet[history u] {ω | u ∈ L ω})
     (ℓ : Set (RootIndexed.TreeNode Root α)) (hcount : ℓ.Countable)
     (past : MeasurableSpace Ω)
     (hinfo : ∀ u v, v ∈ ℓ → RootIndexed.IsAncestor u v → history u ≤ past) :
@@ -105,31 +67,34 @@ theorem IsAncestralStoppingLine.measurableSet_precedes
   apply MeasurableSet.iUnion
   intro n
   by_cases hn : n ≤ v.2.length
-  · have hm0 := @IsAncestralStoppingLine.measurableSet_mem Ω Root α mΩ
-      history L h (v.1, v.2.take n)
+  · have hm0 := hmem (v.1, v.2.take n)
     have hm := hinfo (v.1, v.2.take n) v hv ⟨rfl, List.take_prefix n v.2⟩ _
       hm0
     simpa only [hn, true_and] using hm
   · simp only [hn, false_and, Set.ofPred_false, MeasurableSet.empty]
 
 /-- Ancestral decisions imply optionality when their information is available at every test cut. -/
-theorem IsAncestralStoppingLine.isOptionalLine [Countable Root] [Countable α]
+theorem IsRandomLine.isOptionalLine_of_mem
+    [Countable (RootIndexed.TreeNode Root α)]
     {history : RootIndexed.TreeNode Root α → MeasurableSpace Ω}
-    {L : Ω → Set (RootIndexed.TreeNode Root α)} (h : IsAncestralStoppingLine history L)
+    {L : Ω → Set (RootIndexed.TreeNode Root α)} (h : IsRandomLine L)
+    (hmem : ∀ u, MeasurableSet[history u] {ω | u ∈ L ω})
     (past : Set (RootIndexed.TreeNode Root α) → MeasurableSpace Ω)
     (hinfo : ∀ ℓ, RootIndexed.IsLine ℓ → ∀ u v, v ∈ ℓ →
       RootIndexed.IsAncestor u v → history u ≤ past ℓ) : IsOptionalLine past L :=
-  ⟨h.toIsRandomLine, fun ℓ hℓ =>
-    h.measurableSet_precedes ℓ (Set.to_countable ℓ) (past ℓ) (hinfo ℓ hℓ)⟩
+  ⟨h, fun ℓ hℓ =>
+    measurableSet_precedes_of_mem hmem ℓ (Set.to_countable ℓ) (past ℓ) (hinfo ℓ hℓ)⟩
 
 /-- Strict ancestral decisions are optional for the coordinate-generated line past. -/
-theorem IsAncestralStoppingLine.isOptionalLine_linePast [Countable Root] [Countable α]
+theorem IsRandomLine.isOptionalLine_of_ancestral_mem
+    [Countable (RootIndexed.TreeNode Root α)]
     (initial : MeasurableSpace Ω)
     (coordinate : RootIndexed.TreeNode Root α → MeasurableSpace Ω)
     {L : Ω → Set (RootIndexed.TreeNode Root α)}
-    (h : @IsAncestralStoppingLine Ω Root α mΩ (ancestralPast initial coordinate) L) :
+    (h : @IsRandomLine Ω Root α mΩ L)
+    (hmem : ∀ u, MeasurableSet[ancestralPast initial coordinate u] {ω | u ∈ L ω}) :
     @IsOptionalLine Ω Root α mΩ (linePast initial coordinate) L := by
-  apply IsAncestralStoppingLine.isOptionalLine (mΩ := mΩ) h
+  apply IsRandomLine.isOptionalLine_of_mem (mΩ := mΩ) h hmem
   intro ℓ hℓ u v hv huv
   exact ancestralPast_le_linePast initial coordinate hℓ hv huv
 
