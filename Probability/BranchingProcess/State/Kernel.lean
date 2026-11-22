@@ -28,6 +28,8 @@ In namespace `ProbabilityTheory.BranchingProcess.State`:
   $|u|$ at the address $u$. Absent nodes have value `none`.
 * `treeKernel.isMarkovKernel` proves it is a probability kernel.
 * `treeKernel_root` gives root-state marginal $\delta_s$.
+* `treeKernel_children` gives the complete root-family marginal
+  `Law((t([j]))_j) = K_⊥(s)`.
 
 The underlying construction is Mathlib's Ionescu--Tulcea kernel; its
 existence is not assumed. Inputting `offspringStateKernel F hF Q` gives the
@@ -110,5 +112,42 @@ theorem treeKernel_root {α S : Type*} [MeasurableSpace S]
   change (pathKernel K s).map (fun x ↦ x 0 ((), [].get)) = _
   rw [he, ← Measure.map_map (by fun_prop) (by fun_prop), pathKernel_initial,
     Measure.map_dirac' (by fun_prop)]
+
+/-- The root's complete child family has the original optional offspring law. -/
+theorem treeKernel_children {α S : Type*} [MeasurableSpace S]
+    (K : Kernel S (Step α S)) [IsMarkovKernel K] (s : Option S) :
+    (treeKernel K s).map (fun t j => t [j]) =
+      (Kernel.optionElim (Measure.dirac (fun _ : α => (none : Option S))) K) s := by
+  have hfirst : (pathKernel K s).map (fun x => x 1) =
+      generationKernel (Root := Unit) K 0 (fun _ => s) := by
+    have hm := congrArg (fun L => L (fun (_k : Iic 0)
+      (_p : Unit × (Fin _k.1 → α)) => s))
+      (Kernel.map_traj_succ_self
+        (X := fun n : ℕ => (Unit × (Fin n → α)) → Option S)
+        (κ := generationHistoryKernel (Root := Unit) K) (a := 0))
+    rw [Kernel.map_apply _ (by fun_prop)] at hm
+    exact hm
+  rw [treeKernel, Kernel.map_apply _ (by fun_prop),
+    Measure.map_map (by fun_prop) (by fun_prop)]
+  have he : (fun x : Π n : ℕ, (Unit × (Fin n → α)) → Option S =>
+      fun j => x [j].length ((), [j].get)) =
+      (fun x => fun j => x 1 ((), Fin.snoc (fun i : Fin 0 => i.elim0) j)) := by
+    funext x j
+    congr 2
+    funext i
+    simp only [List.get_eq_getElem, List.getElem_singleton]
+    have hi : i = Fin.last 0 := by
+      apply Fin.ext
+      have hb := i.isLt
+      simp only [List.length_singleton] at hb
+      exact Nat.eq_zero_of_le_zero (Nat.le_of_lt_succ hb)
+    rw [hi, Fin.snoc_last]
+  change (pathKernel K s).map (fun x => fun j => x [j].length ((), [j].get)) = _
+  rw [he]
+  change (pathKernel K s).map
+    ((fun next : (Unit × (Fin 1 → α)) → Option S =>
+      fun j => next ((), Fin.snoc (fun i : Fin 0 => i.elim0) j)) ∘ (fun x => x 1)) = _
+  rw [← Measure.map_map (by fun_prop) (by fun_prop), hfirst]
+  exact generationKernel_childFamily K 0 (fun _ => s) ((), fun i : Fin 0 => i.elim0)
 
 end ProbabilityTheory.BranchingProcess.State

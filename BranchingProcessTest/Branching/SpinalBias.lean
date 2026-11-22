@@ -1,5 +1,6 @@
 import Probability.BranchingProcess.Spine.Family.Conditional
-import Probability.BranchingProcess.Spine.Tree.Construction
+import Probability.BranchingProcess.Spine.Tree.Ray
+import Probability.BranchingProcess.Spine.Tree.FirstGeneration
 
 open MeasureTheory ProbabilityTheory Combinatorics.Branching
 open scoped ENNReal
@@ -56,6 +57,46 @@ example : IsMarkovKernel
 example (K : Kernel Bool Bool) [IsSFiniteKernel K] :
     K.doobTransform (fun _ => 1) = K := Kernel.doobTransform_one K
 
+-- Ordinary branches can later return to positive-weight states. They still
+-- remain ordinary: there is exactly one distinguished node at every depth.
+example : ∀ᵐ t ∂BranchingProcess.Spine.treeKernel offspring (h := weight)
+      (by fun_prop) harmonic_eligible (some (Sum.inr ⟨false, by simp [weight]⟩)),
+    ∃! f, Combinatorics.UlamHarris.IsRay (BranchingProcess.Spine.distinguishedNodes t) f ∧
+      BranchingProcess.Spine.distinguishedNodes t =
+        Set.range (Combinatorics.UlamHarris.lineagePrefix f) :=
+  BranchingProcess.Spine.ae_treeKernel_unique_spine offspring (by fun_prop)
+    harmonic_eligible ⟨false, by simp [weight]⟩
+
+-- The density is a marginal of this same infinite tree, including zero-weight siblings.
+example : (BranchingProcess.Spine.treeKernel offspring (h := weight)
+      (by fun_prop) harmonic_eligible (some (Sum.inr ⟨false, by simp [weight]⟩))).map
+      (fun t => Step.map (Sum.elim id Subtype.val) (fun j => t [j])) =
+      (offspring false).withDensity
+        (fun ξ => (∑' i, (ξ i).elim 0 weight) / weight false) :=
+  BranchingProcess.Spine.treeKernel_firstFamily offspring (by fun_prop)
+    harmonic_eligible ⟨false, by simp [weight]⟩
+
+-- With an absent root, every node has absent children. No measurable equality
+-- or countability hypothesis is imposed on the state space.
+example {S : Type*} [MeasurableSpace S] (K : Kernel S (Step Bool S)) [IsMarkovKernel K]
+    (hsupport : ∀ s, ∀ᵐ ξ ∂K s, ∀ i, ξ i = none) :
+    ∀ᵐ t ∂BranchingProcess.State.treeKernel K none, ∀ u,
+      ∀ i, t (u ++ [i]) = none := by
+  apply BranchingProcess.State.ae_treeKernel_reproduction K none
+    (fun _ ξ => ∀ i, ξ i = none)
+  · rw [Set.ofPred_forall]
+    exact MeasurableSet.iInter fun i => measurableSet_option_none.preimage
+      ((measurable_pi_apply i).comp measurable_snd)
+  · intro o
+    cases o with
+    | none =>
+      rw [Kernel.optionElim_none]
+      exact (ae_dirac_iff (by
+        rw [Set.ofPred_forall]
+        exact MeasurableSet.iInter fun i =>
+          measurableSet_option_none.preimage (measurable_pi_apply i))).mpr (fun _ => rfl)
+    | some a => exact hsupport a
+
 end SpinalBiasExamples
 
 #print axioms ProbabilityTheory.Kernel.lintegral_doobTransform
@@ -69,3 +110,11 @@ end SpinalBiasExamples
 #print axioms ProbabilityTheory.BranchingProcess.Spine.ae_biasedFamilyChild_eligible
 #print axioms ProbabilityTheory.BranchingProcess.Spine.reproductionKernel_distinguished_map
 #print axioms ProbabilityTheory.BranchingProcess.Spine.treeKernel_root
+
+#print axioms Combinatorics.UlamHarris.existsUnique_isRay_of_unique_child
+#print axioms Combinatorics.UlamHarris.IsRay.eq_range_of_unique_child
+#print axioms ProbabilityTheory.BranchingProcess.State.generationKernel_childFamily
+#print axioms ProbabilityTheory.BranchingProcess.State.treeKernel_children
+#print axioms ProbabilityTheory.BranchingProcess.State.ae_treeKernel_reproduction
+#print axioms ProbabilityTheory.BranchingProcess.Spine.ae_treeKernel_unique_spine
+#print axioms ProbabilityTheory.BranchingProcess.Spine.treeKernel_firstFamily

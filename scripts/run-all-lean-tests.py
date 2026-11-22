@@ -23,6 +23,13 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.BranchingProcess.Spine.ae_biasedFamilyChild_eligible",
         "ProbabilityTheory.BranchingProcess.Spine.reproductionKernel_distinguished_map",
         "ProbabilityTheory.BranchingProcess.Spine.treeKernel_root",
+        "Combinatorics.UlamHarris.existsUnique_isRay_of_unique_child",
+        "Combinatorics.UlamHarris.IsRay.eq_range_of_unique_child",
+        "ProbabilityTheory.BranchingProcess.State.generationKernel_childFamily",
+        "ProbabilityTheory.BranchingProcess.State.treeKernel_children",
+        "ProbabilityTheory.BranchingProcess.State.ae_treeKernel_reproduction",
+        "ProbabilityTheory.BranchingProcess.Spine.ae_treeKernel_unique_spine",
+        "ProbabilityTheory.BranchingProcess.Spine.treeKernel_firstFamily",
     ),
     Path("BranchingProcessTest/Branching/LineConstructions.lean"): (
         "ProbabilityTheory.BranchingRandomWalk.Spine.firstEntranceWeight_eq_tsum",

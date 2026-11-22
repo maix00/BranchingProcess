@@ -134,20 +134,34 @@ both marginals, and proves conditional child selection. `Spine/Tree/Construction
 uses this bias for distinguished parents and the original offspring law for
 normal parents in the existing canonical state-tree process. Erasing the
 role in one distinguished family gives exactly its total-weight-biased law.
-The Bool regression example retains an ordinary zero-weight side child.
+`State/Support.lean` transfers local reproduction constraints to the whole
+canonical tree; `Spine/Tree/Ray.lean` proves that the distinguished nodes are
+exactly the prefixes of one almost-sure realized infinite ray.
+`Spine/Tree/FirstGeneration.lean` derives the first-generation density from
+this same tree. The Bool regression example allows ordinary zero-weight
+branches to produce positive-weight descendants and verifies that these
+branches never create an additional spine.
 
 **Remaining source obligations:**
 
-1. §4.1: augment the tree by a distinguished realized infinite ray, with
-   information on the tree alone distinguished from information including the ray.
+1. §4.1: the unique realized distinguished ray is proved for the canonical
+   typed tree. Complete its measurable extraction and the tree/ray product
+   representation, distinguishing information on the untyped tree from
+   information including the ray.
 2. §4.2, (4.3)–(4.4): the kernel construction is implemented. Instantiate it
    with Shi's killed transition and identify the resulting tilted BRW path.
 3. §4.3, Lemma 4.1 and (4.5)–(4.6): prove the harmonic additive martingale
    `M_nʰ = ∑_|u|=n h(V(u)) exp(−V(u)) 1_{ancestry in D}` and construct the
    consistent changed tree law with generation density `M_nʰ/(h(a)exp(−a))`.
 4. §4.4, (4.8): the joint bias and normal/special canonical tree law are
-   constructed. Prove the almost-sure unique distinguished infinite ray and
-   Theorem 4.3's identification of the tree marginal with the changed law.
+   constructed, and the almost-sure unique realized ray and first-generation
+   tree density are proved. Continue the §4.5 proof of Theorem 4.3 by first
+   proving the fixed-spine-address weighted identity (4.12): integrate the
+   ordinary sibling descendant trees under their original laws along the
+   ancestral path. Sum over the terminal spine address only after that
+   identity, obtaining (4.11) and the full tree marginal. The original-law
+   identification for normal descendant trees and the fixed-address identity
+   remain open.
    With harmonicity imposed only on the eligible region, finite-generation
    mass must retain the ancestry-in-region indicator: an ordinary branch may
    leave and later reenter the region.
@@ -199,6 +213,20 @@ state-update, field and stopped-descendant interfaces are retained. New tree
 constructions are reusable and belong outside `Lemmas/`. The native
 stopping-time APIs were checked against the official
 [Mathlib documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/HittingTime.html).
+
+#### Canonical-tree support audit
+
+The extension from local offspring constraints to all nodes uses native
+`Kernel.map_traj_succ_self`, `Measure.ae_compProd_of_ae_ae`,
+`Measure.infinitePi_map_eval`, and the library's existing
+`State.pathKernel_oneStep` and `State.generationKernel_broods`.
+The official [trajectory documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Kernel/IonescuTulcea/Traj.html)
+and pinned Mathlib `26573066084e6e2aa8526ea358bc43b66d96f970` were checked;
+there is no separate probability-space realization or duplicate trajectory
+construction. `State.ae_treeKernel_reproduction` assumes only a jointly
+measurable local relation and a countable slot type, with no spine, additive,
+state equality-measurability, or standard-Borel hypothesis. Its proper owner
+is the general branching-state process, outside `Lemmas/`.
 
 ## Integrated work packages for Theorems 1.1 and 1.2 (2026-10-11 audit)
 
