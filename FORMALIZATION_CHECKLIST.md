@@ -116,6 +116,54 @@ Primary references checked online on 2026-11-22:
   Search Tree via martingales*, [arXiv:math/0410318](https://arxiv.org/abs/math/0410318),
   discussion of the distinction between optional and ancestral stopping rules.
 
+### Shi's general spinal decomposition
+
+Zhan Shi, *Branching Random Walks*, Lecture Notes in Mathematics 2151
+(Springer, 2015), Chapter 4; the checked
+[author lecture PDF](https://igor-kortchemski.perso.math.cnrs.fr/MAP575/docs/brw.pdf)
+has §§4.1–4.7 on printed pp. 33–46. The following are separate **open**
+objects/results, not consequences already supplied by `tiltedIncrementFieldLaw`:
+
+1. §4.1: augment the tree by a distinguished realized infinite ray, with
+   information on the tree alone distinguished from information including the ray.
+2. §4.2, (4.3)–(4.4): for a region `D` and a positive killed-kernel harmonic
+   function `h`, construct the Doob transform
+   `pʰ(u,dv) = 1_D(v) h(v)/h(u) p(u,dv)`.
+3. §4.3, Lemma 4.1 and (4.5)–(4.6): prove the harmonic additive martingale
+   `M_nʰ = ∑_|u|=n h(V(u)) exp(−V(u)) 1_{ancestry in D}` and construct the
+   consistent changed tree law with generation density `M_nʰ/(h(a)exp(−a))`.
+4. §4.4, (4.8): construct the joint system by biasing the spine parent's
+   whole offspring family, choosing its next spine child by normalized
+   harmonic weights, and leaving normal parents under the original law.
+   Theorem 4.3 identifies this construction's tree marginal with the changed law.
+5. Theorem 4.4(i), (4.9): identify the conditional location of the spine given
+   the generation tree. Part (ii), (4.10), identifies its path law with the
+   Doob-transformed chain.
+6. §4.3, Lemma 4.2: uniform-integrability criterion from conditional bounds
+   under the changed measure. The reciprocal density is generally a
+   **supermartingale**, rather than a martingale when extinction is possible.
+7. §4.6, Example 4.5: ordinary size bias is `D = R`, `h = 1`.
+   §4.7, Example 4.6 and Lemma 4.7: the renewal function gives the barrier
+   specialization `h(u) = R(u + α)` on `D = [−α,∞)`. Only the spine is
+   constrained to `D`; ordinary side branches may leave it.
+
+Construction must use a canonical tree/path space and a justified extension
+(such as native Ionescu–Tulcea); consistency of a density martingale alone
+must not be used to claim extension on an arbitrary ambient measurable space.
+The finite-generation Radon–Nikodym identities do not assert a global density
+`M_∞` without the requisite uniform integrability. The killed-kernel / harmonic
+transform and the joint biased-family/child law must be general state-kernel
+objects; the exponential and renewal-function cases are derived instances.
+
+Upstream reuse already available at the pinned revision includes
+`Measure.withDensity_compProd_withDensity` and
+`Measure.rnDeriv_measure_compProd` in
+`Mathlib.Probability.Kernel.Composition.WithDensity` and
+`Mathlib.Probability.Kernel.Composition.RadonNikodym`. These provide the joint
+kernel density calculus behind Biggins–Kyprianou Lemma 12.1; it should not be
+reproved as a branching-specific measure theorem. No Doob-transform
+construction was found in the audited Mathlib or local probability sources.
+
 The general spine construction belongs to a state-kernel branching-process
 module, rather than to an additive BRW-specific interface. A mean-harmonic
 state weight supplies the family bias and trunk-selection distribution.
