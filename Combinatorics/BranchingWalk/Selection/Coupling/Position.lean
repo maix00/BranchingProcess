@@ -19,10 +19,10 @@ the observation of the updated position. Under a finite parent injection,
 matched slots and increments preserve the lower-tail count comparison:
 
 \[
-\psi_C(p,i)=\phi\!\left(x_C(p)+\xi_C(p,i)\right),\qquad
-\bigl|\{(p,i)\in P_C:\psi_C(p,i)\le a\}\bigr|
+\psi_{\mathrm{o}}(p,i)=\phi\!\left(x_C(p)+\xi_C(p,i)\right),\qquad
+\bigl|\{(p,i)\in P_{\mathrm{o}}:\psi_{\mathrm{o}}(p,i)\le a\}\bigr|
 \le
-\bigl|\{(q,i)\in P_D:\psi_D(q,i)\le a\}\bigr|.
+\bigl|\{(q,i)\in P_{\mathrm{p}}:\psi_{\mathrm{p}}(q,i)\le a\}\bigr|.
 \]
 
 The declarations are in namespace
@@ -33,9 +33,9 @@ The declarations are in namespace
 - `childValue_filter_card_le_of_injectivelyDominatesBy`: under a finite
   slice-dominating parent injection, inclusion of matched slot sets, equality
   of mapped increments, and translation monotonicity,
-  `card (P_C.filter (childValue_C ≤ a)) ≤
-  card (P_D.filter (childValue_D ≤ a))`, where `P_C` and `P_D` are the
-  offspring-pair sets built from the source and target slices.
+  `card (P_{\mathrm{o}}.filter (childValue_C ≤ a)) ≤
+  card (P_{\mathrm{p}}.filter (childValue_D ≤ a))`, where `P_{\mathrm{o}}` and `P_{\mathrm{p}}` are the
+  offspring-pair sets built from the object and partner slices.
 - `childValue_eq_branchingWalk_position_child`: the abstract update equals
   `φ (β.position d p.1 (p.2 ++ [i]))` for a child of a branching walk.
 
@@ -74,39 +74,39 @@ theorem childValue_filter_card_le_of_injectivelyDominatesBy
     [Preorder Value]
     [DecidableRel (· ≤ · : Value → Value → Prop)]
     (φ : Position → Value) (d : Mark → Position)
-    {C D : Cloud Time Root α Position} (t : Time)
-    (hCfinite : (C.particles t).Finite)
-    (hDfinite : (D.particles t).Finite)
-    (hdom : C.InjectivelyDominatesBy φ D t)
-    (sourceSlots targetSlots : RootIndexed.TreeNode Root α → Finset α)
-    (sourceStep targetStep : RootIndexed.TreeNode Root α → Step α Mark)
-    (hslots : ∀ p ∈ C.particles t, ∀ q ∈ D.particles t,
-      φ (D.position q.1 q.2) ≤ φ (C.position p.1 p.2) →
-      sourceSlots p ⊆ targetSlots q)
-    (hsharedIncrement : ∀ p ∈ C.particles t, ∀ q ∈ D.particles t,
-      φ (D.position q.1 q.2) ≤ φ (C.position p.1 p.2) →
-      ∀ i ∈ sourceSlots p,
-        value' ((targetStep q).map d) i =
-          value' ((sourceStep p).map d) i)
+    {objectsToMatchCloud availablePartnersCloud : Cloud Time Root α Position} (t : Time)
+    (hobjectsToMatchFinite : (objectsToMatchCloud.particles t).Finite)
+    (havailablePartnersFinite : (availablePartnersCloud.particles t).Finite)
+    (hobjectCloudDominatesPartnerCloud : objectsToMatchCloud.InjectivelyDominatesBy φ availablePartnersCloud t)
+    (objectSlots partnerSlots : RootIndexed.TreeNode Root α → Finset α)
+    (objectStep partnerStep : RootIndexed.TreeNode Root α → Step α Mark)
+    (hmatchedSlotSubset : ∀ p ∈ objectsToMatchCloud.particles t, ∀ q ∈ availablePartnersCloud.particles t,
+      φ (availablePartnersCloud.position q.1 q.2) ≤ φ (objectsToMatchCloud.position p.1 p.2) →
+      objectSlots p ⊆ partnerSlots q)
+    (hmatchedSlotIncrement : ∀ p ∈ objectsToMatchCloud.particles t, ∀ q ∈ availablePartnersCloud.particles t,
+      φ (availablePartnersCloud.position q.1 q.2) ≤ φ (objectsToMatchCloud.position p.1 p.2) →
+      ∀ i ∈ objectSlots p,
+        value' ((partnerStep q).map d) i =
+          value' ((objectStep p).map d) i)
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
     (a : Value) :
-    ((offspringPairs hCfinite.toFinset sourceSlots).filter fun
+    ((offspringPairs hobjectsToMatchFinite.toFinset objectSlots).filter fun
         (pi : RootIndexed.TreeNode Root α × α) =>
-        childValue φ d (fun p => C.position p.1 p.2) sourceStep
+        childValue φ d (fun p => objectsToMatchCloud.position p.1 p.2) objectStep
           pi.1 pi.2 ≤ a).card ≤
-      ((offspringPairs hDfinite.toFinset targetSlots).filter fun
+      ((offspringPairs havailablePartnersFinite.toFinset partnerSlots).filter fun
         (qi : RootIndexed.TreeNode Root α × α) =>
-        childValue φ d (fun q => D.position q.1 q.2) targetStep
+        childValue φ d (fun q => availablePartnersCloud.position q.1 q.2) partnerStep
           qi.1 qi.2 ≤ a).card := by
   apply offspringPairs_filter_card_le_of_injectivelyDominatesBy φ t
-    hCfinite hDfinite hdom sourceSlots targetSlots
+    hobjectsToMatchFinite havailablePartnersFinite hobjectCloudDominatesPartnerCloud objectSlots partnerSlots
   intro p hp q hq hleft i hi
-  refine ⟨hslots p hp q hq hleft hi, ?_⟩
+  refine ⟨hmatchedSlotSubset p hp q hq hleft hi, ?_⟩
   unfold childValue
-  rw [hsharedIncrement p hp q hq hleft i hi]
-  exact htranslate (C.position p.1 p.2) (D.position q.1 q.2)
-    (value' ((sourceStep p).map d) i) hleft
+  rw [hmatchedSlotIncrement p hp q hq hleft i hi]
+  exact htranslate (objectsToMatchCloud.position p.1 p.2) (availablePartnersCloud.position q.1 q.2)
+    (value' ((objectStep p).map d) i) hleft
 
 /-- The abstract child-value update agrees definitionally with the position
 of an actual child in a root-indexed branching walk. -/

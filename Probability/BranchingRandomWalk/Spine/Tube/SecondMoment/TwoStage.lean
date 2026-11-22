@@ -39,7 +39,7 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Defs
   proves positive two-stage success probability when both measurable,
   lower-bounded windows have positive tilted mass.
 
-The first child whose increment enters a prescribed window is chosen by its
+The first selected child whose increment enters a prescribed window is chosen by its
 least slot index. Its descendant field is independent of the root step. This
 gives an exact product formula for success in two consecutive tube windows.
 
@@ -202,7 +202,7 @@ theorem measure_twoStageTubeEvent_eq_mul
   let next : Set (StepField ℕ X) :=
     {ω | hasPotentialChildIn φ J (ω [])}
   let cell (i : ℕ) : Set (StepField ℕ X) :=
-    {ω | first i (ω []) ∧ next (subtreeStepField [i] ω)}
+    {ω | ω [] ∈ first i ∧ subtreeStepField [i] ω ∈ next}
   have hcell_meas (i : ℕ) : MeasurableSet (cell i) := by
     change MeasurableSet
       ({ω : StepField ℕ X | firstPotentialChildIn φ I i (ω [])} ∩
@@ -223,9 +223,6 @@ theorem measure_twoStageTubeEvent_eq_mul
     ext ω
     simp only [twoStageTubeEvent, Set.mem_ofPred_eq, Set.mem_iUnion,
       cell, first, next]
-    apply exists_congr
-    intro i
-    rfl
   have hpair (i : ℕ) :
       (offspringFieldLaw μ) (cell i) = μ (first i) * (offspringFieldLaw μ) next := by
     let pairMap : StepField ℕ X → Step ℕ X × StepField ℕ X :=
@@ -275,7 +272,7 @@ theorem measure_twoStageTubeEvent_eq_mul
       rw [hfirst_union]
 
 /-- If both windows have positive tilted mass, then a two-generation path
-enters the first window and its selected first child has a descendant
+enters the first window and its selected first selected child has a descendant
 increment in the second window with positive probability. -/
 theorem measure_twoStageTubeEvent_pos_of_tiltedWindows_pos
     {X : Type*} [MeasurableSpace X] [Countable ℕ]

@@ -63,7 +63,7 @@ private def rationalBlockEndpointProbability
     ⟨0, hblocks⟩ s ω) ⁻¹' rationalBlockEndpointEvent a ε i)
 
 /-- Five disjoint endpoint bins cover the invariant core `(-2d,2d)`. -/
-def blockEndpointBin (d : ℝ) (i : Fin 5) : Set ℝ :=
+noncomputable def blockEndpointBin (d : ℝ) (i : Fin 5) : Set ℝ :=
   Set.Ioo (-2 * d) (2 * d) ∩
     Set.Ioc (((i.val : ℝ) - 5 / 2) * d) (((i.val : ℝ) - 3 / 2) * d)
 

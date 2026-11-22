@@ -14,6 +14,10 @@ public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measur
 
 ## Public declarations
 
+- `childrenAtGeneration_isLowerFiniteBy_of_leftLocallyFinite`
+  gives finite lower position sections from left local finiteness of the
+  offspring at each parent.
+
 Let \(C_{n+1}\) be the child set of the finite parent set and let
 \(x(q)\) be the observed real position at generation \(n+1\). Under finite
 negative exponential weight at every parent, each lower section in the
@@ -40,14 +44,12 @@ open Combinatorics.UlamHarris
 open _root_.Combinatorics.Selection.NSelection
 open scoped ENNReal
 
-theorem childrenAtGeneration_isLowerFiniteBy_real
+theorem childrenAtGeneration_isLowerFiniteBy_of_leftLocallyFinite
     {Root α : Type*} [DecidableEq (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]
     (n : ℕ) (parents : Finset (RootIndexed.TreeNode Root α))
     (field : StepField Root α ℝ) (initial : Root → ℝ)
-    (hweight : ∀ p ∈ parents,
-      Combinatorics.Branching.totalPotentialWeight
-        Combinatorics.Branching.realPotential (-1) (field p.1 p.2) ≠ ∞) :
+    (hfinite : ∀ p ∈ parents, (field p.1 p.2).IsLeftLocallyFinite) :
     IsLowerFiniteBy
       (observedPositionAtGeneration initial id id (n + 1) field)
       (Combinatorics.Branching.Population.childrenAtGeneration n parents field) := by
@@ -55,8 +57,8 @@ theorem childrenAtGeneration_isLowerFiniteBy_real
     initial field
   let value := fun p : RootIndexed.TreeNode Root α => β.position id p.1 p.2
   have hbase :=
-    Combinatorics.Branching.Population.childrenAtGeneration_isLowerFiniteBy_real
-      n parents field initial hweight
+    Combinatorics.Branching.Population.childrenAtGeneration_isLowerFiniteBy_of_leftLocallyFinite
+      n parents field initial hfinite
   have hobserved (q : RootIndexed.TreeNode Root α)
       (hq : q ∈ Combinatorics.Branching.Population.childrenAtGeneration
         n parents field) :
@@ -73,6 +75,22 @@ theorem childrenAtGeneration_isLowerFiniteBy_real
   change toLex (value q, q) ≤ toLex (value p, p)
   rw [← hobserved q hq.1, ← hobserved p hp]
   exact hq.2
+
+theorem childrenAtGeneration_isLowerFiniteBy_real
+    {Root α : Type*} [DecidableEq (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)]
+    (n : ℕ) (parents : Finset (RootIndexed.TreeNode Root α))
+    (field : StepField Root α ℝ) (initial : Root → ℝ)
+    (hweight : ∀ p ∈ parents,
+      Combinatorics.Branching.totalPotentialWeight
+        Combinatorics.Branching.realPotential (-1) (field p.1 p.2) ≠ ∞) :
+    IsLowerFiniteBy
+      (observedPositionAtGeneration initial id id (n + 1) field)
+      (Combinatorics.Branching.Population.childrenAtGeneration n parents field) := by
+  apply childrenAtGeneration_isLowerFiniteBy_of_leftLocallyFinite
+  intro p hp
+  exact (field p.1 p.2).isLeftLocallyFinite_of_totalPotentialWeight_ne_top
+    (β := 1) zero_lt_one (hweight p hp)
 
 end ProbabilityTheory.BranchingRandomWalk.RootIndexed
 
