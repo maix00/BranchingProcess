@@ -18,6 +18,9 @@ $\ell_N(n)=\lfloor L_N(n)^{5/2}\rfloor$.
 
 ## Public declarations
 
+- `eventually_positiveAFirstStageCutoff_lt_of_logCubeLimit`: if
+  $H_n/(\log N_n)^3\to t>0$, then $\lfloor(\log N_n)^{5/2}\rfloor<H_n$ eventually.
+
 - `positiveAFirstStageCutoff` defines $\ell_N(n)$.
 - Its asymptotic declarations prove $\ell_N(n)/L_N(n)^3\to0$,
   $\ell_N(n)\to\infty$, and $\ell_N(n)^{2/5}/L_N(n)\to1$.
@@ -175,37 +178,47 @@ theorem eventually_positiveAFirstStageAHScale
     linarith
   exact_mod_cast (lt_trans hwidthLower hfloorLower).le
 
-/-- The first cutoff lies strictly before the `floor(t log^3 N)+1` terminal
-horizon for all sufficiently large sample sizes. -/
-theorem eventually_positiveAFirstStageCutoff_lt_horizon
-    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t : ℝ} (ht : 0 < t) :
+/-- The first cutoff lies strictly before any terminal horizon with
+$H_n/(\log N_n)^3\to t>0$ for all sufficiently large sample sizes. -/
+theorem eventually_positiveAFirstStageCutoff_lt_of_logCubeLimit
+    {N H : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t : ℝ} (ht : 0 < t)
+    (hterminal : Tendsto (fun n => (H n : ℝ) / Real.log (N n : ℝ) ^ 3) atTop (𝓝 t)) :
     ∀ᶠ n : ℕ in atTop,
-      positiveAFirstStageCutoff N n < logarithmicHorizon N t n := by
+      positiveAFirstStageCutoff N n < H n := by
   let L : ℕ → ℝ := logarithmOfSampleSize N
   have hcut := tendsto_positiveAFirstStageCutoff_div_logCube hN
-  have hterminal := logarithmicHorizon_div_logCube_tendsto hN ht
   have hgap : Tendsto
-      (fun n => (logarithmicHorizon N t n : ℝ) / L n ^ 3 -
+      (fun n => (H n : ℝ) / L n ^ 3 -
         (positiveAFirstStageCutoff N n : ℝ) / L n ^ 3)
       atTop (𝓝 t) := by
-    simpa [L] using hterminal.sub hcut
+    simpa [L, logarithmOfSampleSize] using hterminal.sub hcut
   have hL : Tendsto L atTop atTop := by
     exact Real.tendsto_log_atTop.comp
       (tendsto_natCast_atTop_atTop.comp hN)
   have hgapPos : ∀ᶠ n : ℕ in atTop,
-      0 < (logarithmicHorizon N t n : ℝ) / L n ^ 3 -
+      0 < (H n : ℝ) / L n ^ 3 -
         (positiveAFirstStageCutoff N n : ℝ) / L n ^ 3 :=
     Filter.Tendsto.eventually hgap (Ioi_mem_nhds ht)
   filter_upwards [hgapPos, hL.eventually_gt_atTop 0]
     with n hgap hLn
   have hratio :
       (positiveAFirstStageCutoff N n : ℝ) / L n ^ 3 <
-        (logarithmicHorizon N t n : ℝ) / L n ^ 3 := by
+        (H n : ℝ) / L n ^ 3 := by
     linarith
   have hreal : (positiveAFirstStageCutoff N n : ℝ) <
-      (logarithmicHorizon N t n : ℝ) := by
+      (H n : ℝ) := by
     exact (div_lt_div_iff_of_pos_right (pow_pos hLn 3)).mp hratio
   exact_mod_cast hreal
+
+/-- The first cutoff lies strictly before the `floor(t log^3 N)+1` terminal
+horizon for all sufficiently large sample sizes. -/
+theorem eventually_positiveAFirstStageCutoff_lt_horizon
+    {N : ℕ → ℕ} (hN : Tendsto N atTop atTop) {t : ℝ} (ht : 0 < t) :
+    ∀ᶠ n : ℕ in atTop,
+      positiveAFirstStageCutoff N n < logarithmicHorizon N t n :=
+  eventually_positiveAFirstStageCutoff_lt_of_logCubeLimit hN ht
+    (logarithmicHorizon_div_logCube_tendsto hN ht)
+
 /-- The `2/5` small-deviation scale of the first-stage cutoff is asymptotic
  to the logarithmic sample-size scale:
 `logarithmicSmallDeviationScale (positiveAFirstStageCutoff N n) /

@@ -47,7 +47,7 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
-namespace StepSelection
+namespace Selection.Stepwise
 namespace SplitSchedule
 
 open Combinatorics.UlamHarris Combinatorics.Branching
@@ -65,10 +65,10 @@ theorem firstSuccess_eq_iff
     (root : ℕ → Root) (duration target k : ℕ)
     (ω : RootIndexed.StepField Root α X) :
     firstSuccess R root duration target ω = k ↔
-      target ≤ (RootIndexed.StepSelection.population
+      target ≤ (RootIndexed.Selection.Stepwise.population
         R duration ω (root k)).card ∧
       ∀ i < k, ¬ target ≤
-        (RootIndexed.StepSelection.population R duration ω (root i)).card := by
+        (RootIndexed.Selection.Stepwise.population R duration ω (root i)).card := by
   simpa [firstSuccess, successEvent] using
     firstDeclaredSuccess_eq_iff
       (successEvent R root duration target) ω k
@@ -150,9 +150,9 @@ theorem mem_orderedPopulationDeclaration_univ_iff
     (initial : RootIndexed.StepField Root α X → WithTop ℕ)
     (threshold duration target n : ℕ)
     (ω : RootIndexed.StepField Root α X) :
-    ω ∈ orderedCandidateDeclarationWithin
+    ω ∈ ProbabilityTheory.Trial.orderedCandidateDeclarationWithin
         (completion R root initial threshold duration)
-        (fun i => successAtCompletion
+        (fun i => ProbabilityTheory.Trial.successAtCompletion
           (completion R root initial threshold duration i)
           (successTest R root initial threshold target i))
         Set.univ (fun j i => j < i) n ↔
@@ -173,6 +173,6 @@ theorem mem_orderedPopulationDeclaration_univ_iff
     exact ⟨i, hcompletion, hsuccess, fun j _ hj => hearlier j hj⟩
 
 end SplitSchedule
-end StepSelection
+end Selection.Stepwise
 end RootIndexed
 end ProbabilityTheory.BranchingRandomWalk

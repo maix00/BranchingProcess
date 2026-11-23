@@ -17,6 +17,296 @@ than the application that first needs it.
 | `Probability` | Laws, filtrations, independence, random processes, and almost-everywhere statements | IID sequences, random walks, Lévy and stable processes |
 | `Probability/BranchingRandomWalk` | Random branching models and their bridges to general process and measure interfaces | offspring fields, spines, selection and coupling |
 
+`Combinatorics/UlamHarris/Relation.lean` owns structural root-preserving
+ancestry (same root, prefix address), without a survival hypothesis.
+`UlamHarris/Line/Basic.lean` defines lines directly with Mathlib `IsAntichain`,
+including their root-fiber and generation characterizations. `Ray.lean` owns
+the single infinite-path prefix construction, also used by branching-walk
+survival. `Line/Coverage.lean` separates meeting every infinite realized path
+from being a line; `Line/Order.lean` owns ancestral precedence and descendant
+closure. These definitions impose no finite-branching, local-finiteness, or
+probability assumptions. They belong outside `Lemmas/` as reusable tree
+objects and results. `BranchingWalk/Population/Line.lean` instantiates them
+for actual population generations. Random optional/stopping-line measurability
+conditions belong in the probability layer and are not part of `IsLine`.
+
+`Probability/Process/Tree/Line/` owns random-line information conditions,
+under `ProbabilityTheory.Tree`, independently of BRW dynamics. `Basic.lean`
+uses Mathlib's membership-generated measurable space on sets and reuses
+`RootIndexed.IsLine`. `IsOptionalLine` is the stopping criterion: for each
+fixed line ℓ, `{L ≼ ℓ}` belongs to its supplied information sigma algebra.
+`Ancestral.lean` derives this condition from node-membership measurability
+and information containment, rather than defining a parallel stopping-line
+class. Its fixed-line criterion only requires that test line to be countable;
+the all-lines corollary assumes countable node addresses.
+
+`Information/Coordinates.lean` defines `linePast` by excluding the line and
+its descendants, and `ancestralPast` using strict ancestors. Both retain
+explicit initial information. A life space is a native measurable value type;
+a life coordinate maps the whole sample domain into it, and its information
+is `MeasurableSpace.comap` of that map. These are distinct objects.
+`Observations.lean` compares inclusive ancestral state observations with
+strict-ancestor reproduction information. Measurable projections give an
+inclusion; measurable equivalences preserve line information exactly.
+`BranchingRandomWalk/Genealogy/RootIndexed/Field/State.lean` proves the actual
+state observation is measurable from strict-ancestor Steps, by reusing the
+existing `stateAlong` recursion and measurable update `F`. A Step records one
+parent's whole indexed offspring branch; a child's mark is one component.
+Marks may themselves carry complete life records: their chosen information
+content and attachment determine their role, without requiring a separate
+life-space type. States are computed from the chosen marks and update. No new state recursion or
+life-space wrapper is introduced.
+
+The information distinction follows Biggins and Kyprianou, *Measure change
+in multitype branching* (2004), §6, pp. 556–557
+(DOI:10.1239/aap/1086957585): their very-simple condition uses ancestral
+states, including the current state, while optionality remains the base
+condition. Jagers and Nerman, *The asymptotic composition of supercritical,
+multi-type branching populations* (1996), §2, p. 41, use measurable carriers
+for individual life records. Including a node's birth state does not entail
+including its own future reproduction record.
+
+`Line/FirstEntrance.lean` in the combinatorial layer defines first entrance
+using native `Minimal` for ancestry; its restriction theorem uses native
+`IsLowerSet` for ancestor-closed carriers. `Line/Truncation.lean` defines a
+bounded generation cut from this same construction. Actual realized-tree
+cuts are restrictions to the realized carrier; a depth bound does not assert
+that an address is alive. The probability-layer `FirstEntrance.lean` and
+`Truncation.lean` add observability and optionality under explicit ancestral
+membership hypotheses. Neither theorem asserts the full simple-line
+truncation result of Biggins–Kyprianou (2004), Lemma 14.3.
+`PathHitting.lean` identifies finite-path entrance events with native Mathlib
+`hittingAfter` events; it introduces no parallel stopping-time object.
+`Pasting.lean` owns the ordered optional-line pasting theorem and derives the
+deterministic-line case from it. These are reusable constructions, outside
+`Lemmas/`; no branching law is needed for these information-theoretic results.
+`BranchingRandomWalk/Spine/StoppingLine/FirstEntrance.lean` owns the weighted
+first-entry identity for the existing boundary-normalized i.i.d. BRW law.
+It sums the existing weighted path many-to-one formula over disjoint entrance
+generations and identifies its mass with the deterministic first-entrance
+line. This is a model-specific theorem outside the generic tree-information
+layer; it does not introduce another branching law or replace the missing
+general-state stopping-line theorem.
+The state-kernel spine construction belongs to
+`Probability/BranchingProcess/Spine/`. `Family/Joint.lean` owns the single
+joint family/selected-child bias; `Family/Marginals.lean` derives both
+marginals and `Family/Conditional.lean` derives conditional child selection.
+`Offspring/Mean.lean` owns the mean child kernel, and the independent native
+kernel density operation lives in `Probability/Kernel/DoobTransform/Basic.lean`.
+`DoobTransform/Composition.lean` owns weight cancellation and native kernel
+iteration; `Trajectory.lean` owns the finite-history endpoint density, and
+`Restriction.lean` owns the normalized kernel on `{0 < h < ∞}`. The generic
+homogeneous history adapter and endpoint marginal belong to
+`Kernel/IonescuTulcea/Markov.lean`; its one-step integral recursion is in
+`IonescuTulcea/PartialTraj.lean`. The process-level Markov realization belongs
+to `Process/Markov/Trajectory.lean`; `Process/Markov/DoobTransform.lean`
+specializes it to the eligible region. `Spine/StateChain.lean` derives the
+associated spine chain and its path density from these general interfaces.
+It identifies its transition with the selected-child marginal.
+`Spine/Observation.lean` reads a unique distinguished coordinate of any
+countable tagged population. It uses the reusable unique-present-value
+observation in `MeasureTheory/MeasurableSpace/UniquePresentValue.lean`.
+`Spine/Tree/Observation.lean` reads the actual spine's state sequence from the
+existing tree, and `Tree/PathLaw.lean` identifies its complete path law with
+the same canonical Doob Markov chain. The proof uses
+`State.treeKernel_generations` to recover the original generation process,
+and `Kernel.map_eq_trajMeasure` for the observed path law.
+The generation-assembly steps specific to this identification belong to
+`Tree/Lemmas/PathLaw.lean`, imported with `import all` by the theorem entry;
+the reusable observations and kernel identities remain outside `Lemmas/`.
+Single-proof auxiliary steps stay local to their proofs.
+`Spine/Tree/Construction.lean` augments states by the ordinary/distinguished
+role and applies the existing `State.treeKernel`; it does not implement
+another branching process. Normal states can have zero harmonic weight;
+only distinguished states require finite positive weight. A barrier on the
+spine therefore leaves ordinary side branches unrestricted.
+`State/Support.lean` transfers any jointly measurable almost-sure local
+reproduction rule to all nodes of the canonical tree, using one-step laws and
+product marginals. It has no dependency on the spine modules.
+`Spine/Tree/Ray.lean` applies it to the normal/distinguished rules and derives
+a unique realized infinite ray; its carrier is exactly all distinguished nodes.
+The deterministic unique-continuation arguments belong to `UlamHarris/Ray.lean`.
+`Spine/Tree/FirstGeneration.lean` derives the root-family density directly from
+the same canonical tree; it defines no alternative tilted tree law.
+`State/Map.lean` transports generation, joint-initial path, and full tree laws
+through a measurable state factor intertwining offspring kernels. Injectivity
+is not required. Its trajectory step uses the single generic observation proof
+in `Kernel/IonescuTulcea/Map.lean`; fixed-history and random-initial observations
+are derived cases. `Spine/Tree/Normal.lean` applies this to `Sum.inl` and recovers
+the original normal-descendant law after erasing roles; the existing branching
+property then gives the conditional product law of normal descendant trees.
+These are reusable constructions, outside `Lemmas/`. Countable-uniqueness
+measurability helpers used only in the ray proof remain private in that file.
+The higher-generation tree-density induction, conditional spine law, and full
+path decomposition remain obligations in `FORMALIZATION_CHECKLIST.md`.
+Fixed-law and exponential BRW specializations must derive from these general results, without a parallel
+joint law. Existing tilted increment laws are not counted as tree-density proofs.
+
+`Information/Stopped.lean` also constructs the native `Filtration` associated
+with any preorder-indexed pointwise increasing optional lines. Tower,
+conditional-expectation martingale, and Lévy upward results reuse Mathlib
+rather than introducing parallel conditional expectation or convergence APIs.
+Ancestrally observable stopping lines use the existing optionality implication
+and the same filtration construction. The regression example of constant
+empty lines retains a trivial limiting
+sigma algebra; no assertion that arbitrary lines exhaust ambient information
+is introduced.
+
+`Information/Stopped.lean` constructs the sigma algebra at an optional
+random line from stopped events, following Mathlib
+`IsStoppingTime.measurableSpace`. The upstream audit at Mathlib
+`26573066084e6e2aa8526ea358bc43b66d96f970` also checked native set-valued
+measurability and `MeasurableSpace.comap`; these supply the base interfaces.
+All these reusable objects and results stay outside `Lemmas/`. Coin,
+mixed-generation, reversible-coding and information-erasure examples belong
+only in `BranchingProcessTest/Branching/RandomLine.lean`.
+
+
+`Combinatorics/BranchingWalk/Basic/State/Recursion.lean` owns the single
+state-update recursion `stateAlong F β s v p`, with update
+`F : State → Mark → State`. Its optional observation `stateAlong?` uses the
+same recursion and the finite-path survival predicate; `stateTree` is the
+root-based observation. Finite-path survival is constructively decidable
+without any equality assumptions on the mark or child-index types.
+`Position/Displace.lean` defines both `displace` and `displace?` by the
+specialization $F(s,e)=s+e$, $s=0$. `DisplacementMap.lean` first maps marks
+by $d$ and uses those same definitions. There is no separate additive path
+recursor. The entry `Basic/State.lean` proves the additive interpretation
+`stateAlong_add` and gives the bundled walk's state operation.
+`MarkedTree/State.lean` constructs the realized state-marked tree. These are
+reusable constructions outside `Lemmas/`.
+`MeasureTheory/BranchingWalk/State.lean` owns coordinate measurability for
+arbitrary measurable initial states and mark fields.
+`MeasureTheory/BranchingWalk/MarkedTree.lean` proves measurability of the
+entire realized state-marked tree representation. Generation and ancestral-information
+observability bridges belong in
+`Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field/State.lean`.
+The existing additive `position_measurable` specializes this update result.
+This deterministic interpretation does not impose a probability law or
+independence; a state-dependent branching kernel is a separate probabilistic
+model, not implied by the update map.
+`Probability/BranchingProcess/Offspring/Kernel.lean` owns the state-dependent
+indexed offspring kernel and its state-update and point-measure images. It
+uses Mathlib `Kernel` and `IsMarkovKernel` and the existing generic offspring
+point-measure interface, without depending on random-walk probability modules.
+
+`Probability/BranchingProcess/State/Generation.lean` constructs the actual
+state-dependent process by applying the offspring-state kernel independently
+to the present parents, then using Mathlib's Ionescu--Tulcea law. The root
+initial law is an arbitrary joint distribution, not necessarily a product.
+`State/Kernel.lean` constructs the single-root path and whole-tree kernels.
+`State/BranchingProperty.lean` is the public entry for complete descendant-tree
+independence conditional on the observed generation. It accepts any
+state-valued Markov offspring kernel $K$; the original mark-valued kernel
+and update enter through $K=Q^F$ in `Offspring/Kernel.lean`.
+`State/Descendants/Generation.lean` and `Path.lean` identify its one-generation
+and complete-path descendant projections. These are reusable transition and
+path-law identities, rather than theorem-specific proof support.
+`State/Descendants/Observed.lean` handles history-measurable choices of distinct
+nodes and the finite-time event of a possibly infinite stopping generation.
+Countable address spaces with measurable singletons suffice for random-address
+evaluation; the state space needs neither an order, algebraic structure,
+standard-Borel structure, nor moment conditions.
+
+`State/FieldLaw.lean` proves `map_stateTree_offspringFieldLaw`: the realized
+state tree on the independent mark field has exactly the canonical `treeKernel`
+law with $Q(x)=\mu$. Its proof identifies the initial state and each
+past/next joint law and invokes the existing Ionescu--Tulcea uniqueness.
+The former independent-mark kernel definition and its public parallel family
+interface have been removed, without aliases.
+`Genealogy/Exploration/Abstract/State.lean` retains only the concrete raw-field
+conditional-law adapters, whose conclusions now use that same canonical kernel.
+Their namespace is `ProbabilityTheory.BranchingRandomWalk.Exploration.State`,
+with names `condExp_selectedTrees`, `condExp_stoppedTrees`, and
+`condExp_stoppedTrees_on_finite`. They condition on the full mark-field past,
+not only the state path, so their
+input data remain with the concrete model. Their single-file integration helper
+is private and uses the field-law identification and native product pushforwards.
+The additive and potential-displacement measurability proofs likewise invoke
+`stateAlong_measurable`; they do not implement separate induction schemes.
+
+### State-dependent branching: upstream reuse audit (2026-11-20)
+
+The dependency audit checked pinned Mathlib
+`26573066084e6e2aa8526ea358bc43b66d96f970`, pinned BrownianMotion
+`baaa2468da869e15e1654cbe416e55a5dc9d08b5`, and the official Mathlib kernel
+source tree at upstream master `5f78f9ce46fc85fa3cb45561d47b489c4c98cd04`.
+The relevant existing APIs and the local additions have separate roles:
+
+| Existing dependency API | Use in this library |
+| --- | --- |
+| `Measure.infinitePi`, `infinitePi_map_pi`, `infinitePi_map_curry`, `map_infinitePi_infinitePi_of_inj` | Construct and reindex independent coordinate measures; no replacement product-measure object. |
+| `Measurable.measure_of_isPiSystem_of_isProbabilityMeasure` | Prove parameter measurability of the product probability kernel from finite cylinders. |
+| `Kernel.traj`, `trajMeasure`, `partialTraj`, `partialTraj_compProd_traj` | Construct and disintegrate the full process; no new extension theorem. |
+| `Kernel.eq_traj`, `eq_traj'`, projective-limit uniqueness | Existing finite-prefix uniqueness. The local `eq_trajMeasure` derives those prefixes from the initial and one-step joint laws by induction. |
+| `Measure.compProd_map` | Change the future coordinate of a joint law. `Composition/Map.lean` supplies the first-coordinate identity and its conditional-kernel observation consequence. |
+| `condExp_stopping_time_ae_eq_restrict_eq_of_countable` | Assemble deterministic-time conditional laws on the cells $\{\tau=n\}$; no replacement stopping-time definition. |
+| `Kernel.exists_measurable_map_eq_unitInterval` | A possible standard-Borel realization of a kernel, unnecessary here: direct products and Ionescu--Tulcea preserve arbitrary measurable state spaces. |
+
+The local `Probability/Kernel/Composition/InfinitePi.lean` packages the native
+product measures as a common-input probability kernel and proves coordinatewise
+composition. `Kernel/IonescuTulcea/Independent.lean` identifies independent
+products of complete history-dependent process laws. The local conditional
+integration statements derive the conditional expectation from an explicit
+joint law, without constructing a regular conditional distribution. These
+are independently meaningful operations on kernels and processes, outside
+`Lemmas/`; the one-use address calculation is a private lemma in its caller.
+
+Official references checked:
+[Mathlib Ionescu--Tulcea](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Kernel/IonescuTulcea/Traj.html),
+[infinite product measures](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/ProductMeasure.html),
+and [Giry measurability](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/GiryMonad.html).
+The branching transition follows the parent-conditioned reproduction property
+in S. Valère Bitseki Penda and J.-F. Delmas, *Central limit theorem for
+bifurcating Markov chains*, Definition 2.1 (binary families),
+https://cermics.gitlab.enpc.fr/delmas/Publi/clt-bmc-ptw.pdf. Sibling dependence
+is retained inside each joint offspring family; distinct parents reproduce
+conditionally independently. Mathlib's extension proof cites O. Kallenberg,
+*Foundations of Modern Probability*, third edition (2021), Theorem 8.24,
+DOI 10.1007/978-3-030-61871-1.
+
+The selected-path construction used for the asymptotic speed of the frontier is owned by
+`Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/SelectedPath/`.
+Its root `selectedPath` follows the second selected child at each split while
+the first selected child starts a growth trial. Trial populations, completion,
+and coupling are grouped beneath `SelectedPath/GrowthTrial/`,
+`SelectedPath/Completion/`, and `SelectedPath/Coupling/`; one-use steps for the
+construction are under the sibling `AsymptoticSpeed/Lemmas/`.
+
+The deterministic rule assigning a child slot to the continuation path is in
+`Combinatorics.Branching.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath`.
+The generic first and second slot operations are methods of `Step.FiniteSelection`.
+`Asymptotics.HasAsymptoticSpeed` describes a limit of position sequences, and
+`Combinatorics.Branching.Selection.NSelection.Walk.Frontier` applies it to the
+least and greatest position paths of a deterministic selected walk.
+
+The first observable split of a selected population is a reusable process fact
+owned by the `BranchingRandomWalk.Selection.Stepwise.SplitTime` namespace. Its
+files are under `Probability/BranchingRandomWalk/Population/Processes/StepSelection/SplitTime/`.
+The fixed-root time shift belongs beside it in `RootIndexed.lean`. The
+almost-sure finite completion is in `SplitTime/Finite.lean`, with its proof
+helpers in `SplitTime/Lemmas/FiniteCompletion.lean`. The
+two-sibling stopped subtree factorization used by the selected-path construction is in
+`AsymptoticSpeed/Lemmas/FirstSplit/`. Generic selected-subtree integration is
+owned by `Genealogy/Exploration/IndependentSubtreeIntegration.lean`, and the
+independent eventwise integral bound is at
+`Probability/Independence/Integration/IndependentUpperBound.lean`.
+
+`AsymptoticSpeed/Limit/EndpointExpectation.lean` uses the public stopped
+endpoint law to transfer the expectation of a terminal payoff on finite
+completion to a fresh descendant field and the stopped endpoint data.
+
+Generic process interfaces stay separate by role: observable candidate
+completion and success are in the `ProbabilityTheory.Trial` namespace under `Probability/Process/HittingTime/`, while
+i.i.d. geometric reward belongs under `Probability/Sequence/IID/GeometricReward/`.
+These cover distinct trial protocols, so no umbrella `Probability/Process/Restart/`
+module is introduced. `Probability/Process/Path/Restart/` retains its own
+path-rebasing and relative-window meaning. The branching-step split event and
+its measurability belong to `Combinatorics/BranchingWalk/Step/Selection/Split.lean`
+and `MeasureTheory/BranchingWalk/Step/Selection/Split.lean`; the general
+positive-probability bounded-split estimate belongs to
+`Probability/BranchingRandomWalk/Step/Selection/BoundedSplit.lean`.
+
 `Probability/Process/Path/Representation/Continuous.lean` owns both the
 bundling and measurability interfaces for continuous sample paths and the
 generic extraction of a measurable continuous-path-valued version from
@@ -79,7 +369,7 @@ event remain under `Probability/Process/RandomWalk/Path/Restart/`.
 `FirstMoment.lean` there owns the law-generic exponentially weighted
 restarted-window integral and its bound by the endpoint factor times the
 ordinary restarted-window probability; its horizontal-tube specialization is
-the random-walk interface consumed by killed branching-population estimates.
+the random-walk interface consumed by estimates for selected branching populations.
 Generic conditional-probability integration and successive-block product
 bounds belong to `Probability/Process/Filtration/ConditionalBlocks.lean`;
 the conditional expectation of a measurable event of an independent pair,
@@ -139,12 +429,15 @@ Selection modules are placed by the data they take as input:
   ([`Finset.filter`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Filter.html),
   [`Finset.sort`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Finset/Sort.html));
   the capacity-$N$ interface composes those operations for this project.
-- `Combinatorics/Matching/LowerTail.lean` owns the finite ordered-value
-  matching theorem: lower-tail count inequalities yield an injective map whose
-  target value is at most the source value. It is independent of `NSelection`;
-  `Combinatorics/Selection/NSelection/Matching/Hall.lean` specializes it to
-  capacity-constrained selections. Mathlib provides the underlying general
-  finite Hall theorem in `Mathlib/Combinatorics/Hall/Basic.lean`.
+- `Combinatorics/Matching/ThresholdCount.lean` owns the generic
+  threshold-count matching theorem. If every order-key threshold count of
+  `objectsToMatch` is bounded by the corresponding count in
+  `availablePartners`, it constructs an injection whose partner order key is
+  at most the matched object's order key. The theorem is independent of
+  `NSelection`; `Combinatorics/Selection/NSelection/Matching/SelectedPopulation.lean`
+  applies it to the population selected by the first-`N` rule. Mathlib provides
+  the underlying relation-based finite Hall theorem in
+  `Mathlib/Combinatorics/Hall/Basic.lean`.
 - `Combinatorics/BranchingWalk/Step/Selection/` owns selectors whose input is
   an offspring step. `Combinatorics/BranchingWalk/Selection/NSelection/Walk/`
   owns the generation recursion
@@ -160,7 +453,7 @@ Selection modules are placed by the data they take as input:
   measurability theorem belongs to
   `MeasureTheory/BranchingWalk/Step/Selection/FiniteSlot.lean`, and the
   pushforward offspring law and supercriticality criterion belong to
-  `Probability/BranchingRandomWalk/Restart/RootedTrial/FiniteSlot/Offspring.lean`.
+  `Probability/BranchingRandomWalk/Step/Selection/BinaryOffspringLaw.lean`.
 - `MeasureTheory/Selection/` owns measurable selector realizations and their
   measurability results. Measurability results whose input is a branching step
   belong to `MeasureTheory/BranchingWalk/Step/Selection/`. The generation

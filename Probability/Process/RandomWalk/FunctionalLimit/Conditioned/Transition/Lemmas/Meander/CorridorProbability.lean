@@ -49,7 +49,7 @@ namespace BrownianMeander
 /-- The fixed strict path corridor used in Wang Yiyang, *Asymptotic Speed of
 the N-Branching Random Walk with Infinite Offspring* (master's thesis, Fudan
 University, 2026), Chapter 3, Lemma 3.5 and Appendix A.2, Lemma A.7. -/
-private def openCorridor (sigma rho : ℝ) : Set (CadlagPath unitInterval ℝ) :=
+private noncomputable def openCorridor (sigma rho : ℝ) : Set (CadlagPath unitInterval ℝ) :=
   Skorokhod.rangeBelowEndsIn
     ((5 / 6 - rho) / sigma)
     ((5 / 12 + rho) / sigma)
@@ -157,7 +157,7 @@ private lemma mem_normalizedTransitionCorridor_of_meanderCorridor
   have hendUpper : (11 / 24 - rho) / sigma <
       (11 / 24 * scale) / sigma :=
     (div_lt_div_iff_of_pos_right hsigma).2 (by linarith)
-  change Skorokhod.rangeBelow ((5 / 6 - rho) / sigma) path ∧
+  change path ∈ Skorokhod.rangeBelow ((5 / 6 - rho) / sigma) ∧
     path ⊤ ∈ Set.Ioo ((5 / 12 + rho) / sigma)
       ((11 / 24 - rho) / sigma) at hpath
   obtain ⟨⟨margin, hmargin, hupper⟩, hend⟩ := hpath
