@@ -11,6 +11,14 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Branching/OptionalLineFiltration.lean"): (
+        "ProbabilityTheory.Tree.IsOptionalLine.filtration",
+        "OptionalLineFiltrationExamples.tower",
+        "OptionalLineFiltrationExamples.conditionalExpectation_martingale",
+        "OptionalLineFiltrationExamples.upward_ae",
+        "OptionalLineFiltrationExamples.upward_L1",
+        "OptionalLineFiltrationExamples.empty_filtration",
+    ),
     Path("BranchingProcessTest/Branching/SpinalBias.lean"): (
         "ProbabilityTheory.Kernel.lintegral_doobTransform",
         "ProbabilityTheory.Kernel.doobTransform_isProbabilityMeasure",
@@ -30,6 +38,15 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.BranchingProcess.State.ae_treeKernel_reproduction",
         "ProbabilityTheory.BranchingProcess.Spine.ae_treeKernel_unique_spine",
         "ProbabilityTheory.BranchingProcess.Spine.treeKernel_firstFamily",
+        "ProbabilityTheory.Kernel.map_eq_trajMeasure",
+        "ProbabilityTheory.Kernel.map_trajMeasure",
+        "ProbabilityTheory.BranchingProcess.State.generationKernel_map",
+        "ProbabilityTheory.BranchingProcess.State.generationPathLaw_map",
+        "ProbabilityTheory.BranchingProcess.State.treeKernel_map",
+        "ProbabilityTheory.BranchingProcess.Spine.treeKernel_normal",
+        "ProbabilityTheory.BranchingProcess.Spine.treeKernel_normal_map",
+        "ProbabilityTheory.BranchingProcess.Spine.traj_normalDescendantTrees",
+        "ProbabilityTheory.BranchingProcess.Spine.lintegral_treeKernel_firstSpineChild",
     ),
     Path("BranchingProcessTest/Branching/LineConstructions.lean"): (
         "ProbabilityTheory.BranchingRandomWalk.Spine.firstEntranceWeight_eq_tsum",

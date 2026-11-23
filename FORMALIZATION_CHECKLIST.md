@@ -116,6 +116,24 @@ Primary references checked online on 2026-11-22:
   Search Tree via martingales*, [arXiv:math/0410318](https://arxiv.org/abs/math/0410318),
   discussion of the distinction between optional and ancestral stopping rules.
 
+### Ordered optional-line information and native convergence
+
+`IsOptionalLine.filtration` constructs `F_i = F_(L_i)` for pointwise ordered
+optional lines, for any preorder index type. Ancestrally observable stopping
+lines enter through the existing optionality implication. Mathlib's `condExp_condExp_of_le`,
+`martingale_condExp`, `tendsto_ae_condExp`, and `tendsto_eLpNorm_condExp` then
+supply tower, martingale, and almost-sure / L¹ upward-convergence properties.
+These are checked in `BranchingProcessTest/Branching/OptionalLineFiltration.lean`,
+including constant empty lines, whose limiting information is trivial.
+There is no duplicate conditional-expectation or martingale implementation.
+The limit is `E[f | ⨆ n, F_(L_n)]`; identification with `f` requires the
+corresponding measurability or sigma-algebra exhaustion condition. Geometric
+intersection with every infinite branch alone is not substituted for that
+information condition. This does not prove a
+branching-mass martingale convergence theorem or optional-line branching property.
+The [official convergence API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Martingale/Convergence.html)
+and pinned Mathlib `26573066084e6e2aa8526ea358bc43b66d96f970` were checked.
+
 ### Shi's general spinal decomposition
 
 Zhan Shi, *Branching Random Walks*, Lecture Notes in Mathematics 2151
@@ -158,10 +176,14 @@ branches never create an additional spine.
    tree density are proved. Continue the §4.5 proof of Theorem 4.3 by first
    proving the fixed-spine-address weighted identity (4.12): integrate the
    ordinary sibling descendant trees under their original laws along the
-   ancestral path. Sum over the terminal spine address only after that
-   identity, obtaining (4.11) and the full tree marginal. The original-law
-   identification for normal descendant trees and the fixed-address identity
-   remain open.
+   ancestral path. `Tree/Normal.lean` now identifies complete normal subtrees
+   with their original laws and proves the conditional product law at distinct
+   current normal nodes. `Tree/FirstGeneration.lean` also proves the
+   fixed-index first-generation (4.12) identity before summing over indices.
+   The remaining induction must recursively combine the joint biased family
+   and conditional subtree laws along the fixed address. Sum over terminal
+   addresses only after this identity, obtaining (4.11) and the full tree marginal.
+   The all-depth fixed-address identity remains open.
    With harmonicity imposed only on the eligible region, finite-generation
    mass must retain the ancestry-in-region indicator: an ordinary branch may
    leave and later reenter the region.
@@ -213,6 +235,23 @@ state-update, field and stopped-descendant interfaces are retained. New tree
 constructions are reusable and belong outside `Lemmas/`. The native
 stopping-time APIs were checked against the official
 [Mathlib documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Process/HittingTime.html).
+
+#### State-factor and normal-subtree audit
+
+`State.generationKernel_map` uses native `Measure.infinitePi_map_pi` to
+transport complete offspring products. `State.generationPathLaw_map` and
+`State.treeKernel_map` reuse the general trajectory observation theorem.
+`Kernel.map_eq_trajMeasure` admits nondecreasing observation times and only
+almost-everywhere intertwining under the actual past law; its input step
+kernels need only be s-finite. Both the retained fixed-history API and the
+joint-initial API derive from that one proof. The native Ionescu--Tulcea
+and product-map APIs were checked at Mathlib
+`26573066084e6e2aa8526ea358bc43b66d96f970` and against the
+[official trajectory documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Kernel/IonescuTulcea/Traj.html).
+The normal-tree specialization is `f = Sum.inl`, followed by role erasure;
+normal roots can have zero harmonic weight. A noninjective state-factor test
+uses two perfectly correlated initial roots. Generic kernel/state transport
+results remain outside `Lemmas/`; single-file tactical wrappers remain private.
 
 #### Canonical-tree support audit
 

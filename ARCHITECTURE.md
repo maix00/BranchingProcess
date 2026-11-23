@@ -106,12 +106,29 @@ a unique realized infinite ray; its carrier is exactly all distinguished nodes.
 The deterministic unique-continuation arguments belong to `UlamHarris/Ray.lean`.
 `Spine/Tree/FirstGeneration.lean` derives the root-family density directly from
 the same canonical tree; it defines no alternative tilted tree law.
+`State/Map.lean` transports generation, joint-initial path, and full tree laws
+through a measurable state factor intertwining offspring kernels. Injectivity
+is not required. Its trajectory step uses the single generic observation proof
+in `Kernel/IonescuTulcea/Map.lean`; fixed-history and random-initial observations
+are derived cases. `Spine/Tree/Normal.lean` applies this to `Sum.inl` and recovers
+the original normal-descendant law after erasing roles; the existing branching
+property then gives the conditional product law of normal descendant trees.
 These are reusable constructions, outside `Lemmas/`. Countable-uniqueness
 measurability helpers used only in the ray proof remain private in that file.
 The higher-generation tree-density induction, conditional spine law, and full
 path decomposition remain obligations in `FORMALIZATION_CHECKLIST.md`.
 Fixed-law and exponential BRW specializations must derive from these general results, without a parallel
 joint law. Existing tilted increment laws are not counted as tree-density proofs.
+
+`Information/Stopped.lean` also constructs the native `Filtration` associated
+with any preorder-indexed pointwise increasing optional lines. Tower,
+conditional-expectation martingale, and Lévy upward results reuse Mathlib
+rather than introducing parallel conditional expectation or convergence APIs.
+Ancestrally observable stopping lines use the existing optionality implication
+and the same filtration construction. The regression example of constant
+empty lines retains a trivial limiting
+sigma algebra; no assertion that arbitrary lines exhaust ambient information
+is introduced.
 
 `Information/Stopped.lean` constructs the sigma algebra at an optional
 random line from stopped events, following Mathlib
