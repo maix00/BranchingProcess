@@ -116,7 +116,7 @@ the same canonical Doob Markov chain. The proof uses
 `State.treeKernel_generations` to recover the original generation process,
 and `Kernel.map_eq_trajMeasure` for the observed path law.
 The generation-assembly steps specific to this identification belong to
-`Tree/Lemmas/PathLaw.lean`, imported with `import all` by the theorem entry;
+`Tree/Lemmas/Generation.lean`, imported with `import all` by the theorem entry;
 the reusable observations and kernel identities remain outside `Lemmas/`.
 Single-proof auxiliary steps stay local to their proofs.
 
@@ -712,3 +712,25 @@ entry. This follows Mathlib's topic-based organization: for example, kernel
 composition APIs are split by composition, products, and related operations
 under [`Mathlib/Probability/Kernel/Composition`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Kernel/Composition/Comp.html),
 instead of being grouped in one general definitions module.
+
+## Fixed-address spinal densities and tree observations (2026-11-23)
+
+`BranchingProcess/Spine/Tree/Density/Weight.lean` owns the ancestral
+fixed-address densities and their endpoint/root telescoping formula.
+`FiniteGeneration.lean` owns the arbitrary-depth fixed-address identity,
+finite-generation tree Radon–Nikodym law, and complete-tree identification.
+`Conditional.lean` uses native Radon–Nikodym and conditional-expectation APIs
+for the spine location given the complete untyped finite tree. The actual
+address and ray observations belong in `Tree/Observation.lean`, outside
+`Lemmas/`; they reuse `distinguishedState` rather than a second selector.
+The source-specific generation assembly and induction stay private to
+`Density/Lemmas/`. Their shared tagged-generation support is
+`Tree/Lemmas/Generation.lean`, used by both the path-law and density proofs.
+There is one canonical tree and one generic observed-state reader throughout.
+The tree subject retains seven direct Lean modules; density is a coherent
+subdirectory with three public modules and one `Lemmas/` directory.
+
+`Process/Tree/Line/Information/Pasting.lean` owns the exact stopped-information
+identity for the existing ordered optional pasting. It requires no branching
+model and introduces no second optional-line or information definition.
+See [the source and upstream audit](docs/architecture/SPINAL_DENSITY_AUDIT.md).

@@ -10,7 +10,7 @@ public import Probability.BranchingProcess.Spine.Tree.Observation
 public import Probability.BranchingProcess.Spine.StateChain
 public import Probability.Process.Markov.Trajectory
 public import Probability.Kernel.IonescuTulcea.Map
-import all Probability.BranchingProcess.Spine.Tree.Lemmas.PathLaw
+import all Probability.BranchingProcess.Spine.Tree.Lemmas.Generation
 
 /-!
 # The complete state-path law of the realized spine

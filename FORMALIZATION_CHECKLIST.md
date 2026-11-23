@@ -116,6 +116,17 @@ Primary references checked online on 2026-11-22:
   Search Tree via martingales*, [arXiv:math/0410318](https://arxiv.org/abs/math/0410318),
   discussion of the distinction between optional and ancestral stopping rules.
 
+### Stopped information under optional pasting
+
+`Probability/Process/Tree/Line/Information/Pasting.lean` proves, for `L ≼ M`,
+`A ∈ F_L`, and `N = L` on `A`, `N = M` on `Aᶜ`, that
+`B ∈ F_N ↔ B ∩ A ∈ F_L ∧ B ∩ Aᶜ ∈ F_M`.
+It reuses the existing pasted optional line and stopped sigma algebras.
+No countability, branching law, or exhaustion hypothesis is introduced.
+The regression checks that a later-line event supported on the later decision
+cell is observable at the pasted line. Strong branching at arbitrary optional
+lines remains open.
+
 ### Countable suprema of optional lines
 
 `Combinatorics/UlamHarris/Line/Supremum.lean` defines ancestral supremum as
@@ -185,24 +196,26 @@ this same tree. The Bool regression example allows ordinary zero-weight
 branches to produce positive-weight descendants and verifies that these
 branches never create an additional spine.
 
-**Remaining source obligations:**
+**Source coverage and remaining obligations:**
 
-1. §4.1: the unique realized distinguished ray is proved for the canonical
-   typed tree. Its state sequence is now measurably extracted and has the Doob
-   chain's complete path law. The tree/ray product representation remains,
-   distinguishing information on the untyped tree from
-   information including the ray.
+1. **§4.1 is implemented for the canonical tagged tree:**
+   `Tree/Observation.lean` measurably reads both the spine addresses and the
+   complete child-index ray by reusing `distinguishedState`. It identifies
+   these observations almost surely with the unique realized ray. The native
+   measurable map `t ↦ (erase(t), spineRay(t))` supplies the joint tree/ray
+   representation. `untypedHistory` supplies the smaller information used in
+   the conditional spine formula; role tags are not included in that past.
 2. §4.2, (4.3)–(4.4): the kernel construction is implemented. Instantiate it
    with Shi's killed transition and identify the resulting tilted BRW path.
-3. §4.3, Lemma 4.1 and (4.5)–(4.6): prove the harmonic additive martingale
-   `M_nʰ = ∑_|u|=n h(V(u)) exp(−V(u)) 1_{ancestry in D}` and construct the
-   consistent changed tree law with generation density `M_nʰ/(h(a)exp(−a))`.
-4. §4.4, (4.8): the joint bias and normal/special canonical tree law are
-   constructed, and the almost-sure unique realized ray and first-generation
-   tree density are proved. Continue the §4.5 proof of Theorem 4.3 by first
-   proving the fixed-spine-address weighted identity (4.12): integrate the
-   ordinary sibling descendant trees under their original laws along the
-   ancestral path. `Tree/Normal.lean` now identifies complete normal subtrees
+3. §4.3, Lemma 4.1 and (4.5)–(4.6): the normalized ancestral mass has mean
+   one, and the consistent changed complete-tree law with finite-generation
+   density `M_nʰ/(h(a)exp(−a))` is constructed and identified below. The native
+   `Martingale` statement for the normalized mass remains to be packaged;
+   a global density at infinity is not asserted.
+4. **§4.4, Theorem 4.3, proved in §4.5, is implemented for general state kernels.**
+   The joint bias and normal/special canonical tree law use the original law
+   on ordinary branches. The proof fixes the terminal address and integrates
+   ordinary sibling branches under that law before summing addresses. `Tree/Normal.lean` now identifies complete normal subtrees
    with their original laws and proves the conditional product law at distinct
    current normal nodes. `Tree/FirstGeneration.lean` also proves the
    fixed-index first-generation (4.12) identity before summing over indices.
@@ -213,14 +226,23 @@ branches never create an additional spine.
    `Tree/BranchingProperty.lean` combines this with the joint biased-family
    law for a fixed first spine child, retaining arbitrary measurable payoffs
    of the complete child trees, including future spine events.
-   The remaining induction must iterate this split along the fixed address. Sum over terminal
-   addresses only after this identity, obtaining (4.11) and the full tree marginal.
-   The all-depth fixed-address identity remains open.
+   The fixed-address induction is now proved at every depth in
+   `Tree/Density/FiniteGeneration.lean`. It first proves (4.12)–(4.13) for
+   arbitrary measurable finite-history payoffs, then sums terminal addresses
+   to obtain (4.11). The same module proves normalization and identifies the
+   complete untyped tree law by native projective-limit uniqueness.
    With harmonicity imposed only on the eligible region, finite-generation
    mass must retain the ancestry-in-region indicator: an ordinary branch may
    leave and later reenter the region.
-5. Theorem 4.4(i), (4.9): identify the conditional location of the spine given
-   the generation tree. **Part (ii), (4.10), is implemented:**
+5. **Theorem 4.4(i), (4.9), is implemented:**
+   `Tree/Density/Conditional.lean` proves the conditional fixed-address
+   probability given the complete untyped finite tree as `W_z/∑_u W_u`;
+   the denominator is positive and finite almost surely under the changed law.
+   It uses native Radon–Nikodym pushforward and conditional-expectation APIs.
+   `condLExp_treeKernel_spinePrefix` states the result using the observed
+   address of the actual realized spine, with the exceptional default affecting
+   only a null set.
+   **Part (ii), (4.10), is implemented:**
    `Spine.treeKernel_statePath` identifies the whole state-path law of the
    existing random-tree spine with the canonical Doob chain;
    `Spine.statePath_isMarkovChain` derives the Markov property from the generic
