@@ -14,6 +14,7 @@ proof-support declarations are documented in their owning modules.
 | First-entrance and truncated lines | First entrance consists of ancestry-minimal target nodes. Generation truncations are increasing cuts of bounded depth and meet every infinite address path | [`FirstEntrance`](Combinatorics/UlamHarris/Line/FirstEntrance.lean), [`Truncation`](Combinatorics/UlamHarris/Line/Truncation.lean) |
 | Optional random lines | Optionality tests `{L ≼ ℓ} ∈ F_ℓ`; countable ancestral suprema remain optional. Ancestrally observable first-entrance rules give optional lines; along a fixed path their entrance events equal Mathlib hitting-time events | [`Optional`](Probability/Process/Tree/Line/Optional.lean), [`Supremum`](Probability/Process/Tree/Line/Supremum.lean), [`FirstEntrance`](Probability/Process/Tree/Line/FirstEntrance.lean), [`PathHitting`](Probability/Process/Tree/Line/PathHitting.lean) |
 | Information at an optional line | `L ≼ M` implies `F_L ⊆ F_M`; stopping at a deterministic line recovers its past. Ordered optional lines form a native filtration, admitting conditional-expectation martingales and Lévy upward convergence to the generated stopped information. Ordered pasting has an exact stopped-information decomposition on its decision cells | [`Stopped`](Probability/Process/Tree/Line/Information/Stopped.lean), [`Pasting`](Probability/Process/Tree/Line/Pasting.lean), [`Information/Pasting`](Probability/Process/Tree/Line/Information/Pasting.lean) |
+| Strong branching at optional lines | Given `F_L`, observed distinct boundary vertices have complete descendant-tree law `⊗ᵢ P_(X_(Rᵢ))`. Localized identities cover empty lines and random cardinality, with arbitrary measurable states, state-dependent offspring kernels and jointly distributed initial roots | [`State/StrongBranching`](Probability/BranchingProcess/State/StrongBranching.lean) |
 | First-entrance exponential mass | For an i.i.d. BRW with boundary-normalized tilt, `E[W_B] = P̂(∃ n, S_n ∈ B) ≤ 1`; expectation is one exactly when the tilted spine enters `B` almost surely | [`Spine/StoppingLine/FirstEntrance`](Probability/BranchingRandomWalk/Spine/StoppingLine/FirstEntrance.lean) |
 
 Life records and child marks are ordinary measurable observations. States are
@@ -22,13 +23,14 @@ information. Reversible measurable coding preserves the line's information.
 The library distinguishes birth-state information from the individual's own
 reproduction information.
 
-**Boundary:** the general strong branching property at arbitrary optional
-lines, the general stopped-line many-to-one identity, and convergence of
-stopped branching-mass martingales are not yet formalized. The conditional-expectation convergence above reuses
-Mathlib, with [checked examples](BranchingProcessTest/Branching/OptionalLineFiltration.lean),
-and does not assert these branching-specific results. The
-first-entrance identity above
-is the additive BRW specialization, rather than the full state-dependent theorem. Optionality of generation
+**Boundary:** strong branching is proved for the canonical discrete
+offspring-kernel model. The full-family law requires each observed address to
+have countable range; the optional line itself needs no countable-range,
+bounded-depth or path-coverage assumption. Continuous-time life-history
+models, the general stopped-line many-to-one identity and convergence of
+stopped branching-mass martingales remain separate obligations. The
+first-entrance mass identity above is the additive BRW specialization.
+Optionality of generation
 truncation is currently proved for ancestrally observable membership rules;
 it is not asserted for arbitrary optional lines. Source results and remaining
 obligations are recorded in the [formalization checklist](FORMALIZATION_CHECKLIST.md#stopping-and-optional-lines).
@@ -37,7 +39,7 @@ obligations are recorded in the [formalization checklist](FORMALIZATION_CHECKLIS
 
 | Object | Main results available | Lean entry |
 | --- | --- | --- |
-| State-dependent branching process | A native offspring kernel `Q(s)` and measurable update `F(s,e)` induce the offspring-state kernel. The process admits arbitrary joint initial states; descendant trees have the conditional product law at fixed generations and at observed stopping generations | [`Offspring/Kernel`](Probability/BranchingProcess/Offspring/Kernel.lean), [`State/BranchingProperty`](Probability/BranchingProcess/State/BranchingProperty.lean), [`State/Descendants/Observed`](Probability/BranchingProcess/State/Descendants/Observed.lean) |
+| State-dependent branching process | A native offspring kernel `Q(s)` and measurable update `F(s,e)` induce the offspring-state kernel. The process admits arbitrary joint initial states; generation and stopping-generation conditional product laws follow from optional-line strong branching | [`Offspring/Kernel`](Probability/BranchingProcess/Offspring/Kernel.lean), [`State/StrongBranching`](Probability/BranchingProcess/State/StrongBranching.lean), [`State/Descendants/Observed`](Probability/BranchingProcess/State/Descendants/Observed.lean) |
 | Harmonic spine bias | For a general mean-harmonic state kernel, the joint law is `Q(s,dξ) h(ξ_i)/h(s)`. Its family marginal has total-weight density; its selected-state marginal is the Doob transform. Conditional child weights are `h(ξ_i)/∑_j h(ξ_j)` | [`Family/Marginals`](Probability/BranchingProcess/Spine/Family/Marginals.lean), [`Family/Conditional`](Probability/BranchingProcess/Spine/Family/Conditional.lean) |
 | Measurable state factors | If `K(s).map (Step.map f) = L(f(s))`, mapping every state by `f` preserves the complete path and tree laws, including arbitrary joint initial states; `f` may be noninjective | [`State/Map`](Probability/BranchingProcess/State/Map.lean) |
 | Branching random walk and tilted path | Many-to-one formulas turn generation sums of endpoint or ancestral-path functionals into tilted-spine expectations | [`EndpointManyToOne`](Probability/BranchingRandomWalk/Spine/ManyToOne/EndpointManyToOne.lean), [`Path/ManyToOne/Identity`](Probability/BranchingRandomWalk/Spine/Path/ManyToOne/Identity.lean) |

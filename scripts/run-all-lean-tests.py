@@ -48,6 +48,8 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.BranchingProcess.State.hasCondDistrib_descendantTrees_optionalLine",
         "ProbabilityTheory.BranchingProcess.State.condExp_descendantTrees_optionalLine",
         "ProbabilityTheory.BranchingProcess.State.condExp_selectedDescendantTree",
+        "OptionalLineRandomCutExamples.cut_optional",
+        "OptionalLineRandomCutExamples.branching_on_decision",
     ),
     Path("BranchingProcessTest/Branching/SpinalBias.lean"): (
         "ProbabilityTheory.Kernel.lintegral_doobTransform",
