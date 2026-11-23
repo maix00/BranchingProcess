@@ -751,3 +751,23 @@ subdirectory with three public modules and one `Lemmas/` directory.
 identity for the existing ordered optional pasting. It requires no branching
 model and introduces no second optional-line or information definition.
 See [the source and upstream audit](docs/architecture/SPINAL_DENSITY_AUDIT.md).
+
+## Simple-line masses and density martingales
+
+`BranchingProcess/State/Observation/History.lean` owns the ordinary state-tree
+history and its native generation filtration. `Process/Tree/Line/Optional.lean`
+defines simplicity relative to an explicit generation filtration; it adds an
+observability condition to the existing optional-line object, rather than
+another line definition. All states in the current generation may be used.
+
+`BranchingProcess/Spine/StoppingLine/Mass.lean` owns line mass and the frozen
+boundary decomposition, identified with the existing `Line.truncate`.
+`ManyToOne.lean` and `Martingale.lean` are its public theorem entries. Specific
+recursion and generation-test assembly stays under the single `Lemmas/` directory,
+with same-file tactical steps private. `Tree/Density/Martingale.lean` derives the
+ordinary generation martingale from the empty-line case; its separate density
+consistency proof was removed. There is one tree law and one stopped-mass proof.
+The new directories have three direct public Lean files and one internal helper
+file; `Tree/Density/` has four direct files and `State/Observation/` four.
+See `docs/architecture/OPTIONAL_LINE_MANY_TO_ONE_AUDIT.md` for exact source
+coverage, native Mathlib tools and remaining line-indexed sampling obligations.

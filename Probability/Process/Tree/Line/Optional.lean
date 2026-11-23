@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Tree.Line.Basic
+public import Mathlib.Probability.Process.Filtration
 
 /-!
 # Optional random lines
@@ -18,6 +19,10 @@ In `ProbabilityTheory.Tree`:
 * `IsOptionalLine past L` is a random line with
   `{ω | RootIndexed.Line.Precedes (L ω) ℓ}` measurable in `past ℓ` for every
   deterministic line `ℓ`. The information family `past` is an explicit input.
+* `IsOptionalLine.IsSimple h ℱ` requires `{u ∈ L} ∈ ℱ_|u|` for every node.
+  This is the simple optional-line condition in Biggins–Kyprianou,
+  *Measure change in multitype branching* (2004), §6, p. 557,
+  DOI 10.1239/aap/1086957585; it permits information on other branches.
 * `IsOptionalLine.const` makes every deterministic line optional.
 * `IsOptionalLine.mono` enlarges the information at every deterministic line.
 
@@ -43,6 +48,14 @@ structure IsOptionalLine
     (L : Ω → Set (RootIndexed.TreeNode Root α)) : Prop extends IsRandomLine L where
   measurableSet_precedes : ∀ ℓ, RootIndexed.IsLine ℓ →
     MeasurableSet[past ℓ] {ω | RootIndexed.Line.Precedes (L ω) ℓ}
+
+/-- Simplicity is generation observability, rather than ancestor-only observability.
+Biggins–Kyprianou (2004), §6, p. 557, DOI 10.1239/aap/1086957585. -/
+def IsOptionalLine.IsSimple
+    {past : Set (RootIndexed.TreeNode Root α) → MeasurableSpace Ω}
+    {L : Ω → Set (RootIndexed.TreeNode Root α)} (_h : IsOptionalLine past L)
+    (ℱ : Filtration ℕ (inferInstance : MeasurableSpace Ω)) : Prop :=
+  ∀ u, MeasurableSet[ℱ u.2.length] {ω | u ∈ L ω}
 
 theorem IsOptionalLine.const
     (past : Set (RootIndexed.TreeNode Root α) → MeasurableSpace Ω)
