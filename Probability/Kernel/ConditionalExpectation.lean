@@ -11,11 +11,19 @@ public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
 public import Probability.Kernel.Composition.InfinitePi
 public import Mathlib.Probability.Kernel.Composition.Lemmas
 public import Mathlib.Probability.HasCondDistrib
+public import Mathlib.MeasureTheory.Function.ConditionalLExpectation
 
 /-!
 # Conditional integration from an explicit joint kernel law
 
 ## Public declarations
+
+* `ProbabilityTheory.HasCondDistrib.condLExp_eq`: for an s-finite measure `P`,
+  a measurable observation `X` with sigma-finite `P` restricted to its
+  generated sigma-algebra, its supplied native conditional law `κ`, and
+  any measurable nonnegative payoff `g`,
+  $E[g(X,Y)\mid X]=\int g(X,y)\,\kappa(X,dy)$. The kernel is s-finite;
+  neither integrability nor a standard-Borel value space is assumed.
 
 * `ProbabilityTheory.Kernel.condExp_of_jointLaw`: if
   $P\circ(X,Y)^{-1}=(P\circ X^{-1})\otimes\kappa$, then for strongly
@@ -232,3 +240,43 @@ theorem hasCondDistrib_of_condExp_generator {Ω A B : Type*}
   exact h
 
 end ProbabilityTheory.Kernel
+
+namespace ProbabilityTheory.HasCondDistrib
+
+open scoped ENNReal
+
+/-- Nonnegative conditional integration of a supplied native conditional law.
+The observation is measurable; the pair need only be almost surely measurable,
+as already supplied by `HasCondDistrib`. -/
+theorem condLExp_eq {Ω A B : Type*}
+    [MeasurableSpace Ω] [MeasurableSpace A] [MeasurableSpace B]
+    {P : Measure Ω} [SFinite P]
+    {X : Ω → A} {Y : Ω → B} {κ : Kernel A B} [IsSFiniteKernel κ]
+    (hd : HasCondDistrib Y X κ P) (hX : Measurable X)
+    [SigmaFinite (P.trim hX.comap_le)]
+    {g : A × B → ℝ≥0∞} (hg : Measurable g) :
+    P⁻[fun ω => g (X ω, Y ω) | MeasurableSpace.comap X inferInstance] =ᵐ[P]
+      fun ω => ∫⁻ y, g (X ω, y) ∂κ (X ω) := by
+  let G : A → ℝ≥0∞ := fun x => ∫⁻ y, g (x, y) ∂κ x
+  have hG : Measurable G := hg.lintegral_kernel_prod_right'
+  refine (ae_eq_condLExp (hm := hX.comap_le) P
+    (fun ω => g (X ω, Y ω)) (hG.comp (Measurable.of_comap_le le_rfl)) ?_).symm
+  rintro _ ⟨U, hU, rfl⟩
+  change ∫⁻ ω in X ⁻¹' U, G (X ω) ∂P = ∫⁻ ω in X ⁻¹' U, g (X ω, Y ω) ∂P
+  rw [← setLIntegral_map hU hG hX]
+  calc
+    ∫⁻ x in U, G x ∂P.map X =
+        ∫⁻ p in U ×ˢ Set.univ, g p ∂(P.map X) ⊗ₘ κ := by
+      simpa only [Measure.restrict_univ] using
+        (Measure.setLIntegral_compProd hg hU MeasurableSet.univ).symm
+    _ = ∫⁻ p in U ×ˢ Set.univ, g p ∂P.map (fun ω => (X ω, Y ω)) := by
+      rw [hd.map_eq]
+    _ = _ := by
+      rw [← lintegral_indicator (hU.prod MeasurableSet.univ),
+        lintegral_map' (hg.indicator (hU.prod MeasurableSet.univ)).aemeasurable hd.aemeasurable,
+        ← lintegral_indicator (hU.preimage hX)]
+      apply lintegral_congr
+      intro ω
+      by_cases hω : X ω ∈ U <;> simp [hω]
+
+end ProbabilityTheory.HasCondDistrib
