@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Basic
+public import Probability.BranchingRandomWalk.Population.Processes.Selected.ParameterizedRootIndexed
 public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Nonempty
 /-!
 # Measurable endpoint minimum
@@ -41,6 +42,8 @@ The declarations in
 - `firstNSelectedEndpointMinimum m N H`: the minimum of the generation-`H`
   selected endpoint positions, with value zero when the selected population
   is empty.
+- `firstNSelectedEndpointMinimum_eq_endpointWithParameter_zero` identifies the
+  same minimum $M_H$ with the parameterized endpoint at the zero initial vector.
 - `firstNSelectedEndpointMinimum_eq_inf'_of_nonempty`: on a nonempty
   selected population, this value is its `Finset.inf'` endpoint position.
 - `firstNSelectedEndpointMinimum_le_iff`: for every `x`,
@@ -80,6 +83,29 @@ noncomputable def firstNSelectedEndpointMinimum (m N H : ℕ)
     population.inf' h (fun p =>
       RootIndexed.position (fun _ : Fin m => (0 : ℝ)) id field p.1 p.2)
   else 0
+
+/-- At the zero initial configuration the two endpoint representations agree. -/
+theorem firstNSelectedEndpointMinimum_eq_endpointWithParameter_zero
+    (m N H : ℕ) [LinearOrder (RootIndexed.TreeNode (Fin m) ℕ)]
+    (field : FiniteRootStepField m ℕ ℝ) :
+    firstNSelectedEndpointMinimum m N H field =
+      RootIndexed.selectedPopulationEndpointWithParameter m N H ((fun _ => 0), field) := by
+  classical
+  have hpop : RootIndexed.selectedPopulationWithParameter m N H ((fun _ => 0), field) =
+      firstNSelectedPopulation m N H field := by
+    unfold RootIndexed.selectedPopulationWithParameter firstNSelectedPopulation
+    congr 1
+  unfold firstNSelectedEndpointMinimum RootIndexed.selectedPopulationEndpointWithParameter
+  rw [hpop]
+  dsimp only
+  by_cases h : (firstNSelectedPopulation m N H field).Nonempty
+  · rw [dite_eq_left h, dite_eq_left h]
+    apply Finset.inf'_congr h rfl
+    intro p hp
+    have hd := RootIndexed.selectedPopulationTotalized_depth N Finset.univ
+      (fun _ => (0 : ℝ)) id id H field p hp
+    exact (RootIndexed.observedPositionAtGeneration_eq (fun _ => (0 : ℝ)) id id H field p hd).symm
+  · rw [dite_eq_right h, dite_eq_right h]
 
 theorem firstNSelectedEndpointMinimum_eq_inf'_of_nonempty
     (m N H : ℕ)

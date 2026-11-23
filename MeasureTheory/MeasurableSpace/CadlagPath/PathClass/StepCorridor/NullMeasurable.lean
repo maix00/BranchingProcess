@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import MeasureTheory.Analytic.Capacity.Choquet
+import BrownianMotion.Choquet.Capacity
 public import MeasureTheory.MeasurableSpace.CadlagPath.PathClass.StepCorridor.Measurable
 public import Mathlib.MeasureTheory.Measure.NullMeasurable
 
@@ -47,7 +47,7 @@ theorem ContinuousAdmissibleStepCorridor.nullMeasurableSet_violationSet
     simp only [ContinuousAdmissibleStepCorridor.violationSet, Set.mem_ofPred_eq, Set.mem_image, Prod.exists,
       exists_eq_right]
   rw [hproj]
-  exact MeasureTheory.Analytic.Paving.MeasurableSet.nullMeasurableSet_snd
+  exact MeasurableSet.nullMeasurableSet_snd
     c.measurableSet_violationAt P
 
 /-- The exact pointwise-strict `M₂` corridor is null-measurable under every

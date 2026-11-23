@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 import Mathlib.Probability.BrownianMotion.Basic
+import BrownianMotion.Gaussian.BrownianMotion
 import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 import Probability.Process.Brownian.SmallDeviation.Corridor.Bounds
@@ -56,15 +57,15 @@ lemma brownianRangeOscillationMass_ne_zero
   let pathLaw := P.map (ProbabilityTheory.continuousunitIntervalPath B hcontinuous)
   have hBrownian : IsBrownianReal B P := ⟨hB, ae_of_all P hcontinuous⟩
   let Bpre := hBrownian.toIsPreBrownianReal
-  let Bc := Bpre.continuousModification
+  let Bc := Bpre.mk B
   have hBccontinuous : ∀ ω, Continuous (Bc · ω) :=
-    Bpre.continuous_continuousModification
+    Bpre.continuous_mk
   have hpathEq : ∀ᵐ ω ∂P, ∀ q : ℚ≥0,
       Bc ((q : ℝ≥0)) ω =
         B ((q : ℝ≥0)) ω := by
     rw [ae_all_iff]
     intro q
-    exact Bpre.continuousModification_ae_eq ((q : ℝ≥0))
+    exact Bpre.mk_ae_eq ((q : ℝ≥0))
   have hmapEq :
       (Skorokhod.ofContinuousMap ∘
         ProbabilityTheory.continuousunitIntervalPath Bc hBccontinuous) =ᵐ[P]

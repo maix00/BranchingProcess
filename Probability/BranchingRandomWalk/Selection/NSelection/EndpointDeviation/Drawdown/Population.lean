@@ -239,26 +239,9 @@ theorem firstNSelectedPopulation_surviveAlong (m N n : ℕ)
     (field : FiniteRootStepField m ℕ ℝ)
     (p : RootIndexed.TreeNode (Fin m) ℕ)
     (hp : p ∈ firstNSelectedPopulation m N n field) :
-    surviveAlong (field p.1) [] p.2 := by
-  classical
-  induction n generalizing p with
-  | zero =>
-      simp only [firstNSelectedPopulation, RootIndexed.selectedPopulationTotalized]
-        at hp
-      rw [RootIndexed.initialPopulation, Finset.mem_map] at hp
-      obtain ⟨r, _, rfl⟩ := hp
-      exact surviveAlong_nil _ []
-  | succ n ih =>
-      change p ∈ RootIndexed.selectedPopulationTotalized N
-        (Finset.univ : Finset (Fin m)) (fun _ : Fin m => (0 : ℝ)) id id
-        (n + 1) field at hp
-      have hchild := RootIndexed.selectedPopulationTotalized_succ_subset
-        N (Finset.univ : Finset (Fin m)) (fun _ => (0 : ℝ)) id id n field hp
-      obtain ⟨q, hq, hqdepth, i, hi, rfl⟩ :=
-        (Combinatorics.Branching.Population.mem_childrenAtGeneration_iff n
-          (firstNSelectedPopulation m N n field) field p).mp hchild
-      exact (surviveAlong_append_singleton (field q.1) [] q.2 i).2
-        ⟨ih q hq, hi⟩
+    surviveAlong (field p.1) [] p.2 :=
+  RootIndexed.selectedPopulationTotalized_surviveAlong N Finset.univ
+    (fun _ : Fin m => (0 : ℝ)) id id n field p hp
 
 /-- Every prefix of a selected address is selected at its own generation.
 This is the ancestor-closure property needed to branch the first-`N`

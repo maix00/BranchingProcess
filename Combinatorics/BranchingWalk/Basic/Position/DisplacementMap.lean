@@ -77,7 +77,8 @@ theorem displaceWith_cons {α X Y : Type*} [AddMonoid Y]
     (d : X → Y) (β : StepField α X) (v : TreeNode α)
     (i : α) (p : TreeNode α) :
     displaceWith d β v (i :: p) =
-      value' ((β v).map d) i + displaceWith d β (v ++ [i]) p := rfl
+      value' ((β v).map d) i + displaceWith d β (v ++ [i]) p :=
+  displace_cons (β.map d) v i p
 
 /-- Partial mapped displacement; an absent edge makes the result absent. -/
 def displaceWith? {α X Y : Type*} [AddMonoid Y]
