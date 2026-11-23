@@ -40,7 +40,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
-namespace StepSelection
+namespace Selection.Stepwise
 namespace Concurrent
 
 open Combinatorics.UlamHarris Combinatorics.Branching
@@ -90,6 +90,6 @@ theorem scheduledPopulation_adapted
     initial hinitial ready hready
 
 end Concurrent
-end StepSelection
+end Selection.Stepwise
 end RootIndexed
 end ProbabilityTheory.BranchingRandomWalk

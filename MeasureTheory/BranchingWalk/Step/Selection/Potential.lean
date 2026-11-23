@@ -10,7 +10,7 @@ public import Combinatorics.BranchingWalk.Step.Selection.Potential
 public import MeasureTheory.BranchingWalk.Step.Selection.FirstN
 public import MeasureTheory.BranchingWalk.Step.Selection.Slot
 import MeasureTheory.MeasurableSpace.Finset.Filter
-import MeasureTheory.MeasurableSpace.CountableEvaluation
+import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 /-!
 # Measurability of potential-based branching selections
@@ -21,7 +21,7 @@ potential and slot selectors.
 ## Public declarations
 
 If the branching step and its finite selector are measurable, then the
-potential-cutoff, first-child, and reserve selectors are measurable; the
+potential-cutoff, first-child, and first-or-below-potential selectors are measurable; the
 positive potential of the least selected slot is measurable as well:
 
 \[
@@ -30,7 +30,7 @@ positive potential of the least selected slot is measurable as well:
   .\operatorname{select}\bigr),\\
 \operatorname{Measurable}\bigl((\operatorname{firstOnlySelectedChild}(R))
   .\operatorname{select}\bigr),\qquad
-\operatorname{Measurable}\bigl((\operatorname{reserveSelectionBelowPotential}
+\operatorname{Measurable}\bigl((\operatorname{firstOrBelowPotential}
   (R,\varphi,M)).\operatorname{select}\bigr),\\
 \operatorname{Measurable}\bigl(
   \operatorname{firstSelectedSlotPositivePotential}(R,\varphi)\bigr).
@@ -41,8 +41,8 @@ positive potential of the least selected slot is measurable as well:
   proves measurability after removing selected children above a potential
   cutoff.
 - `Combinatorics.Branching.Step.FiniteSelection.firstOnlySelectedChild_measurable`
-  and `reserveSelectionBelowPotential_measurable` prove measurability of the
-  first-child and reserve selectors.
+  and `firstOrBelowPotential_measurable` prove measurability of the
+  first-child and first-or-below-potential selectors.
 - `Combinatorics.Branching.Step.FiniteSelection.firstSelectedSlotPositivePotential_measurable`
   proves that the positive potential of the first selected child is measurable
   when the step selection is measurable.
@@ -70,25 +70,12 @@ theorem firstSelectedSlotPositivePotential_measurable
     (φ : Potential X) :
     Measurable (firstSelectedSlotPositivePotential R φ) := by
   have hfirst := firstSelectedSlot_measurable R hR
-  have hcoordinate (i : α) (_hi : i ∈ Set.range (firstSelectedSlot R)) :
-      Measurable (fun ξ : Step α X => ξ.potentialValue' φ i) :=
-    Step.potentialValue'_measurable φ i
-  have hfiber (i : α) (_hi : i ∈ Set.range (firstSelectedSlot R)) :
-      MeasurableSet {ξ : Step α X | firstSelectedSlot R ξ = i} := by
-    have hfiber' : MeasurableSet
-        ((firstSelectedSlot R) ⁻¹' ({i} : Set α)) :=
-      hfirst (measurableSet_singleton i)
-    have heq : {ξ : Step α X | firstSelectedSlot R ξ = i} =
-        (firstSelectedSlot R) ⁻¹' ({i} : Set α) := by
-      ext ξ
-      rfl
-    rw [heq]
-    exact hfiber'
   have hvalue : Measurable (fun ξ : Step α X =>
       ξ.potentialValue' φ (firstSelectedSlot R ξ)) :=
-    Measurable.eval_of_countable_range
-      (fun ξ i => ξ.potentialValue' φ i) (firstSelectedSlot R)
-      hcoordinate hfiber (Set.to_countable _)
+    (measurable_from_prod_countable_left
+      (f := fun p : Step α X × α => p.1.potentialValue' φ p.2)
+      (fun i => Step.potentialValue'_measurable φ i)).comp
+        (measurable_id.prodMk hfirst)
   change Measurable (fun ξ : Step α X =>
     max 0 (ξ.potentialValue' φ (firstSelectedSlot R ξ)))
   exact measurable_const.max hvalue
@@ -120,13 +107,13 @@ theorem firstOnlySelectedChild_measurable
   rw [hset]
   exact hfirst (measurableSet_singleton i)
 
-theorem reserveSelectionBelowPotential_measurable
+theorem firstOrBelowPotential_measurable
     {α X : Type*} [Countable α] [MeasurableSpace α]
     [MeasurableSingletonClass α] [MeasurableSpace X]
     [LinearOrder α] [OrderBot α]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (φ : Potential X) (M : ℝ) :
-    Measurable (reserveSelectionBelowPotential R φ M).select := by
+    Measurable (firstOrBelowPotential R φ M).select := by
   let first := firstOnlySelectedChild R
   let bounded := R.belowPotential φ M
   have hfirst : Measurable first.select := by
@@ -136,7 +123,7 @@ theorem reserveSelectionBelowPotential_measurable
   have hunion : Measurable (fun p : Finset α × Finset α => p.1 ∪ p.2) :=
     measurable_of_countable _
   have h := hunion.comp (hfirst.prodMk hbounded)
-  simpa [Function.comp_def, reserveSelectionBelowPotential, first, bounded] using h
+  simpa [Function.comp_def, firstOrBelowPotential, first, bounded] using h
 
 theorem preserveFirstBelowPotential_measurable
     {α X : Type*} [Countable α] [MeasurableSpace X] [LinearOrder α]

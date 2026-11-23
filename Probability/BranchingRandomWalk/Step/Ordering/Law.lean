@@ -9,6 +9,7 @@ module
 public import Probability.BranchingRandomWalk.Step.Ordering.Realization
 public import Probability.BranchingRandomWalk.Step.PointMeasure.Basic
 public import Probability.BranchingRandomWalk.Assumptions.Structural
+public import Probability.BranchingRandomWalk.Assumptions.CrossWeight
 public import Combinatorics.BranchingWalk.Step.Map
 
 import Probability.RandomMeasure.ExponentialTilt
@@ -39,6 +40,8 @@ variables are read only after applying this code.
   probability through the ordered law. The real-valued image satisfies
   `sortedPotentialImage_nonemptySupport` and
   `sortedPotentialImage_orderedBy`.
+* `StepLaw.lintegral_childCount_sortedPotentialImage`: the mean offspring
+  count $\mathbb E[\#\Xi]$ is unchanged by ordering and projection.
 * `Step.totalPotentialWeight_map` commutes the total exponential potential
   weight with mapping the child marks through the potential.
   `StepLaw.pointMeasureFunctional_ordering`,
@@ -49,9 +52,13 @@ variables are read only after applying this code.
   to the ordered law, and
   `sortedPotentialImage_hasBoundaryNormalization` transfers it to the
   real-valued potential image.
+* `StepLaw.sortedPotentialImage_hasFiniteCrossWeight` transfers
+  $\mathbb E[\sum_{i\ne j}e^{-\varphi(X_i)-\varphi(X_j)}]<\infty$
+  from the raw law to the sorted real displacements under boundary normalization.
 -/
 
 open MeasureTheory
+open scoped ENNReal
 
 @[expose] public section
 
@@ -130,6 +137,30 @@ theorem StepLaw.sorted_pointMeasure
     (L : StepLaw ι κ X) (ξ : Combinatorics.Branching.Step ι X) :
     stepPointMeasure (L.ordering ξ) = stepPointMeasure ξ :=
   L.ordering.pointMeasure_ordered ξ
+
+private theorem measurable_ennreal_childCount
+    {α Y : Type*} [Countable α] [MeasurableSpace Y] :
+    Measurable (fun ξ : Step α Y => (ξ.childCount : ℝ≥0∞)) :=
+  (measurable_of_countable fun n : ℕ∞ => (n : ℝ≥0∞)).comp Step.childCount_measurable
+
+/-- The expected number of children is a property of the point measure and
+is invariant under ordering and projection of the marks. -/
+theorem StepLaw.lintegral_childCount_sortedPotentialImage
+    {ι κ X : Type*} [MeasurableSpace X] [Countable ι] [Countable κ] [LT κ]
+    (L : StepLaw ι κ X) :
+    (∫⁻ ξ, (ξ.childCount : ℝ≥0∞) ∂L.sortedPotentialImage) =
+      ∫⁻ ξ, (ξ.childCount : ℝ≥0∞) ∂L.raw := by
+  unfold StepLaw.sortedPotentialImage
+  rw [lintegral_map (f := fun ξ : Step κ ℝ => (ξ.childCount : ℝ≥0∞))
+    (g := fun ξ : Step κ X => ξ.map L.potential) measurable_ennreal_childCount
+    (Step.map_measurable L.potential.measurable_toFun)]
+  simp only [Step.childCount_map]
+  rw [StepLaw.sorted, lintegral_map
+    (f := fun ξ : Step κ X => (ξ.childCount : ℝ≥0∞)) measurable_ennreal_childCount
+    L.ordering.measurable_ordered]
+  apply lintegral_congr
+  intro ξ
+  rw [← stepPointMeasure_univ, L.sorted_pointMeasure ξ, stepPointMeasure_univ]
 
 theorem StepLaw.nonempty_ordering_iff
     {ι κ X : Type*} [MeasurableSpace X] [LT κ]
@@ -277,5 +308,88 @@ theorem StepLaw.sortedPotentialImage_hasBoundaryNormalization
         intro ξ
         exact Step.totalPotentialWeight_map L.potential ξ
     _ = 1 := L.sorted_hasBoundaryNormalization hboundary
+
+private lemma totalPotentialWeight_sq_eq_diagonal_add_cross
+    {ι X : Type*} [MeasurableSpace X] (φ : Potential X) (ξ : Step ι X) :
+    totalPotentialWeight φ (-1) ξ ^ 2 =
+      totalPotentialWeight φ (-2) ξ + crossPotentialWeight φ (-1) ξ := by
+  classical
+  let w := realizedPotentialWeight φ (-1) ξ
+  have hdiag (i : ι) : w i * w i = realizedPotentialWeight φ (-2) ξ i := by
+    by_cases h : survive ξ i
+    · simp only [w, realizedPotentialWeight, ite_eq_left h]
+      rw [← ENNReal.ofReal_mul (Real.exp_nonneg _), ← Real.exp_add]
+      congr 2
+      ring
+    · simp [w, realizedPotentialWeight, h]
+  unfold totalPotentialWeight crossPotentialWeight
+  change (∑' i, w i) ^ 2 = (∑' i, realizedPotentialWeight φ (-2) ξ i) +
+    ∑' i, ∑' j, if i ≠ j then w i * w j else 0
+  rw [pow_two, ← ENNReal.tsum_mul_right, ← tsum_add]
+  apply tsum_congr
+  intro i
+  rw [← ENNReal.tsum_mul_left, tsum_eq_add_tsum_ite i, hdiag i]
+  congr 1
+  apply tsum_congr
+  intro j
+  by_cases h : j = i
+  · simp [h]
+  · simp [h, Ne.symm h]
+
+private lemma StepLaw.diagonalWeight_ordering
+    {ι κ X : Type*} [MeasurableSpace X] [LT κ] (L : StepLaw ι κ X)
+    (ξ : Step ι X) :
+    totalPotentialWeight L.potential (-2) (L.ordering ξ) =
+      totalPotentialWeight L.potential (-2) ξ := by
+  calc
+    _ = ∫⁻ x, ProbabilityTheory.RandomMeasure.exponentialWeight L.potential (-2) x
+        ∂stepPointMeasure (L.ordering ξ) := by
+          simpa [totalPotentialWeight] using
+            (lintegral_stepPointMeasure_potential L.potential (-2) (L.ordering ξ)
+              (f := fun _ => (1 : ENNReal)) measurable_const).symm
+    _ = ∫⁻ x, ProbabilityTheory.RandomMeasure.exponentialWeight L.potential (-2) x
+        ∂stepPointMeasure ξ := by rw [L.sorted_pointMeasure ξ]
+    _ = _ := by
+      simpa [totalPotentialWeight] using
+        (lintegral_stepPointMeasure_potential L.potential (-2) ξ
+          (f := fun _ => (1 : ENNReal)) measurable_const)
+
+private lemma crossPotentialWeight_potentialImage
+    {ι X : Type*} [MeasurableSpace X] (φ : Potential X) (ξ : Step ι X) :
+    crossPotentialWeight realPotential (-1) (ξ.map φ) = crossPotentialWeight φ (-1) ξ := by
+  classical
+  have hslot (i : ι) : realizedPotentialWeight realPotential (-1) (ξ.map φ) i =
+      realizedPotentialWeight φ (-1) ξ i := by
+    cases h : ξ i <;>
+      simp [realizedPotentialWeight, Step.map, Step.potentialValue',
+        Step.potentialAt?, realPotential, survive, h]
+  simp only [crossPotentialWeight, hslot]
+
+/-- The off-diagonal pair weight is preserved almost surely by ordering and
+projection under boundary normalization. This transports the cross-weight
+assumption in Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk
+with Infinite Offspring* (Fudan University, 2026), Theorem 1.1. -/
+theorem StepLaw.sortedPotentialImage_hasFiniteCrossWeight
+    {ι κ X : Type*} [MeasurableSpace X] [Countable ι] [Countable κ] [LT κ]
+    (L : StepLaw ι κ X) (hboundary : HasBoundaryNormalization L.potential L.raw)
+    (hcross : HasFiniteCrossWeight L.potential L.raw) :
+    HasFiniteCrossWeight realPotential L.sortedPotentialImage := by
+  change (∫⁻ ξ, crossPotentialWeight realPotential (-1) ξ ∂L.sortedPotentialImage) ≠ ∞
+  rw [StepLaw.sortedPotentialImage,
+    lintegral_map (crossPotentialWeight_measurable realPotential (-1))
+      (Step.map_measurable L.potential.measurable_toFun)]
+  simp only [crossPotentialWeight_potentialImage]
+  rw [StepLaw.sorted, lintegral_map (crossPotentialWeight_measurable L.potential (-1))
+    L.ordering.measurable_ordered]
+  refine (lintegral_congr_ae ?_).trans_ne hcross
+  filter_upwards [hboundary.ae_totalPotentialWeight_ne_top L.potential L.raw] with ξ hfinite
+  have hraw := totalPotentialWeight_sq_eq_diagonal_add_cross L.potential ξ
+  have hordered := totalPotentialWeight_sq_eq_diagonal_add_cross L.potential (L.ordering ξ)
+  rw [L.totalPotentialWeight_ordering ξ, L.diagonalWeight_ordering ξ] at hordered
+  have hdiag : totalPotentialWeight L.potential (-2) ξ ≠ ∞ := by
+    intro htop
+    apply ENNReal.pow_ne_top hfinite
+    rw [hraw, htop, top_add]
+  exact (ENNReal.add_right_inj hdiag).mp (hordered.symm.trans hraw)
 
 end ProbabilityTheory.BranchingRandomWalk

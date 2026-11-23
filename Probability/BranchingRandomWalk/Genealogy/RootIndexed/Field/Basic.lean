@@ -80,7 +80,7 @@ def reindex {Root NewRoot α X : Type*} (f : NewRoot → Root)
 
 /-- Pull a root-indexed field back along a map of complete coordinates.  In
 contrast with `reindex`, this may send different addresses of one new root to
-different source roots.  No probabilistic condition is built into the
+different root labels.  No probabilistic condition is built into the
 definition; injectivity is imposed only by the product-law theorem. -/
 def reindexCoordinates {Root NewRoot α X : Type*}
     (f : NewRoot × TreeNode α → Root × TreeNode α)

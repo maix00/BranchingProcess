@@ -121,8 +121,8 @@ theorem nullMeasurableSet_fullSegmentCorridorEvent
   have heq : rationalEvent =ᵐ[P]
       fullSegmentCorridorEvent X start length lower upper := by
     filter_upwards [hcadlag] with ω hω
-    exact propext ((mem_fullSegmentCorridorEvent_iff_rational
-      X start length lower upper ω hω).symm)
+    exact (mem_fullSegmentCorridorEvent_iff_rational
+      X start length lower upper ω hω).symm
   exact hrational.congr heq
 
 theorem mem_fullSegmentCorridorReturnEvent_iff_rational
@@ -191,7 +191,7 @@ theorem measure_fullSegmentCorridorIocReturnEvent_eq_rational
         lower upper coreLower coreUpper) := by
   apply measure_congr
   filter_upwards [hcadlag] with ω hω
-  exact propext (mem_fullSegmentCorridorIocReturnEvent_iff_rational
+  exact (mem_fullSegmentCorridorIocReturnEvent_iff_rational
     X start length lower upper coreLower coreUpper ω hω).symm
 
 /-- For almost surely càdlàg paths, the complete open-endpoint corridor
@@ -209,7 +209,7 @@ theorem measure_fullSegmentCorridorReturnEvent_eq_rational
         lower upper coreLower coreUpper) := by
   apply measure_congr
   filter_upwards [hcadlag] with ω hω
-  exact propext (mem_fullSegmentCorridorReturnEvent_iff_rational
+  exact (mem_fullSegmentCorridorReturnEvent_iff_rational
     X start length lower upper coreLower coreUpper ω hω).symm
 
 theorem nullMeasurableSet_fullSegmentCorridorReturnEvent
@@ -235,8 +235,8 @@ theorem nullMeasurableSet_fullSegmentCorridorReturnEvent
       fullSegmentCorridorReturnEvent X start length
         lower upper coreLower coreUpper := by
     filter_upwards [hcadlag] with ω hω
-    exact propext ((mem_fullSegmentCorridorReturnEvent_iff_rational
-      X start length lower upper coreLower coreUpper ω hω).symm)
+    exact (mem_fullSegmentCorridorReturnEvent_iff_rational
+      X start length lower upper coreLower coreUpper ω hω).symm
   exact hrational.congr heq
 
 /-- The left-open, right-closed endpoint version is null-measurable for an
@@ -265,8 +265,8 @@ theorem nullMeasurableSet_fullSegmentCorridorIocReturnEvent
       fullSegmentCorridorIocReturnEvent X start length
         lower upper coreLower coreUpper := by
     filter_upwards [hcadlag] with ω hω
-    exact propext ((mem_fullSegmentCorridorIocReturnEvent_iff_rational
-      X start length lower upper coreLower coreUpper ω hω).symm)
+    exact (mem_fullSegmentCorridorIocReturnEvent_iff_rational
+      X start length lower upper coreLower coreUpper ω hω).symm
   exact hrational.congr heq
 
 end ProbabilityTheory

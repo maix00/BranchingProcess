@@ -172,7 +172,7 @@ private lemma IsBrownianReal.measure_firstNonnegativeWindowStartUpTo_endpointRet
       hB.continuousPathMap hBmeasurable ω (t + 1) =
         hB.continuousPathMap hBmeasurable ω t} = 0 := by
   let pathB := hB.continuousPathMap hBmeasurable
-  let U : Set Ω := fun ω => HasTripleRunningMinimumContact (pathB ω)
+  let U : Set Ω := {ω | HasTripleRunningMinimumContact (pathB ω)}
   let A : ℚ≥0 → Set Ω := fun r =>
     let q := (r : ℝ≥0)
     let past := fun ω => freezeAfter (pathB ω) q
