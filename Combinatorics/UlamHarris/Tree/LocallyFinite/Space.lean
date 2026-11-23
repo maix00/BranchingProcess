@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.UlamHarris.Tree.LocallyFinite.Basic
-public import Combinatorics.UlamHarris.Tree.Topology.Metric
+public import Combinatorics.UlamHarris.Tree.Topology.Metric.Reciprocal
 public import Combinatorics.UlamHarris.Tree.Topology.MeasurableSpace
 
 /-!
@@ -35,14 +35,14 @@ default topology remains the subspace topology of the pointwise topology.
   the induced metric topology with the default topology.
 - `borel_topology_eq_measurableSpace` gives the Borel/cylinder equality for
   countable labels. `measurableSpace_le_borel_metricTopology` gives the metric
-  inclusion, and `borel_metricTopology_eq_measurableSpace_of_countable_balls`
-  gives equality when the ambient truncation balls are countable.
+  inclusion. `LocallyFinite/Borel.lean` proves equality for countable labels,
+  using the countable basis supplied by finite locally finite truncations.
 
 The default topology and measurable space are induced from `Tree α` along
 the subtype map `\(val:LocallyFiniteTree(\alpha)\to Tree(\alpha)\)`;
-the restricted metric topology is coarser than the default topology, and
+the restricted metric topology is finer than the default topology, and
 for countable labels its Borel structure agrees with the cylinder σ-algebra
-when the truncation balls form a countable family.
+as proved in `LocallyFinite/Borel.lean`.
 -/
 
 open MeasureTheory
@@ -120,14 +120,6 @@ theorem measurableSpace_le_borel_metricTopology [Countable α] :
   rw [metricTopology_eq_induced, borel_comap, measurableSpace]
   exact MeasurableSpace.comap_mono cylinder_le_borel_treeMetricTopology
 
-/-- If the ambient truncation balls are countable, then the Borel σ-algebra of
-the restricted tree metric is the cylinder σ-algebra on locally finite trees. -/
-theorem borel_metricTopology_eq_measurableSpace_of_countable_balls [Countable α]
-    (hball : Countable {b : Set (Tree α) // ∃ T n, b = Tree.truncationBall T n}) :
-    @borel (LocallyFiniteTree α) (metricTopology α) = measurableSpace α := by
-  rw [metricTopology_eq_induced, borel_comap, measurableSpace,
-    borel_treeMetricTopology_eq_borel_treeTruncationTopology,
-    borel_treeTruncationTopology_eq_cylinder_of_countable_balls hball]
 
 end LocallyFinite
 

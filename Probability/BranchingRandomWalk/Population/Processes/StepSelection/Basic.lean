@@ -60,7 +60,7 @@ open MeasureTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory.BranchingRandomWalk.StepSelection
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 
@@ -362,4 +362,4 @@ theorem population_nonempty_of_all_selected_marks_nonempty
       refine ⟨p, hp, i, ?_, rfl⟩
       simpa [frontierMarks, hdepth] using hi
 
-end ProbabilityTheory.BranchingRandomWalk.StepSelection
+end ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise

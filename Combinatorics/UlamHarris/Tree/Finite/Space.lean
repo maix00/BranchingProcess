@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.UlamHarris.Tree.Finite.Basic
-public import Combinatorics.UlamHarris.Tree.Topology.Metric
+public import Combinatorics.UlamHarris.Tree.Topology.Metric.Reciprocal
 public import Combinatorics.UlamHarris.Tree.Topology.MeasurableSpace
 
 /-!

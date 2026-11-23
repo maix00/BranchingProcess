@@ -22,6 +22,9 @@ public import Mathlib.Probability.Kernel.CondDistrib
   for any measurable independent pair and strongly measurable $f$ with
   $f(X,Y)\in L^1(P)$,
   $\mathbb E[f(X,Y)\mid X]=\int f(X,y)\,d(P\circ Y^{-1})(y)$ almost surely.
+- `ProbabilityTheory.Indep.condExp_prod_ae_eq_integral_map` retains an arbitrary
+  past sigma-algebra $\mathcal H$: if $X$ is $\mathcal H$-measurable and
+  $Y\perp\mathcal H$, then $\mathbb E[f(X,Y)\mid\mathcal H]=\int f(X,y)dP_Y$.
 - `ProbabilityTheory.IndepFun.condExp_indicator_pairEvent_ae_eq_sectionProbability`:
   for measurable $E\subseteq A\times B$,
   $\mathbb E[\mathbf1_E(X,Y)\mid X](\omega)
@@ -155,6 +158,37 @@ theorem IndepFun.condExp_prod_ae_eq_integral_map
   exact (ae_eq_condExp_of_forall_setIntegral_eq hX.comap_le
     hf_int hsectionMeasurable hsectionIntegral_eq
     hsectionCompStrong.aestronglyMeasurable).symm
+
+omit [MeasurableSpace Sample] in
+/-- Integrate a fresh input against its marginal law while retaining all
+information in an arbitrary past sigma-algebra. -/
+theorem Indep.condExp_prod_ae_eq_integral_map
+    (m : MeasurableSpace Sample) [mSample : MeasurableSpace Sample]
+    {P : Measure Sample} [IsProbabilityMeasure P]
+    {X : Sample → Past} {Y : Sample → Future} (hm : m ≤ mSample)
+    (h : Indep m (MeasurableSpace.comap Y inferInstance) P)
+    (hX : Measurable[m] X) (hY : Measurable Y)
+    {f : Past × Future → Value} (hf : StronglyMeasurable f)
+    (hfi : Integrable (fun w ↦ f (X w, Y w)) P) :
+    condExp m P (fun w ↦ f (X w, Y w)) =ᵐ[P]
+      fun w ↦ ∫ y, f (X w, y) ∂P.map Y := by
+  let mLift : MeasurableSpace (ULift.{0} Sample) := m.comap ULift.down
+  have hdown : @Measurable (ULift.{0} Sample) Sample inferInstance m ULift.down :=
+    Measurable.of_comap_le le_rfl
+  have heq : MeasurableSpace.comap (ULift.up : Sample → ULift.{0} Sample)
+      (m.comap ULift.down) = m := by
+    exact MeasurableSpace.comap_comp.trans MeasurableSpace.comap_id
+  have hup : Measurable (ULift.up : Sample → ULift.{0} Sample) :=
+    Measurable.of_comap_le (heq ▸ hm)
+  have hi : IndepFun (ULift.up : Sample → ULift.{0} Sample) Y P := by
+    change Indep (MeasurableSpace.comap ULift.up (m.comap ULift.down)) _ P
+    rwa [heq]
+  have hf' : StronglyMeasurable
+      (fun p : ULift.{0} Sample × Future ↦ f (X p.1.down, p.2)) :=
+    hf.comp_measurable ((hX.comp hdown).comp measurable_fst |>.prodMk measurable_snd)
+  have hc := hi.condExp_prod_ae_eq_integral_map hup hY hf' hfi
+  change condExp (MeasurableSpace.comap ULift.up mLift) P _ =ᵐ[P] _ at hc
+  rwa [heq] at hc
 
 /-- For independent random variables, the conditional expectation of the
 indicator of a measurable pair event is the probability of its section under

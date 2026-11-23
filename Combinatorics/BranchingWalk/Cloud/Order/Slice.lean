@@ -265,8 +265,11 @@ theorem Cloud.rankwiseDominates_of_encard_Iic_le [LinearOrder (RootIndexed.TreeN
       · exact ⟨hp.1, hmono p hp.1 q hq hp.2⟩
     have hfin : ({p | p ∈ C.particles t ∧ p < q} : Set _).Finite :=
       (Set.toFinite (C.particles t)).subset fun p hp => hp.1
+    have hqnot : q ∉ ({p | p ∈ C.particles t ∧ p < q} : Set _) := by
+      rintro ⟨_, hlt⟩
+      exact (lt_irrefl q) hlt
     have hb : (insert q {p | p ∈ C.particles t ∧ p < q} : Set _).ncard = m + 1 := by
-      rw [Set.ncard_insert_of_notMem (fun h => lt_irrefl q h.2) hfin]
+      rw [Set.ncard_insert_of_notMem hqnot hfin]
       congr 1
       have hsq := Cloud.sliceRank_eq_coe_ncard_of_finite C t (Set.toFinite (C.particles t)) q
       rw [hk] at hsq
