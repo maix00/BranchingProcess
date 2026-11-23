@@ -172,8 +172,9 @@ theorem RootIndexed.StepField.measurable_reindexCoordinates
     (measurable_pi_apply (f (r, u)).1)
 
 /-- An injective relabelling of all root/address coordinates preserves the
-i.i.d. root-indexed step-field law.  The map may mix source roots and
-addresses; only freshness, expressed by injectivity, matters. -/
+i.i.d. root-indexed step-field law.  The map may mix root labels and
+addresses in the original field; only freshness, expressed by injectivity,
+matters. -/
 theorem RootIndexed.stepFieldLaw_reindexCoordinates
     {Root NewRoot α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]

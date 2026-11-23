@@ -130,7 +130,7 @@ lemma exists_drift_variance_jumpMeasure_along_seq :
     have hdom : ∫ x in {x | |x| < r}, x ^ 2 ∂(S.measure (t_seq_ν (φ₁ n)) : Measure ℝ) ≤
         ∫ x in smallJumpSet, x ^ 2 ∂(S.measure (t_seq_ν (φ₁ n)) : Measure ℝ) :=
       setIntegral_mono_set hint_sq_small (ae_of_all _ fun x => sq_nonneg x)
-        (LE.le.eventuallyLE hsubset)
+        (Filter.Eventually.of_forall (fun _ hx => hsubset hx))
     calc a n
         ≤ (t_seq_ν (φ₁ n)).val⁻¹ *
             ∫ x in smallJumpSet, x ^ 2 ∂(S.measure (t_seq_ν (φ₁ n)) : Measure ℝ) :=

@@ -24,8 +24,8 @@ most recent common ancestor.
 
 This is the second-moment decomposition used in Wang Yiyang,
 *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
-(master's thesis, Fudan University, 2026), Chapter 4, Lemma 4.5,
-equation (4.6).
+(master's thesis, Fudan University, 2026), Chapter 3, Lemma 3.6,
+equation (3.7).
 
 Writing \(P_{\mathrm{off}}=\operatorname{offspringFieldLaw}(\mu)\),
 \(X_N\) for the number of generation-\(N\) paths in the affine corridor, and
@@ -52,7 +52,14 @@ open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.RandomWalk
 
-/-- The second moment of the generation-`N` affine-corridor count is its
+/-- * `exists_lintegral_pathGeneration_affineCorridor_sq_le_exp_sum_of_finiteVariance`
+  gives, for finite cross-child weight and a centered spine of variance
+  $\sigma^2>0$, the uniform bound
+  $E[X_N^2]\le e^{4\Delta^v+2U-2d(N-1)/\Delta^2}
+  \sum_{m<N}e^{dm/\Delta^2-r_m}+e^{U+\Delta^v-dN/\Delta^2}$,
+  for $v>0$, $0<d<\pi^2\sigma^2/2$ and sufficiently large $\Delta$.
+
+The second moment of the generation-`N` affine-corridor count is its
 first moment plus the sum of the actual MRCA pair contributions. The
 ancestor prefix and the birth-generation corridor condition are retained in
 each contribution. -/

@@ -15,8 +15,11 @@ public import Order.OrderDual.SetExtrema
 
 ## Public declarations
 
-For generation \(n\), the lower and upper frontiers are the least and greatest
-population positions. A scalar potential has an attained minimum on every
+For generation \(n\), `lowerFrontier` and `upperFrontier` are the infimum and
+supremum in a complete lattice. `lowerFrontier_eq_lowerPoint` and
+`upperFrontier_eq_upperPoint` identify them with the attained extrema on a
+nonempty finite population. The `...FrontierPoints` operations describe the
+sets of attaining positions. A scalar potential has an attained minimum on every
 nonempty generation, and reversing the position order exchanges the two
 frontiers:
 
@@ -36,21 +39,21 @@ frontiers:
 The declarations below are in namespace
 `Combinatorics.Branching.Selection.NSelection.Walk`.
 
-- `lowerFrontier`, `upperFrontier`, `mem_lowerFrontier_iff`,
-  `lowerFrontier_subset_population`, `mem_upperFrontier_iff`, and
-  `upperFrontier_subset_population`: least and greatest positions in a
+- `lowerFrontierPoints`, `upperFrontierPoints`, `mem_lowerFrontierPoints_iff`,
+  `lowerFrontierPoints_subset_population`, `mem_upperFrontierPoints_iff`, and
+  `upperFrontierPoints_subset_population`: least and greatest positions in a
   generation, characterized by `IsLeast` and `IsGreatest`.
 - `lowerPotentialPoint`, `isLeast_lowerPotentialPoint`,
   `lowerPotentialPoint_le`, and `exists_potential_eq_lowerPotentialPoint`:
   for a nonempty generation, the least value of `potential` is attained by a
   particle and is at most every value in that generation.
 - `lowerPoint`, `upperPoint`, `isLeast_lowerPoint`, `isGreatest_upperPoint`,
-  `lowerPoint_mem_lowerFrontier`, `upperPoint_mem_upperFrontier`,
-  `lowerFrontier_nonempty`, and `upperFrontier_nonempty`: extrema of a
+  `lowerPoint_mem_lowerFrontierPoints`, `upperPoint_mem_upperFrontierPoints`,
+  `lowerFrontierPoints_nonempty`, and `upperFrontierPoints_nonempty`: extrema of a
   nonempty linearly ordered generation belong to their respective frontiers.
-- `mem_lowerFrontier_mapOrderDual_iff`,
-  `mem_upperFrontier_mapOrderDual_iff`, `lowerFrontier_mapOrderDual`, and
-  `upperFrontier_mapOrderDual`: order reversal exchanges the two frontiers.
+- `mem_lowerFrontierPoints_mapOrderDual_iff`,
+  `mem_upperFrontierPoints_mapOrderDual_iff`, `lowerFrontierPoints_mapOrderDual`, and
+  `upperFrontierPoints_mapOrderDual`: order reversal exchanges the two frontiers.
 - `lowerPoint_mapOrderDual` and `upperPoint_mapOrderDual`: the extrema of the
   reversed walk are the order-duals of the opposite extrema.
 
@@ -93,33 +96,41 @@ namespace NSelection namespace Walk
 
 variable {X : Type*} [DecidableEq X] {N : ℕ} {M : FiniteNSelection X N}
 
-/-- The lower frontier of the walk at generation `n`: the least positions of
-the population. -/
-def lowerFrontier [LE X] (V : Walk N X M) (n : ℕ) : Set X :=
+/-- The lower frontier of a generation is its infimum. -/
+noncomputable def lowerFrontier [CompleteLattice X] (V : Walk N X M) (n : ℕ) : X :=
   V.cloud.lowerFrontier n
 
-@[simp] theorem mem_lowerFrontier_iff [LE X] (V : Walk N X M) (n : ℕ) (x : X) :
-    x ∈ V.lowerFrontier n ↔ IsLeast {y | y ∈ V.population n} x := by
-  rw [lowerFrontier, CloudSet.mem_lowerFrontier_iff]
+/-- The upper frontier of a generation is its supremum. -/
+noncomputable def upperFrontier [CompleteLattice X] (V : Walk N X M) (n : ℕ) : X :=
+  V.cloud.upperFrontier n
+
+/-- The lower frontier of the walk at generation `n`: the least positions of
+the population. -/
+noncomputable def lowerFrontierPoints [LE X] (V : Walk N X M) (n : ℕ) : Set X :=
+  V.cloud.lowerFrontierPoints n
+
+@[simp] theorem mem_lowerFrontierPoints_iff [LE X] (V : Walk N X M) (n : ℕ) (x : X) :
+    x ∈ V.lowerFrontierPoints n ↔ IsLeast {y | y ∈ V.population n} x := by
+  rw [lowerFrontierPoints, CloudSet.mem_lowerFrontierPoints_iff]
   rfl
 
-theorem lowerFrontier_subset_population [LE X] (V : Walk N X M) (n : ℕ) :
-    V.lowerFrontier n ⊆ {y | y ∈ V.population n} :=
-  CloudSet.lowerFrontier_subset_points V.cloud n
+theorem lowerFrontierPoints_subset_population [LE X] (V : Walk N X M) (n : ℕ) :
+    V.lowerFrontierPoints n ⊆ {y | y ∈ V.population n} :=
+  CloudSet.lowerFrontierPoints_subset_points V.cloud n
 
 /-- The upper frontier of the walk at generation `n`: the greatest positions of
 the population. -/
-def upperFrontier [LE X] (V : Walk N X M) (n : ℕ) : Set X :=
-  V.cloud.upperFrontier n
+noncomputable def upperFrontierPoints [LE X] (V : Walk N X M) (n : ℕ) : Set X :=
+  V.cloud.upperFrontierPoints n
 
-@[simp] theorem mem_upperFrontier_iff [LE X] (V : Walk N X M) (n : ℕ) (x : X) :
-    x ∈ V.upperFrontier n ↔ IsGreatest {y | y ∈ V.population n} x := by
-  rw [upperFrontier, CloudSet.mem_upperFrontier_iff]
+@[simp] theorem mem_upperFrontierPoints_iff [LE X] (V : Walk N X M) (n : ℕ) (x : X) :
+    x ∈ V.upperFrontierPoints n ↔ IsGreatest {y | y ∈ V.population n} x := by
+  rw [upperFrontierPoints, CloudSet.mem_upperFrontierPoints_iff]
   rfl
 
-theorem upperFrontier_subset_population [LE X] (V : Walk N X M) (n : ℕ) :
-    V.upperFrontier n ⊆ {y | y ∈ V.population n} :=
-  CloudSet.upperFrontier_subset_points V.cloud n
+theorem upperFrontierPoints_subset_population [LE X] (V : Walk N X M) (n : ℕ) :
+    V.upperFrontierPoints n ⊆ {y | y ∈ V.population n} :=
+  CloudSet.upperFrontierPoints_subset_points V.cloud n
 
 /-! ### Scalar frontiers through a potential -/
 
@@ -131,7 +142,7 @@ private theorem hasLowerPotentialPoint_of_nonempty (V : Walk N X M)
   have hxcloud : x ∈ V.cloud.points n := by
     simpa [cloud] using hx
   refine ⟨potential x, ?_⟩
-  rw [CloudSet.mem_lowerPotentialFrontier_iff]
+  rw [CloudSet.mem_lowerPotentialFrontierPoints_iff]
   change IsLeast (potential '' V.cloud.points n) (potential x)
   constructor
   · exact ⟨x, hxcloud, rfl⟩
@@ -148,7 +159,7 @@ noncomputable def lowerPotentialPoint (V : Walk N X M)
     have hxcloud : x ∈ V.cloud.points n := by
       simpa [cloud] using hx
     refine ⟨potential x, ?_⟩
-    rw [CloudSet.mem_lowerPotentialFrontier_iff]
+    rw [CloudSet.mem_lowerPotentialFrontierPoints_iff]
     change IsLeast (potential '' V.cloud.points n) (potential x)
     constructor
     · exact ⟨x, hxcloud, rfl⟩
@@ -202,68 +213,78 @@ theorem isGreatest_upperPoint [LinearOrder X] (V : Walk N X M) (n : ℕ)
     IsGreatest {x | x ∈ V.population n} (V.upperPoint n h) :=
   Finset.isGreatest_max' (V.population n) h
 
-theorem lowerPoint_mem_lowerFrontier [LinearOrder X] (V : Walk N X M) (n : ℕ)
+theorem lowerPoint_mem_lowerFrontierPoints [LinearOrder X] (V : Walk N X M) (n : ℕ)
     (h : (V.population n).Nonempty) :
-    V.lowerPoint n h ∈ V.lowerFrontier n :=
-  (mem_lowerFrontier_iff V n _).mpr (isLeast_lowerPoint V n h)
+    V.lowerPoint n h ∈ V.lowerFrontierPoints n :=
+  (mem_lowerFrontierPoints_iff V n _).mpr (isLeast_lowerPoint V n h)
 
-theorem upperPoint_mem_upperFrontier [LinearOrder X] (V : Walk N X M) (n : ℕ)
+theorem upperPoint_mem_upperFrontierPoints [LinearOrder X] (V : Walk N X M) (n : ℕ)
     (h : (V.population n).Nonempty) :
-    V.upperPoint n h ∈ V.upperFrontier n :=
-  (mem_upperFrontier_iff V n _).mpr (isGreatest_upperPoint V n h)
+    V.upperPoint n h ∈ V.upperFrontierPoints n :=
+  (mem_upperFrontierPoints_iff V n _).mpr (isGreatest_upperPoint V n h)
+
+/-- On a nonempty finite population, the infimum is attained at its least point. -/
+theorem lowerFrontier_eq_lowerPoint [CompleteLinearOrder X] (V : Walk N X M) (n : ℕ)
+    (h : (V.population n).Nonempty) : V.lowerFrontier n = V.lowerPoint n h :=
+  CloudSet.lowerFrontier_eq_of_isLeast V.cloud n (V.isLeast_lowerPoint n h)
+
+/-- On a nonempty finite population, the supremum is attained at its greatest point. -/
+theorem upperFrontier_eq_upperPoint [CompleteLinearOrder X] (V : Walk N X M) (n : ℕ)
+    (h : (V.population n).Nonempty) : V.upperFrontier n = V.upperPoint n h :=
+  CloudSet.upperFrontier_eq_of_isGreatest V.cloud n (V.isGreatest_upperPoint n h)
 
 /-- A nonempty generation has a nonempty lower frontier. -/
-theorem lowerFrontier_nonempty [LinearOrder X] (V : Walk N X M) (n : ℕ)
+theorem lowerFrontierPoints_nonempty [LinearOrder X] (V : Walk N X M) (n : ℕ)
     (h : (V.population n).Nonempty) :
-    (V.lowerFrontier n).Nonempty :=
-  ⟨V.lowerPoint n h, V.lowerPoint_mem_lowerFrontier n h⟩
+    (V.lowerFrontierPoints n).Nonempty :=
+  ⟨V.lowerPoint n h, V.lowerPoint_mem_lowerFrontierPoints n h⟩
 
 /-- A nonempty generation has a nonempty upper frontier. -/
-theorem upperFrontier_nonempty [LinearOrder X] (V : Walk N X M) (n : ℕ)
+theorem upperFrontierPoints_nonempty [LinearOrder X] (V : Walk N X M) (n : ℕ)
     (h : (V.population n).Nonempty) :
-    (V.upperFrontier n).Nonempty :=
-  ⟨V.upperPoint n h, V.upperPoint_mem_upperFrontier n h⟩
+    (V.upperFrontierPoints n).Nonempty :=
+  ⟨V.upperPoint n h, V.upperPoint_mem_upperFrontierPoints n h⟩
 
 /-! ### The two orders -/
 
 /-- Reversing the order exchanges the two frontiers of every generation. -/
-theorem mem_lowerFrontier_mapOrderDual_iff [LE X] (V : Walk N X M) (n : ℕ)
+theorem mem_lowerFrontierPoints_mapOrderDual_iff [LE X] (V : Walk N X M) (n : ℕ)
     (x : X) :
-    OrderDual.toDual x ∈ (V.mapOrderDual).lowerFrontier n ↔ x ∈ V.upperFrontier n := by
-  show OrderDual.toDual x ∈ (V.mapOrderDual).cloud.lowerFrontier n ↔
-    x ∈ V.cloud.upperFrontier n
+    OrderDual.toDual x ∈ (V.mapOrderDual).lowerFrontierPoints n ↔ x ∈ V.upperFrontierPoints n := by
+  show OrderDual.toDual x ∈ (V.mapOrderDual).cloud.lowerFrontierPoints n ↔
+    x ∈ V.cloud.upperFrontierPoints n
   rw [mapOrderDual_cloud]
-  exact (CloudSet.mem_upperFrontier_iff_orderDual V.cloud n x).symm
+  exact (CloudSet.mem_upperFrontierPoints_iff_orderDual V.cloud n x).symm
 
-theorem mem_upperFrontier_mapOrderDual_iff [LE X] (V : Walk N X M) (n : ℕ)
+theorem mem_upperFrontierPoints_mapOrderDual_iff [LE X] (V : Walk N X M) (n : ℕ)
     (x : X) :
-    OrderDual.toDual x ∈ (V.mapOrderDual).upperFrontier n ↔ x ∈ V.lowerFrontier n := by
-  show OrderDual.toDual x ∈ (V.mapOrderDual).cloud.upperFrontier n ↔
-    x ∈ V.cloud.lowerFrontier n
+    OrderDual.toDual x ∈ (V.mapOrderDual).upperFrontierPoints n ↔ x ∈ V.lowerFrontierPoints n := by
+  show OrderDual.toDual x ∈ (V.mapOrderDual).cloud.upperFrontierPoints n ↔
+    x ∈ V.cloud.lowerFrontierPoints n
   rw [mapOrderDual_cloud]
   show IsGreatest (OrderDual.toDual '' V.cloud.points n) (OrderDual.toDual x) ↔
     IsLeast (V.cloud.points n) x
   exact OrderDual.isGreatest_image_toDual_iff
 
-theorem lowerFrontier_mapOrderDual (V : Walk N X M) [LE X] (n : ℕ) :
-    (V.mapOrderDual).lowerFrontier n = OrderDual.toDual '' V.upperFrontier n := by
+theorem lowerFrontierPoints_mapOrderDual (V : Walk N X M) [LE X] (n : ℕ) :
+    (V.mapOrderDual).lowerFrontierPoints n = OrderDual.toDual '' V.upperFrontierPoints n := by
   ext q
   constructor
   · intro hq
     refine ⟨OrderDual.ofDual q, ?_, by simp⟩
-    exact (mem_lowerFrontier_mapOrderDual_iff V n (OrderDual.ofDual q)).mp (by simpa using hq)
+    exact (mem_lowerFrontierPoints_mapOrderDual_iff V n (OrderDual.ofDual q)).mp (by simpa using hq)
   · rintro ⟨y, hy, rfl⟩
-    exact (mem_lowerFrontier_mapOrderDual_iff V n y).mpr hy
+    exact (mem_lowerFrontierPoints_mapOrderDual_iff V n y).mpr hy
 
-theorem upperFrontier_mapOrderDual (V : Walk N X M) [LE X] (n : ℕ) :
-    (V.mapOrderDual).upperFrontier n = OrderDual.toDual '' V.lowerFrontier n := by
+theorem upperFrontierPoints_mapOrderDual (V : Walk N X M) [LE X] (n : ℕ) :
+    (V.mapOrderDual).upperFrontierPoints n = OrderDual.toDual '' V.lowerFrontierPoints n := by
   ext q
   constructor
   · intro hq
     refine ⟨OrderDual.ofDual q, ?_, by simp⟩
-    exact (mem_upperFrontier_mapOrderDual_iff V n (OrderDual.ofDual q)).mp (by simpa using hq)
+    exact (mem_upperFrontierPoints_mapOrderDual_iff V n (OrderDual.ofDual q)).mp (by simpa using hq)
   · rintro ⟨y, hy, rfl⟩
-    exact (mem_upperFrontier_mapOrderDual_iff V n y).mpr hy
+    exact (mem_upperFrontierPoints_mapOrderDual_iff V n y).mpr hy
 
 /-- The least particle of the reversed walk is the greatest particle of the
 walk. -/

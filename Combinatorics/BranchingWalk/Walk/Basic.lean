@@ -191,7 +191,7 @@ theorem displaceWith_lineNode [AddCommMonoid Position]
       change displaceWith d (stepFieldOfIncrements increment) [] (lineNode n) +
           displaceWith d (stepFieldOfIncrements increment) (lineNode n)
             [PUnit.unit] = _
-      rw [ih]
+      rw [ih, displaceWith_cons, displaceWith_nil]
       change (∑ k ∈ Finset.range n, d (increment k)) +
           (d (increment (lineNode n).length) + 0) = _
       simp [Finset.sum_range_succ]
