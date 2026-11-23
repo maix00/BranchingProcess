@@ -29,7 +29,7 @@ generation only reads slot presence.
   and `ProbabilityTheory.BranchingRandomWalk.multiRootCandidatesAtGeneration_fixed_measurable` prove domain-flow
   measurability of the one-parent, fixed-parent-set, and generation-filtered
   updates, respectively.
-- `ProbabilityTheory.BranchingRandomWalk.oneChildCandidate_first_mem` characterizes whether the first child slot is
+- `ProbabilityTheory.BranchingRandomWalk.oneChildCandidate_first_mem` characterizes whether the first selected child slot is
   present; `ProbabilityTheory.BranchingRandomWalk.multiRootCandidates_first_mem` shows a surviving first slot of a
   retained parent belongs to the finite candidate set when $N>0$.
 - `ProbabilityTheory.BranchingRandomWalk.multiRootCandidates_depth` and

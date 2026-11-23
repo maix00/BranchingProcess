@@ -122,7 +122,7 @@ theorem lower_power_of_prefix
   refine ⟨C, hC, ?_⟩
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     by_cases hn : n < n₀
     · exact hbase n hn
     · have hn₀ : n₀ ≤ n := by omega

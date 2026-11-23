@@ -63,7 +63,7 @@ open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 
 /-- The range-cover target, restricted to the source path domain. -/
-def rangeCoverTarget (k : ℕ) (hk : 0 < k) :
+noncomputable def rangeCoverTarget (k : ℕ) (hk : 0 < k) :
     Set (CadlagPath unitInterval ℝ) :=
   Skorokhod.terminalLeftPathSpace ∩ (rangeCoverUnion k hk).toSet
 
@@ -169,8 +169,7 @@ theorem eventually_iidSequenceLaw_blockOscillationProbability_le_exp_of_centered
     (hrate_lt : rate < (Real.pi ^ 2 / 2) * (rangeCoverUnion k hk).realEnergy) :
     ∀ᶠ n : ℕ in atTop,
       iidSequenceLaw ν {increment : ℕ → ℝ |
-        blockOscillationEvent (2 * scale n / factor) (n - 1)
-          (Combinatorics.Sequence.blockCoordinates 0 (n - 1) increment)} ≤
+        (Combinatorics.Sequence.blockCoordinates 0 (n - 1) increment) ∈ blockOscillationEvent (2 * scale n / factor) (n - 1)} ≤
         ENNReal.ofReal (Real.exp (-rate * ((n : ℝ) / scale n ^ 2))) := by
   let paths : ℕ → (ℕ → ℝ) → CadlagPath unitInterval ℝ := fun n increment =>
     terminalLeftNormalizedStepCadlagPathIcc scale n increment
@@ -238,8 +237,8 @@ theorem eventually_iidSequenceLaw_blockOscillationProbability_le_exp_of_centered
   have hscaleIdentity : factor * (2 * scale n / factor) / 2 = scale n := by
     field_simp [ne_of_gt (by linarith : 0 < factor)]
   have hsubset :
-      {increment : ℕ → ℝ | blockOscillationEvent (2 * scale n / factor)
-        (n - 1) (Combinatorics.Sequence.blockCoordinates 0 (n - 1) increment)} ⊆
+      {increment : ℕ → ℝ | (Combinatorics.Sequence.blockCoordinates 0 (n - 1) increment) ∈ blockOscillationEvent (2 * scale n / factor)
+        (n - 1)} ⊆
       targetEvent n := by
     intro increment hosc
     have hTube := blockOscillationEvent_subset_sourceRangeTube hn hwidth

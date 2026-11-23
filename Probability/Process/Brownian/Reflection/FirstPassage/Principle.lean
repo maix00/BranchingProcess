@@ -88,7 +88,6 @@ theorem IsBrownianReal.measure_hitAndAbove_eq_below
       h0meas).2 h0orig
   have hpre : F ⁻¹' U =ᵐ[μ] L := by
     filter_upwards [h0] with f hf0
-    apply propext
     change (firstPassageBelow (F f) a ≤ 1 ∧ a < F f 1) ↔ f 1 < a
     have hevent := firstPassageBelow_le_one_reflectAfter_capped_iff f a
     have hL_hit (hf : f 1 < a) : firstPassageBelow f a ≤ 1 :=
@@ -142,7 +141,6 @@ theorem IsBrownianReal.measure_firstPassageBelow_le_one
       hAmeas).2 hAorig
   have hEq : H =ᵐ[μ] U ∪ L := by
     filter_upwards [hA] with f hfne
-    apply propext
     change firstPassageBelow f a ≤ 1 ↔
       (firstPassageBelow f a ≤ 1 ∧ a < f 1) ∨ f 1 < a
     constructor

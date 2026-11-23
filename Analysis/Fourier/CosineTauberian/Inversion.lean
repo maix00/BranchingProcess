@@ -32,7 +32,7 @@ Fourier inversion then gives the kernel identity needed for the twice-integrated
 -/
 
 open MeasureTheory Set
-open scoped Interval FourierTransform RealInnerProductSpace Complex
+open scoped Interval FourierTransform RealInnerProductSpace Complex Pointwise
 
 @[expose] public section
 
@@ -206,7 +206,8 @@ private lemma integrable_cosineTauberianKernel :
       · simp [hx]
       · simp [hx]
   have hfull : IntegrableOn cosineTauberianKernel Set.univ := by
-    simpa [← hparts] using hrest.union hzero
+    rw [← hparts]
+    exact hrest.union hzero
   simpa using hfull.integrable
 
 /-- The spline cosine transform agrees with the kernel at every nonzero

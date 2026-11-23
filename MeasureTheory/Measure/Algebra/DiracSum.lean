@@ -72,7 +72,7 @@ theorem iOptionDiracSum_apply (f : ι → Option X) {s : Set X} (hs : Measurable
       ∑' i, match f i with
         | some x => s.indicator (1 : X → ℝ≥0∞) x
         | none => 0 := by
-  simp only [iOptionDiracSum, sum_apply _ hs]
+  simp only [iOptionDiracSum, Measure.sum_apply _ hs]
   refine tsum_congr fun i => ?_
   cases f i <;> simp [dirac_apply' _ hs]
 

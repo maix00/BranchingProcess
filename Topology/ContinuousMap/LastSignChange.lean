@@ -612,7 +612,9 @@ theorem continuousAt_lastZeroMeanderTransform_of_lastZero_eq_zero
     filter_upwards [hevent] with g hg
     simp [start, hg]
   have hstart : ContinuousAt start f := by
-    exact (continuousAt_codRestrict_iff (fun g => (start g).2)).mpr hval
+    exact (continuousAt_codRestrict_iff
+      (t := {t : unitInterval | t < ⊤})
+      (fun g => Set.mem_setOf_eq.mpr (start g).2)).mpr hval
   have hrescale : ContinuousAt
       (fun g => rescaledTailAt g (start g)) f :=
     continuous_rescaledTailAt.continuousAt.comp
@@ -644,7 +646,9 @@ theorem continuousAt_lastSignChangeMeanderTransform_of_eq_lastZero
     filter_upwards [hevent] with g hg
     simp [start, hg]
   have hstart : ContinuousAt start f := by
-    exact (continuousAt_codRestrict_iff (fun g => (start g).2)).mpr hval
+    exact (continuousAt_codRestrict_iff
+      (t := {t : unitInterval | t < ⊤})
+      (fun g => Set.mem_setOf_eq.mpr (start g).2)).mpr hval
   have hrescale : ContinuousAt
       (fun g => rescaledTailAt g (start g)) f :=
     continuous_rescaledTailAt.continuousAt.comp

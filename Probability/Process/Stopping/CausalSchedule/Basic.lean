@@ -14,7 +14,7 @@ public import Probability.Process.HittingTime.Declarations
 Every trial is defined whether or not an earlier trial succeeds.  Trial
 `i + 1` starts at the first time after trial `i`'s start at which its
 pre-defined readiness event is observed.  This provides the stopping-time
-schedule needed by concurrent reserve constructions without conditioning the
+schedule needed by concurrent trial constructions without conditioning the
 definition of later trial times on earlier failures.
 ## Public declarations
 

@@ -111,7 +111,7 @@ noncomputable def restartedWindowFirstMoment
 /-- The exponential first moment in restarted windows is bounded by the
 ordinary window measure times the deterministic maximal endpoint weight.
 This is the bridge from Mogulskii probability estimates to the first-moment
-interface used by the killed branching population. -/
+interface used by the selected branching population. -/
 theorem restartedWindowFirstMoment_le
     (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
     (window : ℕ → Set ℝ) (hwindow : ∀ k, MeasurableSet (window k))
@@ -181,7 +181,7 @@ def HasRestartedWindowFirstMomentBound
     restartedWindowFirstMoment incrementLaw cutoff window n x ≤ bound n
 
 /-- Any uniform probability estimate for the restarted windows supplies the
-first-moment bound needed by the killed branching population, after inserting
+first-moment bound needed by the selected branching population, after inserting
 the deterministic exponential endpoint factor. -/
 theorem hasRestartedWindowFirstMomentBound_of_probability
     (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
@@ -234,7 +234,7 @@ theorem hasRestartedWindowFirstMomentBound_of_zero_probability
 /-- For canonical IID increments, the first moment in a constant restarted
 horizontal tube is controlled entirely by the two ordinary horizontal-tube
 probabilities.  This is the direct interface from a Mogulskii estimate to the
-restarted killed-population argument. -/
+restarted selected-population argument. -/
 theorem hasRestartedWindowFirstMomentBound_horizontal
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {a width : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : 0 ≤ width)

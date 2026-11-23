@@ -90,7 +90,8 @@ theorem bochner
     simp_rw [this]
     exact tendsto_smoothed φ ξ
   -- Step 3: The sequence {μₙ} is tight.
-  have htight := isTight_of_charFun_pointwise_tendsto hφc hcharfun_conv
+  have htight := MeasureTheory.isTightMeasureSet_of_tendsto_charFun
+    hφc.continuousAt hcharfun_conv
   -- Step 4: Convert to the right form for Prokhorov.
   have htight' : IsTightMeasureSet
       {((ν : ProbabilityMeasure ℝ) : Measure ℝ) | ν ∈ range μs} := by
