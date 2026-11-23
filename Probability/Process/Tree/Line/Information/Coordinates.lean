@@ -27,6 +27,8 @@ In `ProbabilityTheory.Tree`, let `initial` be the initial information and
   `coordinate_le_ancestralPast` gives the strict-ancestor observation rule.
 * `ancestralPast_mono` states `u ≼ v → ancestralPast u ≤ ancestralPast v`.
 * `linePast_mono` states `ℓ ≼ q → linePast ℓ ≤ linePast q`.
+* `ancestralPast_le_linePast_of_no_strict_ancestor` states that the birth
+  information at `u` lies in `linePast ℓ` when no member of `ℓ` strictly precedes `u`.
 * `ancestralPast_le_linePast` states that if `u ≼ v ∈ ℓ` and `ℓ` is a line,
   then the strict ancestral information at `u` lies in `linePast ℓ`.
 * `linePast_empty` identifies the empty-line past with all coordinate information.
@@ -106,17 +108,28 @@ theorem linePast_mono {ℓ q : Set (RootIndexed.TreeNode Root α)}
   obtain ⟨u, hu, huw⟩ := h w hw
   exact hv ⟨u, hu, huw.trans hwv⟩
 
+/-- Birth information is outside a cut whenever no cut vertex is a strict ancestor. -/
+theorem ancestralPast_le_linePast_of_no_strict_ancestor
+    {ℓ : Set (RootIndexed.TreeNode Root α)} {u : RootIndexed.TreeNode Root α}
+    (hno : ∀ v ∈ ℓ, RootIndexed.IsAncestor v u → v = u) :
+    ancestralPast initial coordinate u ≤ linePast initial coordinate ℓ := by
+  refine sup_le le_sup_left (iSup_le fun w => iSup_le fun hw => ?_)
+  apply coordinate_le_linePast initial coordinate
+  rintro ⟨v, hv, hvw⟩
+  have heq := hno v hv (hvw.trans hw.1)
+  subst v
+  exact hw.2 (hw.1.antisymm hvw)
+
+/-- In particular, ancestors of a cut vertex have their birth information available. -/
 theorem ancestralPast_le_linePast {ℓ : Set (RootIndexed.TreeNode Root α)}
     (hℓ : RootIndexed.IsLine ℓ) {u v : RootIndexed.TreeNode Root α}
     (hv : v ∈ ℓ) (huv : RootIndexed.IsAncestor u v) :
     ancestralPast initial coordinate u ≤ linePast initial coordinate ℓ := by
-  refine sup_le le_sup_left (iSup_le fun w => iSup_le fun hw => ?_)
-  apply coordinate_le_linePast initial coordinate
-  rintro ⟨q, hq, hqw⟩
-  have hqv : q = v := hℓ.eq hq hv (hqw.trans (hw.1.trans huv))
+  apply ancestralPast_le_linePast_of_no_strict_ancestor initial coordinate
+  intro q hq hqu
+  have heq : q = v := hℓ.eq hq hv (hqu.trans huv)
   subst q
-  have huw : RootIndexed.IsAncestor u w := huv.trans hqw
-  exact hw.2 (hw.1.antisymm huw)
+  exact hqu.antisymm huv
 
 @[simp] theorem linePast_empty :
     linePast initial coordinate ∅ = initial ⊔ ⨆ v, coordinate v := by

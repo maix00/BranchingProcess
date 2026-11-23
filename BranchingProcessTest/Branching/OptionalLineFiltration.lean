@@ -1,4 +1,5 @@
-import Probability.Process.Tree.Line.Information.Stopped
+import Probability.Process.Tree.Line.ConditionalExpectation
+import Probability.BranchingProcess.State.StrongBranching
 import Mathlib.Probability.Martingale.Convergence
 
 open MeasureTheory ProbabilityTheory ProbabilityTheory.Tree Combinatorics.UlamHarris Filter
@@ -78,3 +79,146 @@ end OptionalLineFiltrationExamples
 #print axioms OptionalLineFiltrationExamples.upward_ae
 #print axioms OptionalLineFiltrationExamples.upward_L1
 #print axioms OptionalLineFiltrationExamples.empty_filtration
+
+namespace OptionalLineLocalizationExamples
+
+-- A genuine cut with different depths: a common stopping generation cannot represent it.
+def mixedCut : Set (RootIndexed.TreeNode Unit Bool) :=
+  {((), [false]), ((), [true, false])}
+
+theorem mixedCut_isLine : RootIndexed.IsLine mixedCut := by
+  rw [RootIndexed.isLine_iff]
+  intro u hu v hv huv
+  simp only [mixedCut, Set.mem_insert_iff, Set.mem_singleton_iff] at hu hv
+  rcases hu with rfl | rfl <;> rcases hv with rfl | rfl
+  · rfl
+  · exact False.elim ((by simp [RootIndexed.IsAncestor] :
+      ¬ RootIndexed.IsAncestor ((), [false]) ((), [true, false])) huv)
+  · exact False.elim ((by simp [RootIndexed.IsAncestor] :
+      ¬ RootIndexed.IsAncestor ((), [true, false]) ((), [false])) huv)
+  · rfl
+
+-- Neither node-space countability nor a countable range of L is assumed here.
+example {Ω Root α : Type*} [mΩ : MeasurableSpace Ω]
+    {past : Set (RootIndexed.TreeNode Root α) → MeasurableSpace Ω}
+    {L : Ω → Set (RootIndexed.TreeNode Root α)}
+    (hL : IsOptionalLine past L)
+    (hp : ∀ {a b}, RootIndexed.IsLine a → RootIndexed.IsLine b →
+      RootIndexed.Line.Precedes a b → past a ≤ past b) :
+    Measurable[hL.measurableSpace] L := hL.measurable_stopped hp
+
+example {Ω : Type*} [MeasurableSpace Ω]
+    {past : Set (RootIndexed.TreeNode Unit Bool) → MeasurableSpace Ω}
+    {L : Ω → Set (RootIndexed.TreeNode Unit Bool)}
+    (hL : IsOptionalLine past L)
+    (hp : ∀ {a b}, RootIndexed.IsLine a → RootIndexed.IsLine b →
+      RootIndexed.Line.Precedes a b → past a ≤ past b)
+    {A : Set Ω} (hA : MeasurableSet[hL.measurableSpace] A) :
+    MeasurableSet[past mixedCut] (A ∩ {ω | mixedCut ⊆ L ω}) :=
+  hL.measurableSet_inter_subset hp mixedCut_isLine
+    (Set.to_countable mixedCut) hA
+
+-- A constant choice exercises the transfer theorem without any extra stopping-time,
+-- covering-line, or moment hypothesis.
+example {Ω Root α : Type*} [mΩ : MeasurableSpace Ω]
+    {past : Set (RootIndexed.TreeNode Root α) → MeasurableSpace Ω}
+    {L : Ω → Set (RootIndexed.TreeNode Root α)}
+    (hL : IsOptionalLine past L)
+    (hp : ∀ {a b}, RootIndexed.IsLine a → RootIndexed.IsLine b →
+      RootIndexed.Line.Precedes a b → past a ≤ past b)
+    (ℓ : Set (RootIndexed.TreeNode Root α)) (hℓ : RootIndexed.IsLine ℓ)
+    (hcount : ℓ.Countable) (hle : past ℓ ≤ mΩ)
+    (hsubset : ∀ ω, ℓ ⊆ L ω)
+    (μ : Measure Ω) [IsFiniteMeasure μ] (f g : Ω → ℝ)
+    (hf : Integrable f μ) (hg : Integrable g μ)
+    (hgm : StronglyMeasurable[hL.measurableSpace] g)
+    (hdet : μ[f | past ℓ] =ᵐ[μ] g) :
+    μ[f | hL.measurableSpace] =ᵐ[μ] g := by
+  exact hL.condExp_of_selected_cut hp (fun _ : Unit => ℓ) (fun _ => hℓ)
+    (fun _ => hcount) (fun _ => hle) μ (fun _ => ())
+    (fun i => by
+      cases i
+      simpa only [Set.ofPred_true] using
+        (@MeasurableSet.univ Ω hL.measurableSpace))
+    hsubset (fun _ => f) (fun _ => g) (fun _ => hf) (fun _ => hdet) hgm hf hg
+
+end OptionalLineLocalizationExamples
+
+#print axioms Combinatorics.UlamHarris.RootIndexed.Line.precedes_firstEntrance_iff
+#print axioms ProbabilityTheory.Tree.IsOptionalLine.measurableSet_subset_stopped
+#print axioms ProbabilityTheory.Tree.IsOptionalLine.measurable_stopped
+#print axioms ProbabilityTheory.Tree.IsOptionalLine.measurableSet_subset
+#print axioms ProbabilityTheory.Tree.IsOptionalLine.measurableSet_inter_subset
+#print axioms ProbabilityTheory.Tree.IsOptionalLine.condExp_of_selected_cut
+#print axioms OptionalLineLocalizationExamples.mixedCut_isLine
+
+#print axioms ProbabilityTheory.Tree.ancestralPast_le_linePast_of_no_strict_ancestor
+#print axioms ProbabilityTheory.Tree.IsOptionalLine.measurableSet_inter_mem_of_ancestralPast
+#print axioms ProbabilityTheory.Tree.IsOptionalLine.measurable_selected_state
+#print axioms ProbabilityTheory.BranchingProcess.State.stateAt_ofFn
+#print axioms ProbabilityTheory.BranchingProcess.State.stateAt_measurable_ancestralPast
+#print axioms ProbabilityTheory.BranchingProcess.State.linePast_generation_eq_piLE
+#print axioms ProbabilityTheory.BranchingProcess.State.stateAt_measurable_selected
+
+#print axioms MeasureTheory.condExp_finsetProd_of_complement
+#print axioms ProbabilityTheory.Kernel.condExp_coordinate_of_jointLaw
+#print axioms ProbabilityTheory.Kernel.hasCondDistrib_of_condExp_generator
+#print axioms ProbabilityTheory.Tree.IsOptionalLine.measurable_boundary_state
+#print axioms ProbabilityTheory.BranchingProcess.State.descendantTree_ofFn
+#print axioms ProbabilityTheory.BranchingProcess.State.descendantTree_measurable_linePast
+#print axioms ProbabilityTheory.BranchingProcess.State.linePast_singleton_eq_comap_complementObservation
+#print axioms ProbabilityTheory.BranchingProcess.State.condExp_descendantTree
+#print axioms ProbabilityTheory.BranchingProcess.State.condExp_prod_descendantTrees
+#print axioms ProbabilityTheory.BranchingProcess.State.condExp_prod_selectedDescendantTrees
+#print axioms ProbabilityTheory.BranchingProcess.State.setIntegral_prod_descendantTrees_optionalLine
+#print axioms ProbabilityTheory.BranchingProcess.State.condExp_prod_on_optionalLine
+#print axioms ProbabilityTheory.BranchingProcess.State.descendantTreesKernel.isMarkovKernel
+#print axioms ProbabilityTheory.BranchingProcess.State.hasCondDistrib_descendantTrees_optionalLine
+#print axioms ProbabilityTheory.BranchingProcess.State.condExp_descendantTrees_optionalLine
+#print axioms ProbabilityTheory.BranchingProcess.State.condExp_selectedDescendantTree
+
+namespace OptionalLineLocalizationExamples
+
+open ProbabilityTheory.BranchingProcess.State Combinatorics.Branching
+
+def mixedCutRoots (b : Bool) : RootIndexed.TreeNode Unit Bool :=
+  if b then ((), [true, false]) else ((), [false])
+
+private theorem mixedCutRoots_injective : Function.Injective mixedCutRoots := by
+  intro i j hij
+  cases i <;> cases j <;> simp [mixedCutRoots] at hij ⊢
+
+private theorem range_mixedCutRoots : Set.range mixedCutRoots = mixedCut := by
+  ext u
+  constructor
+  · rintro ⟨b, rfl⟩
+    cases b <;> simp [mixedCutRoots, mixedCut]
+  · intro hu
+    simp only [mixedCut, Set.mem_insert_iff, Set.mem_singleton_iff] at hu
+    rcases hu with rfl | rfl
+    · exact ⟨false, rfl⟩
+    · exact ⟨true, rfl⟩
+
+-- The full formula accepts different cut depths, arbitrary measurable states,
+-- and lines that may be empty: there is no assumed global choice of cut vertices.
+example {S : Type*} [MeasurableSpace S]
+    (K : Kernel S (Step Bool S)) [IsMarkovKernel K]
+    (initial : Measure (Unit → Option S)) [IsProbabilityMeasure initial]
+    {L : (Π n : ℕ, (Unit × (Fin n → Bool)) → Option S) →
+      Set (RootIndexed.TreeNode Unit Bool)}
+    (h : IsOptionalLine (linePast
+      (MeasurableSpace.comap (rootStates (Root := Unit) (α := Bool) (S := S)) inferInstance)
+      (fun u => MeasurableSpace.comap (offspringStates (S := S) u) inferInstance)) L)
+    (g : Bool → (List Bool → Option S) → ℝ) (hg : ∀ i, StronglyMeasurable (g i))
+    (hb : ∀ i t, ‖g i t‖ ≤ 1) :
+    (generationPathLaw K initial)[{x | mixedCut ⊆ L x}.indicator
+      (fun x => ∏ i, g i (descendantTree (mixedCutRoots i) x)) | h.measurableSpace]
+      =ᵐ[generationPathLaw K initial] {x | mixedCut ⊆ L x}.indicator
+        (fun x => ∏ i, ∫ t, g i t ∂treeKernel K (stateAt (mixedCutRoots i) x)) := by
+  have hline : RootIndexed.IsLine (Set.range mixedCutRoots) := by
+    rw [range_mixedCutRoots]
+    exact mixedCut_isLine
+  simpa only [range_mixedCutRoots] using condExp_prod_on_optionalLine K initial h
+    mixedCutRoots mixedCutRoots_injective hline g hg hb
+
+end OptionalLineLocalizationExamples
