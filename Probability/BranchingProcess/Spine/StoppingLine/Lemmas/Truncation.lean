@@ -8,7 +8,7 @@ module
 
 import Probability.BranchingProcess.Spine.StoppingLine.Mass
 import Probability.BranchingProcess.Spine.Tree.Density.FiniteGeneration
-import Probability.Process.Tree.Line.Optional
+import Probability.Process.Tree.Line.Basic
 import Mathlib.MeasureTheory.Function.FactorsThrough
 
 /-!
@@ -127,9 +127,9 @@ private lemma ray_take (f : ℕ → ι) {n k : ℕ} (hk : k ≤ n) :
 
 omit [MeasurableSpace ι] [Countable ι] [MeasurableSingletonClass ι] in
 lemma measurable_line_test
-    {past : Set (Unit × List ι) → MeasurableSpace (List ι → Option S)}
     {L : (List ι → Option S) → Set (Unit × List ι)}
-    (hL : Tree.IsOptionalLine past L) (hs : hL.IsSimple State.treeFiltration)
+    (hs : ∀ u : Unit × List ι,
+      MeasurableSet[State.treeFiltration u.2.length] {t | u ∈ L t})
     (u : List ι) :
     MeasurableSet[State.treeFiltration u.length] {t | ∀ k < u.length, ((), u.take k) ∉ L t} := by
   have heq : {t : List ι → Option S | ∀ k < u.length, ((), u.take k) ∉ L t} =
@@ -154,15 +154,16 @@ lemma lintegral_boundary_survival
     {h : S → ℝ≥0∞} (hh : Measurable h)
     (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ → (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
     (s : {s // h s ≠ 0 ∧ h s ≠ ∞})
-    {past : Set (Unit × List ι) → MeasurableSpace (List ι → Option S)}
     {L : (List ι → Option S) → Set (Unit × List ι)}
-    (hL : Tree.IsOptionalLine past L) (hs : hL.IsSimple State.treeFiltration)
+    (hL : Tree.IsRandomLine L)
+    (hs : ∀ u : Unit × List ι,
+      MeasurableSet[State.treeFiltration u.2.length] {t | u ∈ L t})
     (n : ℕ) {B : Set (List ι → Option S)} (hB : MeasurableSet[State.treeFiltration n] B) :
     (∫⁻ t in B, generationMass h L n t ∂State.treeKernel Q (some s.1)) +
       (∫⁻ t in B, unexitedMass h L (n + 1) t ∂State.treeKernel Q (some s.1)) =
     ∫⁻ t in B, unexitedMass h L n t ∂State.treeKernel Q (some s.1) := by
   let C (u : List ι) (t : List ι → Option S) := ∀ k < u.length, ((), u.take k) ∉ L t
-  have hC := measurable_line_test hL hs
+  have hC := measurable_line_test hs
   have hbn := lintegral_generation_test Q hh harmonic s n C hC hB
   have hbn1 := lintegral_generation_test Q hh harmonic s (n + 1) C hC
     ((State.treeFiltration.mono n.le_succ) _ hB)
@@ -196,7 +197,7 @@ lemma lintegral_boundary_survival
     refine Measurable.ite ((measurableSet_singleton true).preimage
       (ht.comp (measurable_pi_apply _))) ?_ measurable_const
     exact measurable_const.ite
-      (((hL.toIsRandomLine.measurableSet_mem _).preimage he).inter
+      (((hL.measurableSet_mem _).preimage he).inter
         (((State.treeFiltration.le n) _ hB).preimage he)) measurable_const
   rw [← lintegral_add_left hm]
   apply lintegral_congr_ae

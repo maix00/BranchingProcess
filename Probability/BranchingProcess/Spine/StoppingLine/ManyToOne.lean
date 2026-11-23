@@ -6,12 +6,12 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingProcess.Spine.Tree.Density.FiniteGeneration
+public import Probability.BranchingProcess.Spine.Tree.Density.AdaptedPayoff
 public import Probability.BranchingProcess.Spine.StoppingLine.Mass
-public import Probability.Process.Tree.Line.Optional
+public import Probability.Process.Tree.Line.Basic
 
 /-!
-# Many-to-one at simple optional lines
+# Many-to-one at generation-observable random lines
 
 ## Public declarations
 
@@ -20,10 +20,8 @@ In `ProbabilityTheory.BranchingProcess.Spine.StoppingLine`:
 * `spineHit L` is the event that a distinguished node belongs to the line
   evaluated on the same tree after erasing roles.
 * `measurableSet_spineHit` proves measurability of that entrance event.
-* `lintegral_payoff_eq` proves
-  `E[∑_(u∈L) W_u g_u(H_|u|)] = E_spine[∑_(u∈L∩spine) g_u(H_|u|)]`
-  for nonnegative measurable finite-history payoffs at a simple optional line.
-* `lintegral_mass_eq` proves `E[W_L] = P_spine(spineHit L)`.
+* `lintegral_mass_eq` proves `E[W_L] = P_spine(spineHit L)` for a
+  generation-observable random line; optionality is not assumed.
 * `lintegral_mass_le_one` gives `E[W_L] ≤ 1`.
 * `lintegral_mass_eq_one_iff` characterizes preservation of expectation
   by almost-sure spine entrance: `E[W_L] = 1 ↔ P_spine(spineHit L) = 1`.
@@ -31,14 +29,14 @@ In `ProbabilityTheory.BranchingProcess.Spine.StoppingLine`:
 The original process has any measurable state space and countable child slots.
 The measurable weight is mean harmonic on its finite positive region; the root
 lies there. Weights retain the existing ancestral eligibility guard.
-Simplicity means generation-observable membership, not just ancestor-observable
-membership. No bounded depth, path coverage, moment or uniform-integrability
+Line-mass corollaries require only a random antichain and generation-observable
+membership. Optionality relative to a separately supplied line past is unnecessary. No bounded depth, path coverage, moment or uniform-integrability
 assumption is imposed.
 
-This is J. D. Biggins and A. E. Kyprianou, *Measure change in multitype branching*
+This generalizes Lemma 14.1 of J. D. Biggins and A. E. Kyprianou, *Measure change in multitype branching*
 (2004), §14, Lemma 14.1, pp. 577–578, DOI 10.1239/aap/1086957585.
-Its proof applies the existing fixed-address density separately at each depth,
-then sums. The same canonical original and distinguished trees are used.
+The line formulas specialize `Spine.lintegral_adaptedPayoff_eq`; they do not
+maintain a second fixed-address density proof. The same canonical original and distinguished trees are used.
 -/
 
 @[expose] public section
@@ -59,57 +57,17 @@ def spineHit {h : S → ℝ≥0∞}
 
 variable [MeasurableSpace ι] [Countable ι] [MeasurableSingletonClass ι]
 
-private lemma fixedAddress_linePayoff
-    (Q : Kernel S (Step ι S)) [IsMarkovKernel Q]
-    {h : S → ℝ≥0∞} (hh : Measurable h)
-    (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ →
-      (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
-    (s : {s // h s ≠ 0 ∧ h s ≠ ∞})
-    {L : (List ι → Option S) → Set (Unit × List ι)} (u : List ι)
-    (hL : MeasurableSet[State.treeFiltration u.length] {t | ((), u) ∈ L t})
-    (g : (Π k : Finset.Iic u.length, (Unit × (Fin k.1 → ι)) → Option S) → ℝ≥0∞)
-    (hg : Measurable g) :
-    (∫⁻ t, if ((), u) ∈ L t then
-      addressWeight h u.length u.get (State.treeHistory u.length t) *
-        g (State.treeHistory u.length t) else 0 ∂State.treeKernel Q (some s.1)) =
-    ∫⁻ t, if ((), u) ∈ L (fun v => (t v).map (Sum.elim id Subtype.val)) ∧
-        (t u).any Sum.isRight = true then g (untypedHistory u.length t) else 0
-      ∂treeKernel Q hh harmonic (some (Sum.inr s)) := by
-  obtain ⟨B, hB, hEq⟩ := hL
-  have hmem (t : List ι → Option S) : State.treeHistory u.length t ∈ B ↔
-      ((), u) ∈ L t := Set.ext_iff.mp hEq t
-  have hi := lintegral_treeKernel_fixedAddress Q hh harmonic s u.length u.get
-    (g := B.indicator g) (hg.indicator hB)
-  simp only [List.ofFn_get] at hi
-  calc
-    _ = ∫⁻ t, addressWeight h u.length u.get (State.treeHistory u.length t) *
-        B.indicator g (State.treeHistory u.length t) ∂State.treeKernel Q (some s.1) := by
-      apply lintegral_congr
-      intro t
-      by_cases ht : ((), u) ∈ L t <;> simp [Set.indicator, hmem t, ht]
-    _ = _ := hi.symm.trans (by
-      apply lintegral_congr
-      intro t
-      have he : untypedHistory u.length t = State.treeHistory u.length
-          (fun v => (t v).map (Sum.elim id Subtype.val)) := rfl
-      change (if (t u).any Sum.isRight = true then
-        B.indicator g (untypedHistory u.length t) else 0) = _
-      rw [he]
-      by_cases ht : ((), u) ∈ L (fun v => (t v).map (Sum.elim id Subtype.val)) <;>
-        by_cases hs : (t u).any Sum.isRight = true <;>
-        simp [Set.indicator, hmem, ht, hs])
-
 /-- Generation-by-generation many-to-one, with a payoff known at each node's
 whole generation (Biggins–Kyprianou (2004), proof of Lemma 14.1). -/
-theorem lintegral_payoff_eq
+private lemma lintegral_linePayoff
     (Q : Kernel S (Step ι S)) [IsMarkovKernel Q]
     {h : S → ℝ≥0∞} (hh : Measurable h)
     (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ →
       (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
     (s : {s // h s ≠ 0 ∧ h s ≠ ∞})
-    {past : Set (Unit × List ι) → MeasurableSpace (List ι → Option S)}
     {L : (List ι → Option S) → Set (Unit × List ι)}
-    (hL : Tree.IsOptionalLine past L) (hsimple : hL.IsSimple State.treeFiltration)
+    (hsimple : ∀ u : List ι,
+      MeasurableSet[State.treeFiltration u.length] {t | ((), u) ∈ L t})
     (g : (u : List ι) →
       (Π k : Finset.Iic u.length, (Unit × (Fin k.1 → ι)) → Option S) → ℝ≥0∞)
     (hg : ∀ u, Measurable (g u)) :
@@ -120,33 +78,19 @@ theorem lintegral_payoff_eq
       if ((), u) ∈ L (fun v => (t v).map (Sum.elim id Subtype.val)) ∧
         (t u).any Sum.isRight = true then g u (untypedHistory u.length t) else 0
       ∂treeKernel Q hh harmonic (some (Sum.inr s)) := by
-  have he : Measurable (fun t : List ι → Option (S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}) =>
-      fun v => (t v).map (Sum.elim id Subtype.val)) := by
-    have hm := measurable_option_map (measurable_id.sumElim
-      (measurable_subtype_coe : Measurable (Subtype.val : {s // h s ≠ 0 ∧ h s ≠ ∞} → S)))
-    fun_prop
-  have htag (u : List ι) : Measurable (fun t :
-      List ι → Option (S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}) => (t u).any Sum.isRight) :=
-    (show Measurable (fun o : Option (S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}) =>
-      o.any Sum.isRight) from
-      measurable_option_elim false (measurable_const.sumElim measurable_const)).comp
-        (measurable_pi_apply u)
-  have hm (u : List ι) := hL.toIsRandomLine.measurableSet_mem ((), u)
-  have hleft (u : List ι) : Measurable (fun t : List ι → Option S =>
-      if ((), u) ∈ L t then addressWeight h u.length u.get (State.treeHistory u.length t) *
-        g u (State.treeHistory u.length t) else 0) :=
-    (((measurable_addressWeight hh _ _).comp (State.measurable_treeHistory _)).mul
-      ((hg u).comp (State.measurable_treeHistory _))).ite (hm u) measurable_const
-  have hright (u : List ι) : Measurable (fun t :
-      List ι → Option (S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}) =>
-      if ((), u) ∈ L (fun v => (t v).map (Sum.elim id Subtype.val)) ∧
-        (t u).any Sum.isRight = true then g u (untypedHistory u.length t) else 0) :=
-    ((hg u).comp (measurable_untypedHistory _)).ite
-      (((hm u).preimage he).inter ((measurableSet_singleton true).preimage (htag u)))
-      measurable_const
-  rw [lintegral_tsum (fun u => (hleft u).aemeasurable),
-    lintegral_tsum (fun u => (hright u).aemeasurable)]
-  exact tsum_congr fun u => fixedAddress_linePayoff Q hh harmonic s u (hsimple ((), u)) (g u) (hg u)
+  let F (u : List ι) (t : List ι → Option S) :=
+    if ((), u) ∈ L t then g u (State.treeHistory u.length t) else 0
+  have hF (u : List ι) : Measurable[State.treeFiltration u.length] (F u) :=
+    ((hg u).comp (Measurable.of_comap_le le_rfl)).ite (hsimple u) measurable_const
+  have hi := lintegral_adaptedPayoff_eq Q hh harmonic s F hF
+  refine (lintegral_congr fun t => ?_).trans (hi.trans (lintegral_congr fun t => ?_))
+  · apply tsum_congr
+    intro u
+    by_cases ht : ((), u) ∈ L t <;> simp [F, ht]
+  · apply tsum_congr
+    intro u
+    by_cases ht : ((), u) ∈ L (fun v => (t v).map (Sum.elim id Subtype.val)) <;>
+      by_cases htag : (t u).any Sum.isRight = true <;> simp [F, ht, htag]; rfl
 
 omit [MeasurableSpace ι] [MeasurableSingletonClass ι] in
 /-- The actual distinguished-line entrance event is measurable. -/
@@ -209,31 +153,33 @@ theorem lintegral_mass_eq
     (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ →
       (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
     (s : {s // h s ≠ 0 ∧ h s ≠ ∞})
-    {past : Set (Unit × List ι) → MeasurableSpace (List ι → Option S)}
     {L : (List ι → Option S) → Set (Unit × List ι)}
-    (hL : Tree.IsOptionalLine past L) (hsimple : hL.IsSimple State.treeFiltration) :
+    (hL : Tree.IsRandomLine L)
+    (hsimple : ∀ u : List ι,
+      MeasurableSet[State.treeFiltration u.length] {t | ((), u) ∈ L t}) :
     (∫⁻ t, mass h L t ∂State.treeKernel Q (some s.1)) =
       (treeKernel Q hh harmonic (some (Sum.inr s))) (spineHit L) := by
-  have hi := lintegral_payoff_eq Q hh harmonic s hL hsimple
+  have hi := lintegral_linePayoff Q hh harmonic s hsimple
     (fun _ _ => 1) (fun _ => measurable_const)
   simp only [mul_one] at hi
   change (∫⁻ t, mass h L t ∂State.treeKernel Q (some s.1)) = _ at hi
   refine hi.trans ?_
-  rw [← lintegral_indicator_one (measurableSet_spineHit hL.toIsRandomLine)]
+  rw [← lintegral_indicator_one (measurableSet_spineHit hL)]
   apply lintegral_congr_ae
   filter_upwards [ae_treeKernel_unique_spine Q hh harmonic s] with t ht
   exact sum_line_spine_indicator hL.isLine t ⟨ht.choose, ht.choose_spec.1.2⟩
 
-/-- A simple optional line has normalized expected mass at most one. -/
+/-- A generation-observable random line has normalized expected mass at most one. -/
 theorem lintegral_mass_le_one
     (Q : Kernel S (Step ι S)) [IsMarkovKernel Q]
     {h : S → ℝ≥0∞} (hh : Measurable h)
     (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ →
       (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
     (s : {s // h s ≠ 0 ∧ h s ≠ ∞})
-    {past : Set (Unit × List ι) → MeasurableSpace (List ι → Option S)}
     {L : (List ι → Option S) → Set (Unit × List ι)}
-    (hL : Tree.IsOptionalLine past L) (hsimple : hL.IsSimple State.treeFiltration) :
+    (hL : Tree.IsRandomLine L)
+    (hsimple : ∀ u : List ι,
+      MeasurableSet[State.treeFiltration u.length] {t | ((), u) ∈ L t}) :
     (∫⁻ t, mass h L t ∂State.treeKernel Q (some s.1)) ≤ 1 := by
   rw [lintegral_mass_eq Q hh harmonic s hL hsimple]
   exact prob_le_one
@@ -246,9 +192,10 @@ theorem lintegral_mass_eq_one_iff
     (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ →
       (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
     (s : {s // h s ≠ 0 ∧ h s ≠ ∞})
-    {past : Set (Unit × List ι) → MeasurableSpace (List ι → Option S)}
     {L : (List ι → Option S) → Set (Unit × List ι)}
-    (hL : Tree.IsOptionalLine past L) (hsimple : hL.IsSimple State.treeFiltration) :
+    (hL : Tree.IsRandomLine L)
+    (hsimple : ∀ u : List ι,
+      MeasurableSet[State.treeFiltration u.length] {t | ((), u) ∈ L t}) :
     (∫⁻ t, mass h L t ∂State.treeKernel Q (some s.1)) = 1 ↔
       (treeKernel Q hh harmonic (some (Sum.inr s))) (spineHit L) = 1 := by
   rw [lintegral_mass_eq Q hh harmonic s hL hsimple]
