@@ -1,4 +1,5 @@
 import Probability.BranchingProcess.Spine.Family.Conditional
+import Probability.BranchingProcess.Spine.StateChain
 import Probability.BranchingProcess.Spine.Tree.Ray
 import Probability.BranchingProcess.Spine.Tree.FirstGeneration
 import Probability.BranchingProcess.Spine.Tree.Normal
@@ -42,6 +43,18 @@ example : ∀ᵐ p ∂BranchingProcess.Spine.biasedFamilyChild offspring weight 
     ∃ t, p.1 p.2 = some t ∧ weight t ≠ 0 ∧ weight t ≠ ∞ :=
   BranchingProcess.Spine.ae_biasedFamilyChild_eligible offspring (by fun_prop)
     false (by simp [weight]) (by simp [weight]) harmonic_false
+
+-- The same zero-weight example realizes a complete Markov state chain via the generic API.
+example : IsMarkovKernel (BranchingProcess.Spine.eligibleStateKernel offspring
+    (h := weight) (by fun_prop)) :=
+  BranchingProcess.Spine.eligibleStateKernel_isMarkovKernel offspring (by fun_prop)
+    harmonic_eligible
+
+-- Forgetting the subtype recovers the actual selected-child marginal.
+example : (BranchingProcess.Spine.eligibleStateKernel offspring (h := weight) (by fun_prop)
+    ⟨false, by simp [weight]⟩).map Subtype.val =
+      BranchingProcess.Spine.spineChildKernel offspring weight false :=
+  BranchingProcess.Spine.eligibleStateKernel_map offspring (by fun_prop) harmonic_eligible _
 
 -- Normal children outside the positive-weight domain are retained, not killed.
 example : Step.distinguishChild (fun s => weight s ≠ 0 ∧ weight s ≠ ∞)
@@ -172,3 +185,12 @@ end SpinalBiasExamples
 #print axioms ProbabilityTheory.BranchingProcess.Spine.treeKernel_normal_map
 #print axioms ProbabilityTheory.BranchingProcess.Spine.traj_normalDescendantTrees
 #print axioms ProbabilityTheory.BranchingProcess.Spine.lintegral_treeKernel_firstSpineChild
+
+#print axioms ProbabilityTheory.Kernel.doobTransform_comp
+#print axioms ProbabilityTheory.Kernel.doobTransform_pow
+#print axioms ProbabilityTheory.Kernel.partialTraj_doobTransform
+#print axioms ProbabilityTheory.Kernel.doobTransformOnPositive_map
+#print axioms ProbabilityTheory.Kernel.doobTransformOnPositive_isMarkovChain
+#print axioms ProbabilityTheory.isMarkovChain_traj_historyKernel
+#print axioms ProbabilityTheory.BranchingProcess.Spine.eligibleStateKernel_isMarkovChain
+#print axioms ProbabilityTheory.BranchingProcess.Spine.partialTraj_spineChildKernel

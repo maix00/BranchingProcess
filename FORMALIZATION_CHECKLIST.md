@@ -145,7 +145,15 @@ open results is supplied by `tiltedIncrementFieldLaw`.
 
 **Implemented foundation:** `Probability/Kernel/DoobTransform/Basic.lean`
 constructs the general density kernel and proves local normalization and
-positive finite-weight support. `BranchingProcess/Offspring/Mean.lean`
+positive finite-weight support. The independent Doob API now proves native
+kernel iteration `(Kʰ)^n = (K^n)ʰ` and finite-history density `h(X_b)/h(x_a)`
+for finite positive measurable weights, without harmonicity. On the eligible
+region `{0 < h < ∞}`, harmonicity only there yields a Markov kernel and a
+complete native Ionescu--Tulcea Markov realization. `Spine/StateChain.lean`
+applies these generic results to the mean child kernel and identifies its
+transition with the selected-child marginal. Identification with the ray of
+the biased random tree remains open as stated below.
+`BranchingProcess/Offspring/Mean.lean`
 constructs the mean child kernel. `BranchingProcess/Spine/Family/` constructs
 the joint family/child bias, proves its probability normalization, derives
 both marginals, and proves conditional child selection. `Spine/Tree/Construction.lean`
