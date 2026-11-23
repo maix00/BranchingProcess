@@ -10,7 +10,7 @@ public import Combinatorics.BranchingWalk.Step.Selection.Potential
 public import MeasureTheory.BranchingWalk.Step.Selection.FirstN
 public import MeasureTheory.BranchingWalk.Step.Selection.Slot
 import MeasureTheory.MeasurableSpace.Finset.Filter
-import MeasureTheory.MeasurableSpace.CountableEvaluation
+import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 /-!
 # Measurability of potential-based branching selections
@@ -70,25 +70,12 @@ theorem firstSelectedSlotPositivePotential_measurable
     (φ : Potential X) :
     Measurable (firstSelectedSlotPositivePotential R φ) := by
   have hfirst := firstSelectedSlot_measurable R hR
-  have hcoordinate (i : α) (_hi : i ∈ Set.range (firstSelectedSlot R)) :
-      Measurable (fun ξ : Step α X => ξ.potentialValue' φ i) :=
-    Step.potentialValue'_measurable φ i
-  have hfiber (i : α) (_hi : i ∈ Set.range (firstSelectedSlot R)) :
-      MeasurableSet {ξ : Step α X | firstSelectedSlot R ξ = i} := by
-    have hfiber' : MeasurableSet
-        ((firstSelectedSlot R) ⁻¹' ({i} : Set α)) :=
-      hfirst (measurableSet_singleton i)
-    have heq : {ξ : Step α X | firstSelectedSlot R ξ = i} =
-        (firstSelectedSlot R) ⁻¹' ({i} : Set α) := by
-      ext ξ
-      rfl
-    rw [heq]
-    exact hfiber'
   have hvalue : Measurable (fun ξ : Step α X =>
       ξ.potentialValue' φ (firstSelectedSlot R ξ)) :=
-    Measurable.eval_of_countable_range
-      (fun ξ i => ξ.potentialValue' φ i) (firstSelectedSlot R)
-      hcoordinate hfiber (Set.to_countable _)
+    (measurable_from_prod_countable_left
+      (f := fun p : Step α X × α => p.1.potentialValue' φ p.2)
+      (fun i => Step.potentialValue'_measurable φ i)).comp
+        (measurable_id.prodMk hfirst)
   change Measurable (fun ξ : Step α X =>
     max 0 (ξ.potentialValue' φ (firstSelectedSlot R ξ)))
   exact measurable_const.max hvalue

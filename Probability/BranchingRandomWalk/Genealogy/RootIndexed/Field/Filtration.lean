@@ -10,7 +10,7 @@ public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Basic
 public import Probability.BranchingRandomWalk.Tree.Filtration
 public import Probability.Process.Filtration.GeneratedByCoordinates
 
-import MeasureTheory.MeasurableSpace.CountableEvaluation
+import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 /-!
 # Generation filtrations on root-indexed step fields
@@ -239,14 +239,24 @@ theorem RootIndexed.selectedStep_measurable
         ω (chosen ω).1 (chosen ω).2) := by
   let _ : MeasurableSpace (RootIndexed.StepField Root α X) :=
     RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n
-  exact Measurable.eval_of_countable_range
-    (fun ω p => ω p.1 p.2) chosen
-    (fun p hp => by
-      have hpdepth : p.2.length < n := by
-        obtain ⟨ω, hω⟩ := hp
-        simpa [← hω] using hdepth ω
-      exact RootIndexed.step_measurable (X := X) p.1 p.2 hpdepth)
-    (fun p _ => hfiber p) hcount
+  let R := Set.range chosen
+  let _ : Countable R := Set.countable_coe_iff.mpr hcount
+  let _ : MeasurableSpace R := ⊤
+  let selected (ω : RootIndexed.StepField Root α X) : R := ⟨chosen ω, Set.mem_range_self ω⟩
+  have hs : Measurable selected := measurable_to_countable' fun p => by
+    convert hfiber p.1 using 1
+    ext ω
+    exact Subtype.ext_iff
+  have he : Measurable (fun z : RootIndexed.StepField Root α X × R =>
+      z.1 z.2.1.1 z.2.1.2) := by
+    apply measurable_from_prod_countable_left
+    intro p
+    have hpdepth : p.1.2.length < n := by
+      obtain ⟨ω, hω⟩ := p.2
+      simpa [← hω] using hdepth ω
+    exact RootIndexed.step_measurable (X := X) p.1.1 p.1.2 hpdepth
+  exact he.comp (measurable_id.prodMk hs)
+
 
 
 /-- The finite multi-root generation domain flow is the root-indexed

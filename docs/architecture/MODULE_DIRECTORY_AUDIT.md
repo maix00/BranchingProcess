@@ -29205,3 +29205,31 @@ owned by `MeasureTheory/BranchingWalk/Step/Selection/Split.lean`, and the
 positive-probability finite-cutoff estimate for a first-or-below-potential
 selector is in `Probability/BranchingRandomWalk/Step/Selection/BoundedSplit.lean`.
 The corresponding axiom tests and the test runner now follow these owners.
+
+
+## Native countable-range evaluation audit (2026-11-23)
+
+This supersedes the historical `CountableEvaluation` promotion notes above.
+Pinned Mathlib `26573066084e6e2aa8526ea358bc43b66d96f970` and the
+[official constructions API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/MeasurableSpace/Constructions.html)
+provide `measurable_to_countable'` (measurable singleton preimages imply a
+measurable map into a countable codomain) and
+`measurable_from_prod_countable_left` (measurable coordinate sections give a
+measurable product field for a countable discrete index). For a selector
+whose ambient index type is uncountable, use the subtype of its actual
+countable range and give that subtype the discrete measurable space. The
+selector's original measurable fibers prove the restricted selector
+measurable; composing product evaluation with that selector proves the
+required observation measurable. Coordinate hypotheses remain restricted to
+the actual range, and no assumption on the ambient index measurable space
+is introduced.
+
+All seven calls across six modules now use these Mathlib operations directly:
+selected-population adaptedness, root-indexed selected steps, selected tree
+marks, positive-potential slot observations, matched-rank value installation,
+finite-population membership, and distinguished-state observation. The local
+generic file and both declarations were removed, without aliases or a new
+wrapper at another layer. Their clients retain their original statements.
+Earlier inventory entries naming that file are historical checkpoints, not
+current module owners. The current ownership table and `ARCHITECTURE.md`
+record the native interfaces.

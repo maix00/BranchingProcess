@@ -104,12 +104,10 @@ specializes it to the eligible region. `Spine/StateChain.lean` derives the
 associated spine chain and its path density from these general interfaces.
 It identifies its transition with the selected-child marginal.
 `Spine/Observation.lean` reads a unique distinguished coordinate of any
-countable tagged population. Its model-specific readout uses the existing
-`Measurable.eval_of_countable_range` in `MeasurableSpace/CountableEvaluation.lean`:
-the selector returns the unique distinguished index, or `none` on the
-exceptional populations. Coordinate measurability, measurable selector fibers,
-and the countable selector range give measurability without an additional
-generic coordinate-selection API.
+countable tagged population. Its model-specific readout uses Mathlib's
+`measurable_to_countable'` for the selector and
+`measurable_from_prod_countable_left` for evaluation. The selector returns the
+unique distinguished index, or `none` on exceptional populations.
 `Spine/Tree/Observation.lean` reads the actual spine's state sequence from the
 existing tree, and `Tree/PathLaw.lean` identifies its complete path law with
 the same canonical Doob Markov chain. The proof uses
@@ -126,13 +124,15 @@ The observation abstraction audit checked pinned Mathlib
 `Measurable.find` selects the first satisfied predicate in a natural-number
 indexing and assumes a witness at each input. `measurable_liftCover` and
 `exists_measurable_piecewise` glue compatible local functions over countably
-many measurable pieces. The existing repository evaluation theorem matches
-the actual observation more directly: it allows arbitrary index types with
-countable selector range, asks only for selector-fiber and coordinate
-measurability, and requires no measurable-space structure on the index type.
-The distinguished-state selector is therefore kept as model-specific data;
-the general measurability argument is reused instead of a separate
-optional-coordinate selection definition.
+many measurable pieces. Mathlib's `measurable_to_countable'` and
+`measurable_from_prod_countable_left` also cover the former repository
+countable-range evaluation interfaces: restrict the selector to its actual
+range, equip that countable subtype with the discrete measurable space,
+prove selector measurability from its fibers, then evaluate the measurable
+product field. This preserves arbitrary ambient index types and requires
+coordinate measurability only on the actual range. Every client uses these
+native operations directly; no local evaluation wrapper or forwarding alias
+is retained. The distinguished-state selector remains model-specific data.
 
 `Spine/Tree/Construction.lean` augments states by the ordinary/distinguished
 role and applies the existing `State.treeKernel`; it does not implement

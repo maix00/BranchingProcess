@@ -10,7 +10,7 @@ public import MeasureTheory.Selection.NSelection.AtRank
 public import Probability.BranchingRandomWalk.Coupling.Field.Preimage
 public import Combinatorics.Selection.NSelection.Matching.ByRank
 public import Combinatorics.BranchingWalk.Step.Map
-import MeasureTheory.MeasurableSpace.CountableEvaluation
+import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 /-!
 # Rank preimage measurability
@@ -72,8 +72,14 @@ private theorem measurableSet_mem_finset
     (hfiber : ∀ t, MeasurableSet {ω | s ω = t})
     (hrange : (Set.range s).Countable) (i : ι) :
     MeasurableSet {ω | i ∈ s ω} := by
-  have hs : Measurable s :=
-    measurable_of_countable_range_of_fibers s hfiber hrange
+  let R := Set.range s
+  let _ : Countable R := Set.countable_coe_iff.mpr hrange
+  have hsR : Measurable (fun ω => (⟨s ω, Set.mem_range_self ω⟩ : R)) :=
+    measurable_to_countable' fun t => by
+      convert hfiber t.1 using 1
+      ext ω
+      exact Subtype.ext_iff
+  have hs : Measurable s := measurable_subtype_coe.comp hsR
   exact measurableSet_setOfPred.2 (measurable_finset_iff.mp hs i)
 
 omit [MeasurableSpace Ω] in
@@ -451,17 +457,26 @@ theorem valueAtMatchedRank_measurable
   let field : Ω → Option Particle → Y := fun ω o =>
     o.elim (fallback ω q) (objectData ω)
   have hfield : Measurable (fun ω => field ω (pre ω)) := by
-    apply Measurable.eval_of_countable_range field pre
-    · intro o _
-      cases o with
-      | none => simpa [field] using hfallback q
-      | some p => simpa [field] using hobjectData p
-    · intro o _
-      exact measurableSet_preimageByRank_eq objectOrderKey partnerOrderKey
-        objectsToMatch availablePartners hobjectsToMatchFiber hobjectsToMatchRange havailablePartnersFiber havailablePartnersRange
-        hobjectOrderKeyMeasurable hpartnerOrderKeyMeasurable q o
-    · exact preimageByRank_range_countable objectOrderKey partnerOrderKey
-        objectsToMatch availablePartners hobjectsToMatchRange q
+    let R := Set.range pre
+    let _ : Countable R := Set.countable_coe_iff.mpr
+      (preimageByRank_range_countable objectOrderKey partnerOrderKey
+        objectsToMatch availablePartners hobjectsToMatchRange q)
+    let _ : MeasurableSpace R := ⊤
+    let selected (ω : Ω) : R := ⟨pre ω, Set.mem_range_self ω⟩
+    have hs : Measurable selected := measurable_to_countable' fun o => by
+      convert measurableSet_preimageByRank_eq objectOrderKey partnerOrderKey
+          objectsToMatch availablePartners hobjectsToMatchFiber hobjectsToMatchRange
+          havailablePartnersFiber havailablePartnersRange hobjectOrderKeyMeasurable
+          hpartnerOrderKeyMeasurable q o.1 using 1
+      ext ω
+      exact Subtype.ext_iff
+    have he : Measurable (fun z : Ω × R => field z.1 z.2.1) := by
+      apply measurable_from_prod_countable_left
+      intro o
+      cases ho : o.1 with
+      | none => simpa [field, ho] using hfallback q
+      | some p => simpa [field, ho] using hobjectData p
+    exact he.comp (measurable_id.prodMk hs)
   simpa [valueAtMatchedRank, Coupling.valueAtObjectPreimage, pre, field] using hfield
 
 end ProbabilityTheory.BranchingRandomWalk.Coupling
