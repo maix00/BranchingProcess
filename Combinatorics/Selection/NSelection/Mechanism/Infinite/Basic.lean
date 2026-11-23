@@ -52,7 +52,7 @@ on particle labels and observed values.
   injective and preserves the strict order of
   the value keys, then
   `IsFirstNBy N value C S` implies
-  `IsFirstNBy N targetValue (f '' C) (S.image f)`.
+  `IsFirstNBy N imageValue (f '' C) (S.image f)`.
 - `Combinatorics.Selection.NSelection.IsFirstNBy.unique`: two
   first-$N$ segments for the same key and candidates are equal.
 - `Combinatorics.Selection.NSelection.IsFirstNBy.mem_iff_ncard_lt`
@@ -284,13 +284,13 @@ theorem IsFirstNBy.image
     {κ : Type*}
     [LinearOrder ι] [LinearOrder κ] [LinearOrder Value] [DecidableEq κ]
     (N : ℕ) (f : ι → κ) (hf : Function.Injective f)
-    (value : ι → Value) (targetValue : κ → Value)
+    (value : ι → Value) (imageValue : κ → Value)
     (keyOrder : ∀ p q,
       valueKey value p < valueKey value q ↔
-        valueKey targetValue (f p) < valueKey targetValue (f q))
+        valueKey imageValue (f p) < valueKey imageValue (f q))
     (candidates : Set ι) (selected : Finset ι)
     (hselected : IsFirstNBy N value candidates selected) :
-    IsFirstNBy N targetValue (f '' candidates) (selected.image f) := by
+    IsFirstNBy N imageValue (f '' candidates) (selected.image f) := by
   classical
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro q hq

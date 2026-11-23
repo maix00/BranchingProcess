@@ -25,8 +25,8 @@ public import Probability.Process.Path.Restart.Basic
   positions are measured from the initial root through the cutoff and from the
   cutoff ancestor thereafter.
 
-This file defines the general set-valued killed populations obtained from
-ancestral relative-position windows.  Finiteness and real-valued weights are
+This file defines the general set-valued populations selected by ancestral
+relative-position windows.  Finiteness and real-valued weights are
 separate layers.
 
 For a label `q` at generation `n` and an anchor `a≤n`, the relative position
@@ -55,8 +55,8 @@ open ProbabilityTheory.Process.Path
 attribute [local instance] Classical.propDecidable Classical.decEq
 attribute [local instance] Classical.propDecidable Classical.decEq
 
-/-- Kill every child whose displacement from its `anchor n` ancestor lies
-outside `window n`.  No order or real-valued structure is imposed on the
+/-- Select each child whose displacement from its `anchor n` ancestor lies
+inside `window n`.  No order or real-valued structure is imposed on the
 position space. -/
 noncomputable def ofRelativePositionSets
     {Root α Mark Position : Type*}
@@ -92,7 +92,7 @@ noncomputable def ofRelativePositionSets
   exact (RootIndexed.relativePositionAtGeneration_measurable
     initialPosition d hd (hanchor n) q) (hwindow n)
 
-/-- Two-stage killed population: positions are viewed from the initial root
+/-- Two-stage selected population: positions are viewed from the initial root
 through `cutoff`, and from the generation-`cutoff` ancestor afterwards.  The
 window function may impose narrower cuts exactly at `cutoff` and at a terminal
 generation. -/

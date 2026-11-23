@@ -206,7 +206,7 @@ lemma drift_limit
     have hdom : ∫ x in {x | |x| < r}, x ^ 2 ∂(S.measure (t_seq n) : Measure ℝ) ≤
         ∫ x in smallJumpSet, x ^ 2 ∂(S.measure (t_seq n) : Measure ℝ) :=
       setIntegral_mono_set hint_sq_small (ae_of_all _ fun x => sq_nonneg x)
-        (LE.le.eventuallyLE hsubset)
+        (Filter.Eventually.of_forall fun _ hx => hsubset hx)
     -- Bound |t⁻¹∫_{|x|<r} (x - sin x)|: |x - sin x| ≤ x²/2 on {|x|<r}, then dominate by smallJumpSet.
     have hS : |(t_seq n).val⁻¹ *
         ∫ x in {x | |x| < r}, (x - Real.sin x) ∂(S.measure (t_seq n) : Measure ℝ)| ≤ C₂ := by
