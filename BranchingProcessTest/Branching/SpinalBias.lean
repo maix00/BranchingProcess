@@ -1,6 +1,7 @@
 import Probability.BranchingProcess.Spine.Family.Conditional
 import Probability.BranchingProcess.Spine.Tree.Ray
 import Probability.BranchingProcess.Spine.Tree.FirstGeneration
+import Probability.BranchingProcess.Spine.Tree.Normal
 
 open MeasureTheory ProbabilityTheory Combinatorics.Branching
 open scoped ENNReal
@@ -97,6 +98,49 @@ example {S : Type*} [MeasurableSpace S] (K : Kernel S (Step Bool S)) [IsMarkovKe
           measurableSet_option_none.preimage (measurable_pi_apply i))).mpr (fun _ => rfl)
     | some a => exact hsupport a
 
+-- A zero-weight ordinary root still has exactly the original complete subtree law.
+example : (BranchingProcess.Spine.treeKernel offspring (h := weight)
+      (by fun_prop) harmonic_eligible (some (Sum.inl true))).map
+      (fun t u => (t u).map (Sum.elim id Subtype.val)) =
+      BranchingProcess.State.treeKernel offspring (some true) :=
+  BranchingProcess.Spine.treeKernel_normal_map offspring (by fun_prop)
+    harmonic_eligible (some true)
+
+-- A noninjective state factor can erase state information while retaining both
+-- child slots. The initial states of the two roots below are perfectly correlated.
+noncomputable def collapsedOffspring : Kernel Unit (Step Bool Unit) :=
+  Kernel.const _ (Measure.dirac (fun _ => some ()))
+
+instance : IsMarkovKernel collapsedOffspring := by
+  unfold collapsedOffspring
+  infer_instance
+
+example (μ : Measure Bool) [IsProbabilityMeasure μ] :
+    (BranchingProcess.State.generationPathLaw offspring
+      (μ.map (fun b (_r : Bool) => some b))).map
+        (fun x n p => (x n p).map (fun _ => ())) =
+      BranchingProcess.State.generationPathLaw collapsedOffspring
+        ((μ.map (fun b (_r : Bool) => some b)).map
+          (fun x r => (x r).map (fun _ => ()))) := by
+  apply BranchingProcess.State.generationPathLaw_map offspring collapsedOffspring
+    (fun _ => ()) measurable_const
+  intro a
+  rw [offspring, collapsedOffspring, Kernel.const_apply, Kernel.const_apply,
+    Measure.map_dirac' (Step.map_measurable measurable_const)]
+  congr 1
+
+-- Keep the spine index in the integrand: summing the family density alone
+-- would not establish this fixed-index identity.
+example (i : Bool) :
+    (∫⁻ t, if (t [i]).any Sum.isRight = true then
+      (1 : ℝ≥0∞) else 0
+      ∂BranchingProcess.Spine.treeKernel offspring (h := weight) (by fun_prop)
+        harmonic_eligible (some (Sum.inr ⟨false, by simp [weight]⟩))) =
+      ∫⁻ ξ, (ξ i).elim 0 weight / weight false ∂offspring false := by
+  simpa only [mul_one] using
+    BranchingProcess.Spine.lintegral_treeKernel_firstSpineChild offspring (by fun_prop)
+      harmonic_eligible ⟨false, by simp [weight]⟩ i (g := fun _ => 1) measurable_const
+
 end SpinalBiasExamples
 
 #print axioms ProbabilityTheory.Kernel.lintegral_doobTransform
@@ -118,3 +162,13 @@ end SpinalBiasExamples
 #print axioms ProbabilityTheory.BranchingProcess.State.ae_treeKernel_reproduction
 #print axioms ProbabilityTheory.BranchingProcess.Spine.ae_treeKernel_unique_spine
 #print axioms ProbabilityTheory.BranchingProcess.Spine.treeKernel_firstFamily
+
+#print axioms ProbabilityTheory.Kernel.map_eq_trajMeasure
+#print axioms ProbabilityTheory.Kernel.map_trajMeasure
+#print axioms ProbabilityTheory.BranchingProcess.State.generationKernel_map
+#print axioms ProbabilityTheory.BranchingProcess.State.generationPathLaw_map
+#print axioms ProbabilityTheory.BranchingProcess.State.treeKernel_map
+#print axioms ProbabilityTheory.BranchingProcess.Spine.treeKernel_normal
+#print axioms ProbabilityTheory.BranchingProcess.Spine.treeKernel_normal_map
+#print axioms ProbabilityTheory.BranchingProcess.Spine.traj_normalDescendantTrees
+#print axioms ProbabilityTheory.BranchingProcess.Spine.lintegral_treeKernel_firstSpineChild

@@ -13,7 +13,7 @@ proof-support declarations are documented in their owning modules.
 | Lines in a forest | Ancestry antichains; meeting every infinite path is a separate property. Ancestral precedence orders lines, and distinct line members have disjoint descendant subtrees | [`Line/Basic`](Combinatorics/UlamHarris/Line/Basic.lean), [`Line/Order`](Combinatorics/UlamHarris/Line/Order.lean) |
 | First-entrance and truncated lines | First entrance consists of ancestry-minimal target nodes. Generation truncations are increasing cuts of bounded depth and meet every infinite address path | [`FirstEntrance`](Combinatorics/UlamHarris/Line/FirstEntrance.lean), [`Truncation`](Combinatorics/UlamHarris/Line/Truncation.lean) |
 | Optional random lines | Optionality tests `{L ≼ ℓ} ∈ F_ℓ`. Ancestrally observable first-entrance rules give optional lines; along a fixed path their entrance events equal Mathlib hitting-time events | [`Optional`](Probability/Process/Tree/Line/Optional.lean), [`FirstEntrance`](Probability/Process/Tree/Line/FirstEntrance.lean), [`PathHitting`](Probability/Process/Tree/Line/PathHitting.lean) |
-| Information at an optional line | `L ≼ M` implies `F_L ⊆ F_M`; stopping at a deterministic line recovers its past. A decision known at the earlier optional line can paste two ordered optional lines | [`Stopped`](Probability/Process/Tree/Line/Information/Stopped.lean), [`Pasting`](Probability/Process/Tree/Line/Pasting.lean) |
+| Information at an optional line | `L ≼ M` implies `F_L ⊆ F_M`; stopping at a deterministic line recovers its past. Ordered optional lines form a native filtration, admitting conditional-expectation martingales and Lévy upward convergence to the generated stopped information. Earlier stopped information can decide an ordered pasting | [`Stopped`](Probability/Process/Tree/Line/Information/Stopped.lean), [`Pasting`](Probability/Process/Tree/Line/Pasting.lean) |
 | First-entrance exponential mass | For an i.i.d. BRW with boundary-normalized tilt, `E[W_B] = P̂(∃ n, S_n ∈ B) ≤ 1`; expectation is one exactly when the tilted spine enters `B` almost surely | [`Spine/StoppingLine/FirstEntrance`](Probability/BranchingRandomWalk/Spine/StoppingLine/FirstEntrance.lean) |
 
 Life records and child marks are ordinary measurable observations. States are
@@ -23,8 +23,11 @@ The library distinguishes birth-state information from the individual's own
 reproduction information.
 
 **Boundary:** the general strong branching property at arbitrary optional
-lines, the general stopped-line many-to-one identity, and the associated martingale
-convergence theorems are not yet formalized. The first-entrance identity above
+lines, the general stopped-line many-to-one identity, and convergence of
+stopped branching-mass martingales are not yet formalized. The conditional-expectation convergence above reuses
+Mathlib, with [checked examples](BranchingProcessTest/Branching/OptionalLineFiltration.lean),
+and does not assert these branching-specific results. The
+first-entrance identity above
 is the additive BRW specialization, rather than the full state-dependent theorem. Optionality of generation
 truncation is currently proved for ancestrally observable membership rules;
 it is not asserted for arbitrary optional lines. Source results and remaining
@@ -36,6 +39,7 @@ obligations are recorded in the [formalization checklist](FORMALIZATION_CHECKLIS
 | --- | --- | --- |
 | State-dependent branching process | A native offspring kernel `Q(s)` and measurable update `F(s,e)` induce the offspring-state kernel. The process admits arbitrary joint initial states; descendant trees have the conditional product law at fixed generations and at observed stopping generations | [`Offspring/Kernel`](Probability/BranchingProcess/Offspring/Kernel.lean), [`State/BranchingProperty`](Probability/BranchingProcess/State/BranchingProperty.lean), [`State/Descendants/Observed`](Probability/BranchingProcess/State/Descendants/Observed.lean) |
 | Harmonic spine bias | For a general mean-harmonic state kernel, the joint law is `Q(s,dξ) h(ξ_i)/h(s)`. Its family marginal has total-weight density; its selected-state marginal is the Doob transform. Conditional child weights are `h(ξ_i)/∑_j h(ξ_j)` | [`Family/Marginals`](Probability/BranchingProcess/Spine/Family/Marginals.lean), [`Family/Conditional`](Probability/BranchingProcess/Spine/Family/Conditional.lean) |
+| Measurable state factors | If `K(s).map (Step.map f) = L(f(s))`, mapping every state by `f` preserves the complete path and tree laws, including arbitrary joint initial states; `f` may be noninjective | [`State/Map`](Probability/BranchingProcess/State/Map.lean) |
 | Branching random walk and tilted path | Many-to-one formulas turn generation sums of endpoint or ancestral-path functionals into tilted-spine expectations | [`EndpointManyToOne`](Probability/BranchingRandomWalk/Spine/ManyToOne/EndpointManyToOne.lean), [`Path/ManyToOne/Identity`](Probability/BranchingRandomWalk/Spine/Path/ManyToOne/Identity.lean) |
 | Selection and capacity `N` | Threshold-count domination gives an injective order-preserving matching. Adapted selection and first-`N` populations admit pathwise and probabilistic coupling | [`ThresholdCount`](Combinatorics/Matching/ThresholdCount.lean), [`SelectedPopulation`](Combinatorics/Selection/NSelection/Matching/SelectedPopulation.lean), [`Causal/Restarted/Coupling`](Probability/BranchingRandomWalk/Selection/NSelection/Law/Causal/Restarted/Coupling.lean) |
 | Selected-population endpoint | From `⌊Nᵃ⌋` initial particles, `a ∈ [0,1]`, at times `n_N/log³ N → t > 0`, the normalized minimum converges in `L²` to `−a + π²σ²t/2`, under the stated branching and moment conditions | [`L2Limit`](Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/Endpoint/Sequence/L2Limit.lean) |
@@ -44,7 +48,11 @@ obligations are recorded in the [formalization checklist](FORMALIZATION_CHECKLIS
 The canonical normal/distinguished tree has almost surely one realized
 infinite spine, and its distinguished nodes are exactly that ray's prefixes:
 [`Spine/Tree/Ray`](Probability/BranchingProcess/Spine/Tree/Ray.lean).
-The root-family density is derived from this same tree. The higher-generation
+Normal descendant trees have their original laws and the conditional product
+law at distinct current normal nodes:
+[`Spine/Tree/Normal`](Probability/BranchingProcess/Spine/Tree/Normal.lean).
+The root-family density and fixed first-spine-child weighted identity are
+derived from this same tree. The higher-generation
 tree-density theorem and full conditional spine/path decomposition remain open;
 the first-generation identity does not assert them. See the [proof checklist](FORMALIZATION_CHECKLIST.md#shis-general-spinal-decomposition).
 

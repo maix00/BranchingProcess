@@ -31,6 +31,17 @@ FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
 GENERAL_LAYER_BOUNDARIES = {
+    "Probability.Kernel.IonescuTulcea.Map": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.State.Map": (
+        "Probability.BranchingProcess.Spine",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.Normal": (
+        "Probability.BranchingRandomWalk",
+    ),
     "Probability.BranchingProcess.State.Support": (
         "Probability.BranchingProcess.Spine",
         "Probability.BranchingRandomWalk",

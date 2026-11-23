@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.Tree.Line.Optional
+public import Mathlib.Probability.Process.Filtration
 
 /-!
 # Information at an optional random line
@@ -26,6 +27,13 @@ In `ProbabilityTheory.Tree`:
 * `IsOptionalLine.measurableSpace_const` identifies the stopped information
   of a constant line `ℓ` with `past ℓ`, assuming ancestry monotonicity of
   `past` and that `past ℓ` is contained in the ambient space.
+
+* `IsOptionalLine.filtration` constructs the native filtration
+  `Fᵢ = F_(Lᵢ)` for any preorder-indexed pointwise increasing family of optional
+  lines; `IsOptionalLine.filtration_apply` gives this defining identity.
+  Native conditional-expectation martingale and Lévy upward theorems apply
+  to this object. The limiting information is `⨆ i, F_(Lᵢ)`, which need not
+  equal the ambient sigma algebra for non-exhaustive lines.
 
 This is the tree-order version of Mathlib's stopped-information construction
 `MeasureTheory.IsStoppingTime.measurableSpace` in
@@ -125,6 +133,22 @@ theorem IsOptionalLine.measurableSpace_const
     · simpa only [hℓq, Set.ofPred_true, Set.inter_univ] using hmono hℓ hq hℓq _ hA
     · simp only [hℓq, Set.ofPred_false, Set.inter_empty]
       exact @MeasurableSet.empty Ω (past q)
+
+/-- The information at an ordered family of optional lines forms a native filtration. -/
+def IsOptionalLine.filtration {ι : Type*} [Preorder ι]
+    {lines : ι → Ω → Set (RootIndexed.TreeNode Root α)}
+    (h : ∀ i, IsOptionalLine past (lines i))
+    (hmono : ∀ i j, i ≤ j → ∀ ω, RootIndexed.Line.Precedes (lines i ω) (lines j ω)) :
+    Filtration ι mΩ where
+  seq i := (h i).measurableSpace
+  mono' := fun i j hij => (h i).measurableSpace_mono (h j) (hmono i j hij)
+  le' i := (h i).measurableSpace_le
+
+@[simp] theorem IsOptionalLine.filtration_apply {ι : Type*} [Preorder ι]
+    {lines : ι → Ω → Set (RootIndexed.TreeNode Root α)}
+    (h : ∀ i, IsOptionalLine past (lines i))
+    (hmono : ∀ i j, i ≤ j → ∀ ω, RootIndexed.Line.Precedes (lines i ω) (lines j ω))
+    (i : ι) : IsOptionalLine.filtration h hmono i = (h i).measurableSpace := rfl
 
 end ProbabilityTheory.Tree
 
