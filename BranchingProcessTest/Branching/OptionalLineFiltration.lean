@@ -305,3 +305,57 @@ end OptionalLineRandomCutExamples
 
 #print axioms OptionalLineRandomCutExamples.cut_optional
 #print axioms OptionalLineRandomCutExamples.branching_on_decision
+
+
+open scoped ENNReal
+
+-- No selector can exist on an empty line. The empty tested family still gives
+-- the full conditional identity, including an infinite payoff, on that line.
+example {S : Type*} [MeasurableSpace S]
+    (K : Kernel S (Combinatorics.Branching.Step Bool S)) [IsMarkovKernel K]
+    (initial : Measure (Unit → Option S)) [IsProbabilityMeasure initial]
+    {L : (Π n : ℕ, (Unit × (Fin n → Bool)) → Option S) →
+      Set (RootIndexed.TreeNode Unit Bool)}
+    (h : IsOptionalLine
+      (linePast (MeasurableSpace.comap
+        (ProbabilityTheory.BranchingProcess.State.rootStates
+          (Root := Unit) (α := Bool) (S := S)) inferInstance)
+        (fun u => MeasurableSpace.comap
+          (ProbabilityTheory.BranchingProcess.State.offspringStates (S := S) u) inferInstance)) L) :
+    (ProbabilityTheory.BranchingProcess.State.generationPathLaw K initial)⁻[
+      (fun _ => (∞ : ℝ≥0∞)) | h.measurableSpace] =ᵐ[
+      ProbabilityTheory.BranchingProcess.State.generationPathLaw K initial]
+      fun _ => ∞ := by
+  have hc := ProbabilityTheory.BranchingProcess.State.condLExp_descendantTrees_optionalLine
+    K initial h (fun i : Empty => i.elim)
+    (fun i => i.elim) (fun i => i.elim) (fun _ i => i.elim)
+    (fun i => i.elim) (fun _ => ∞) measurable_const
+  simpa using hc
+
+#print axioms ProbabilityTheory.HasCondDistrib.condLExp_eq
+#print axioms ProbabilityTheory.BranchingProcess.State.condLExp_descendantTrees_optionalLine
+
+
+namespace OptionalLineRandomCutExamples
+
+open ProbabilityTheory.BranchingProcess.State Combinatorics.Branching
+open OptionalLineLocalizationExamples
+
+-- This line is empty on one initial-state event and contains different depths
+-- on its complement. Infinite payoffs can be localized without choosing a root
+-- on every sample or adding a moment assumption.
+example (K : Kernel Bool (Step Bool Bool)) [IsMarkovKernel K]
+    (initial : Measure (Unit → Option Bool)) [IsProbabilityMeasure initial] :
+    (generationPathLaw K initial)⁻[decision.indicator (fun _ => (∞ : ℝ≥0∞)) |
+      cut_optional.measurableSpace] =ᵐ[generationPathLaw K initial]
+      decision.indicator (fun _ => ∞) := by
+  have hevent : {x : History | ((), [false]) ∈ cut x} = decision := by
+    ext x
+    by_cases hx : x ∈ decision <;> simp [cut, hx, mixedCut]
+  have hc := condLExp_on_optionalLine K initial cut_optional ((), [false])
+    (fun _ => ∞) measurable_const
+  simpa only [hevent, lintegral_const, measure_univ, mul_one] using hc
+
+end OptionalLineRandomCutExamples
+
+#print axioms ProbabilityTheory.BranchingProcess.State.condLExp_on_optionalLine

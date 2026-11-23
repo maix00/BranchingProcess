@@ -25,6 +25,10 @@ In `ProbabilityTheory.BranchingProcess.State`, write `P_x = treeKernel K x`,
 * `condExp_prod_on_optionalLine` proves the full localized formula
   `E[1_(E_ℓ) ∏ᵢ gᵢ(T_(rᵢ)) | F_L] = 1_(E_ℓ) ∏ᵢ ∫ gᵢ dP_(X_(rᵢ))`.
   This includes lines of random size and samples where the line is empty.
+* `condLExp_on_optionalLine` proves
+  `E[1_(u∈L) g(x,T_u) | F_L] = 1_(u∈L) ∫ g(x,t) dP_(X_u)`
+  for every nonnegative stopped-information-dependent measurable payoff.
+  Empty lines and infinite payoffs are allowed.
 * `descendantTreesKernel` constructs the native product kernel
   `κ(ω) = ⊗ᵢ P_(X_(Rᵢ(ω)))` on complete descendant trees, measurable in `F_L`.
 * `descendantTreesKernel.isMarkovKernel` proves `κ(ω)(univ) = 1`.
@@ -32,6 +36,10 @@ In `ProbabilityTheory.BranchingProcess.State`, write `P_x = treeKernel K x`,
   `HasCondDistrib` of the entire observed family `(T_(Rᵢ))ᵢ` given `F_L`.
 * `condExp_descendantTrees_optionalLine` proves `E[g((T_(Rᵢ))ᵢ) | F_L] = ∫ g dκ`
   for any strongly measurable Banach-valued test with integrable selected payoff.
+* `condLExp_descendantTrees_optionalLine` proves the same complete-family
+  identity for every nonnegative measurable payoff `g(x, (T_(Rᵢ))ᵢ)`,
+  allowing dependence on the stopped information, with values in `ℝ≥0∞`;
+  no moment assumption is required.
 * `condExp_selectedDescendantTree` derives the single-tree conditional identity
   `E[g(T_R) | F_L] = ∫ g dP_(X_R)` from that full-family theorem.
 
@@ -52,6 +60,11 @@ DOI 10.1016/0304-4149(89)90075-6. The model here is the existing discrete
 state-dependent offspring-kernel tree. Continuous-time life histories require
 their corresponding model and information interfaces.
 
+The nonnegative localized identity is the subtree conditional-mean step of
+J. D. Biggins and A. E. Kyprianou, *Measure change in multitype branching*
+(2004), Lemma 14.2, p. 578, DOI 10.1239/aap/1086957585. The generation-mass
+assembly of that lemma is a separate theorem and is not asserted here.
+
 The proof derives arbitrary deterministic-cut product identities from the actual
 one-node outside-subtree law, localizes to optional cuts, and identifies the full
 joint kernel law with native pi-system uniqueness. Generation and stopping-generation
@@ -61,6 +74,8 @@ specializations live in `State/Descendants/Observed.lean` and use this interface
 @[expose] public section
 
 namespace ProbabilityTheory.BranchingProcess.State
+
+open scoped ENNReal
 
 open MeasureTheory MeasurableSpace Combinatorics.UlamHarris Combinatorics.Branching
 
@@ -299,6 +314,117 @@ theorem condExp_prod_on_optionalLine {J : Type*} [Fintype J]
     exact heq x hx
   · simp only [Set.indicator_of_notMem hx]
 
+/-- Nonnegative strong branching localized to membership of one fixed node.
+This is the subtree conditional-mean step used in Biggins–Kyprianou (2004),
+Lemma 14.2, with the existing Jagers–Lagerås optional-line law. The line may
+be empty, and no globally selected boundary vertex is required. -/
+theorem condLExp_on_optionalLine
+    (K : Kernel S (Step α S)) [IsMarkovKernel K]
+    (initial : Measure (Root → Option S)) [IsProbabilityMeasure initial]
+    {L : (Π n : ℕ, (Root × (Fin n → α)) → Option S) →
+      Set (RootIndexed.TreeNode Root α)}
+    (h : Tree.IsOptionalLine (Tree.linePast initialInformation reproductionInformation) L)
+    (u : RootIndexed.TreeNode Root α)
+    (g : (Π n : ℕ, (Root × (Fin n → α)) → Option S) ×
+      (List α → Option S) → ℝ≥0∞)
+    (hg : Measurable[h.measurableSpace.prod inferInstance] g) :
+    (generationPathLaw K initial)⁻[{x | u ∈ L x}.indicator
+      (fun x => g (x, descendantTree u x)) | h.measurableSpace]
+      =ᵐ[generationPathLaw K initial] {x | u ∈ L x}.indicator
+        (fun x => ∫⁻ tree, g (x, tree) ∂treeKernel K (stateAt u x)) := by
+  classical
+  let P := generationPathLaw K initial
+  let E := {x | u ∈ L x}
+  have hE : MeasurableSet[h.measurableSpace] E := by
+    simpa only [Set.singleton_subset_iff] using h.measurableSet_subset_stopped
+      (fun _ _ hp => Tree.linePast_mono initialInformation reproductionInformation hp)
+      {u} (Set.countable_singleton u)
+  have hEm : MeasurableSet E := h.measurableSpace_le _ hE
+  let q (x : Π n : ℕ, (Root × (Fin n → α)) → Option S) :=
+    if u ∈ L x then stateAt u x else none
+  have hq : Measurable[h.measurableSpace] q :=
+    h.measurable_boundary_state initialInformation reproductionInformation
+      rootStates_measurable.comap_le (fun v => (offspringStates_measurable v).comap_le)
+      u (stateAt u) (stateAt_measurable_ancestralPast u) none
+  let κ : @Kernel (Π n : ℕ, (Root × (Fin n → α)) → Option S)
+      (List α → Option S) h.measurableSpace inferInstance := (treeKernel K).comap q hq
+  have hD : Measurable (descendantTree u (S := S)) := descendantTree_measurable u
+  have hd : @HasCondDistrib _ _ _ inferInstance h.measurableSpace inferInstance
+      (descendantTree u) id κ (P.restrict E) := by
+    refine @Kernel.hasCondDistrib_of_condExp_generator
+      (Π n : ℕ, (Root × (Fin n → α)) → Option S)
+      (Π n : ℕ, (Root × (Fin n → α)) → Option S) (List α → Option S)
+      inferInstance h.measurableSpace inferInstance (P.restrict E) inferInstance
+      id (descendantTree u) (measurable_id'' h.measurableSpace_le) hD κ inferInstance
+      {V | MeasurableSet V} generateFrom_measurableSet.symm isPiSystem_measurableSet ?_
+    intro V hV
+    change MeasurableSet V at hV
+    let f := fun x => V.indicator (fun _ => (1 : ℝ)) (descendantTree u x)
+    let G := fun x => (κ x).real V
+    have hfm : StronglyMeasurable f :=
+      (stronglyMeasurable_const.indicator hV).comp_measurable hD
+    have hfi : Integrable f (P.restrict E) := Integrable.of_bound
+      hfm.aestronglyMeasurable 1 (Filter.Eventually.of_forall fun x => by
+        dsimp [f]; by_cases hx : descendantTree u x ∈ V <;> simp [hx])
+    have hGm : StronglyMeasurable[h.measurableSpace] G :=
+      (κ.measurable_coe hV).ennreal_toReal.stronglyMeasurable
+    have hGi : Integrable G (P.restrict E) := Integrable.of_bound
+      (hGm.mono h.measurableSpace_le).aestronglyMeasurable 1
+      (Filter.Eventually.of_forall fun x => by
+        rw [Real.norm_of_nonneg (measureReal_nonneg)]
+        exact measureReal_le_one)
+    rw [MeasurableSpace.comap_id]
+    refine (ae_eq_condExp_of_forall_setIntegral_eq h.measurableSpace_le hfi
+      (fun _ _ _ => hGi.integrableOn) ?_ hGm.aestronglyMeasurable).symm
+    intro A hA _
+    have hAm := h.measurableSpace_le _ hA
+    rw [Measure.restrict_restrict hAm]
+    have hr := setIntegral_prod_descendantTrees_optionalLine K initial h
+      (fun _ : Unit => u) (fun _ _ _ => Subsingleton.elim _ _)
+      (by simp)
+      (fun _ : Unit => V.indicator (fun _ => (1 : ℝ)))
+      (fun _ => stronglyMeasurable_const.indicator hV)
+      (fun _ t => by by_cases ht : t ∈ V <;> simp [ht]) hA
+    have hset : {x | Set.range (fun _ : Unit => u) ⊆ L x} = E := by
+      ext x
+      simp [E]
+    simp only [Fintype.prod_unique, hset] at hr
+    change (∫ x in A ∩ E, G x ∂P) = ∫ x in A ∩ E, f x ∂P
+    refine (setIntegral_congr_fun (hAm.inter hEm) ?_).trans hr.symm
+    intro x hx
+    dsimp [G, κ, q]
+    rw [ite_eq_left (show u ∈ L x from hx.2)]
+    exact (integral_indicator_one (μ := treeKernel K (stateAt u x)) hV).symm
+  have hc := @HasCondDistrib.condLExp_eq
+    (Π n : ℕ, (Root × (Fin n → α)) → Option S)
+    (Π n : ℕ, (Root × (Fin n → α)) → Option S) (List α → Option S)
+    inferInstance h.measurableSpace inferInstance
+    (P.restrict E) inferInstance id (descendantTree u) κ inferInstance hd
+    (measurable_id'' h.measurableSpace_le) inferInstance g hg
+  rw [@MeasurableSpace.comap_id _ h.measurableSpace] at hc
+  simp only [id_eq] at hc
+  let G := fun x => ∫⁻ tree, g (x, tree) ∂κ x
+  have hG : Measurable[h.measurableSpace] G := hg.lintegral_kernel_prod_right'
+  have hout := (ae_eq_condLExp (hm := h.measurableSpace_le) P
+    (E.indicator (fun x => g (x, descendantTree u x))) (hG.indicator hE) (by
+      intro A hA
+      have hAm := h.measurableSpace_le _ hA
+      rw [lintegral_indicator hEm, lintegral_indicator hEm]
+      have he := setLIntegral_condLExp h.measurableSpace_le (P.restrict E)
+        (fun x => g (x, descendantTree u x)) hA
+      have heq := (lintegral_congr_ae (μ := (P.restrict E).restrict A)
+        (ae_restrict_of_ae hc)).symm.trans he
+      simpa only [Measure.restrict_restrict hAm, Measure.restrict_restrict hEm,
+        Set.inter_comm E A] using heq)).symm
+  refine hout.trans (Filter.Eventually.of_forall fun x => ?_)
+  change E.indicator G x = E.indicator
+    (fun x => ∫⁻ tree, g (x, tree) ∂treeKernel K (stateAt u x)) x
+  by_cases hx : x ∈ E
+  · simp only [Set.indicator_of_mem hx]
+    change (∫⁻ tree, g (x, tree) ∂treeKernel K (q x)) = _
+    rw [show q x = stateAt u x from ite_eq_left hx]
+  · simp only [Set.indicator_of_notMem hx]
+
 /-- Independent canonical continuations at observed boundary states. The law theorem
 below identifies this native product kernel with the actual conditional tree law. -/
 noncomputable def descendantTreesKernel {ι : Type*}
@@ -457,6 +583,38 @@ theorem condExp_descendantTrees_optionalLine {ι E : Type*}
     (measurable_id'' h.measurableSpace_le) hD
     (descendantTreesKernel K h roots hcount hroots hmem) inferInstance hd.map_eq
     (fun p => g p.2) (hg.comp_measurable measurable_snd) hgi
+  rw [MeasurableSpace.comap_id] at hc
+  exact hc
+
+/-- Nonnegative strong branching on arbitrary optional lines, derived from the
+same native conditional law as the integrable Banach-valued formula. This is
+Jagers–Lagerås (2008), §2.3, with monotone integration of the supplied kernel;
+there is no integrability or bounded-depth assumption. -/
+theorem condLExp_descendantTrees_optionalLine {ι : Type*}
+    (K : Kernel S (Step α S)) [IsMarkovKernel K]
+    (initial : Measure (Root → Option S)) [IsProbabilityMeasure initial]
+    {L : (Π n : ℕ, (Root × (Fin n → α)) → Option S) →
+      Set (RootIndexed.TreeNode Root α)}
+    (h : Tree.IsOptionalLine (Tree.linePast initialInformation reproductionInformation) L)
+    (roots : ι → (Π n : ℕ, (Root × (Fin n → α)) → Option S) → RootIndexed.TreeNode Root α)
+    (hcount : ∀ i, (Set.range (roots i)).Countable)
+    (hroots : ∀ i u, MeasurableSet[h.measurableSpace] {x | roots i x = u})
+    (hinj : ∀ x, Function.Injective (fun i => roots i x)) (hmem : ∀ i x, roots i x ∈ L x)
+    (g : (Π n : ℕ, (Root × (Fin n → α)) → Option S) ×
+      (ι → List α → Option S) → ℝ≥0∞)
+    (hg : Measurable[h.measurableSpace.prod inferInstance] g) :
+    (generationPathLaw K initial)⁻[fun x => g (x, fun i => descendantTree (roots i x) x) |
+      h.measurableSpace] =ᵐ[generationPathLaw K initial]
+      fun x => ∫⁻ trees, g (x, trees) ∂descendantTreesKernel K h roots hcount hroots hmem x := by
+  have hd := hasCondDistrib_descendantTrees_optionalLine K initial h roots hcount hroots hinj hmem
+  have hc := @HasCondDistrib.condLExp_eq
+    (Π n : ℕ, (Root × (Fin n → α)) → Option S)
+    (Π n : ℕ, (Root × (Fin n → α)) → Option S) (ι → List α → Option S)
+    inferInstance h.measurableSpace inferInstance
+    (generationPathLaw K initial) inferInstance id
+    (fun x i => descendantTree (roots i x) x)
+    (descendantTreesKernel K h roots hcount hroots hmem) inferInstance
+    hd (measurable_id'' h.measurableSpace_le) inferInstance g hg
   rw [MeasurableSpace.comap_id] at hc
   exact hc
 
