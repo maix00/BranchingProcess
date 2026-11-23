@@ -16,6 +16,10 @@ public import Probability.BranchingProcess.Spine.Observation
 
 In `ProbabilityTheory.BranchingProcess.Spine`:
 
+* `untypedHistory n t` records all states through generation `n` after
+  erasing role tags; `measurable_untypedHistory` proves its measurability.
+  Its comap sigma algebra is the tree information used in Shi (4.9).
+
 * `statePath d t n` reads the distinguished state at depth `n` of `t`.
 * `measurable_statePath` proves that the entire sequence is measurable.
 * `existsUnique_distinguished_generation` proves that the realized ray meets
@@ -33,6 +37,22 @@ DOI 10.1007/978-3-319-25372-5. It introduces no additional tree or ray law.
 namespace ProbabilityTheory.BranchingProcess.Spine
 
 open MeasureTheory Combinatorics.UlamHarris
+open scoped ENNReal
+
+/-- The finite tree history after forgetting ordinary/distinguished roles. -/
+def untypedHistory {S ι : Type*} {h : S → ℝ≥0∞} (n : ℕ)
+    (t : List ι → Option (S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}))
+    (k : Finset.Iic n) (p : Unit × (Fin k.1 → ι)) : Option S :=
+  (t (List.ofFn p.2)).map (Sum.elim id Subtype.val)
+
+@[fun_prop]
+theorem measurable_untypedHistory {S ι : Type*} [MeasurableSpace S]
+    {h : S → ℝ≥0∞} (n : ℕ) : Measurable (untypedHistory (ι := ι) (h := h) n) := by
+  have hm : Measurable (fun o : Option (S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}) =>
+      o.map (Sum.elim id Subtype.val)) :=
+    measurable_option_map (measurable_id.sumElim measurable_subtype_coe)
+  unfold untypedHistory
+  fun_prop
 
 /-- The sequence of states read from distinguished nodes of each generation. -/
 noncomputable def statePath {S T ι : Type*} (d : T)

@@ -213,14 +213,20 @@ branches never create an additional spine.
    `Tree/BranchingProperty.lean` combines this with the joint biased-family
    law for a fixed first spine child, retaining arbitrary measurable payoffs
    of the complete child trees, including future spine events.
-   The remaining induction must iterate this split along the fixed address. Sum over terminal
-   addresses only after this identity, obtaining (4.11) and the full tree marginal.
-   The all-depth fixed-address identity remains open.
+   The fixed-address induction is now proved at every depth in
+   `Tree/Density/FiniteGeneration.lean`. It first proves (4.12)–(4.13) for
+   arbitrary measurable finite-history payoffs, then sums terminal addresses
+   to obtain (4.11). The same module proves normalization and identifies the
+   complete untyped tree law by native projective-limit uniqueness.
    With harmonicity imposed only on the eligible region, finite-generation
    mass must retain the ancestry-in-region indicator: an ordinary branch may
    leave and later reenter the region.
-5. Theorem 4.4(i), (4.9): identify the conditional location of the spine given
-   the generation tree. **Part (ii), (4.10), is implemented:**
+5. **Theorem 4.4(i), (4.9), is implemented:**
+   `Tree/Density/Conditional.lean` proves the conditional fixed-address
+   probability given the complete untyped finite tree as `W_z/∑_u W_u`;
+   the denominator is positive and finite almost surely under the changed law.
+   It uses native Radon–Nikodym pushforward and conditional-expectation APIs.
+   **Part (ii), (4.10), is implemented:**
    `Spine.treeKernel_statePath` identifies the whole state-path law of the
    existing random-tree spine with the canonical Doob chain;
    `Spine.statePath_isMarkovChain` derives the Markov property from the generic
