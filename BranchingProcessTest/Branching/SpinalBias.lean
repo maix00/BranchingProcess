@@ -10,6 +10,19 @@ open scoped ENNReal
 
 namespace SpinalBiasExamples
 
+-- Empty, absent and multiply distinguished populations retain the exceptional default.
+example : BranchingProcess.Spine.distinguishedState (S := Unit) true
+    (fun i : Empty => nomatch i) = true := by
+  simp [BranchingProcess.Spine.distinguishedState]
+
+example : BranchingProcess.Spine.distinguishedState (S := Unit) true
+    (fun _ : Unit => (none : Option (Unit ⊕ Bool))) = true := by
+  simp [BranchingProcess.Spine.distinguishedState]
+
+example : BranchingProcess.Spine.distinguishedState (S := Unit) true
+    (fun _ : Bool => some (Sum.inr false)) = true := by
+  simp [BranchingProcess.Spine.distinguishedState, ExistsUnique, Bool.forall_bool]
+
 -- A zero-weight side branch is allowed: positivity applies only to the spine.
 def weight (s : Bool) : ℝ≥0∞ := if s then 0 else 1
 
@@ -210,8 +223,8 @@ end SpinalBiasExamples
 #print axioms ProbabilityTheory.BranchingProcess.Spine.eligibleStateKernel_isMarkovChain
 #print axioms ProbabilityTheory.BranchingProcess.Spine.partialTraj_spineChildKernel
 
-#print axioms Function.uniquePresentValue_eq
-#print axioms measurable_uniquePresentValue
+#print axioms ProbabilityTheory.BranchingProcess.Spine.distinguishedState_eq
+#print axioms ProbabilityTheory.BranchingProcess.Spine.measurable_distinguishedState
 #print axioms ProbabilityTheory.BranchingProcess.State.treeKernel_generations
 #print axioms ProbabilityTheory.BranchingProcess.Spine.reproductionKernel_distinguished_state
 #print axioms ProbabilityTheory.BranchingProcess.Spine.measurable_statePath
