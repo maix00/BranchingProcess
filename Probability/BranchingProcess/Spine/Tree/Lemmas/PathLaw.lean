@@ -8,7 +8,6 @@ module
 
 import Probability.BranchingProcess.Spine.Tree.Observation
 import Probability.BranchingProcess.Spine.StateChain
-import Probability.Kernel.IonescuTulcea.Map
 
 /-!
 # Support for identifying the realized spine's state law

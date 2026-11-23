@@ -8,6 +8,7 @@ module
 
 public import Probability.BranchingProcess.Spine.Tree.Observation
 public import Probability.BranchingProcess.Spine.StateChain
+public import Probability.Process.Markov.Trajectory
 public import Probability.Kernel.IonescuTulcea.Map
 import all Probability.BranchingProcess.Spine.Tree.Lemmas.PathLaw
 
@@ -142,7 +143,7 @@ theorem statePath_isMarkovChain (Q : Kernel S (Step ι S)) [IsMarkovKernel Q]
       (eligibleStateKernel Q hh) := by
   let := eligibleStateKernel_isMarkovKernel Q hh harmonic
   simpa only [← treeKernel_statePath Q hh harmonic d s] using
-    eligibleStateKernel_isMarkovChain Q hh harmonic s
+    isMarkovChain_traj_historyKernel (eligibleStateKernel Q hh) s
 
 end ProbabilityTheory.BranchingProcess.Spine
 

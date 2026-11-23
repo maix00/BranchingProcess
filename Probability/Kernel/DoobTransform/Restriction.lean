@@ -50,7 +50,8 @@ theorem doobTransformOnPositive_isMarkovKernel (K : Kernel S S) [IsSFiniteKernel
     {h : S → ℝ≥0∞} (hh : Measurable h)
     (harmonic : ∀ x, h x ≠ 0 → h x ≠ ∞ → (∫⁻ y, h y ∂K x) = h x) :
     IsMarkovKernel (doobTransformOnPositive K hh) := by
-  constructor
+  unfold doobTransformOnPositive
+  apply IsMarkovKernel.comapRight
   intro x
   let := doobTransform_isProbabilityMeasure K hh x.1 x.2.1 x.2.2
     (harmonic x.1 x.2.1 x.2.2)
@@ -58,10 +59,11 @@ theorem doobTransformOnPositive_isMarkovKernel (K : Kernel S S) [IsSFiniteKernel
     (ae_doobTransform_weight_ne_zero K hh x.1).and
       (ae_doobTransform_weight_ne_top K hh x.1
         ((harmonic x.1 x.2.1 x.2.2).trans_ne x.2.2))
-  constructor
-  rw [doobTransformOnPositive, comapRight_apply' _ _ _ MeasurableSet.univ,
-    comap_apply, Set.image_univ, Subtype.range_coe]
-  exact (measure_congr (by filter_upwards [hs] with y hy; simp [hy])).trans (measure_univ)
+  rw [comap_apply, Subtype.range_coe]
+  exact (mem_ae_iff_prob_eq_one
+    (show MeasurableSet {y | h y ≠ 0 ∧ h y ≠ ∞} from
+      (hh (MeasurableSet.singleton 0).compl).inter
+        (hh (MeasurableSet.singleton ∞).compl))).mp hs
 
 /-- Forgetting the state restriction recovers the weighted transition. -/
 theorem doobTransformOnPositive_map (K : Kernel S S) [IsSFiniteKernel K]
@@ -81,7 +83,6 @@ theorem doobTransformOnPositive_map (K : Kernel S S) [IsSFiniteKernel K]
       ((harmonic x.1 x.2.1 x.2.2).trans_ne x.2.2))
   filter_upwards [hs] with y hy
   exact ⟨⟨y, hy⟩, rfl⟩
-
 
 end ProbabilityTheory.Kernel
 

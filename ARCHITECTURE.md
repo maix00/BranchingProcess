@@ -97,11 +97,13 @@ kernel density operation lives in `Probability/Kernel/DoobTransform/Basic.lean`.
 iteration; `Trajectory.lean` owns the finite-history endpoint density, and
 `Restriction.lean` owns the normalized kernel on `{0 < h < ∞}`. The generic
 homogeneous history adapter and endpoint marginal belong to
-`Kernel/IonescuTulcea/Markov.lean`; its one-step integral recursion is in
-`IonescuTulcea/PartialTraj.lean`. The process-level Markov realization belongs
-to `Process/Markov/Trajectory.lean`; `Process/Markov/DoobTransform.lean`
-specializes it to the eligible region. `Spine/StateChain.lean` derives the
-associated spine chain and its path density from these general interfaces.
+`Kernel/IonescuTulcea/Markov.lean`. Finite-history integration uses Mathlib's
+`partialTraj_succ_of_le`, integral composition and product-map formulas
+directly. `Process/Markov/Trajectory.lean` owns the homogeneous Markov
+realization. Doob and spine clients apply that realization directly after
+proving their kernels Markov, with no separate specialization modules or
+forwarding declarations. `Spine/StateChain.lean` derives the associated spine
+transition and its finite-history density from the general Doob interfaces.
 It identifies its transition with the selected-child marginal.
 `Spine/Observation.lean` reads a unique distinguished coordinate of any
 countable tagged population. Its model-specific readout uses Mathlib's
@@ -117,6 +119,15 @@ The generation-assembly steps specific to this identification belong to
 `Tree/Lemmas/PathLaw.lean`, imported with `import all` by the theorem entry;
 the reusable observations and kernel identities remain outside `Lemmas/`.
 Single-proof auxiliary steps stay local to their proofs.
+
+The Doob/spine dependency audit is recorded in
+`docs/architecture/DOOB_SPINE_MATHLIB_AUDIT.md`. It distinguishes the
+Doob-specific cancellation and eligible-region support theorems from generic
+kernel operations. Density application, constant-one reduction, s-finiteness,
+finite-history integration and Markov realization use existing general
+interfaces directly. The s-finite power instance remains because the pinned
+Mathlib lacks that closure instance, and replacing it with Markov powers
+would strengthen the assumptions on the mean offspring kernel.
 
 The observation abstraction audit checked pinned Mathlib
 `26573066084e6e2aa8526ea358bc43b66d96f970` against the

@@ -126,13 +126,8 @@ theorem treeKernel_generations {α S : Type*} [MeasurableSpace S]
       fun n (p : Unit × (Fin n → α)) =>
         x (List.ofFn p.2).length ((), (List.ofFn p.2).get)) = id := by
     funext x n p
-    have hp : (⟨(List.ofFn p.2).length, (List.ofFn p.2).get⟩ :
-        Sigma (fun n => Fin n → α)) = ⟨n, p.2⟩ := by
-      apply Sigma.ext (List.length_ofFn (f := p.2))
-      apply (Fin.heq_fun_iff (List.length_ofFn (f := p.2))).mpr
-      intro i
-      exact List.get_ofFn p.2 i
-    have hr := congrArg (fun v : Sigma (fun n => Fin n → α) => x v.1 ((), v.2)) hp
+    have hr := congrArg (fun v : Sigma (fun n => Fin n → α) => x v.1 ((), v.2))
+      (List.equivSigmaTuple.apply_symm_apply ⟨n, p.2⟩)
     exact hr.trans (congrArg (x n) (Prod.ext (Subsingleton.elim _ _) rfl))
   change (pathKernel K s).map
     (fun x n (p : Unit × (Fin n → α)) =>

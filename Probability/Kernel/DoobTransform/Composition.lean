@@ -18,8 +18,6 @@ public import Probability.Kernel.Composition.Pow
   measurable weight, `Lʰ ∘ Kʰ = (L ∘ K)ʰ`.
 * `ProbabilityTheory.Kernel.doobTransform_pow`: native kernel powers
   satisfy `(Kʰ)^n = (K^n)ʰ`.
-* `ProbabilityTheory.Kernel.lintegral_pow_doobTransform`: for measurable
-  nonnegative `f`, `(Kʰ)^n f(x) = K^n(h f)(x)/h(x)`.
 
 The proof cancels the intermediate weight in the iterated integral.
 This is the iterated form of Zhan Shi, *Branching Random Walks*, LNM 2151
@@ -79,14 +77,6 @@ theorem doobTransform_pow (K : Kernel S S) [IsSFiniteKernel K]
     change doobTransform (K ^ n) h ∘ₖ doobTransform K h =
       doobTransform ((K ^ n) ∘ₖ K) h
     exact doobTransform_comp K (K ^ n) hh hzero htop
-
-/-- The n-step transition has the endpoint-to-start weight ratio. -/
-theorem lintegral_pow_doobTransform (K : Kernel S S) [IsSFiniteKernel K]
-    {h f : S → ℝ≥0∞} (hh : Measurable h) (hf : Measurable f)
-    (hzero : ∀ x, h x ≠ 0) (htop : ∀ x, h x ≠ ∞) (n : ℕ) (x : S) :
-    (∫⁻ y, f y ∂(doobTransform K h ^ n) x) =
-      (∫⁻ y, h y * f y ∂(K ^ n) x) / h x := by
-  rw [doobTransform_pow K hh hzero htop n, lintegral_doobTransform _ hh hf]
 
 end ProbabilityTheory.Kernel
 

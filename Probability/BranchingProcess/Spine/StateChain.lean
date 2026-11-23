@@ -9,8 +9,8 @@ module
 public import Probability.BranchingProcess.Spine.Family.Marginals
 public import Probability.BranchingProcess.Spine.Observation
 public import Probability.BranchingProcess.Spine.Tree.Construction
-public import Probability.Process.Markov.DoobTransform
 public import Probability.Kernel.DoobTransform.Trajectory
+public import Probability.Kernel.DoobTransform.Restriction
 
 /-!
 # The state chain associated with the spine transition
@@ -25,8 +25,6 @@ In `ProbabilityTheory.BranchingProcess.Spine`:
   `E_s[∑ᵢ h(ξᵢ)] = h(s)` on `E` makes this kernel Markov.
 * `eligibleStateKernel_map`: forgetting the eligible-state subtype gives
   exactly the selected-child marginal `spineChildKernel Q h`.
-* `eligibleStateKernel_isMarkovChain`: its native trajectory is a Markov
-  chain with transitions `(eligibleStateKernel Q hh)^(n-m)`.
 * `reproductionKernel_distinguished_state` identifies the observed actual
   distinguished offspring law with the same generic Doob transition.
 * `partialTraj_spineChildKernel`: when `h` is finite and positive everywhere,
@@ -74,21 +72,6 @@ theorem eligibleStateKernel_map [MeasurableSingletonClass ι]
     (eligibleStateKernel Q hh s).map Subtype.val = spineChildKernel Q h s.1 := by
   rw [spineChildKernel_eq_doobTransform Q hh]
   exact Kernel.doobTransformOnPositive_map _ hh
-    (fun s hs ht => (lintegral_meanChildKernel Q hh s).trans (harmonic s hs ht)) s
-
-omit [MeasurableSpace ι] in
-/-- The associated state process is the generic homogeneous Markov realization. -/
-theorem eligibleStateKernel_isMarkovChain (Q : Kernel S (Step ι S)) [IsSFiniteKernel Q]
-    {h : S → ℝ≥0∞} (hh : Measurable h)
-    (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ → (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
-    (s : {s // h s ≠ 0 ∧ h s ≠ ∞}) :
-    letI := eligibleStateKernel_isMarkovKernel Q hh harmonic
-    IsMarkovChain (fun n (w : ℕ → {s // h s ≠ 0 ∧ h s ≠ ∞}) => w n)
-      Filtration.piLE
-      (Kernel.traj (X := fun _ => {s // h s ≠ 0 ∧ h s ≠ ∞})
-        (Kernel.historyKernel (eligibleStateKernel Q hh)) 0 (fun _ => s))
-      (eligibleStateKernel Q hh) := by
-  exact Kernel.doobTransformOnPositive_isMarkovChain _ hh
     (fun s hs ht => (lintegral_meanChildKernel Q hh s).trans (harmonic s hs ht)) s
 
 /-- The finite spine-state path density is inherited from the general Doob identity. -/
