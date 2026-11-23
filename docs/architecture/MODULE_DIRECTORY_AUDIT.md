@@ -29294,3 +29294,13 @@ formulas derive from its path specialization. The unused
 mean-measure formulas keep their strictly weaker assumptions. New reusable
 law/observation theorems stay outside `Lemmas`; same-file representation
 helpers are private. No compatibility aliases are introduced.
+
+## Local-density spine and many-to-one core (2026-11-23)
+
+The source, native APIs, hypotheses and generalized-to-harmonic dependency
+chain are reviewed in [LOCAL_SPINE_BIAS_AUDIT.md](LOCAL_SPINE_BIAS_AUDIT.md).
+`Spine/LocalBias` has eight direct semantic modules and one `Lemmas` directory
+with only the two construction-specific finite-history assembly steps.
+Reusable structural observations are in `Tree/Observation/Path`. The former
+harmonic-only `Tree/Density/Lemmas` files are removed; the harmonic entries
+and BRW model adapters use the single local-density construction and proof.

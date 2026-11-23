@@ -1249,3 +1249,33 @@ The unused point-measure-specific IID-law and single-child BRW wrappers are
 removed without aliases. Mean-measure recursions retain their weaker
 assumptions: they neither require a probability outer law nor counting-valued
 measures. See `docs/architecture/MANY_TO_ONE_LAW_TRANSPORT.md`.
+
+### General local-bias many-to-one core (2026-11-23)
+
+`Probability/BranchingProcess/Spine/LocalBias/ManyToOne.lean` now owns the
+all-depth adapted-node formula for an arbitrary local family/index density
+`r(s,ξ,i)`. Its explicit `IsAdmissible` assumptions are measurable data,
+`E_Q(s)[∑_i r]=1` on the eligible state domain, and almost-sure existing
+eligible selected-child support. No harmonic function, finite offspring
+mean, standard-Borel state space, bounded depth, or payoff integrability
+is required. Child slots remain countable with measurable singletons.
+`LocalBias/Tree` constructs the entire normal/distinguished tree through
+the existing `State.treeKernel`; `Ray` proves one realized infinite ray.
+`LocalBias/Path` derives fixed-generation ancestral-path formulas.
+
+`LocalBias/Normalization` admits `h(child)/m_h(s)` when `m_h=Mh` is finite
+positive wherever `0<h<∞`; no eigenfunction equation is assumed.
+`Mh=h` is a specialization of that normalization argument. The former
+harmonic family and tree definitions now specialize the same local-bias
+construction, and their fixed-address, adapted-node and path many-to-one
+proofs call the general core. The two old harmonic-only density-induction
+files are removed. The BRW and pre-sampled-field law adapters continue to
+use the harmonic specialization, so endpoint and entrance clients have
+the same public assumptions and the same underlying proof. No compatibility
+paths or theorem aliases are introduced.
+
+`BranchingProcessTest/Branching/LocalSpineBias.lean` tests a genuinely
+family-dependent choice, a non-harmonic constant weight for binary
+reproduction, the all-depth formula, and the axioms of the general-to-special
+chain. This does not close the separate conditional identity at arbitrary
+optional lines or infinite-horizon absolute-continuity obligations.

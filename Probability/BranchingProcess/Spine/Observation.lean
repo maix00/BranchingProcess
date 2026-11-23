@@ -14,6 +14,8 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 ## Public declarations
 
+* `distinguishedNodes t` is `{u | t(u) has a distinguished role}`.
+
 In `ProbabilityTheory.BranchingProcess.Spine`:
 
 * `distinguishedState d x` reads the state at the unique distinguished
@@ -145,6 +147,11 @@ theorem measurableSet_unique_distinguished {I S T : Type*} [Countable I]
       exact (measurable_option_elim d (measurable_const.sumElim measurable_id)).comp
         (measurable_pi_apply i)
   exact hm.comp (measurable_id.prodMk hs)
+
+/-- Nodes carrying a distinguished state, rather than an absent or normal state. -/
+def distinguishedNodes {ι S T : Type*} (t : List ι → Option (S ⊕ T)) : Set (List ι) :=
+  {u | (t u).any Sum.isRight = true}
+
 
 end ProbabilityTheory.BranchingProcess.Spine
 

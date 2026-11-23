@@ -11,6 +11,17 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Branching/LocalSpineBias.lean"): (
+        "ProbabilityTheory.BranchingProcess.Spine.LocalBias.familyChildKernel_mass",
+        "ProbabilityTheory.BranchingProcess.Spine.LocalBias.ae_familyChildKernel_eligible",
+        "ProbabilityTheory.BranchingProcess.Spine.LocalBias.normalizedWeight_isAdmissible",
+        "ProbabilityTheory.BranchingProcess.Spine.LocalBias.ae_treeKernel_unique_spine",
+        "ProbabilityTheory.BranchingProcess.Spine.LocalBias.lintegral_treeKernel_fixedAddress",
+        "ProbabilityTheory.BranchingProcess.Spine.LocalBias.lintegral_adaptedPayoff_eq",
+        "ProbabilityTheory.BranchingProcess.Spine.LocalBias.lintegral_pathPayoff_eq",
+        "ProbabilityTheory.BranchingProcess.Spine.lintegral_adaptedPayoff_eq",
+        "ProbabilityTheory.BranchingProcess.Spine.lintegral_pathPayoff_eq",
+    ),
     Path("BranchingProcessTest/Branching/ManyToOneLawTransport.lean"): (
         "ProbabilityTheory.RandomWalk.map_positionProcess_eq_trajMeasure",
         "ProbabilityTheory.BranchingProcess.Spine.lintegral_pathPayoff_eq",
