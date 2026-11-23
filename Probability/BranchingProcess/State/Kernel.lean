@@ -28,6 +28,8 @@ In namespace `ProbabilityTheory.BranchingProcess.State`:
   $|u|$ at the address $u$. Absent nodes have value `none`.
 * `treeKernel.isMarkovKernel` proves it is a probability kernel.
 * `treeKernel_root` gives root-state marginal $\delta_s$.
+* `treeKernel_generations` recovers the original generation-path law:
+  `P_tree.map (t ↦ (n,p ↦ t(ofFn p₂))) = pathKernel K s`.
 * `treeKernel_children` gives the complete root-family marginal
   `Law((t([j]))_j) = K_⊥(s)`.
 
@@ -112,6 +114,30 @@ theorem treeKernel_root {α S : Type*} [MeasurableSpace S]
   change (pathKernel K s).map (fun x ↦ x 0 ((), [].get)) = _
   rw [he, ← Measure.map_map (by fun_prop) (by fun_prop), pathKernel_initial,
     Measure.map_dirac' (by fun_prop)]
+
+/-- Reading all generations from the canonical tree recovers the original path law. -/
+theorem treeKernel_generations {α S : Type*} [MeasurableSpace S]
+    (K : Kernel S (Step α S)) [IsMarkovKernel K] (s : Option S) :
+    (treeKernel K s).map
+      (fun t n (p : Unit × (Fin n → α)) => t (List.ofFn p.2)) = pathKernel K s := by
+  rw [treeKernel, Kernel.map_apply _ (by fun_prop),
+    Measure.map_map (by fun_prop) (by fun_prop)]
+  have he : (fun x : Π n : ℕ, (Unit × (Fin n → α)) → Option S =>
+      fun n (p : Unit × (Fin n → α)) =>
+        x (List.ofFn p.2).length ((), (List.ofFn p.2).get)) = id := by
+    funext x n p
+    have hp : (⟨(List.ofFn p.2).length, (List.ofFn p.2).get⟩ :
+        Sigma (fun n => Fin n → α)) = ⟨n, p.2⟩ := by
+      apply Sigma.ext (List.length_ofFn (f := p.2))
+      apply (Fin.heq_fun_iff (List.length_ofFn (f := p.2))).mpr
+      intro i
+      exact List.get_ofFn p.2 i
+    have hr := congrArg (fun v : Sigma (fun n => Fin n → α) => x v.1 ((), v.2)) hp
+    exact hr.trans (congrArg (x n) (Prod.ext (Subsingleton.elim _ _) rfl))
+  change (pathKernel K s).map
+    (fun x n (p : Unit × (Fin n → α)) =>
+      x (List.ofFn p.2).length ((), (List.ofFn p.2).get)) = _
+  rw [he, Measure.map_id]
 
 /-- The root's complete child family has the original optional offspring law. -/
 theorem treeKernel_children {α S : Type*} [MeasurableSpace S]

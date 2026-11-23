@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingProcess.Spine.Tree.Construction
+public import Probability.BranchingProcess.Spine.Observation
 public import Probability.BranchingProcess.State.Support
 public import Combinatorics.UlamHarris.Ray
 
@@ -49,30 +50,6 @@ private theorem measurable_distinguished {S T : Type*} [MeasurableSpace S]
   measurable_option_elim false
     (show Measurable (Sum.isRight : S ⊕ T → Bool) from
       measurable_const.sumElim measurable_const)
-
-private theorem measurableSet_unique_distinguished {ι S T : Type*} [Countable ι]
-    [MeasurableSpace S] [MeasurableSpace T] :
-    MeasurableSet {ξ : Step ι (S ⊕ T) | ∃! i, (ξ i).any Sum.isRight = true} := by
-  classical
-  have hB (i : ι) : MeasurableSet {ξ : Step ι (S ⊕ T) |
-      (ξ i).any Sum.isRight = true} :=
-    (MeasurableSet.singleton true).preimage
-      (measurable_distinguished.comp (measurable_pi_apply i))
-  change MeasurableSet {ξ : Step ι (S ⊕ T) | ∃ i,
-    (ξ i).any Sum.isRight = true ∧ ∀ j, (ξ j).any Sum.isRight = true → j = i}
-  rw [Set.ofPred_exists]
-  apply MeasurableSet.iUnion
-  intro i
-  rw [Set.ofPred_and]
-  apply (hB i).inter
-  rw [Set.ofPred_forall]
-  apply MeasurableSet.iInter
-  intro j
-  by_cases hij : j = i
-  · simp [hij]
-  · convert (hB j).compl using 1
-    ext ξ
-    simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, hij, imp_false]
 
 /-- The canonical normal/distinguished tree has exactly one realized infinite spine. -/
 theorem ae_treeKernel_unique_spine {S ι : Type*} [MeasurableSpace S]

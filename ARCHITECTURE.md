@@ -102,10 +102,19 @@ homogeneous history adapter and endpoint marginal belong to
 to `Process/Markov/Trajectory.lean`; `Process/Markov/DoobTransform.lean`
 specializes it to the eligible region. `Spine/StateChain.lean` derives the
 associated spine chain and its path density from these general interfaces.
-It identifies its transition with the selected-child marginal, while
-identification with the ray extracted from the random tree remains a separate
-obligation. All these APIs are reusable mathematical results outside `Lemmas/`;
-single-proof auxiliary steps stay local to their proofs.
+It identifies its transition with the selected-child marginal.
+`Spine/Observation.lean` reads a unique distinguished coordinate of any
+countable tagged population. It uses the reusable unique-present-value
+observation in `MeasureTheory/MeasurableSpace/UniquePresentValue.lean`.
+`Spine/Tree/Observation.lean` reads the actual spine's state sequence from the
+existing tree, and `Tree/PathLaw.lean` identifies its complete path law with
+the same canonical Doob Markov chain. The proof uses
+`State.treeKernel_generations` to recover the original generation process,
+and `Kernel.map_eq_trajMeasure` for the observed path law.
+The generation-assembly steps specific to this identification belong to
+`Tree/Lemmas/PathLaw.lean`, imported with `import all` by the theorem entry;
+the reusable observations and kernel identities remain outside `Lemmas/`.
+Single-proof auxiliary steps stay local to their proofs.
 `Spine/Tree/Construction.lean` augments states by the ordinary/distinguished
 role and applies the existing `State.treeKernel`; it does not implement
 another branching process. Normal states can have zero harmonic weight;

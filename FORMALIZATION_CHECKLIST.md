@@ -151,8 +151,12 @@ for finite positive measurable weights, without harmonicity. On the eligible
 region `{0 < h < ∞}`, harmonicity only there yields a Markov kernel and a
 complete native Ionescu--Tulcea Markov realization. `Spine/StateChain.lean`
 applies these generic results to the mean child kernel and identifies its
-transition with the selected-child marginal. Identification with the ray of
-the biased random tree remains open as stated below.
+transition with the selected-child marginal. `Spine/Tree/Observation.lean`
+measurably extracts the state sequence on the realized distinguished ray.
+`Spine/Tree/PathLaw.lean` identifies its complete joint path law with the
+canonical Doob chain and derives its Markov property. The argument uses the
+existing generation-path law and generic observed-trajectory identification;
+it assumes harmonicity only on the finite positive-weight region.
 `BranchingProcess/Offspring/Mean.lean`
 constructs the mean child kernel. `BranchingProcess/Spine/Family/` constructs
 the joint family/child bias, proves its probability normalization, derives
@@ -171,8 +175,9 @@ branches never create an additional spine.
 **Remaining source obligations:**
 
 1. §4.1: the unique realized distinguished ray is proved for the canonical
-   typed tree. Complete its measurable extraction and the tree/ray product
-   representation, distinguishing information on the untyped tree from
+   typed tree. Its state sequence is now measurably extracted and has the Doob
+   chain's complete path law. The tree/ray product representation remains,
+   distinguishing information on the untyped tree from
    information including the ray.
 2. §4.2, (4.3)–(4.4): the kernel construction is implemented. Instantiate it
    with Shi's killed transition and identify the resulting tilted BRW path.
@@ -196,8 +201,12 @@ branches never create an additional spine.
    mass must retain the ancestry-in-region indicator: an ordinary branch may
    leave and later reenter the region.
 5. Theorem 4.4(i), (4.9): identify the conditional location of the spine given
-   the generation tree. Part (ii), (4.10), identifies its path law with the
-   Doob-transformed chain.
+   the generation tree. **Part (ii), (4.10), is implemented:**
+   `Spine.treeKernel_statePath` identifies the whole state-path law of the
+   existing random-tree spine with the canonical Doob chain;
+   `Spine.statePath_isMarkovChain` derives the Markov property from the generic
+   process interface. The regression includes ordinary zero-weight branches
+   whose descendants can return to the eligible region.
 6. §4.3, Lemma 4.2: uniform-integrability criterion from conditional bounds
    under the changed measure. The reciprocal density is generally a
    **supermartingale**, rather than a martingale when extinction is possible.
