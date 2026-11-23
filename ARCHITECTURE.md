@@ -85,8 +85,25 @@ first-entry identity for the existing boundary-normalized i.i.d. BRW law.
 It sums the existing weighted path many-to-one formula over disjoint entrance
 generations and identifies its mass with the deterministic first-entrance
 line. This is a model-specific theorem outside the generic tree-information
-layer; it does not introduce another branching law or replace the missing
-general-state stopping-line theorem.
+layer; it does not introduce another branching law or replace the canonical
+state-tree branching theorem.
+`Line/Information/Localization.lean` owns the optional-line trace rules
+`A in F_L => A intersect {ell subset L} in F_ell` and stopped measurability
+of the random line. `Line/ConditionalExpectation.lean` transfers deterministic
+conditional identities to observed selections of cuts, without requiring the
+random line to have countable range or bounded depth.
+`Line/Information/Boundary.lean` proves boundary-state observability.
+`BranchingProcess/State/Observation/` instantiates these information interfaces
+for actual generation states and identifies generation-cut information with
+native `piLE`. `State/Descendants/SingleNode.lean` and `Products.lean` prove
+ordinary branching at arbitrary deterministic cuts from the canonical tree law.
+`State/StrongBranching.lean` is the general optional-line entry: it proves
+localized finite-product formulas for lines of arbitrary random cardinality,
+then identifies the full descendant-family product kernel with native
+`HasCondDistrib` and derives conditional expectations for integrable tests.
+`State/Descendants/Observed.lean` derives the original generation and
+stopping-generation conclusions from this interface. See
+`docs/architecture/OPTIONAL_LINE_BRANCHING_AUDIT.md` for scope and references.
 The state-kernel spine construction belongs to
 `Probability/BranchingProcess/Spine/`. `Family/Joint.lean` owns the single
 joint family/selected-child bias; `Family/Marginals.lean` derives both

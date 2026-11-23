@@ -1,4 +1,5 @@
 import Probability.BranchingProcess.Spine.Tree.BranchingProperty
+import Probability.BranchingProcess.State.Descendants.Observed
 
 open MeasureTheory ProbabilityTheory Combinatorics.Branching
 open scoped ENNReal

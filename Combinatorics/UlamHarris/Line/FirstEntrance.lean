@@ -24,6 +24,7 @@ In `Combinatorics.UlamHarris.RootIndexed.Line`:
 * `isLine_firstEntrance` proves that first entrance is a line.
 * `firstEntrance_eq` states `firstEntrance L = L` for an existing line.
 * `descendantClosure_firstEntrance` states `D_(firstEntrance A) = D_A`.
+* `precedes_firstEntrance_iff` states `L ≼ firstEntrance A ↔ L ≼ A`.
 * `firstEntrance_precedes` states `firstEntrance A ≼ A`.
 * `firstEntrance_precedes_of_subset` states `A ⊆ B → firstEntrance B ≼ firstEntrance A`.
 * `firstEntrance_inter_of_ancestorClosed` states
@@ -111,6 +112,13 @@ theorem descendantClosure_firstEntrance (A : Set (TreeNode Root α)) :
 theorem firstEntrance_precedes (A : Set (TreeNode Root α)) : Precedes (firstEntrance A) A := by
   rw [precedes_iff_subset_descendantClosure, descendantClosure_firstEntrance]
   exact subset_descendantClosure A
+
+/-- Testing first entrance is equivalent to testing the entire target set. -/
+theorem precedes_firstEntrance_iff {L : Set (TreeNode Root α)} :
+    Precedes L (firstEntrance A) ↔ Precedes L A := by
+  constructor
+  · exact fun h => h.trans (firstEntrance_precedes A)
+  · exact fun h u hu => h u hu.1
 
 theorem firstEntrance_precedes_of_subset (hAB : A ⊆ B) :
     Precedes (firstEntrance B) (firstEntrance A) := by

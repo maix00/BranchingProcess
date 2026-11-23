@@ -24,10 +24,6 @@ In namespace `ProbabilityTheory.BranchingProcess.State`:
   `Law(history, (Tᵢ)ᵢ) = Law(history) ⊗ (⊗ᵢ P_(Xₐ(rᵢ,uᵢ)))`.
   It allows arbitrary joint initial root states and measurable payoff functions
   without an integrability condition on those payoffs.
-* `condExp_descendantTrees` gives the equivalent conditional-integral identity
-  under the actual process law with any joint initial distribution:
-  $E[g((T_{r_i,u_i})_i)\mid\mathcal F_a]
-    =\int g\,d\bigotimes_i P_{X_a(r_i,u_i)}$.
 
 Here $P_s$ is `treeKernel K s`, constructed from the same arbitrary
 state-dependent offspring kernel $K$. For mark law $Q$ and measurable update
@@ -106,34 +102,6 @@ theorem descendantTrees_jointLaw {Root ι α S : Type*} [MeasurableSpace S]
     Measure.map_map (by fun_prop) (by fun_prop)]
   rfl
 
-/-- The state-dependent branching identity under an arbitrary joint initial law. -/
-theorem condExp_descendantTrees {Root ι α S E : Type*} [MeasurableSpace S]
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    (K : Kernel S (Step α S)) [IsMarkovKernel K]
-    (initial : Measure (Root → Option S)) [IsProbabilityMeasure initial]
-    (a : ℕ) (roots : ι → Root × (Fin a → α)) (hinj : Function.Injective roots)
-    (g : (ι → List α → Option S) → E) (hg : StronglyMeasurable g)
-    (hgi : Integrable (fun x : Π n : ℕ, (Root × (Fin n → α)) → Option S ↦ g (fun i (u : List α) ↦
-      x (a + u.length) ((roots i).1, Fin.append (roots i).2 u.get)))
-      (generationPathLaw (Root := Root) K initial)) :
-    (generationPathLaw (Root := Root) K initial)[
-      fun x : Π n : ℕ, (Root × (Fin n → α)) → Option S ↦ g (fun i (u : List α) ↦
-        x (a + u.length) ((roots i).1, Fin.append (roots i).2 u.get)) |
-        Filtration.piLE (X := fun n : ℕ ↦ (Root × (Fin n → α)) → Option S) a]
-      =ᵐ[generationPathLaw (Root := Root) K initial]
-      fun x : Π n : ℕ, (Root × (Fin n → α)) → Option S ↦ ∫ trees, g trees ∂Measure.infinitePi
-        (fun i : ι ↦ treeKernel K (x a (roots i))) := by
-  have hD : Measurable (fun x : Π n : ℕ, (Root × (Fin n → α)) → Option S =>
-      fun i (u : List α) =>
-        x (a + u.length) ((roots i).1, Fin.append (roots i).2 u.get)) := by fun_prop
-  rw [Filtration.piLE_eq_comap_frestrictLe]
-  exact Kernel.condExp_of_jointLaw (generationPathLaw K initial)
-    (frestrictLe a) _ (measurable_frestrictLe a) hD
-    (Kernel.infinitePi (fun i => (treeKernel K).comap
-      (fun history : Π k : Iic a, (Root × (Fin k.1 → α)) → Option S =>
-        history ⟨a, by simp⟩ (roots i)) (by fun_prop)))
-    (descendantTrees_jointLaw K initial a roots hinj)
-    (hg.comp_measurable measurable_snd) hgi
 
 end ProbabilityTheory.BranchingProcess.State
 
