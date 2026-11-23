@@ -11,6 +11,18 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Branching/ManyToOneLawTransport.lean"): (
+        "ProbabilityTheory.RandomWalk.map_positionProcess_eq_trajMeasure",
+        "ProbabilityTheory.BranchingProcess.Spine.lintegral_pathPayoff_eq",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.Additive.map_stateTree_law",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.Additive.harmonic_weight",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.Additive.spineChildKernel_eq_incrementKernel",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.Additive.map_spinePath_law",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.weightedPathManyToOneCore",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.generationManyToOne",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_firstEntranceWeight_eq",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.pointMeasureWeightedPathManyToOne",
+    ),
     Path("BranchingProcessTest/Branching/SpineDensity.lean"): (
         "ProbabilityTheory.BranchingProcess.Spine.addressWeight_eq_endpointRatio",
         "ProbabilityTheory.BranchingProcess.Spine.lintegral_treeKernel_fixedAddress",

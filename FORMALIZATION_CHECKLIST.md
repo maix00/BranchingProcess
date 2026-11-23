@@ -1234,3 +1234,18 @@ proof chain.
 8. Every use of a limit interchange, monotone convergence, Fatou, or uniform
    integrability in the $L^2$ and proposed $L^1$ closures remains a separate
    proof obligation.
+
+### Canonical many-to-one law transport (2026-11-23)
+
+The pre-sampled additive field is pushed forward to `State.treeKernel` by
+`Spine.Additive.map_stateTree_law`. `Spine.lintegral_pathPayoff_eq` specializes
+the general adapted-node compensation theorem to ancestral paths, and
+`Spine.Additive.map_spinePath_law` identifies the observed distinguished path
+with the existing tilted IID walk. The BRW weighted path identity, endpoint
+identities, and first-entry exponential mass formula now derive from that
+chain. Their old public assumptions are unchanged. The duplicated BRW
+endpoint probability induction and partial-sum operator proofs are removed.
+The unused point-measure-specific IID-law and single-child BRW wrappers are
+removed without aliases. Mean-measure recursions retain their weaker
+assumptions: they neither require a probability outer law nor counting-valued
+measures. See `docs/architecture/MANY_TO_ONE_LAW_TRANSPORT.md`.

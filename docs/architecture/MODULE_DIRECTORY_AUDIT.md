@@ -29282,3 +29282,15 @@ Exact source coverage and open sampling obligations are in
 `Spine/Tree/Density/AdaptedPayoff.lean` is the public node-payoff compensation
 identity with no line hypothesis. It is a reusable complete theorem and is
 outside `Lemmas/`; the line entry specializes it without a compatibility alias.
+
+## Canonical many-to-one law transport (2026-11-23)
+
+See [the focused audit](MANY_TO_ONE_LAW_TRANSPORT.md) for the exact native
+Mathlib interfaces, source theorems, hypotheses, semantic ownership, and
+removed duplicate proofs. The complete pre-sampled BRW and spine-path laws
+now connect to the canonical state-tree theorem. Endpoint and first-entry
+formulas derive from its path specialization. The unused
+`Spine/PointMeasure/RandomWalk.lean` realization is removed; analytic
+mean-measure formulas keep their strictly weaker assumptions. New reusable
+law/observation theorems stay outside `Lemmas`; same-file representation
+helpers are private. No compatibility aliases are introduced.

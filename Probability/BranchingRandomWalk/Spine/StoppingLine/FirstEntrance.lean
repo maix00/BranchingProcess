@@ -32,12 +32,12 @@ This is the additive branching-random-walk first-entry specialization of
 J. D. Biggins and A. E. Kyprianou, *Measure change in multitype branching*
 (2004), §6, p. 557, Lemma 6.1,
 [DOI:10.1239/aap/1086957585](https://doi.org/10.1239/aap/1086957585).
-The proof sums the existing weighted path many-to-one identity over the
-pairwise disjoint first-entry generations. It requires no moment condition
-or almost-sure finiteness of the spine hitting time. The general-state simple-line identity is proved in
-`BranchingProcess/Spine/StoppingLine/ManyToOne.lean`. The independent-field
-realization here retains its existing weighted-path-law proof; transporting it
-to that canonical state-tree entry remains an explicit migration obligation.
+The proof sums the weighted path formula, now derived from the canonical
+state-tree adapted-node identity through the independent-field realization
+and the observed Doob spine path. First-entry generations are disjoint. No
+moment condition or almost-sure finiteness of the hitting time is required.
+There is one probabilistic many-to-one proof chain; the first-entrance sum
+only converts that identity into a hitting event under the auxiliary IID law.
 -/
 
 @[expose] public section

@@ -78,19 +78,17 @@ noncomputable instance ofPartialStep.instIsSubMarkovKernel
 
 /-- Evaluation of a realized total step. -/
 theorem ofStep_apply (ν : Measure ξ) [SFinite ν]
-    [MeasurableSingletonClass α]
     (step : α → ξ → β) (hstep : Measurable (Function.uncurry step))
     (a : α) (s : Set β) (hs : MeasurableSet s) :
     ofStep ν step hstep a s = ν {z | step a z ∈ s} := by
   rw [ofStep, Kernel.map_apply' _ hstep _ hs,
     Kernel.compProd_apply (hstep hs) _ _ _]
   simp only [Kernel.id_apply, Kernel.const_apply]
-  rw [lintegral_dirac]
+  rw [lintegral_dirac' _ (measurable_measure_prodMk_left (hstep hs))]
   rfl
 
 /-- At a fixed source, a realized step is the pushforward of its noise law. -/
 theorem ofStep_apply_eq_map (ν : Measure ξ) [SFinite ν]
-    [MeasurableSingletonClass α]
     (step : α → ξ → β) (hstep : Measurable (Function.uncurry step))
     (a : α) :
     ofStep ν step hstep a = ν.map (step a) := by

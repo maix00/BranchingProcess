@@ -6,15 +6,14 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Spine.GenerationBranching.Recursion
-public import Probability.BranchingRandomWalk.Spine.RandomWalk.Basic
+public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Identity
 
 /-!
 # Actual-generation many-to-one identities
 
 This file connects observables of the pre-sampled branching field to the spine
-random walk.  The first-generation theorem is the base case for the general
-subtree induction.
+random walk. Each endpoint theorem specializes the canonical state-tree path
+identity to the last coordinate; the one-generation forms specialize `n = 1`.
 
 ## Public declarations
 
@@ -22,7 +21,7 @@ subtree induction.
   weighted and unweighted observable sums over the actual generation of the
   pre-sampled field with the corresponding spine-walk expectations.
 - `weightedGenerationOneManyToOne` and `generationOneManyToOne`: their
-  one-generation forms, used as the base step for subtree induction.
+  one-generation forms, obtained by setting `n = 1`.
 
 For a measurable observable \(f:\mathbb R\to[0,\infty]\), generation
 \(n\), and initial position \(x\), the weighted identity is
@@ -52,7 +51,6 @@ namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
-open Combinatorics.Branching.Walk
 open ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching MeasureTheory
@@ -73,15 +71,10 @@ theorem weightedGenerationManyToOne
       ∫⁻ increment,
         f (x + AdditivePath.displacement n increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
-  calc
-    (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) n f x ω
-        ∂offspringFieldLaw μ) =
-        weightedBranchingEndpointIterate
-          (potential.comp d hd) μ n f x :=
-      lintegral_weightedGenerationEndpoint_eq_iterate
-        (potential.comp d hd) μ hf n x
-    _ = _ := weightedEndpointManyToOne_randomWalk
-      d hd potential μ hboundary hf n x
+  have hi := weightedPathManyToOne d hd potential μ hboundary n
+    (F := fun path => f (path ⟨n, Nat.lt_succ_self n⟩))
+    (hf.comp (measurable_pi_apply _)) x
+  simpa only [weightedPathGeneration_last, history_last, AdditivePath.fromIncrements] using hi
 
 /-- Unweighted many-to-one for the actual generation of the pre-sampled
 branching field, including the reciprocal exponential spine factor. -/
@@ -101,14 +94,10 @@ theorem generationManyToOne
           (AdditivePath.displacement n increment)) *
           f (x + AdditivePath.displacement n increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
-  calc
-    (∫⁻ ω, generationEndpoint (potential.comp d hd) n f x ω
-        ∂offspringFieldLaw μ) =
-        branchingEndpointIterate (potential.comp d hd) μ n f x :=
-      lintegral_generationEndpoint_eq_iterate
-        (potential.comp d hd) μ hf n x
-    _ = _ := endpointManyToOne_randomWalk
-      d hd potential μ hboundary hf n x
+  have hi := pathManyToOne d hd potential μ hboundary n
+    (F := fun path => f (path ⟨n, Nat.lt_succ_self n⟩))
+    (hf.comp (measurable_pi_apply _)) x
+  simpa only [pathGeneration_last, history_last, AdditivePath.fromIncrements] using hi
 
 /-- Weighted many-to-one for the actual first generation of the pre-sampled
 field. -/
@@ -126,16 +115,7 @@ theorem weightedGenerationOneManyToOne
       ∫⁻ increment,
         f (x + AdditivePath.displacement 1 increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
-  calc
-    (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) 1 f x ω
-        ∂offspringFieldLaw μ) =
-        weightedBranchingEndpointOperator (potential.comp d hd) μ f x :=
-      lintegral_weightedGenerationEndpoint_one
-        (potential.comp d hd) μ hf x
-    _ = weightedBranchingEndpointIterate
-        (potential.comp d hd) μ 1 f x := rfl
-    _ = _ := weightedEndpointManyToOne_randomWalk
-      d hd potential μ hboundary hf 1 x
+  exact weightedGenerationManyToOne d hd potential μ hboundary hf 1 x
 
 /-- Unweighted many-to-one for the actual first generation of the pre-sampled
 field. -/
@@ -155,14 +135,6 @@ theorem generationOneManyToOne
           (AdditivePath.displacement 1 increment)) *
           f (x + AdditivePath.displacement 1 increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
-  calc
-    (∫⁻ ω, generationEndpoint (potential.comp d hd) 1 f x ω
-        ∂offspringFieldLaw μ) =
-        branchingEndpointOperator (potential.comp d hd) μ f x :=
-      lintegral_generationEndpoint_one (potential.comp d hd) μ hf x
-    _ = branchingEndpointIterate
-        (potential.comp d hd) μ 1 f x := rfl
-    _ = _ := endpointManyToOne_randomWalk
-      d hd potential μ hboundary hf 1 x
+  exact generationManyToOne d hd potential μ hboundary hf 1 x
 
 end ProbabilityTheory.BranchingRandomWalk.Spine

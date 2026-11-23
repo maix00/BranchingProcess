@@ -130,8 +130,10 @@ The source's statements have different hypotheses and are tracked separately:
 3. Lemma 14.4 and the martingale indexed by increasing mean-preserving lines
    in Theorem 6.1 remain open. The proved martingale is indexed by generations
    truncating one line, not by arbitrary successive optional lines.
-4. The existing BRW first-entry field formula still needs its law-transport
-   adapter to this state-tree entry and identification of its tilted path.
+4. The BRW first-entry field formula now follows from the generic adapted-node
+   identity through `Tree/Density/PathPayoff`, complete field-law transport,
+   and identification of the observed spine with the auxiliary IID walk.
+   See [the law-transport audit](MANY_TO_ONE_LAW_TRANSPORT.md).
    No replacement BRW process or second generic spine law was added.
 
 `ae_truncatedMass_eq` additionally identifies the real martingale with the

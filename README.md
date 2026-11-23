@@ -46,7 +46,7 @@ obligations are recorded in the [formalization checklist](FORMALIZATION_CHECKLIS
 | State-dependent branching process | A native offspring kernel `Q(s)` and measurable update `F(s,e)` induce the offspring-state kernel. The process admits arbitrary joint initial states; generation and stopping-generation conditional product laws follow from optional-line strong branching | [`Offspring/Kernel`](Probability/BranchingProcess/Offspring/Kernel.lean), [`State/StrongBranching`](Probability/BranchingProcess/State/StrongBranching.lean), [`State/Descendants/Observed`](Probability/BranchingProcess/State/Descendants/Observed.lean) |
 | Harmonic spine bias | For a general mean-harmonic state kernel, the joint law is `Q(s,dξ) h(ξ_i)/h(s)`. Its family marginal has total-weight density; its selected-state marginal is the Doob transform. Conditional child weights are `h(ξ_i)/∑_j h(ξ_j)` | [`Family/Marginals`](Probability/BranchingProcess/Spine/Family/Marginals.lean), [`Family/Conditional`](Probability/BranchingProcess/Spine/Family/Conditional.lean) |
 | Measurable state factors | If `K(s).map (Step.map f) = L(f(s))`, mapping every state by `f` preserves the complete path and tree laws, including arbitrary joint initial states; `f` may be noninjective | [`State/Map`](Probability/BranchingProcess/State/Map.lean) |
-| Branching random walk and tilted path | Many-to-one formulas turn generation sums of endpoint or ancestral-path functionals into tilted-spine expectations | [`EndpointManyToOne`](Probability/BranchingRandomWalk/Spine/ManyToOne/EndpointManyToOne.lean), [`Path/ManyToOne/Identity`](Probability/BranchingRandomWalk/Spine/Path/ManyToOne/Identity.lean) |
+| Branching random walk and tilted path | Endpoint, ancestral-path and first-entry formulas derive from the general state-tree many-to-one theorem via complete pre-sampled-field law transport | [`EndpointManyToOne`](Probability/BranchingRandomWalk/Spine/ManyToOne/EndpointManyToOne.lean), [`Path/ManyToOne/Identity`](Probability/BranchingRandomWalk/Spine/Path/ManyToOne/Identity.lean) |
 | Selection and capacity `N` | Threshold-count domination gives an injective order-preserving matching. Adapted selection and first-`N` populations admit pathwise and probabilistic coupling | [`ThresholdCount`](Combinatorics/Matching/ThresholdCount.lean), [`SelectedPopulation`](Combinatorics/Selection/NSelection/Matching/SelectedPopulation.lean), [`Causal/Restarted/Coupling`](Probability/BranchingRandomWalk/Selection/NSelection/Law/Causal/Restarted/Coupling.lean) |
 | Selected-population endpoint | From `⌊Nᵃ⌋` initial particles, `a ∈ [0,1]`, at times `n_N/log³ N → t > 0`, the normalized minimum converges in `L²` to `−a + π²σ²t/2`, under the stated branching and moment conditions | [`L2Limit`](Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/Endpoint/Sequence/L2Limit.lean) |
 | Asymptotic speed | For each positive capacity, every deterministic nonempty initial cloud of size at most `N` has the same almost-sure and `L¹` speed; `v_N log² N → π²σ²/2` under the theorem's first-moment assumptions | [`Limit/Speed`](Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/Limit/Speed.lean) |
@@ -66,7 +66,11 @@ including zero-weight branches:
 [`Tree/Normal`](Probability/BranchingProcess/Spine/Tree/Normal.lean).
 These are finite-generation Radon–Nikodym identities; an infinite-horizon
 density requires additional uniform integrability. The [checklist](FORMALIZATION_CHECKLIST.md#shis-general-spinal-decomposition)
-records the remaining barrier and tilted-BRW specializations.
+records the remaining optional-line obligations.
+The additive BRW specialization now transports the complete field and spine
+path laws; its endpoint and first-entry formulas are corollaries of
+[`Density/PathPayoff`](Probability/BranchingProcess/Spine/Tree/Density/PathPayoff.lean),
+with no parallel branching-expectation induction.
 
 The endpoint and speed results formalize Theorems 1.1 and 1.2 (including the
 first-moment formulation) in Wang Yiyang, *Asymptotic Speed of the N-Branching
