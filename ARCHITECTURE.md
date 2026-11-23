@@ -93,6 +93,19 @@ joint family/selected-child bias; `Family/Marginals.lean` derives both
 marginals and `Family/Conditional.lean` derives conditional child selection.
 `Offspring/Mean.lean` owns the mean child kernel, and the independent native
 kernel density operation lives in `Probability/Kernel/DoobTransform/Basic.lean`.
+`DoobTransform/Composition.lean` owns weight cancellation and native kernel
+iteration; `Trajectory.lean` owns the finite-history endpoint density, and
+`Restriction.lean` owns the normalized kernel on `{0 < h < ∞}`. The generic
+homogeneous history adapter and endpoint marginal belong to
+`Kernel/IonescuTulcea/Markov.lean`; its one-step integral recursion is in
+`IonescuTulcea/PartialTraj.lean`. The process-level Markov realization belongs
+to `Process/Markov/Trajectory.lean`; `Process/Markov/DoobTransform.lean`
+specializes it to the eligible region. `Spine/StateChain.lean` derives the
+associated spine chain and its path density from these general interfaces.
+It identifies its transition with the selected-child marginal, while
+identification with the ray extracted from the random tree remains a separate
+obligation. All these APIs are reusable mathematical results outside `Lemmas/`;
+single-proof auxiliary steps stay local to their proofs.
 `Spine/Tree/Construction.lean` augments states by the ordinary/distinguished
 role and applies the existing `State.treeKernel`; it does not implement
 another branching process. Normal states can have zero harmonic weight;

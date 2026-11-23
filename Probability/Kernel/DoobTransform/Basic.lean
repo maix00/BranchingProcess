@@ -24,6 +24,7 @@ In `ProbabilityTheory.Kernel`:
   `∫ h(y) dK(x) = h(x)` and `0 < h(x) < ∞`.
 * `doobTransform_isProbabilityMeasure` gives the same normalization at a
   single eligible state, permitting zero weights elsewhere.
+* `doobTransform_isSFiniteKernel` preserves s-finiteness when `0 < h(x) < ∞`.
 * `doobTransform_one` identifies the constant-one specialization with `K`.
 * `ae_doobTransform_weight_ne_zero` states that the transformed transition
   avoids zero-weight states. `ae_doobTransform_weight_ne_top` excludes
@@ -90,6 +91,12 @@ theorem doobTransform_isMarkovKernel (K : Kernel S S) [IsSFiniteKernel K]
     IsMarkovKernel (doobTransform K h) where
   isProbabilityMeasure x :=
     doobTransform_isProbabilityMeasure K hh x (hzero x) (htop x) (harmonic x)
+
+/-- Finite positive weights preserve s-finiteness of the native density kernel. -/
+theorem doobTransform_isSFiniteKernel (K : Kernel S S) [IsSFiniteKernel K]
+    {h : S → ℝ≥0∞} (hzero : ∀ x, h x ≠ 0) (htop : ∀ x, h x ≠ ∞) :
+    IsSFiniteKernel (doobTransform K h) :=
+  IsSFiniteKernel.withDensity K (fun x y => ENNReal.div_ne_top (htop y) (hzero x))
 
 @[simp] theorem doobTransform_one (K : Kernel S S) [IsSFiniteKernel K] :
     doobTransform K (fun _ => 1) = K := by
