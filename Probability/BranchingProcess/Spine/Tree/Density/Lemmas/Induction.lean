@@ -8,7 +8,7 @@ module
 
 import Probability.BranchingProcess.Spine.Tree.Density.Weight
 import all Probability.BranchingProcess.Spine.Tree.Density.Lemmas.Generation
-import all Probability.BranchingProcess.Spine.Tree.Lemmas.PathLaw
+import all Probability.BranchingProcess.Spine.Tree.Lemmas.Generation
 
 /-!
 # Fixed-address finite-history induction

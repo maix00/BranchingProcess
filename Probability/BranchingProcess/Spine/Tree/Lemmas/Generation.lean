@@ -10,7 +10,7 @@ import Probability.BranchingProcess.Spine.Tree.Observation
 import Probability.BranchingProcess.Spine.StateChain
 
 /-!
-# Support for identifying the realized spine's state law
+# Generation support for the spinal tree and observed path laws
 
 ## Internal proof declarations
 
@@ -19,8 +19,8 @@ import Probability.BranchingProcess.Spine.StateChain
 * `ae_pathKernel_unique_distinguished` transfers the realized-ray uniqueness
   to each generation of the same canonical process.
 
-These lemmas assemble the tagged reproduction rules for the path-law theorem
-in `Spine/Tree/PathLaw.lean`; they follow Zhan Shi, *Branching Random Walks*
+These lemmas assemble the tagged reproduction rules for the observed path law
+and the finite-history density induction. They follow Zhan Shi, *Branching Random Walks*
 (2015), §4.4, Theorem 4.4(ii), (4.10), DOI 10.1007/978-3-319-25372-5.
 -/
 

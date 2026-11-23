@@ -29233,3 +29233,17 @@ wrapper at another layer. Their clients retain their original statements.
 Earlier inventory entries naming that file are historical checkpoints, not
 current module owners. The current ownership table and `ARCHITECTURE.md`
 record the native interfaces.
+
+## Fixed-address spinal densities (2026-11-23)
+
+The fixed-address induction, full finite-generation density, complete-tree
+identification and conditional spine location are owned by
+`Spine/Tree/Density/{Weight,FiniteGeneration,Conditional}.lean`.
+`Density/Lemmas/{Generation,Induction}.lean` contains only their specific
+assembly and raw-history proof support. Shared tagged-generation support is
+renamed from `Tree/Lemmas/PathLaw.lean` to `Tree/Lemmas/Generation.lean`.
+Actual address and ray constructions remain public in `Tree/Observation.lean`.
+The tree root has seven direct Lean files, and the probability-line root has
+eight; the stopped-information pasting theorem is under `Line/Information/`.
+The source proof, native Mathlib candidates and abstraction decisions are
+recorded in [SPINAL_DENSITY_AUDIT.md](SPINAL_DENSITY_AUDIT.md).

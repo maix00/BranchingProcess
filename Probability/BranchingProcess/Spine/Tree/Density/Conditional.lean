@@ -20,6 +20,9 @@ In `ProbabilityTheory.BranchingProcess.Spine`:
   `P(wₙ=z | Hₙ) = W_z(Hₙ)/∑_u W_u(Hₙ)` almost surely for the canonical
   distinguished tree. Here `Hₙ = untypedHistory n`; the information includes
   the entire untyped tree through depth `n`, rather than only the spine path.
+* `condLExp_treeKernel_spinePrefix` gives the same conditional location for
+  the measurable address observation of the actual spine, using its almost
+  sure identification with the tagged-node event.
 * `ae_treeKernel_totalWeight` proves `0 < ∑_u W_u(Hₙ) < ∞` almost surely
   under the changed tree law, so this conditional ratio is well-defined.
 
@@ -34,7 +37,7 @@ or Radon--Nikodym implementation is introduced.
 
 namespace ProbabilityTheory.BranchingProcess.Spine
 
-open MeasureTheory Combinatorics.Branching Finset Preorder
+open Classical MeasureTheory Combinatorics.Branching Finset Preorder
 open scoped ENNReal
 
 /-- Shi Theorem 4.4(i), (4.9), conditioned on the full untyped finite tree. -/
@@ -136,6 +139,29 @@ theorem ae_treeKernel_totalWeight {S ι : Type*} [MeasurableSpace S]
     μ.withDensity (totalWeight h n) at hlaw
   rw [← hlaw] at ha
   exact ae_of_ae_map (measurable_untypedHistory n).aemeasurable ha
+
+/-- Shi (4.9), written with the measurable prefix of the actual realized spine. -/
+theorem condLExp_treeKernel_spinePrefix {S ι : Type*} [MeasurableSpace S]
+    [MeasurableSpace ι] [Countable ι] [MeasurableSingletonClass ι]
+    (Q : Kernel S (Step ι S)) [IsMarkovKernel Q]
+    {h : S → ℝ≥0∞} (hh : Measurable h)
+    (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ →
+      (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
+    (s : {s // h s ≠ 0 ∧ h s ≠ ∞}) (defaultChild : ι) (n : ℕ) (z : Fin n → ι) :
+    let P := treeKernel Q hh harmonic (some (Sum.inr s))
+    P⁻[(fun t => if spinePrefix defaultChild t n = z then 1 else 0) |
+      MeasurableSpace.comap (untypedHistory (h := h) n) inferInstance] =ᵐ[P]
+      fun t => addressWeight h n z (untypedHistory n t) /
+        totalWeight h n (untypedHistory n t) := by
+  classical
+  have he : (fun t => if spinePrefix defaultChild t n = z then (1 : ℝ≥0∞) else 0) =ᵐ[
+      treeKernel Q hh harmonic (some (Sum.inr s))]
+      (fun t => if (t (List.ofFn z)).any Sum.isRight = true then 1 else 0) := by
+    filter_upwards [ae_treeKernel_spinePrefix Q hh harmonic s defaultChild] with t ht
+    simp only [ht n z]
+  exact (condLExp_congr_ae
+    (mΩ := MeasurableSpace.comap (untypedHistory (h := h) n) inferInstance) he).trans
+      (condLExp_treeKernel_fixedAddress Q hh harmonic s n z)
 
 end ProbabilityTheory.BranchingProcess.Spine
 

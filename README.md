@@ -13,7 +13,7 @@ proof-support declarations are documented in their owning modules.
 | Lines in a forest | Ancestry antichains; meeting every infinite path is a separate property. Ancestral precedence orders lines, and distinct line members have disjoint descendant subtrees | [`Line/Basic`](Combinatorics/UlamHarris/Line/Basic.lean), [`Line/Order`](Combinatorics/UlamHarris/Line/Order.lean) |
 | First-entrance and truncated lines | First entrance consists of ancestry-minimal target nodes. Generation truncations are increasing cuts of bounded depth and meet every infinite address path | [`FirstEntrance`](Combinatorics/UlamHarris/Line/FirstEntrance.lean), [`Truncation`](Combinatorics/UlamHarris/Line/Truncation.lean) |
 | Optional random lines | Optionality tests `{L ≼ ℓ} ∈ F_ℓ`; countable ancestral suprema remain optional. Ancestrally observable first-entrance rules give optional lines; along a fixed path their entrance events equal Mathlib hitting-time events | [`Optional`](Probability/Process/Tree/Line/Optional.lean), [`Supremum`](Probability/Process/Tree/Line/Supremum.lean), [`FirstEntrance`](Probability/Process/Tree/Line/FirstEntrance.lean), [`PathHitting`](Probability/Process/Tree/Line/PathHitting.lean) |
-| Information at an optional line | `L ≼ M` implies `F_L ⊆ F_M`; stopping at a deterministic line recovers its past. Ordered optional lines form a native filtration, admitting conditional-expectation martingales and Lévy upward convergence to the generated stopped information. Earlier stopped information can decide an ordered pasting | [`Stopped`](Probability/Process/Tree/Line/Information/Stopped.lean), [`Pasting`](Probability/Process/Tree/Line/Pasting.lean) |
+| Information at an optional line | `L ≼ M` implies `F_L ⊆ F_M`; stopping at a deterministic line recovers its past. Ordered optional lines form a native filtration, admitting conditional-expectation martingales and Lévy upward convergence to the generated stopped information. Ordered pasting has an exact stopped-information decomposition on its decision cells | [`Stopped`](Probability/Process/Tree/Line/Information/Stopped.lean), [`Pasting`](Probability/Process/Tree/Line/Pasting.lean), [`Information/Pasting`](Probability/Process/Tree/Line/Information/Pasting.lean) |
 | First-entrance exponential mass | For an i.i.d. BRW with boundary-normalized tilt, `E[W_B] = P̂(∃ n, S_n ∈ B) ≤ 1`; expectation is one exactly when the tilted spine enters `B` almost surely | [`Spine/StoppingLine/FirstEntrance`](Probability/BranchingRandomWalk/Spine/StoppingLine/FirstEntrance.lean) |
 
 Life records and child marks are ordinary measurable observations. States are
@@ -45,23 +45,22 @@ obligations are recorded in the [formalization checklist](FORMALIZATION_CHECKLIS
 | Selected-population endpoint | From `⌊Nᵃ⌋` initial particles, `a ∈ [0,1]`, at times `n_N/log³ N → t > 0`, the normalized minimum converges in `L²` to `−a + π²σ²t/2`, under the stated branching and moment conditions | [`L2Limit`](Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/Endpoint/Sequence/L2Limit.lean) |
 | Asymptotic speed | For each positive capacity, every deterministic nonempty initial cloud of size at most `N` has the same almost-sure and `L¹` speed; `v_N log² N → π²σ²/2` under the theorem's first-moment assumptions | [`Limit/Speed`](Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/Limit/Speed.lean) |
 
-The canonical normal/distinguished tree has almost surely one realized
-infinite spine, and its distinguished nodes are exactly that ray's prefixes:
-[`Spine/Tree/Ray`](Probability/BranchingProcess/Spine/Tree/Ray.lean).
-Normal descendant trees have their original laws and the conditional product
-law at distinct current normal nodes:
-[`Spine/Tree/Normal`](Probability/BranchingProcess/Spine/Tree/Normal.lean).
-The root-family density and fixed first-spine-child weighted identity are
-derived from this same tree. The recursive split retains complete child
-subtrees, including future spine events:
-[`Spine/Tree/BranchingProperty`](Probability/BranchingProcess/Spine/Tree/BranchingProperty.lean).
-The underlying root-family/child-tree disintegration is available for arbitrary
-state and child-slot spaces:
-[`State/Descendants/Disintegration`](Probability/BranchingProcess/State/Descendants/Disintegration.lean).
-The realized spine's measurable state path has the canonical Doob-chain law:
-[`Spine/Tree/PathLaw`](Probability/BranchingProcess/Spine/Tree/PathLaw.lean).
-The higher-generation tree-density theorem and the conditional spine location
-given the untyped tree remain open; the recursive split does not assert them. See the [proof checklist](FORMALIZATION_CHECKLIST.md#shis-general-spinal-decomposition).
+For a mean-harmonic state kernel, the canonical distinguished tree has one
+measurably observed realized spine. Its complete untyped tree law is uniquely
+identified by the finite-generation densities
+`P_spine(Hₙ∈dx,wₙ=z) = W_z(x) P(Hₙ∈dx)`.
+Given the whole untyped finite tree, the spine address has probabilities
+`W_z/∑_u W_u`; its state path has the canonical Doob-chain law.
+See [`Density/FiniteGeneration`](Probability/BranchingProcess/Spine/Tree/Density/FiniteGeneration.lean),
+[`Density/Conditional`](Probability/BranchingProcess/Spine/Tree/Density/Conditional.lean),
+[`Tree/Observation`](Probability/BranchingProcess/Spine/Tree/Observation.lean),
+and [`Tree/PathLaw`](Probability/BranchingProcess/Spine/Tree/PathLaw.lean).
+Ordinary descendant trees retain their original conditional product laws,
+including zero-weight branches:
+[`Tree/Normal`](Probability/BranchingProcess/Spine/Tree/Normal.lean).
+These are finite-generation Radon–Nikodym identities; an infinite-horizon
+density requires additional uniform integrability. The [checklist](FORMALIZATION_CHECKLIST.md#shis-general-spinal-decomposition)
+records the remaining barrier and tilted-BRW specializations.
 
 The endpoint and speed results formalize Theorems 1.1 and 1.2 (including the
 first-moment formulation) in Wang Yiyang, *Asymptotic Speed of the N-Branching
