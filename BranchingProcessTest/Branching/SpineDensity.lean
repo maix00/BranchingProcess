@@ -1,4 +1,6 @@
 import Probability.BranchingProcess.Spine.Tree.Density.Conditional
+import Probability.BranchingProcess.Spine.Tree.Density.Martingale
+import Probability.BranchingProcess.Spine.StoppingLine.ManyToOne
 
 open MeasureTheory ProbabilityTheory Combinatorics.Branching Finset
 open scoped ENNReal
@@ -86,6 +88,57 @@ example : ∀ᵐ t ∂BranchingProcess.Spine.treeKernel offspring (h := weight)
   BranchingProcess.Spine.ae_treeKernel_spinePrefix offspring (by fun_prop) harmonic
     ⟨false, by simp [weight]⟩ false
 
+-- The same general martingale permits ordinary zero-weight branches and return
+-- to positive weight; it is derived from the empty stopped-line construction.
+example : Martingale
+    (fun n t => (BranchingProcess.Spine.totalWeight weight n
+      (BranchingProcess.State.treeHistory n t)).toReal)
+    BranchingProcess.State.treeFiltration
+    (BranchingProcess.State.treeKernel offspring (some false)) :=
+  BranchingProcess.Spine.martingale_totalWeight offspring (by fun_prop) harmonic
+    ⟨false, by simp [weight]⟩
+
+-- Stopping at this non-covering line gives no ancestral weight after the
+-- zero-weight first child, even though its terminal state has weight one.
+example : BranchingProcess.Spine.StoppingLine.mass weight
+    (fun _ => {((), [true, false])}) originalTree = 0 := by
+  have hp : Fin.init ([true, false].get) (0 : Fin 1) = true := by decide
+  simp [BranchingProcess.Spine.StoppingLine.mass, BranchingProcess.Spine.addressWeight,
+    BranchingProcess.State.treeHistory, originalTree, weight, hp]
+
+-- Missing entrance cannot be treated as expectation preservation: the empty
+-- line has mass zero, while every frozen generation still has expectation one.
+example : (∫⁻ t, BranchingProcess.Spine.StoppingLine.mass weight (fun _ => ∅) t
+    ∂BranchingProcess.State.treeKernel offspring (some false)) = 0 := by
+  simp [BranchingProcess.Spine.StoppingLine.mass]
+
+example (n : ℕ) :
+    (∫ t, BranchingProcess.Spine.StoppingLine.truncatedMass weight (fun _ => ∅) n t
+      ∂BranchingProcess.State.treeKernel offspring (some false)) = 1 := by
+  let past := fun _ : Set (Unit × List Bool) =>
+    (⊥ : MeasurableSpace (List Bool → Option Bool))
+  have hL : ProbabilityTheory.Tree.IsOptionalLine past
+      (fun _ : List Bool → Option Bool => (∅ : Set (Unit × List Bool))) :=
+    ProbabilityTheory.Tree.IsOptionalLine.const past IsAntichain.empty
+  exact BranchingProcess.Spine.StoppingLine.integral_truncatedMass offspring (by fun_prop) harmonic
+    ⟨false, by simp [weight]⟩ hL (fun _ => MeasurableSet.const _) n
+
+-- Full simple-line many-to-one at a deterministic singleton of depth two;
+-- no common stopping generation or coverage condition is introduced.
+example :
+    let L := fun _ : List Bool → Option Bool => {((), [true, false])}
+    (∫⁻ t, BranchingProcess.Spine.StoppingLine.mass weight L t
+      ∂BranchingProcess.State.treeKernel offspring (some false)) =
+      (BranchingProcess.Spine.treeKernel offspring (h := weight) (by fun_prop) harmonic
+        (some (Sum.inr ⟨false, by simp [weight]⟩))) (BranchingProcess.Spine.StoppingLine.spineHit L) := by
+  let past := fun _ : Set (Unit × List Bool) =>
+    (⊥ : MeasurableSpace (List Bool → Option Bool))
+  have hL : ProbabilityTheory.Tree.IsOptionalLine past
+      (fun _ : List Bool → Option Bool => {((), [true, false])}) :=
+    ProbabilityTheory.Tree.IsOptionalLine.const past IsAntichain.singleton
+  exact BranchingProcess.Spine.StoppingLine.lintegral_mass_eq offspring (by fun_prop) harmonic
+    ⟨false, by simp [weight]⟩ hL (fun _ => MeasurableSet.const _)
+
 end SpineDensityExamples
 
 #print axioms ProbabilityTheory.BranchingProcess.Spine.addressWeight_eq_endpointRatio
@@ -101,3 +154,16 @@ end SpineDensityExamples
 #print axioms ProbabilityTheory.BranchingProcess.Spine.ae_treeKernel_spineRay
 #print axioms ProbabilityTheory.BranchingProcess.Spine.ae_treeKernel_spinePrefix
 #print axioms ProbabilityTheory.BranchingProcess.Spine.condLExp_treeKernel_spinePrefix
+
+#print axioms ProbabilityTheory.BranchingProcess.Spine.lintegral_generationPayoff_eq
+#print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.mass_truncate
+#print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.lintegral_payoff_eq
+#print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.lintegral_mass_eq
+#print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.lintegral_mass_le_one
+#print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.martingale_truncatedMass
+#print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.integral_truncatedMass
+#print axioms ProbabilityTheory.BranchingProcess.Spine.martingale_totalWeight
+
+#print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.ae_tendsto_truncatedMass
+
+#print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.ae_truncatedMass_eq

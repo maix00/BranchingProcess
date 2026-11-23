@@ -29261,3 +29261,20 @@ results remain in `Process/Tree/Line`, `Kernel` and `MeasureTheory`; import
 guards prevent dependencies on BRW or spine models. Source coverage, native
 Mathlib comparisons and the random-empty/mixed-depth regression are recorded
 in [OPTIONAL_LINE_BRANCHING_AUDIT.md](OPTIONAL_LINE_BRANCHING_AUDIT.md).
+
+## Simple-line mass and martingale ownership (2026-11-23)
+
+`Spine/StoppingLine/{Mass,ManyToOne,Martingale}.lean` exposes line mass,
+its spine expectation identity and its generation-truncation martingale.
+Declarations use `ProbabilityTheory.BranchingProcess.Spine.StoppingLine`,
+so names such as `mass` and `truncatedMass` do not repeat that context.
+The one proof-support module is `StoppingLine/Lemmas/Truncation.lean`;
+it contains no independent public construction or process. The ordinary
+generation-density martingale is derived as an empty-line special case in
+`Tree/Density/Martingale.lean`, replacing its independent proof. Ordinary
+state history belongs in `State/Observation/History.lean`; simplicity is an
+observability property in the existing generic `Line/Optional.lean` module.
+Direct file counts remain three under `StoppingLine`, four under `Density`
+and four under `State/Observation`; the generic `Line` root retains eight.
+Exact source coverage and open sampling obligations are in
+[OPTIONAL_LINE_MANY_TO_ONE_AUDIT.md](OPTIONAL_LINE_MANY_TO_ONE_AUDIT.md).

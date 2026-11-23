@@ -15,6 +15,8 @@ proof-support declarations are documented in their owning modules.
 | Optional random lines | Optionality tests `{L ≼ ℓ} ∈ F_ℓ`; countable ancestral suprema remain optional. Ancestrally observable first-entrance rules give optional lines; along a fixed path their entrance events equal Mathlib hitting-time events | [`Optional`](Probability/Process/Tree/Line/Optional.lean), [`Supremum`](Probability/Process/Tree/Line/Supremum.lean), [`FirstEntrance`](Probability/Process/Tree/Line/FirstEntrance.lean), [`PathHitting`](Probability/Process/Tree/Line/PathHitting.lean) |
 | Information at an optional line | `L ≼ M` implies `F_L ⊆ F_M`; stopping at a deterministic line recovers its past. Ordered optional lines form a native filtration, admitting conditional-expectation martingales and Lévy upward convergence to the generated stopped information. Ordered pasting has an exact stopped-information decomposition on its decision cells | [`Stopped`](Probability/Process/Tree/Line/Information/Stopped.lean), [`Pasting`](Probability/Process/Tree/Line/Pasting.lean), [`Information/Pasting`](Probability/Process/Tree/Line/Information/Pasting.lean) |
 | Strong branching at optional lines | Given `F_L`, observed distinct boundary vertices have complete descendant-tree law `⊗ᵢ P_(X_(Rᵢ))`. Localized identities cover empty lines and random cardinality, with arbitrary measurable states, state-dependent offspring kernels and jointly distributed initial roots | [`State/StrongBranching`](Probability/BranchingProcess/State/StrongBranching.lean) |
+| Simple-line many-to-one | For measurable mean-harmonic ancestral weights, `E[W_L] = P_spine(spine hits L) ≤ 1`; equality to one is equivalent to almost-sure entrance. Membership may use the entire current generation | [`StoppingLine/ManyToOne`](Probability/BranchingProcess/Spine/StoppingLine/ManyToOne.lean) |
+| Generation-truncated line mass | The frozen boundary mass `S_n = ∑_(k<n) A_k + U_n` is a native nonnegative martingale with `E[S_n]=1` and an almost-sure limit. The ordinary generation-density martingale is its empty-line special case | [`StoppingLine/Martingale`](Probability/BranchingProcess/Spine/StoppingLine/Martingale.lean), [`Density/Martingale`](Probability/BranchingProcess/Spine/Tree/Density/Martingale.lean) |
 | First-entrance exponential mass | For an i.i.d. BRW with boundary-normalized tilt, `E[W_B] = P̂(∃ n, S_n ∈ B) ≤ 1`; expectation is one exactly when the tilted spine enters `B` almost surely | [`Spine/StoppingLine/FirstEntrance`](Probability/BranchingRandomWalk/Spine/StoppingLine/FirstEntrance.lean) |
 
 Life records and child marks are ordinary measurable observations. States are
@@ -27,8 +29,9 @@ reproduction information.
 offspring-kernel model. The full-family law requires each observed address to
 have countable range; the optional line itself needs no countable-range,
 bounded-depth or path-coverage assumption. Continuous-time life-history
-models, the general stopped-line many-to-one identity and convergence of
-stopped branching-mass martingales remain separate obligations. The
+models, many-to-one beyond the simple-line hypothesis, line-indexed optional
+sampling and identification of the truncated-mass limit with `W_L` remain
+separate obligations. The latter identification needs expectation preservation. The
 first-entrance mass identity above is the additive BRW specialization.
 Optionality of generation
 truncation is currently proved for ancestrally observable membership rules;

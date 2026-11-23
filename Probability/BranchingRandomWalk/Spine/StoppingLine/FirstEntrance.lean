@@ -34,8 +34,10 @@ J. D. Biggins and A. E. Kyprianou, *Measure change in multitype branching*
 [DOI:10.1239/aap/1086957585](https://doi.org/10.1239/aap/1086957585).
 The proof sums the existing weighted path many-to-one identity over the
 pairwise disjoint first-entry generations. It requires no moment condition
-or almost-sure finiteness of the spine hitting time. The general-state and
-simple-optional-line versions of Lemmas 6.1 and 14.1 are separate obligations.
+or almost-sure finiteness of the spine hitting time. The general-state simple-line identity is proved in
+`BranchingProcess/Spine/StoppingLine/ManyToOne.lean`. The independent-field
+realization here retains its existing weighted-path-law proof; transporting it
+to that canonical state-tree entry remains an explicit migration obligation.
 -/
 
 @[expose] public section

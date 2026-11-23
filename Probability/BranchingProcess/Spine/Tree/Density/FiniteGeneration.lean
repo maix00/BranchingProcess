@@ -20,6 +20,8 @@ In `ProbabilityTheory.BranchingProcess.Spine`:
 * `lintegral_treeKernel_fixedAddress` proves, at every depth `n` and fixed
   address `z`, `E_spine[1_{wₙ=z} g(Hₙ)] = E[W_z(Hₙ) g(Hₙ)]` for every
   nonnegative measurable finite-history payoff. `W_z` is `addressWeight`.
+* `lintegral_generationPayoff_eq` sums fixed-address densities for nonnegative
+  measurable tests depending jointly on the generation history and address.
 * `treeKernel_finiteHistory` identifies the untyped finite-tree law as
   `P(Hₙ∈dx) (∑_z W_z(x))`, for all `n`.
 * `treeKernel_fixedAddress_measure` gives the joint fixed-address law
@@ -103,6 +105,40 @@ theorem lintegral_treeKernel_fixedAddress {S ι : Type*} [MeasurableSpace S]
     (μ := State.treeKernel Q (some s.1))
   rw [treeKernel_history] at hright
   exact hleft.symm.trans ((lintegral_partialTraj_fixedAddress Q hh harmonic s n z hg).trans hright)
+
+/-- Summed fixed-address density, retaining dependence on both the selected
+address and the entire generation history (Shi, Theorem 4.3, (4.11)–(4.13)). -/
+theorem lintegral_generationPayoff_eq {S ι : Type*} [MeasurableSpace S]
+    [MeasurableSpace ι] [Countable ι] [MeasurableSingletonClass ι]
+    (Q : Kernel S (Step ι S)) [IsMarkovKernel Q]
+    {h : S → ℝ≥0∞} (hh : Measurable h)
+    (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ →
+      (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
+    (s : {s // h s ≠ 0 ∧ h s ≠ ∞}) (n : ℕ)
+    (g : (Fin n → ι) → (Π k : Iic n, (Unit × (Fin k.1 → ι)) → Option S) → ℝ≥0∞)
+    (hg : ∀ z, Measurable (g z)) :
+    (∫⁻ t, ∑' z : Fin n → ι,
+      addressWeight h n z (fun _k p => t (List.ofFn p.2)) *
+        g z (fun _k p => t (List.ofFn p.2)) ∂State.treeKernel Q (some s.1)) =
+    ∫⁻ t, ∑' z : Fin n → ι, if (t (List.ofFn z)).any Sum.isRight = true then
+      g z (untypedHistory n t) else 0 ∂treeKernel Q hh harmonic (some (Sum.inr s)) := by
+  classical
+  have ht : Measurable (fun t : List ι → Option S =>
+      fun _k : Iic n => fun p : Unit × (Fin _k.1 → ι) => t (List.ofFn p.2)) := by fun_prop
+  have hb : Measurable (fun o : Option (S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}) =>
+      o.any Sum.isRight) := measurable_option_elim false (measurable_const.sumElim measurable_const)
+  have hleft (z : Fin n → ι) : Measurable (fun t : List ι → Option S =>
+      addressWeight h n z (fun _k p => t (List.ofFn p.2)) *
+        g z (fun _k p => t (List.ofFn p.2))) :=
+    ((measurable_addressWeight hh n z).comp ht).mul ((hg z).comp ht)
+  have hright (z : Fin n → ι) : Measurable (fun t :
+      List ι → Option (S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}) =>
+      if (t (List.ofFn z)).any Sum.isRight = true then g z (untypedHistory n t) else 0) :=
+    ((hg z).comp (measurable_untypedHistory n)).ite
+      ((measurableSet_singleton true).preimage (hb.comp (measurable_pi_apply _))) measurable_const
+  rw [lintegral_tsum (fun z => (hleft z).aemeasurable),
+    lintegral_tsum (fun z => (hright z).aemeasurable)]
+  exact tsum_congr fun z => (lintegral_treeKernel_fixedAddress Q hh harmonic s n z (hg z)).symm
 
 /-- Shi Theorem 4.3, (4.11): sum the fixed-address densities after their induction. -/
 theorem treeKernel_finiteHistory {S ι : Type*} [MeasurableSpace S]

@@ -125,9 +125,10 @@ its new information theorem is grouped under `Information/`.
 
 ## Remaining boundaries
 
-The native `Martingale` packaging of the ancestral mass, the changed-measure
-uniform-integrability criterion, and the renewal/barrier BRW instantiations
-remain separate obligations in `FORMALIZATION_CHECKLIST.md`. These are not
+The ancestral mass is now a native `Martingale`, derived as the empty-line
+special case in `Tree/Density/Martingale.lean`; see
+`OPTIONAL_LINE_MANY_TO_ONE_AUDIT.md`. The changed-measure uniform-integrability
+criterion and renewal/barrier BRW instantiations remain separate obligations in `FORMALIZATION_CHECKLIST.md`. These are not
 assumptions in the proved fixed-address, tree-law, or conditional-location
 results. No global absolute continuity of infinite-horizon tree laws or
 strong branching at arbitrary optional lines is inferred from them.

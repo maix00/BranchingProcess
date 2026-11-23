@@ -11,6 +11,30 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Branching/SpineDensity.lean"): (
+        "ProbabilityTheory.BranchingProcess.Spine.addressWeight_eq_endpointRatio",
+        "ProbabilityTheory.BranchingProcess.Spine.lintegral_treeKernel_fixedAddress",
+        "ProbabilityTheory.BranchingProcess.Spine.treeKernel_finiteHistory",
+        "ProbabilityTheory.BranchingProcess.Spine.treeKernel_fixedAddress_measure",
+        "ProbabilityTheory.BranchingProcess.Spine.lintegral_totalWeight",
+        "ProbabilityTheory.BranchingProcess.Spine.eq_treeKernel_marginal_of_finiteHistory",
+        "ProbabilityTheory.BranchingProcess.Spine.condLExp_treeKernel_fixedAddress",
+        "ProbabilityTheory.BranchingProcess.Spine.ae_treeKernel_totalWeight",
+        "ProbabilityTheory.BranchingProcess.Spine.measurable_spineRay",
+        "ProbabilityTheory.BranchingProcess.Spine.ae_treeKernel_spineRay",
+        "ProbabilityTheory.BranchingProcess.Spine.ae_treeKernel_spinePrefix",
+        "ProbabilityTheory.BranchingProcess.Spine.condLExp_treeKernel_spinePrefix",
+        "ProbabilityTheory.BranchingProcess.Spine.lintegral_generationPayoff_eq",
+        "ProbabilityTheory.BranchingProcess.Spine.StoppingLine.mass_truncate",
+        "ProbabilityTheory.BranchingProcess.Spine.StoppingLine.lintegral_payoff_eq",
+        "ProbabilityTheory.BranchingProcess.Spine.StoppingLine.lintegral_mass_eq",
+        "ProbabilityTheory.BranchingProcess.Spine.StoppingLine.lintegral_mass_le_one",
+        "ProbabilityTheory.BranchingProcess.Spine.StoppingLine.martingale_truncatedMass",
+        "ProbabilityTheory.BranchingProcess.Spine.StoppingLine.integral_truncatedMass",
+        "ProbabilityTheory.BranchingProcess.Spine.martingale_totalWeight",
+        "ProbabilityTheory.BranchingProcess.Spine.StoppingLine.ae_tendsto_truncatedMass",
+        "ProbabilityTheory.BranchingProcess.Spine.StoppingLine.ae_truncatedMass_eq",
+    ),
     Path("BranchingProcessTest/Branching/OptionalLineFiltration.lean"): (
         "ProbabilityTheory.Tree.IsOptionalLine.filtration",
         "OptionalLineFiltrationExamples.tower",
