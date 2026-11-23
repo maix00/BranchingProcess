@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import MeasureTheory.MeasurableSpace.Option
-public import MeasureTheory.MeasurableSpace.CountableEvaluation
+public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 /-!
 # Distinguished-state observations of tagged populations
@@ -28,8 +28,8 @@ In `ProbabilityTheory.BranchingProcess.Spine`:
 These observations apply to arbitrary tagged populations. For their use in
 Zhan Shi, *Branching Random Walks* (2015), §4.4, Theorem 4.4(ii), (4.10),
 see DOI 10.1007/978-3-319-25372-5. They require no offspring or path law.
-Measurability uses the existing countable-range evaluation theorem rather
-than introducing a second general coordinate-selection interface.
+Measurability uses Mathlib's countable-codomain fiber criterion and
+countable-index product measurability directly.
 -/
 
 @[expose] public section
@@ -134,16 +134,17 @@ theorem measurableSet_unique_distinguished {I S T : Type*} [Countable I]
     dsimp [distinguishedState, chosen, field]
     split_ifs <;> rfl
   rw [he]
-  apply Measurable.eval_of_countable_range field chosen
-  · intro i _
+  let _ : MeasurableSpace (Option I) := ⊤
+  have hs : Measurable chosen := measurable_to_countable' hfiber
+  have hm : Measurable (fun p : (I → Option (S ⊕ T)) × Option I => field p.1 p.2) := by
+    apply measurable_from_prod_countable_left
+    intro i
     cases i with
     | none => exact measurable_const
     | some i =>
       exact (measurable_option_elim d (measurable_const.sumElim measurable_id)).comp
         (measurable_pi_apply i)
-  · intro i _
-    exact hfiber i
-  · exact Set.to_countable _
+  exact hm.comp (measurable_id.prodMk hs)
 
 end ProbabilityTheory.BranchingProcess.Spine
 

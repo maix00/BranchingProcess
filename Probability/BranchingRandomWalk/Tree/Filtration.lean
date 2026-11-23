@@ -10,7 +10,7 @@ public import Combinatorics.UlamHarris.Basic
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import Probability.Process.Filtration.GeneratedByCoordinates
 
-import MeasureTheory.MeasurableSpace.CountableEvaluation
+import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 /-!
 # The generation filtration on a pre-sampled mark field
@@ -163,14 +163,22 @@ theorem selected_mark_measurable_of_countable_range (n : ℕ)
     Measurable[generationFiltration (M := M) n]
       (fun ω : Mark α M => ω (chosen ω)) := by
   let _ : MeasurableSpace (Mark α M) := generationFiltration (M := M) n
-  exact Measurable.eval_of_countable_range
-    (fun ω u => ω u) chosen
-    (fun u hu => by
-      have hdepth' : u.length < n := by
-        obtain ⟨ω, hω⟩ := hu
-        simpa [← hω] using hdepth ω
-      exact mark_measurable_of_depth_lt u n hdepth')
-    (fun u _ => hchosen (measurableSet_singleton u)) hcount
+  let R := Set.range chosen
+  let _ : Countable R := Set.countable_coe_iff.mpr hcount
+  let _ : MeasurableSpace R := ⊤
+  let selected (ω : Mark α M) : R := ⟨chosen ω, Set.mem_range_self ω⟩
+  have hs : Measurable selected := measurable_to_countable' fun u => by
+    convert hchosen (measurableSet_singleton u.1) using 1
+    ext ω
+    exact Subtype.ext_iff
+  have he : Measurable (fun z : Mark α M × R => z.1 z.2.1) := by
+    apply measurable_from_prod_countable_left
+    intro u
+    have hu : u.1.length < n := by
+      obtain ⟨ω, hω⟩ := u.2
+      simpa [← hω] using hdepth ω
+    exact mark_measurable_of_depth_lt u.1 n hu
+  exact he.comp (measurable_id.prodMk hs)
 
 /-- Countable offspring labels are a convenient sufficient condition for the
 range condition in `selected_mark_measurable_of_countable_range`. -/

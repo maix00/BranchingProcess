@@ -8,7 +8,7 @@ module
 
 public import Probability.BranchingRandomWalk.Population.Candidates.Leftmost
 import Probability.BranchingRandomWalk.Population.Candidates.Adapted
-import MeasureTheory.MeasurableSpace.CountableEvaluation
+import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 /-!
 # A measurable multi-root finite-candidate selection process
@@ -53,15 +53,21 @@ theorem finiteLeftmostAtGeneration_of_adapted {m : ℕ}
     (hcandidates : Measurable[multiRootStepFiltration (m := m) (X := ℝ) n] candidates) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
       (fun ω => finiteLeftmostAtGeneration N n x ω (candidates ω)) := by
-  exact @Measurable.eval_of_countable_range
-    (FiniteRootStepField m ℕ ℝ) (Finset (RootAddress m ℕ))
+  exact @Measurable.comp
+    (FiniteRootStepField m ℕ ℝ)
+    (FiniteRootStepField m ℕ ℝ × Finset (RootAddress m ℕ))
     (Finset (RootAddress m ℕ))
-    (multiRootStepFiltration (m := m) (X := ℝ) n) inferInstance
-    (fun ω s => finiteLeftmostAtGeneration N n x ω s) candidates
-    (fun s _ => finiteLeftmostAtGeneration_fixed_measurable N n x s)
-    (fun s _ => hcandidates (measurableSet_singleton s))
-    (Set.Countable.mono (Set.subset_univ (Set.range candidates))
-      Set.countable_univ)
+    (multiRootStepFiltration (m := m) (X := ℝ) n)
+    (@MeasurableSpace.prod _ _ (multiRootStepFiltration (m := m) (X := ℝ) n) inferInstance)
+    inferInstance
+    (fun p => finiteLeftmostAtGeneration N n x p.1 p.2)
+    (fun ω => (ω, candidates ω))
+    (@measurable_from_prod_countable_left
+      (FiniteRootStepField m ℕ ℝ) (Finset (RootAddress m ℕ)) (Finset (RootAddress m ℕ))
+      (multiRootStepFiltration (m := m) (X := ℝ) n) inferInstance inferInstance
+      inferInstance inferInstance _
+      (fun s => finiteLeftmostAtGeneration_fixed_measurable N n x s))
+    (measurable_id.prodMk hcandidates)
 
 /-- One common selected population from `m` labelled initial ancestors. -/
 noncomputable def selectedPopulation {m : ℕ}
