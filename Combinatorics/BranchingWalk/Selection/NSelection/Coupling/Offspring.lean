@@ -14,33 +14,41 @@ public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Cloud
 
 ## Public declarations
 
-If a spatially dominating injection matches every source parent to a target
-parent, source child slots are contained in the matched target slots, and
-shared increments agree, then every lower-tail count of source child
-addresses is bounded by the corresponding target count:
+If `nSelectedBranchingWalkParentMatching` spatially matches every
+`selectedBranchingWalkParents` parent to an
+`nSelectedBranchingWalkParents` parent, the corresponding child-slot sets
+are included, and shared increments agree, then every threshold count of
+offspring addresses of `selectedBranchingWalk` is bounded by that of
+`nSelectedBranchingWalk`:
 
 \[
-\left|\left\{q\in\operatorname{offspringAddresses}(P_C,I_C):
-  \phi(x_C(q))\le a\right\}\right|
-\le
-\left|\left\{q\in\operatorname{offspringAddresses}(P_D,I_D):
-  \phi(x_D(q))\le a\right\}\right|.
+\begin{aligned}
+&\#\left\{q\in\operatorname{offspringAddresses}
+  (\texttt{selectedBranchingWalkParents},
+   \texttt{selectedBranchingWalkChildSlots}):
+  \phi\bigl(\operatorname{position}(\texttt{selectedBranchingWalk},d,q.1,q.2)\bigr)\le a\right\}\\
+&\qquad\le
+\#\left\{q\in\operatorname{offspringAddresses}
+  (\texttt{nSelectedBranchingWalkParents},
+   \texttt{nSelectedBranchingWalkChildSlots}):
+  \phi\bigl(\operatorname{position}(\texttt{nSelectedBranchingWalk},d,q.1,q.2)\bigr)\le a\right\}.
+\end{aligned}
 \]
 
-This file propagates parent domination to lower-tail domination of genuine child
+This file propagates parent domination to threshold-count domination of genuine offspring
 addresses.  Child slots remain arbitrary finite sets or sets; no enumeration
 of roots or offspring slots is assumed.
 
-The public API is `offspringAddresses_filter_card_le_of_injection`: a spatially
-dominating injection of parents, inclusion of each source parent's child slots
-in its matched target parent's slots, and equality of shared increments imply
-`((offspringAddresses sourceParents sourceSlots).filter
-(fun q => φ (sourceWalk.position d q.1 q.2) ≤ a)).card ≤
-((offspringAddresses targetParents targetSlots).filter
-(fun q => φ (targetWalk.position d q.1 q.2) ≤ a)).card` for every `a`.
+The public API is `offspringAddresses_filter_card_le_of_injection`: spatial
+domination by `nSelectedBranchingWalkParentMatching`, child-slot inclusion,
+and equality of shared increments imply
+`((offspringAddresses selectedBranchingWalkParents selectedBranchingWalkChildSlots).filter
+(fun q => φ (selectedBranchingWalk.position d q.1 q.2) ≤ a)).card ≤
+((offspringAddresses nSelectedBranchingWalkParents nSelectedBranchingWalkChildSlots).filter
+(fun q => φ (nSelectedBranchingWalk.position d q.1 q.2) ≤ a)).card` for every `a`.
 `offspringAddresses_filter_card_le_of_parent_matching` gives the same bound
 from the corresponding injective-domination relation when slot inclusion and
-increment equality are assumed for every eligible target parent.
+increment equality are assumed for every eligible `nSelectedBranchingWalk` parent.
 -/
 
 @[expose] public section
@@ -50,97 +58,97 @@ namespace Combinatorics.Branching.Selection.Coupling
 open Combinatorics.UlamHarris
 open _root_.Combinatorics.Selection.NSelection
 
-variable {Root α Mark Position Value : Type*}
+variable {Root α Mark Position OrderKey : Type*}
 
-/-- Parent domination propagates to lower-tail domination of genuine child
-addresses.  The two walks may use different underlying step fields; the
-coupling hypothesis identifies the mapped increment of every shared slot of
-matched parents. -/
+/-- Parent domination propagates to threshold-count domination of genuine offspring
+addresses. The two branching walks may use different underlying step fields;
+the coupling hypothesis identifies the mapped increment of every shared
+child slot. -/
 theorem offspringAddresses_filter_card_le_of_injection
     [AddCommMonoid Position]
-    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
-    (φ : Position → Value) (d : Mark → Position)
-    (sourceWalk targetWalk : RootIndexed.BranchingWalk Root α Mark Position)
-    (sourceParents targetParents : Finset (RootIndexed.TreeNode Root α))
-    (sourceSlots targetSlots : RootIndexed.TreeNode Root α → Finset α)
-    (parents : Cloud.SliceDominatingMap φ
-      (populationCloud d sourceWalk sourceParents)
-      (populationCloud d targetWalk targetParents) ())
-    (hslots : ∀ p ∈ sourceParents,
-      sourceSlots p ⊆ targetSlots (parents p))
-    (hsharedIncrement : ∀ p ∈ sourceParents, ∀ i ∈ sourceSlots p,
-        value' ((targetWalk.step (parents p).1 (parents p).2).map d) i =
-          value' ((sourceWalk.step p.1 p.2).map d) i)
-    (htranslate : ∀ x y z : Position,
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder OrderKey]
+    (φ : Position → OrderKey) (d : Mark → Position)
+    (selectedBranchingWalk nSelectedBranchingWalk : RootIndexed.BranchingWalk Root α Mark Position)
+    (selectedBranchingWalkParents nSelectedBranchingWalkParents : Finset (RootIndexed.TreeNode Root α))
+    (selectedBranchingWalkChildSlots nSelectedBranchingWalkChildSlots : RootIndexed.TreeNode Root α → Finset α)
+    (nSelectedBranchingWalkParentMatching : Cloud.SliceDominatingMap φ
+      (populationCloud d selectedBranchingWalk selectedBranchingWalkParents)
+      (populationCloud d nSelectedBranchingWalk nSelectedBranchingWalkParents) ())
+    (hchildSlots_mono_under_parentMatching : ∀ p ∈ selectedBranchingWalkParents,
+      selectedBranchingWalkChildSlots p ⊆ nSelectedBranchingWalkChildSlots (nSelectedBranchingWalkParentMatching p))
+    (hmatchedParents_sharedIncrement : ∀ p ∈ selectedBranchingWalkParents, ∀ i ∈ selectedBranchingWalkChildSlots p,
+        value' ((nSelectedBranchingWalk.step (nSelectedBranchingWalkParentMatching p).1 (nSelectedBranchingWalkParentMatching p).2).map d) i =
+          value' ((selectedBranchingWalk.step p.1 p.2).map d) i)
+    (horderKey_translation_mono : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
-    (a : Value) :
-    ((offspringAddresses sourceParents sourceSlots).filter fun q =>
-        φ (sourceWalk.position d q.1 q.2) ≤ a).card ≤
-      ((offspringAddresses targetParents targetSlots).filter fun q =>
-        φ (targetWalk.position d q.1 q.2) ≤ a).card := by
+    (a : OrderKey) :
+    ((offspringAddresses selectedBranchingWalkParents selectedBranchingWalkChildSlots).filter fun q =>
+        φ (selectedBranchingWalk.position d q.1 q.2) ≤ a).card ≤
+      ((offspringAddresses nSelectedBranchingWalkParents nSelectedBranchingWalkChildSlots).filter fun q =>
+        φ (nSelectedBranchingWalk.position d q.1 q.2) ≤ a).card := by
   classical
-  have hmem : ∀ p ∈ sourceParents, parents.toFun p ∈ targetParents := by
+  have hmem : ∀ p ∈ selectedBranchingWalkParents, nSelectedBranchingWalkParentMatching.toFun p ∈ nSelectedBranchingWalkParents := by
     intro p hp
-    simpa using parents.mapsTo (by simpa using hp)
-  have hinj : Set.InjOn parents.toFun (↑sourceParents : Set _) := by
+    simpa using nSelectedBranchingWalkParentMatching.mapsTo (by simpa using hp)
+  have hinj : Set.InjOn nSelectedBranchingWalkParentMatching.toFun (↑selectedBranchingWalkParents : Set _) := by
     intro p hp q hq hpq
-    exact parents.injOn (by simpa using hp) (by simpa using hq) hpq
-  have hpairs := offspringPairs_filter_card_le sourceParents targetParents
-    sourceSlots targetSlots parents.toFun hmem hinj
-    hslots
-    (fun p i => φ (sourceWalk.position d p.1 (p.2 ++ [i])))
-    (fun q i => φ (targetWalk.position d q.1 (q.2 ++ [i])))
+    exact nSelectedBranchingWalkParentMatching.injOn (by simpa using hp) (by simpa using hq) hpq
+  have hpairs := offspringPairs_filter_card_le selectedBranchingWalkParents nSelectedBranchingWalkParents
+    selectedBranchingWalkChildSlots nSelectedBranchingWalkChildSlots nSelectedBranchingWalkParentMatching.toFun hmem hinj
+    hchildSlots_mono_under_parentMatching
+    (fun p i => φ (selectedBranchingWalk.position d p.1 (p.2 ++ [i])))
+    (fun q i => φ (nSelectedBranchingWalk.position d q.1 (q.2 ++ [i])))
     (by
       intro p hp i hi
-      rw [sourceWalk.position_child, targetWalk.position_child,
-        hsharedIncrement p hp i hi]
-      exact htranslate (sourceWalk.position d p.1 p.2)
-        (targetWalk.position d (parents p).1 (parents p).2)
-        (value' ((sourceWalk.step p.1 p.2).map d) i)
-        (by simpa using parents.dominates p (by simpa using hp))) a
+      rw [selectedBranchingWalk.position_child, nSelectedBranchingWalk.position_child,
+        hmatchedParents_sharedIncrement p hp i hi]
+      exact horderKey_translation_mono (selectedBranchingWalk.position d p.1 p.2)
+        (nSelectedBranchingWalk.position d (nSelectedBranchingWalkParentMatching p).1 (nSelectedBranchingWalkParentMatching p).2)
+        (value' ((selectedBranchingWalk.step p.1 p.2).map d) i)
+        (by simpa using nSelectedBranchingWalkParentMatching.dominates p (by simpa using hp))) a
   rw [card_filter_offspringAddresses, card_filter_offspringAddresses]
   convert hpairs using 1 <;> rfl
 
 /-- Compatibility form with a proposition-valued parent domination and
-shared-step hypotheses stated for every eligible target parent. -/
+shared-step hypotheses stated for every eligible `nSelectedBranchingWalk` parent. -/
 theorem offspringAddresses_filter_card_le_of_parent_matching
     [AddCommMonoid Position]
-    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
-    (φ : Position → Value) (d : Mark → Position)
-    (sourceWalk targetWalk : RootIndexed.BranchingWalk Root α Mark Position)
-    (sourceParents targetParents : Finset (RootIndexed.TreeNode Root α))
-    (sourceSlots targetSlots : RootIndexed.TreeNode Root α → Finset α)
-    (hparents : (populationCloud d sourceWalk sourceParents).InjectivelyDominatesBy φ
-      (populationCloud d targetWalk targetParents) ())
-    (hslots : ∀ p ∈ sourceParents, ∀ q ∈ targetParents,
-      φ (targetWalk.position d q.1 q.2) ≤
-          φ (sourceWalk.position d p.1 p.2) →
-      sourceSlots p ⊆ targetSlots q)
-    (hsharedIncrement : ∀ p ∈ sourceParents, ∀ q ∈ targetParents,
-      φ (targetWalk.position d q.1 q.2) ≤
-          φ (sourceWalk.position d p.1 p.2) →
-      ∀ i ∈ sourceSlots p,
-        value' ((targetWalk.step q.1 q.2).map d) i =
-          value' ((sourceWalk.step p.1 p.2).map d) i)
-    (htranslate : ∀ x y z : Position,
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder OrderKey]
+    (φ : Position → OrderKey) (d : Mark → Position)
+    (selectedBranchingWalk nSelectedBranchingWalk : RootIndexed.BranchingWalk Root α Mark Position)
+    (selectedBranchingWalkParents nSelectedBranchingWalkParents : Finset (RootIndexed.TreeNode Root α))
+    (selectedBranchingWalkChildSlots nSelectedBranchingWalkChildSlots : RootIndexed.TreeNode Root α → Finset α)
+    (hselectedParents_injectivelyDominate_nSelectedParents : (populationCloud d selectedBranchingWalk selectedBranchingWalkParents).InjectivelyDominatesBy φ
+      (populationCloud d nSelectedBranchingWalk nSelectedBranchingWalkParents) ())
+    (hchildSlots_mono_under_parentMatching : ∀ p ∈ selectedBranchingWalkParents, ∀ q ∈ nSelectedBranchingWalkParents,
+      φ (nSelectedBranchingWalk.position d q.1 q.2) ≤
+          φ (selectedBranchingWalk.position d p.1 p.2) →
+      selectedBranchingWalkChildSlots p ⊆ nSelectedBranchingWalkChildSlots q)
+    (hmatchedParents_sharedIncrement : ∀ p ∈ selectedBranchingWalkParents, ∀ q ∈ nSelectedBranchingWalkParents,
+      φ (nSelectedBranchingWalk.position d q.1 q.2) ≤
+          φ (selectedBranchingWalk.position d p.1 p.2) →
+      ∀ i ∈ selectedBranchingWalkChildSlots p,
+        value' ((nSelectedBranchingWalk.step q.1 q.2).map d) i =
+          value' ((selectedBranchingWalk.step p.1 p.2).map d) i)
+    (horderKey_translation_mono : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
-    (a : Value) :
-    ((offspringAddresses sourceParents sourceSlots).filter fun q =>
-        φ (sourceWalk.position d q.1 q.2) ≤ a).card ≤
-      ((offspringAddresses targetParents targetSlots).filter fun q =>
-        φ (targetWalk.position d q.1 q.2) ≤ a).card := by
-  let parents := Cloud.SliceDominatingMap.ofInjectivelyDominatesBy hparents
-  apply offspringAddresses_filter_card_le_of_injection φ d sourceWalk
-    targetWalk sourceParents targetParents sourceSlots targetSlots parents
+    (a : OrderKey) :
+    ((offspringAddresses selectedBranchingWalkParents selectedBranchingWalkChildSlots).filter fun q =>
+        φ (selectedBranchingWalk.position d q.1 q.2) ≤ a).card ≤
+      ((offspringAddresses nSelectedBranchingWalkParents nSelectedBranchingWalkChildSlots).filter fun q =>
+        φ (nSelectedBranchingWalk.position d q.1 q.2) ≤ a).card := by
+  let nSelectedBranchingWalkParentMatching := Cloud.SliceDominatingMap.ofInjectivelyDominatesBy hselectedParents_injectivelyDominate_nSelectedParents
+  apply offspringAddresses_filter_card_le_of_injection φ d selectedBranchingWalk
+    nSelectedBranchingWalk selectedBranchingWalkParents nSelectedBranchingWalkParents selectedBranchingWalkChildSlots nSelectedBranchingWalkChildSlots nSelectedBranchingWalkParentMatching
   · intro p hp i hi
-    exact hslots p hp (parents p)
-      (by simpa using parents.mapsTo (by simpa using hp))
-      (by simpa using parents.dominates p (by simpa using hp)) hi
+    exact hchildSlots_mono_under_parentMatching p hp (nSelectedBranchingWalkParentMatching p)
+      (by simpa using nSelectedBranchingWalkParentMatching.mapsTo (by simpa using hp))
+      (by simpa using nSelectedBranchingWalkParentMatching.dominates p (by simpa using hp)) hi
   · intro p hp i hi
-    exact hsharedIncrement p hp (parents p)
-      (by simpa using parents.mapsTo (by simpa using hp))
-      (by simpa using parents.dominates p (by simpa using hp)) i hi
-  · exact htranslate
+    exact hmatchedParents_sharedIncrement p hp (nSelectedBranchingWalkParentMatching p)
+      (by simpa using nSelectedBranchingWalkParentMatching.mapsTo (by simpa using hp))
+      (by simpa using nSelectedBranchingWalkParentMatching.dominates p (by simpa using hp)) i hi
+  · exact horderKey_translation_mono
 
 
 end Combinatorics.Branching.Selection.Coupling

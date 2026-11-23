@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Basic.Position.Displace
+public import MeasureTheory.BranchingWalk.State
 public import Combinatorics.BranchingWalk.Step.Basic
 public import Combinatorics.BranchingWalk.Basic.Survival.SurviveAlong
 public import Probability.BranchingRandomWalk.Tree.Filtration
@@ -93,34 +94,23 @@ theorem surviveAlong_root_measurableSet {α X : Type*} [MeasurableSpace X]
       {step : StepField α X | surviveAlong step [] u} := by
   exact surviveAlong_measurableSet (X := X) [] u u.length (by simp)
 
-/-- The displacement is observable at the generation reached by the path;
-again the induction carries the current address. Both the mark type and the
-monoid are parameters, so this is not a real-valued statement. -/
+/-- Additive displacement measurability is the additive case of the general
+state-update measurability theorem at the observed generation. -/
 theorem displace_measurable
     {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
     (v p : 𝕍) (n : ℕ) (hn : v.length + p.length ≤ n) :
     Measurable[generationFiltration (M := Step ℕ X) n]
       (fun step : StepField ℕ X =>
         displace step v p) := by
-  induction p generalizing v with
-  | nil => exact measurable_const
-  | cons i p ih =>
-      have hlen : (v ++ [i]).length = v.length + 1 := by simp
-      have hlen' : (i :: p).length = p.length + 1 := by simp
-      have hstep : Measurable[generationFiltration (M := Step ℕ X) n]
-          (fun step : StepField ℕ X =>
-            Combinatorics.Branching.value' (step v) i) :=
-        (value'_measurable (X := X) i).comp
-          (mark_measurable_of_depth_lt (M := Step ℕ X) v n
-            (by omega))
-      have hrec : Measurable[generationFiltration (M := Step ℕ X) n]
-          (fun step : StepField ℕ X =>
-            displace step (v ++ [i]) p) :=
-        ih (v := v ++ [i]) (by omega)
-      change Measurable[generationFiltration (M := Step ℕ X) n]
-        ((fun step : StepField ℕ X => Combinatorics.Branching.value' (step v) i) +
-          fun step => displace step (v ++ [i]) p)
-      exact hstep.add hrec
+  let : MeasurableSpace (StepField ℕ X) := generationFiltration (M := Step ℕ X) n
+  change Measurable (fun step : StepField ℕ X ↦
+    stateAlong (fun x e ↦ x + e) step 0 v p)
+  exact stateAlong_measurable (fun (x e : X) ↦ x + e) (by fun_prop)
+    id (fun _ ↦ 0) v p measurable_const
+    (fun k hk ↦ (measurable_pi_apply (p[k])).comp
+      (mark_measurable_of_depth_lt (M := Step ℕ X) (v ++ p.take k) n (by
+        simp only [List.length_append, List.length_take]
+        omega)))
 
 /-- Position of a fixed address once the observed generation matches its
 depth, and zero before that. -/

@@ -83,8 +83,7 @@ theorem eventually_iidSequenceLaw_blockOscillationProbability_le_of_fixedCover
     (hspectral : finiteCoverCorridorExponential count width < 1 / 2) :
     ∀ᶠ n : ℕ in atTop,
       iidSequenceLaw ν {increment : ℕ → ℝ |
-        blockOscillationEvent (blockWidth n) (length n)
-          (Combinatorics.Sequence.blockCoordinates 0 (length n) increment)} ≤
+        (Combinatorics.Sequence.blockCoordinates 0 (length n) increment) ∈ blockOscillationEvent (blockWidth n) (length n)} ≤
       ENNReal.ofReal (2 * finiteCoverRangeBound count width) := by
   let spectralBound : ℝ := finiteCoverRangeBound count width
   let upperBound : ℝ := 2 * spectralBound
@@ -115,8 +114,7 @@ theorem eventually_iidSequenceLaw_blockOscillationProbability_le_of_fixedCover
   have hlimsupStrict := hlimsup.trans_lt hmassStrict
   have hprobBounded : Filter.IsBoundedUnder (· ≤ ·) atTop
       (fun n : ℕ => iidSequenceLaw ν {increment : ℕ → ℝ |
-        blockOscillationEvent (blockWidth n) (length n)
-          (Combinatorics.Sequence.blockCoordinates 0 (length n) increment)}) := by
+        (Combinatorics.Sequence.blockCoordinates 0 (length n) increment) ∈ blockOscillationEvent (blockWidth n) (length n)}) := by
     apply Filter.isBoundedUnder_of_eventually_le (a := 1)
     exact Eventually.of_forall fun n : ℕ => by
       calc

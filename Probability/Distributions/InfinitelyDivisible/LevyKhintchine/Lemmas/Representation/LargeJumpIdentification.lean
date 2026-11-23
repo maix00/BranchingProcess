@@ -924,7 +924,7 @@ lemma smallBall_second_moment_nu_le
       rw [h_band, h_ball]
       exact setIntegral_mono_set hg_int_ball
         (ae_restrict_of_forall_mem h_meas_ball (fun x _ => hg_nn x))
-        (LE.le.eventuallyLE h_band_sub)
+        (Filter.Eventually.of_forall fun _ hx => h_band_sub hx)
     exact le_of_tendsto_of_tendsto' h_band_lim hσ h_compare
   -- Step 3: `m → ∞`. The bands exhaust the punctured ball; `x²·1_{band m} → x²·1_{ball∖{0}}`
   -- pointwise off `{0}`, dominated by `r²`, so the band integrals tend to the ball integral.

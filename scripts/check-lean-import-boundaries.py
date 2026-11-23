@@ -31,6 +31,135 @@ FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
 GENERAL_LAYER_BOUNDARIES = {
+    "Probability.BranchingProcess.Spine.Tree.Density.AdaptedPayoff": (
+        "Probability.BranchingRandomWalk", "Probability.Process.Tree.Line",
+    ),
+    "Probability.BranchingProcess.Spine.StoppingLine.ManyToOne": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.StoppingLine.Martingale": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.State.Observation.History": (
+        "Probability.BranchingProcess.Spine", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.State.StrongBranching": (
+        "Probability.BranchingProcess.Spine", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Process.Tree.Line.ConditionalExpectation": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Process.Tree.Line.Information.Boundary": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Process.Tree.Line.Information.Localization": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Kernel.ConditionalExpectation": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+        "Probability.Process.Tree",
+    ),
+    "MeasureTheory.Function.ConditionalExpectation.FiniteProduct": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+        "Probability.Process.Tree",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.Density.Conditional": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Process.Tree.Line.Information.Pasting": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+    ),
+    "Combinatorics.UlamHarris.Line.Supremum": (
+        "MeasureTheory", "Probability",
+    ),
+    "Probability.Process.Tree.Line.Supremum": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.State.Descendants.Disintegration": (
+        "Probability.BranchingProcess.Spine", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.BranchingProperty": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Kernel.IonescuTulcea.Map": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.State.Map": (
+        "Probability.BranchingProcess.Spine",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.Normal": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.State.Support": (
+        "Probability.BranchingProcess.Spine",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.Ray": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.FirstGeneration": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Kernel.DoobTransform.Basic": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Kernel.Sum": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.Construction": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Process.Tree.Line.FirstEntrance": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Process.Tree.Line.Truncation": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Process.Tree.Line.PathHitting": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Process.Tree.Line.Pasting": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Process.Tree.Line.Information.Observations": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Process.Tree.Line.Ancestral": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Process.Tree.Line.Information.Stopped": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Combinatorics.UlamHarris.Line.Order": (
+        "Combinatorics.BranchingWalk",
+        "MeasureTheory",
+        "Probability",
+    ),
+    "Combinatorics.UlamHarris.Ray": (
+        "Combinatorics.BranchingWalk",
+        "MeasureTheory",
+        "Probability",
+    ),
     "Order.Filter.SlowDiagonal": (
         "Analysis",
         "MeasureTheory",

@@ -38,7 +38,7 @@ open MeasureTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory
+namespace ProbabilityTheory.Trial
 
 variable {Ω ι : Type*} {m : MeasurableSpace Ω}
 
@@ -209,4 +209,4 @@ theorem mem_orderedDeclaration_iff
   intro ω' i j hi hj hji
   exact hmono ω' (Nat.le_of_lt hji)
 
-end ProbabilityTheory
+end ProbabilityTheory.Trial
