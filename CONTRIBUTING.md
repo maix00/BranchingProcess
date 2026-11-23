@@ -54,6 +54,15 @@ before changing the strategy.
 
 ## Generalizations and special cases
 
+Treat a reference's assumptions as sufficient conditions to audit, not as
+necessary restrictions on the public API. Seek stronger useful conclusions
+under weaker natural conditions. Record which assumptions the proof actually
+uses, remove unnecessary source-specific hypotheses, and derive the published
+version from the general theorem. Distinguish a restriction of the current
+proof from a proved mathematical necessity; a necessity claim needs evidence
+such as a counterexample. Generalization must preserve the meaning of the
+objects and the correctness of the conclusion.
+
 Use one fundamental implementation when generalizing a construction. Define
 additive, fixed-law, or other special cases from that implementation. Proving
 an equality between two independently maintained interfaces does not finish

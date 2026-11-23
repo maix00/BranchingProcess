@@ -115,11 +115,9 @@ example : (∫⁻ t, BranchingProcess.Spine.StoppingLine.mass weight (fun _ => �
 example (n : ℕ) :
     (∫ t, BranchingProcess.Spine.StoppingLine.truncatedMass weight (fun _ => ∅) n t
       ∂BranchingProcess.State.treeKernel offspring (some false)) = 1 := by
-  let past := fun _ : Set (Unit × List Bool) =>
-    (⊥ : MeasurableSpace (List Bool → Option Bool))
-  have hL : ProbabilityTheory.Tree.IsOptionalLine past
+  have hL : ProbabilityTheory.Tree.IsRandomLine
       (fun _ : List Bool → Option Bool => (∅ : Set (Unit × List Bool))) :=
-    ProbabilityTheory.Tree.IsOptionalLine.const past IsAntichain.empty
+    ProbabilityTheory.Tree.IsRandomLine.const IsAntichain.empty
   exact BranchingProcess.Spine.StoppingLine.integral_truncatedMass offspring (by fun_prop) harmonic
     ⟨false, by simp [weight]⟩ hL (fun _ => MeasurableSet.const _) n
 
@@ -131,13 +129,28 @@ example :
       ∂BranchingProcess.State.treeKernel offspring (some false)) =
       (BranchingProcess.Spine.treeKernel offspring (h := weight) (by fun_prop) harmonic
         (some (Sum.inr ⟨false, by simp [weight]⟩))) (BranchingProcess.Spine.StoppingLine.spineHit L) := by
-  let past := fun _ : Set (Unit × List Bool) =>
-    (⊥ : MeasurableSpace (List Bool → Option Bool))
-  have hL : ProbabilityTheory.Tree.IsOptionalLine past
+  have hL : ProbabilityTheory.Tree.IsRandomLine
       (fun _ : List Bool → Option Bool => {((), [true, false])}) :=
-    ProbabilityTheory.Tree.IsOptionalLine.const past IsAntichain.singleton
+    ProbabilityTheory.Tree.IsRandomLine.const IsAntichain.singleton
   exact BranchingProcess.Spine.StoppingLine.lintegral_mass_eq offspring (by fun_prop) harmonic
     ⟨false, by simp [weight]⟩ hL (fun _ => MeasurableSet.const _)
+
+-- All nodes in generations zero and one are active, including root-child
+-- pairs. No antichain, line, or optionality hypothesis is supplied.
+example :
+    (∫⁻ t, ∑' u : List Bool,
+      BranchingProcess.Spine.addressWeight weight u.length u.get
+        (BranchingProcess.State.treeHistory u.length t) *
+        (if u.length ≤ 1 then 1 else 0)
+      ∂BranchingProcess.State.treeKernel offspring (some false)) =
+    ∫⁻ t, ∑' u : List Bool,
+      if (t u).any Sum.isRight = true then
+        (if u.length ≤ 1 then 1 else 0) else 0
+      ∂BranchingProcess.Spine.treeKernel offspring (h := weight) (by fun_prop) harmonic
+        (some (Sum.inr ⟨false, by simp [weight]⟩)) :=
+  BranchingProcess.Spine.lintegral_adaptedPayoff_eq offspring (by fun_prop) harmonic
+    ⟨false, by simp [weight]⟩ (fun u _ => if u.length ≤ 1 then 1 else 0)
+    (fun _ => measurable_const)
 
 end SpineDensityExamples
 
@@ -157,7 +170,6 @@ end SpineDensityExamples
 
 #print axioms ProbabilityTheory.BranchingProcess.Spine.lintegral_generationPayoff_eq
 #print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.mass_truncate
-#print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.lintegral_payoff_eq
 #print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.lintegral_mass_eq
 #print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.lintegral_mass_le_one
 #print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.martingale_truncatedMass
@@ -167,3 +179,5 @@ end SpineDensityExamples
 #print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.ae_tendsto_truncatedMass
 
 #print axioms ProbabilityTheory.BranchingProcess.Spine.StoppingLine.ae_truncatedMass_eq
+
+#print axioms ProbabilityTheory.BranchingProcess.Spine.lintegral_adaptedPayoff_eq

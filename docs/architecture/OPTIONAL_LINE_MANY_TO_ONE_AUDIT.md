@@ -1,4 +1,4 @@
-# Simple-line many-to-one and generation-truncated mass
+# Adapted-node many-to-one and generation-truncated mass
 
 Audit date: 2026-11-23. Mathlib revision:
 `26573066084e6e2aa8526ea358bc43b66d96f970`.
@@ -23,7 +23,7 @@ explicit native generation filtration, on the existing optional-line object.
 
 | Source | Completed formalization |
 | --- | --- |
-| Biggins–Kyprianou, Lemma 14.1 | General-state simple-line many-to-one, including nonnegative generation-history payoffs; `E[W_L]=P_spine(spine meets L)≤1`, with equality to one exactly when entrance has probability one. |
+| Biggins–Kyprianou, Lemma 14.1 | General-state adapted-node many-to-one without a line or optionality assumption; its generation-observable random-line corollary includes nonnegative generation-history payoffs; `E[W_L]=P_spine(spine meets L)≤1`, with equality to one exactly when entrance has probability one. |
 | Biggins–Kyprianou, Lemma 14.3, mass recursion and martingale assertion | The frozen boundary mass `S_n = ∑_(k<n) A_k + U_n` is a native nonnegative generation martingale, has expectation one and converges almost surely to the native filtration limit process. |
 | The combinatorial cut used in Lemma 14.3 | `mass_truncate` identifies `W_(L_n)=∑_(k<n) A_k+U_n` with the already implemented `RootIndexed.Line.truncate`. No second cut definition is introduced. |
 | Shi, Lemma 4.1 | The ordinary ancestral generation-density martingale is derived from the empty-line case of the stopped-mass theorem. Its independent density-consistency proof was removed. |
@@ -42,8 +42,16 @@ branching theorem.
 ## Proof and reuse
 
 The fixed-address identity is applied before summing over addresses and
-generations, exactly as in the calculation proving Lemma 14.1. For a simple
-line the membership event factors through the finite generation history.
+generations, as in the calculation proving Lemma 14.1. The general public
+identity accepts arbitrary nonnegative generation-measurable node payoffs;
+there is no active-set, line, antichain or optionality assumption.
+A private indicator-payoff helper specializes this identity to node-membership
+indicators, without a line assumption. The earlier public line-payoff wrapper
+was removed in favor of the more general public node-payoff theorem; no alias
+is retained. Only the mass-to-entrance corollaries
+use the random-line antichain property. They require generation-observable
+membership, without separately assuming optionality for any line past.
+The earlier private line-specific fixed-address proof was removed.
 The countable sum on the distinguished tree has at most one surviving term,
 since a line is an antichain and the distinguished vertices lie on one ray.
 This proves the entrance-probability identity without a finite entrance-time
@@ -90,7 +98,13 @@ stopping-time interface is not substituted for it.
   explicitly supplied filtration, without a branching model.
 * `Spine/StoppingLine/Mass.lean`: reusable line-mass observations and their
   deterministic regrouping and truncation identities.
+* `Spine/Tree/Density/AdaptedPayoff.lean`: general all-depth many-to-one for
+  nonnegative adapted node payoffs. It has mathematical content independent
+  of lines and belongs outside `Lemmas/`.
 * `Spine/StoppingLine/ManyToOne.lean` and `Martingale.lean`: public theorem entries.
+  Both now use random lines plus generation observability, with no separate
+  optional-line input. The existing optional-line and simple-condition objects
+  remain available for literature terminology and other line results.
 * `Spine/StoppingLine/Lemmas/Truncation.lean`: only the specific generation-test
   assembly, conditional recursion and domination steps. Cross-file helpers are
   ordinary internal `lemma`s, imported with `import all`; tactical steps remain
@@ -99,7 +113,7 @@ stopping-time interface is not substituted for it.
   derived from the stopped-line theorem.
 
 `StoppingLine/` has three direct files and one `Lemmas/` directory containing
-one proof file; `Tree/Density/` has four direct files and `State/Observation/`
+one proof file; `Tree/Density/` has five direct files and `State/Observation/`
 four. There are no path or declaration aliases.
 
 ## Remaining obligations
@@ -107,7 +121,7 @@ four. There are no path or declaration aliases.
 The source's statements have different hypotheses and are tracked separately:
 
 1. Lemma 14.2's conditional identity at an arbitrary optional line is still
-   open. Neither simple-line many-to-one nor the generation-martingale
+   open. Neither adapted-node many-to-one nor the generation-martingale
    assertion is claimed to prove it.
 2. Full optionality of the generation truncations for simple lines, the
    identification of the almost-sure limit with `W_L`, and L¹ convergence
@@ -199,3 +213,23 @@ its identification with `StoppingLine.mass` on the canonical state-tree law
 remain open. Regression coverage localizes an infinite payoff to a random
 line that is empty on one initial-state cell and has two different depths on
 the complementary cell. An explicit axiom report is registered for this result.
+
+
+## Assumption review after generalization
+
+The published Lemma 14.1 assumes a simple optional line. The public node-payoff
+identity needs only generation measurability; antichain and optionality are
+absent. Line mass uses an antichain to identify the spinal sum with a single
+hit. Generation observability suffices for its payoff measurability. The
+frozen-mass martingale proof likewise uses generation observability and the
+antichain property, not optionality relative to an independently supplied
+line-past family. Its public signatures were weakened accordingly, and the
+ordinary density martingale is still derived from the empty-line case.
+
+This does not prove that generation observability is necessary for a
+many-to-one identity on a line. Removing that remaining restriction for
+arbitrary optional lines requires extending the fixed-address density to
+information outside the complete descendant subtree, including later states
+of other branches. No counterexample or necessity result is claimed.
+The regression suite applies the payoff theorem to a set containing both
+a root and its child, which cannot be an antichain.

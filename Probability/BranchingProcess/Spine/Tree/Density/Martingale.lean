@@ -48,9 +48,10 @@ theorem martingale_totalWeight
     Martingale (fun n t => (totalWeight h n (State.treeHistory n t)).toReal)
       (State.treeFiltration (ι := ι)) (State.treeKernel Q (some s.1)) := by
   let L := fun _t : List ι → Option S => (∅ : Set (Unit × List ι))
-  let past := fun _ : Set (Unit × List ι) => (⊥ : MeasurableSpace (List ι → Option S))
-  have hL : Tree.IsOptionalLine past L := Tree.IsOptionalLine.const past IsAntichain.empty
-  have hs : hL.IsSimple State.treeFiltration := fun _ => MeasurableSet.const _
+  have hL : Tree.IsRandomLine L := Tree.IsRandomLine.const IsAntichain.empty
+  have hs : ∀ u : Unit × List ι,
+      MeasurableSet[State.treeFiltration u.2.length] {t | u ∈ L t} :=
+    fun _ => MeasurableSet.const _
   have hm := martingale_truncatedMass Q hh harmonic s hL hs
   have heq : truncatedMass h L =
       (fun n t => (totalWeight h n (State.treeHistory n t)).toReal) := by

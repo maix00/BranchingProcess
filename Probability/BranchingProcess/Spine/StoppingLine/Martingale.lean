@@ -8,20 +8,21 @@ module
 
 public import Probability.BranchingProcess.Spine.StoppingLine.Mass
 public import Probability.BranchingProcess.State.Kernel
-public import Probability.Process.Tree.Line.Optional
+public import Probability.Process.Tree.Line.Basic
 public import Mathlib.Probability.Martingale.Convergence
 import all Probability.BranchingProcess.Spine.StoppingLine.Lemmas.Truncation
 import Probability.BranchingProcess.Spine.Tree.Density.FiniteGeneration
 
 /-!
-# Generation truncation of a simple line
+# Generation truncation of a generation-observable random line
 
 ## Public declarations
 
 In `ProbabilityTheory.BranchingProcess.Spine.StoppingLine`:
 
 * `martingale_truncatedMass` proves this is a native martingale in the
-  original tree's generation filtration when `L` is a simple optional line.
+  original tree's generation filtration when membership of `L` is known
+  at each node's generation; no optionality hypothesis is required.
 * `ae_truncatedMass_eq` identifies this real mass almost surely with
   `(mass h (Line.truncate L n)).toReal`, using finite mean-harmonic mass.
 * `integral_truncatedMass` proves `E[S_n] = 1` at every generation.
@@ -31,7 +32,7 @@ In `ProbabilityTheory.BranchingProcess.Spine.StoppingLine`:
 
 Assumptions are those of the existing finite-generation spine density:
 measurable mean-harmonic weights on the finite positive region, an eligible
-root, arbitrary measurable states and countable child slots. Simplicity uses
+root, arbitrary measurable states and countable child slots. Generation observability may use
 all states through a generation, including other branches. No higher moment,
 path coverage or uniform integrability is assumed.
 
@@ -60,9 +61,10 @@ theorem martingale_truncatedMass
     {h : S → ℝ≥0∞} (hh : Measurable h)
     (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ → (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
     (s : {s // h s ≠ 0 ∧ h s ≠ ∞})
-    {past : Set (Unit × List ι) → MeasurableSpace (List ι → Option S)}
     {L : (List ι → Option S) → Set (Unit × List ι)}
-    (hL : Tree.IsOptionalLine past L) (hs : hL.IsSimple State.treeFiltration) :
+    (hL : Tree.IsRandomLine L)
+    (hs : ∀ u : Unit × List ι,
+      MeasurableSet[State.treeFiltration u.2.length] {t | u ∈ L t}) :
     Martingale (truncatedMass h L) (State.treeFiltration (ι := ι))
       (State.treeKernel Q (some s.1)) := by
   let P := State.treeKernel Q (some s.1)
@@ -78,7 +80,7 @@ theorem martingale_truncatedMass
     refine measurable_generation_cut hh n (fun z t =>
       ∀ k < n, ((), (List.ofFn z).take k) ∉ L t) ?_
     intro z
-    have hz := measurable_line_test hL hs (List.ofFn z)
+    have hz := measurable_line_test hs (List.ofFn z)
     rw [List.length_ofFn] at hz
     simpa only [List.length_ofFn] using hz
   have hba (n : ℕ) : (∫⁻ t, generationMass h L n t ∂P) < ∞ :=
@@ -191,9 +193,10 @@ theorem integral_truncatedMass
     {h : S → ℝ≥0∞} (hh : Measurable h)
     (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ → (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
     (s : {s // h s ≠ 0 ∧ h s ≠ ∞})
-    {past : Set (Unit × List ι) → MeasurableSpace (List ι → Option S)}
     {L : (List ι → Option S) → Set (Unit × List ι)}
-    (hL : Tree.IsOptionalLine past L) (hs : hL.IsSimple State.treeFiltration) (n : ℕ) :
+    (hL : Tree.IsRandomLine L)
+    (hs : ∀ u : Unit × List ι,
+      MeasurableSet[State.treeFiltration u.2.length] {t | u ∈ L t}) (n : ℕ) :
     (∫ t, truncatedMass h L n t ∂State.treeKernel Q (some s.1)) = 1 := by
   have hm := martingale_truncatedMass Q hh harmonic s hL hs
   have hi := hm.setIntegral_eq (i := 0) (j := n) (Nat.zero_le n) MeasurableSet.univ
@@ -207,9 +210,10 @@ theorem ae_tendsto_truncatedMass
     {h : S → ℝ≥0∞} (hh : Measurable h)
     (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ → (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
     (s : {s // h s ≠ 0 ∧ h s ≠ ∞})
-    {past : Set (Unit × List ι) → MeasurableSpace (List ι → Option S)}
     {L : (List ι → Option S) → Set (Unit × List ι)}
-    (hL : Tree.IsOptionalLine past L) (hs : hL.IsSimple State.treeFiltration) :
+    (hL : Tree.IsRandomLine L)
+    (hs : ∀ u : Unit × List ι,
+      MeasurableSet[State.treeFiltration u.2.length] {t | u ∈ L t}) :
     ∀ᵐ t ∂State.treeKernel Q (some s.1),
       Filter.Tendsto (fun n => truncatedMass h L n t) Filter.atTop
         (nhds (State.treeFiltration.limitProcess (truncatedMass h L)

@@ -768,6 +768,15 @@ with same-file tactical steps private. `Tree/Density/Martingale.lean` derives th
 ordinary generation martingale from the empty-line case; its separate density
 consistency proof was removed. There is one tree law and one stopped-mass proof.
 The new directories have three direct public Lean files and one internal helper
-file; `Tree/Density/` has four direct files and `State/Observation/` four.
+file; `Tree/Density/` has five direct files and `State/Observation/` four.
 See `docs/architecture/OPTIONAL_LINE_MANY_TO_ONE_AUDIT.md` for exact source
 coverage, native Mathlib tools and remaining line-indexed sampling obligations.
+
+
+The reusable all-depth node-payoff identity is
+`Spine/Tree/Density/AdaptedPayoff.lean`, in the parent `Spine` namespace.
+Its nonnegative payoffs need only be measurable at their own generation;
+there is no line or optionality input. The line payoff and mass formulas
+specialize this theorem. Their public random-line signatures and the
+frozen-mass martingale do not retain a separate optionality condition.
+See `OPTIONAL_LINE_MANY_TO_ONE_AUDIT.md` for the source-hypothesis review.

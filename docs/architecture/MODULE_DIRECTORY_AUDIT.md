@@ -29274,7 +29274,11 @@ generation-density martingale is derived as an empty-line special case in
 `Tree/Density/Martingale.lean`, replacing its independent proof. Ordinary
 state history belongs in `State/Observation/History.lean`; simplicity is an
 observability property in the existing generic `Line/Optional.lean` module.
-Direct file counts remain three under `StoppingLine`, four under `Density`
+Direct file counts remain three under `StoppingLine`, five under `Density`
 and four under `State/Observation`; the generic `Line` root retains eight.
 Exact source coverage and open sampling obligations are in
 [OPTIONAL_LINE_MANY_TO_ONE_AUDIT.md](OPTIONAL_LINE_MANY_TO_ONE_AUDIT.md).
+
+`Spine/Tree/Density/AdaptedPayoff.lean` is the public node-payoff compensation
+identity with no line hypothesis. It is a reusable complete theorem and is
+outside `Lemmas/`; the line entry specializes it without a compatibility alias.
