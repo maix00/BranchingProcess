@@ -104,8 +104,12 @@ specializes it to the eligible region. `Spine/StateChain.lean` derives the
 associated spine chain and its path density from these general interfaces.
 It identifies its transition with the selected-child marginal.
 `Spine/Observation.lean` reads a unique distinguished coordinate of any
-countable tagged population. It uses the reusable unique-present-value
-observation in `MeasureTheory/MeasurableSpace/UniquePresentValue.lean`.
+countable tagged population. Its model-specific readout uses the existing
+`Measurable.eval_of_countable_range` in `MeasurableSpace/CountableEvaluation.lean`:
+the selector returns the unique distinguished index, or `none` on the
+exceptional populations. Coordinate measurability, measurable selector fibers,
+and the countable selector range give measurability without an additional
+generic coordinate-selection API.
 `Spine/Tree/Observation.lean` reads the actual spine's state sequence from the
 existing tree, and `Tree/PathLaw.lean` identifies its complete path law with
 the same canonical Doob Markov chain. The proof uses
@@ -115,6 +119,21 @@ The generation-assembly steps specific to this identification belong to
 `Tree/Lemmas/PathLaw.lean`, imported with `import all` by the theorem entry;
 the reusable observations and kernel identities remain outside `Lemmas/`.
 Single-proof auxiliary steps stay local to their proofs.
+
+The observation abstraction audit checked pinned Mathlib
+`26573066084e6e2aa8526ea358bc43b66d96f970` against the
+[official measurable-constructions API](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/MeasurableSpace/Constructions.html).
+`Measurable.find` selects the first satisfied predicate in a natural-number
+indexing and assumes a witness at each input. `measurable_liftCover` and
+`exists_measurable_piecewise` glue compatible local functions over countably
+many measurable pieces. The existing repository evaluation theorem matches
+the actual observation more directly: it allows arbitrary index types with
+countable selector range, asks only for selector-fiber and coordinate
+measurability, and requires no measurable-space structure on the index type.
+The distinguished-state selector is therefore kept as model-specific data;
+the general measurability argument is reused instead of a separate
+optional-coordinate selection definition.
+
 `Spine/Tree/Construction.lean` augments states by the ordinary/distinguished
 role and applies the existing `State.treeKernel`; it does not implement
 another branching process. Normal states can have zero harmonic weight;
