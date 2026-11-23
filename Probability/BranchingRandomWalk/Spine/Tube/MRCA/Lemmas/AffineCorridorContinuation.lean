@@ -15,7 +15,9 @@ import Probability.BranchingProcess.Offspring.FieldLaw
 
 ## Internal proof declarations
 
-`lintegral_affineCorridorPrefixContinuationPair_indicator_le_of_drawdown`
+`lintegral_affineCorridorPrefixContinuationPair_indicator_le_of_continuationBound`
+uses a uniform bound $q$ over continuation starting positions in the first corridor
+window. `lintegral_affineCorridorPrefixContinuationPair_indicator_le_of_drawdown`
 specializes the reusable prefix-continuation estimate to the affine corridor
 and its drawdown bound. It is used to prove the positive-depth pair estimate
 in `MRCA/PositiveDepth.lean`.
@@ -43,18 +45,22 @@ open ProbabilityTheory.BranchingProcess (offspringFieldLaw)
 open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.RandomWalk
 
-/-- The fixed-depth affine-corridor estimate follows from the drawdown bound
-on continuation increments. The prefix and continuation lengths describe
+/-- The fixed-depth affine-corridor estimate uses a uniform probability bound
+on continuations inside the corridor. The prefix and continuation lengths describe
 paths through MRCA depth `m` and then `n + 1` further generations. -/
-lemma lintegral_affineCorridorPrefixContinuationPair_indicator_le_of_drawdown
+lemma lintegral_affineCorridorPrefixContinuationPair_indicator_le_of_continuationBound
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (hboundary : HasBoundaryNormalization φ μ)
     (m n : ℕ) (initial lower drift width endpointUpper : ℝ)
-    (hdrift : 0 ≤ drift) (q : ℝ≥0∞)
-    (hdrawdown : (tiltedIncrementFieldLaw φ μ)
-      (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
-        n width (width + drift * (n : ℝ))) ≤ q) :
+    (q : ℝ≥0∞)
+    (hbound : ∀ x y : ℝ, x + y ∈
+        affineCorridorFirstWindow (lower + drift * (m : ℝ)) drift width →
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            affineCorridorHistoryEndpointCutoff n
+              (lower + drift * (m : ℝ)) drift width endpointUpper} ≤ q) :
     ENNReal.ofReal (Real.exp (-(2 * initial))) *
       (∫⁻ ω, ∑' u : TreeNode ℕ,
         weightedPathGenerationTerm φ m
@@ -102,19 +108,50 @@ lemma lintegral_affineCorridorPrefixContinuationPair_indicator_le_of_drawdown
     intro history hh
     exact affineCorridorHistoryEndpointCutoff_firstWindow n
       (lower + drift * (m : ℝ)) drift width endpointUpper history hh
-  have hcontinuation : ∀ x y : ℝ, x + y ∈ window →
-      (tiltedIncrementFieldLaw φ μ)
-        {increment | prependHistory x
-          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
-            continuationCorridor} ≤ q := by
-    intro x y _
-    exact tiltedIncrementFieldLaw_affineCorridorHistoryEndpointCutoff_le_drawdown
-      φ μ n x (lower + drift * (m : ℝ)) drift width endpointUpper y hdrift q
-      hdrawdown
   simpa [prefixCorridor, continuationCorridor, window] using
     lintegral_weightedPrefixContinuationPair_indicator_le
       φ μ hboundary m n prefixCorridor hprefixMeas initial
       (lower + drift * (m : ℝ)) hprefixLower continuationCorridor
-      hcontinuationMeas endpointUpper hterminal window q hfirst hcontinuation
+      hcontinuationMeas endpointUpper hterminal window q hfirst hbound
+
+/-- The fixed-depth affine-corridor estimate follows from the drawdown bound
+on continuation increments. The prefix and continuation lengths describe
+paths through MRCA depth `m` and then `n + 1` further generations. -/
+lemma lintegral_affineCorridorPrefixContinuationPair_indicator_le_of_drawdown
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (m n : ℕ) (initial lower drift width endpointUpper : ℝ)
+    (hdrift : 0 ≤ drift) (q : ℝ≥0∞)
+    (hdrawdown : (tiltedIncrementFieldLaw φ μ)
+      (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        n width (width + drift * (n : ℝ))) ≤ q) :
+    ENNReal.ofReal (Real.exp (-(2 * initial))) *
+      (∫⁻ ω, ∑' u : TreeNode ℕ,
+        weightedPathGenerationTerm φ m
+          ((affineCorridorPrefix m lower drift width).indicator
+            (fun _ => (1 : ℝ≥0∞))) initial u ω *
+          ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) *
+          ENNReal.ofReal
+            (Real.exp (2 * (initial + pathPotential φ ω u))) *
+          pathGenerationChildMeanOffDiagonal φ μ n
+            ((affineCorridorHistoryEndpointCutoff n
+              (lower + drift * (m : ℝ)) drift width endpointUpper).indicator
+                (fun _ => (1 : ℝ≥0∞)))
+            (initial + pathPotential φ ω u) (ω u)
+        ∂offspringFieldLaw μ) ≤
+      ENNReal.ofReal (Real.exp (-(2 * initial))) *
+        (ENNReal.ofReal (Real.exp (2 * endpointUpper)) * q ^ 2) *
+        (∫⁻ ξ, crossPotentialWeight φ (-1) ξ ∂μ) *
+        (ENNReal.ofReal (Real.exp
+          (initial - (lower + drift * (m : ℝ)))) *
+          (tiltedIncrementFieldLaw φ μ)
+            {increment | ProbabilityTheory.RandomWalk.history m initial increment ∈
+              affineCorridorPrefix m lower drift width}) := by
+  apply lintegral_affineCorridorPrefixContinuationPair_indicator_le_of_continuationBound
+    φ μ hboundary m n initial lower drift width endpointUpper q
+  intro x y _
+  exact tiltedIncrementFieldLaw_affineCorridorHistoryEndpointCutoff_le_drawdown
+    φ μ n x (lower + drift * (m : ℝ)) drift width endpointUpper y hdrift q hdrawdown
 
 end ProbabilityTheory.BranchingRandomWalk.Spine

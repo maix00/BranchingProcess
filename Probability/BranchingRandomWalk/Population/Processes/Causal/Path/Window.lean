@@ -22,17 +22,17 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Defs
 * `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.pathHistory_eq_positionAtGeneration` identifies the spine path history at
   generation `k` with the selected particle's position at generation `k`.
 * `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.mem_ofRestartedRealPositionSets_inRestartedWindows` shows that membership
-  in the restarted killed population implies that every restarted path window
+  in the restarted selected population implies that every restarted path window
   condition holds.
 * `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.mem_ofRestartedRealPositionSets_of_path` proves the converse from a
   surviving path with finite strict-ancestor weights and all prescribed window
   conditions.
 
-This file connects the genealogical killed-process representation to the
+This file connects the genealogical selection-process representation to the
 finite-history events consumed by path-functional many-to-one identities.
 
 For a path history `H_n` and restart anchor `a_c(k)`, the path event and its
-relation to the killed population are
+relation to the selected population are
 
 \[\begin{aligned}
 \operatorname{InRestartedWindows}(c,W,H_n)
@@ -75,7 +75,7 @@ theorem pathHistory_eq_positionAtGeneration
   simp [pathHistory, Spine.pathPotential, RootIndexed.positionAtGeneration,
     RootIndexed.position, RootIndexed.displace, htake]
 
-/-- A particle retained by the restarted killed process determines a path in
+/-- A particle retained by the restarted selected process determines a path in
 the corresponding measurable restarted-window event. -/
 theorem mem_ofRestartedRealPositionSets_inRestartedWindows
     {Root α Mark : Type*} [Countable α] [MeasurableSpace Mark]

@@ -36,6 +36,8 @@ rebasing identities, the root-address characterization, and prefix closure:
   `u ++ v` implies survival along `u`.
 - `Combinatorics.Branching.surviveAlong_map_iff` states that changing every
   child mark preserves survival along each finite address.
+- `Combinatorics.Branching.surviveAlong.decidable` decides the predicate by
+  checking the optional slots along the finite path.
 - `Combinatorics.Branching.surviveAlong` defines this finite-path predicate.
 -/
 
@@ -50,6 +52,16 @@ def surviveAlong {α X : Type*} (step : StepField α X) :
   | _, [] => True
   | v, i :: p => survive (step v) i ∧
       surviveAlong step (v ++ [i]) p
+
+/-- Survival of a finite path is decidable by inspecting its optional child slots. -/
+def surviveAlong.decidable {α X : Type*} (step : StepField α X) :
+    (v p : TreeNode α) → Decidable (surviveAlong step v p)
+  | _, [] => isTrue trivial
+  | v, i :: p => match h : step v i with
+    | none => isFalse (by rintro ⟨⟨x, hx⟩, _⟩; simp [h] at hx)
+    | some x => match surviveAlong.decidable step (v ++ [i]) p with
+      | isTrue hp => isTrue ⟨⟨x, h⟩, hp⟩
+      | isFalse hp => isFalse (fun hs ↦ hp hs.2)
 
 theorem surviveAlong_nil {α X : Type*} (step : StepField α X)
     (v : TreeNode α) : surviveAlong step v [] := trivial
