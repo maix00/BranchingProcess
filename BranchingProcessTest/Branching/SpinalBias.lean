@@ -1,3 +1,4 @@
+import Probability.Kernel.DoobTransform.Composition
 import Probability.BranchingProcess.Spine.Family.Conditional
 import Probability.BranchingProcess.Spine.StateChain
 import Probability.BranchingProcess.Spine.Tree.PathLaw
@@ -97,7 +98,8 @@ example : IsMarkovKernel
 
 -- Constant weight reduces the Doob transform to the original kernel.
 example (K : Kernel Bool Bool) [IsSFiniteKernel K] :
-    K.doobTransform (fun _ => 1) = K := Kernel.doobTransform_one K
+    K.doobTransform (fun _ => 1) = K := by
+  simp [Kernel.doobTransform]
 
 -- Ordinary branches can later return to positive-weight states. They still
 -- remain ordinary: there is exactly one distinguished node at every depth.
@@ -218,9 +220,9 @@ end SpinalBiasExamples
 #print axioms ProbabilityTheory.Kernel.doobTransform_pow
 #print axioms ProbabilityTheory.Kernel.partialTraj_doobTransform
 #print axioms ProbabilityTheory.Kernel.doobTransformOnPositive_map
-#print axioms ProbabilityTheory.Kernel.doobTransformOnPositive_isMarkovChain
+#print axioms ProbabilityTheory.Kernel.doobTransformOnPositive_isMarkovKernel
 #print axioms ProbabilityTheory.isMarkovChain_traj_historyKernel
-#print axioms ProbabilityTheory.BranchingProcess.Spine.eligibleStateKernel_isMarkovChain
+#print axioms ProbabilityTheory.Kernel.traj_historyKernel_map_eval
 #print axioms ProbabilityTheory.BranchingProcess.Spine.partialTraj_spineChildKernel
 
 #print axioms ProbabilityTheory.BranchingProcess.Spine.distinguishedState_eq

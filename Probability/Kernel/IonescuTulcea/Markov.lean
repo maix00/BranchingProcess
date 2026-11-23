@@ -7,7 +7,6 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Probability.Kernel.IonescuTulcea.Traj
-public import Probability.Kernel.IonescuTulcea.PartialTraj
 public import Probability.Kernel.Composition.Pow
 
 /-!
@@ -64,9 +63,25 @@ theorem lintegral_partialTraj_historyKernel (K : Kernel S S) [IsSFiniteKernel K]
     change f (x ⟨a, by simp⟩) = ∫⁻ z, f z ∂Kernel.id (x ⟨a, by simp⟩)
     rw [Kernel.id_apply, lintegral_dirac' _ hf]
   | succ b hab ih =>
-    rw [lintegral_partialTraj_succ (X := fun _ => S) _ hab x
-      (show Measurable (fun y : Iic (b + 1) → S => f (y ⟨b + 1, by simp⟩)) from
-        by fun_prop)]
+    have hf' : Measurable (fun y : Iic (b + 1) → S => f (y ⟨b + 1, by simp⟩)) :=
+      hf.comp (measurable_pi_apply _)
+    rw [partialTraj_succ_of_le hab,
+      Kernel.lintegral_map _ (measurable_IicProdIoc (X := fun _ => S)) _
+        hf']
+    rw [lintegral_comp _ _ _
+      (g := fun p => f (IicProdIoc (X := fun _ => S) b (b + 1) p ⟨b + 1, by simp⟩))
+      (hf'.comp measurable_IicProdIoc)]
+    conv_lhs =>
+      arg 2
+      ext y
+      rw [lintegral_id_prod
+        (f := fun p => f (IicProdIoc (X := fun _ => S) b (b + 1) p ⟨b + 1, by simp⟩))
+        (hf'.comp measurable_IicProdIoc)]
+      rw [Kernel.lintegral_map _ (MeasurableEquiv.piSingleton (X := fun _ => S) b).measurable _
+        (g' := fun z => f (IicProdIoc (X := fun _ => S) b (b + 1) (y, z)
+          ⟨b + 1, by simp⟩))
+        (hf'.comp
+          (measurable_IicProdIoc.comp (measurable_const.prodMk measurable_id)))]
     have he : ∀ (y : Iic b → S) (z : S),
         f (IicProdIoc (X := fun _ => S) b (b + 1)
           (y, MeasurableEquiv.piSingleton (X := fun _ => S) b z) ⟨b + 1, by simp⟩) = f z := by

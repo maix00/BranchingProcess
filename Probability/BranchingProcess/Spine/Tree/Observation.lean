@@ -53,12 +53,11 @@ theorem existsUnique_distinguished_generation {S T ι : Type*}
     (hf : IsRay (distinguishedNodes t) f)
     (hcarrier : distinguishedNodes t = Set.range (lineagePrefix f)) (n : ℕ) :
     ∃! p : Unit × (Fin n → ι), (t (List.ofFn p.2)).any Sum.isRight = true := by
-  let i : Fin n → ι := fun j => (lineagePrefix f n)[j.1]'(by simp)
-  have hi : List.ofFn i = lineagePrefix f n := by
-    apply List.ext_getElem
-    · simp
-    · intro k hk hk'
-      simp [i]
+  let i : Fin n → ι := fun j =>
+    (lineagePrefix f n).get (Fin.cast (length_lineagePrefix f n).symm j)
+  have hi : List.ofFn i = lineagePrefix f n :=
+    (List.ofFn_congr (length_lineagePrefix f n) (lineagePrefix f n).get).symm.trans
+      (List.ofFn_get _)
   refine ⟨((), i), by simpa only [distinguishedNodes, Set.mem_ofPred_eq, hi] using hf n, ?_⟩
   intro j hj
   have hnode : List.ofFn j.2 ∈ distinguishedNodes t := hj
@@ -85,13 +84,11 @@ theorem statePath_eq_of_isRay {S T ι : Type*} (d : T)
     | some a => cases a with
       | inl a => simp [he] at hn
       | inr s => exact ⟨s, rfl⟩
-  have hlen := length_lineagePrefix f n
-  let i : Fin n → ι := fun j => (lineagePrefix f n)[j.1]'(by simp [hlen])
-  have hi : List.ofFn i = lineagePrefix f n := by
-    apply List.ext_getElem
-    · simp [hlen]
-    · intro k hk hk'
-      simp [i]
+  let i : Fin n → ι := fun j =>
+    (lineagePrefix f n).get (Fin.cast (length_lineagePrefix f n).symm j)
+  have hi : List.ofFn i = lineagePrefix f n :=
+    (List.ofFn_congr (length_lineagePrefix f n) (lineagePrefix f n).get).symm.trans
+      (List.ofFn_get _)
   have hread : statePath d t n = s := by
     apply distinguishedState_eq d _ ((), i) s (by simpa [hi] using hs)
     intro j hji hj
