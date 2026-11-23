@@ -173,3 +173,29 @@ listed above remains a separate open assembly obligation.
 Regression coverage includes an infinite payoff on an empty tested family,
 with no global selector from the optional line. Both new declarations have
 explicit axiom reports checked by the test runner.
+
+
+### Localization to one boundary-membership event
+
+`State.condLExp_on_optionalLine` proves, for a deterministic address `u`,
+
+```
+E[1_(u ∈ L) g(x,T_u) | F_L]
+  = 1_(u ∈ L) ∫ g(x,t) P_(stateAt u)(dt).
+```
+
+The payoff may depend measurably on the stopped information, may be infinite,
+and requires no moment assumption. No selector or countable enumeration of the
+line is used. The proof restricts the existing generation-path measure to
+`E={u∈L}`, identifies the supplied native subtree conditional law there from
+the already proved localized bounded-test identities, applies
+`HasCondDistrib.condLExp_eq`, and uses native conditional Lebesgue expectation
+uniqueness to return to the ambient measure. The censored boundary state is
+only a measurable kernel argument outside `E`; it defines no new process.
+
+This completes the nonnegative subtree conditional-integration ingredient in
+Biggins–Kyprianou Lemma 14.2. The required generation-weight decomposition and
+its identification with `StoppingLine.mass` on the canonical state-tree law
+remain open. Regression coverage localizes an infinite payoff to a random
+line that is empty on one initial-state cell and has two different depths on
+the complementary cell. An explicit axiom report is registered for this result.

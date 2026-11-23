@@ -334,3 +334,28 @@ example {S : Type*} [MeasurableSpace S]
 
 #print axioms ProbabilityTheory.HasCondDistrib.condLExp_eq
 #print axioms ProbabilityTheory.BranchingProcess.State.condLExp_descendantTrees_optionalLine
+
+
+namespace OptionalLineRandomCutExamples
+
+open ProbabilityTheory.BranchingProcess.State Combinatorics.Branching
+open OptionalLineLocalizationExamples
+
+-- This line is empty on one initial-state event and contains different depths
+-- on its complement. Infinite payoffs can be localized without choosing a root
+-- on every sample or adding a moment assumption.
+example (K : Kernel Bool (Step Bool Bool)) [IsMarkovKernel K]
+    (initial : Measure (Unit → Option Bool)) [IsProbabilityMeasure initial] :
+    (generationPathLaw K initial)⁻[decision.indicator (fun _ => (∞ : ℝ≥0∞)) |
+      cut_optional.measurableSpace] =ᵐ[generationPathLaw K initial]
+      decision.indicator (fun _ => ∞) := by
+  have hevent : {x : History | ((), [false]) ∈ cut x} = decision := by
+    ext x
+    by_cases hx : x ∈ decision <;> simp [cut, hx, mixedCut]
+  have hc := condLExp_on_optionalLine K initial cut_optional ((), [false])
+    (fun _ => ∞) measurable_const
+  simpa only [hevent, lintegral_const, measure_univ, mul_one] using hc
+
+end OptionalLineRandomCutExamples
+
+#print axioms ProbabilityTheory.BranchingProcess.State.condLExp_on_optionalLine
