@@ -29247,3 +29247,17 @@ The tree root has seven direct Lean files, and the probability-line root has
 eight; the stopped-information pasting theorem is under `Line/Information/`.
 The source proof, native Mathlib candidates and abstraction decisions are
 recorded in [SPINAL_DENSITY_AUDIT.md](SPINAL_DENSITY_AUDIT.md).
+
+## Optional-line strong branching review (2026-11-23)
+
+`BranchingProcess/State/StrongBranching.lean` is the principal law entry;
+`State/Descendants/Observed.lean` derives its generation and stopping-generation
+specializations. The deterministic-cut laws in `Descendants/{SingleNode,Products}`
+and information equalities in `Observation/` are reusable mathematical results,
+so they remain outside `Lemmas/`. Single-module tactical helpers are private.
+The direct Lean-file counts are seven in `State/`, six in `Descendants/` and
+three in `Observation/`. Generic line-information and conditional-integration
+results remain in `Process/Tree/Line`, `Kernel` and `MeasureTheory`; import
+guards prevent dependencies on BRW or spine models. Source coverage, native
+Mathlib comparisons and the random-empty/mixed-depth regression are recorded
+in [OPTIONAL_LINE_BRANCHING_AUDIT.md](OPTIONAL_LINE_BRANCHING_AUDIT.md).

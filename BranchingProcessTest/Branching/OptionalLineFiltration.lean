@@ -1,5 +1,7 @@
 import Probability.Process.Tree.Line.ConditionalExpectation
+import Probability.Process.Tree.Line.Pasting
 import Probability.BranchingProcess.State.StrongBranching
+import Mathlib.MeasureTheory.MeasurableSpace.Instances
 import Mathlib.Probability.Martingale.Convergence
 
 open MeasureTheory ProbabilityTheory ProbabilityTheory.Tree Combinatorics.UlamHarris Filter
@@ -222,3 +224,84 @@ example {S : Type*} [MeasurableSpace S]
     mixedCutRoots mixedCutRoots_injective hline g hg hb
 
 end OptionalLineLocalizationExamples
+
+namespace OptionalLineRandomCutExamples
+
+open Classical
+
+open ProbabilityTheory.BranchingProcess.State Combinatorics.Branching
+open OptionalLineLocalizationExamples
+
+abbrev History := Π n : ℕ, (Unit × (Fin n → Bool)) → Option Bool
+
+-- An initial-state decision gives a genuinely random cut: it is either empty
+-- or has two vertices at different depths. No enumeration of the random cut
+-- is supplied to the branching theorem.
+def decision : Set History := {x | rootStates x () = some true}
+
+noncomputable def cut (x : History) : Set (RootIndexed.TreeNode Unit Bool) :=
+  if x ∈ decision then mixedCut else ∅
+
+local notation "initialInformation" => MeasurableSpace.comap
+  (rootStates (Root := Unit) (α := Bool) (S := Bool)) inferInstance
+local notation "reproductionInformation" =>
+  fun u : RootIndexed.TreeNode Unit Bool =>
+    MeasurableSpace.comap (offspringStates (S := Bool) u) inferInstance
+
+theorem cut_optional :
+    IsOptionalLine (linePast initialInformation reproductionInformation) cut := by
+  have hA : MeasurableSet[initialInformation] decision := by
+    have hm : Measurable[initialInformation] (fun x : History => rootStates x ()) :=
+      (measurable_pi_apply ()).comp
+        (show Measurable[initialInformation]
+          (rootStates (Root := Unit) (α := Bool) (S := Bool)) from
+          Measurable.of_comap_le le_rfl)
+    have hs : MeasurableSet ({some true} : Set (Option Bool)) := by
+      simpa only [Set.image_singleton] using
+        measurableSet_option_some_image (measurableSet_singleton true)
+    exact hs.preimage hm
+  exact isOptionalLine_ite_of_precedes _ (fun _ _ hp => linePast_mono _ _ hp)
+    mixedCut_isLine IsAntichain.empty (fun _ hu => False.elim hu)
+    (rootStates_measurable.comap_le _ hA)
+    ((show initialInformation ≤ linePast initialInformation reproductionInformation mixedCut
+      from le_sup_left) _ hA)
+
+theorem containment_eq_decision : {x : History | mixedCut ⊆ cut x} = decision := by
+  ext x
+  by_cases hx : x ∈ decision
+  · simp [cut, hx]
+  · have hn : ¬ mixedCut ⊆ (∅ : Set (RootIndexed.TreeNode Unit Bool)) := by
+      intro h
+      exact h (by simp [mixedCut] : ((), [false]) ∈ mixedCut)
+    simp [cut, hx, hn]
+
+-- Both possible cut values occur as the root state varies, independently of
+-- which offspring kernel will subsequently be used.
+example : cut (fun _ _ => some true) = mixedCut := by
+  simp [cut, decision, rootStates, stateAt]
+
+example : cut (fun _ _ => some false) = ∅ := by
+  simp [cut, decision, rootStates, stateAt]
+
+-- Localized strong branching is valid on precisely the initial decision cell;
+-- outside it the random line is empty and both indicated payoffs vanish.
+theorem branching_on_decision
+    (K : Kernel Bool (Step Bool Bool)) [IsMarkovKernel K]
+    (initial : Measure (Unit → Option Bool)) [IsProbabilityMeasure initial]
+    (g : Bool → (List Bool → Option Bool) → ℝ) (hg : ∀ i, StronglyMeasurable (g i))
+    (hb : ∀ i t, ‖g i t‖ ≤ 1) :
+    (generationPathLaw K initial)[decision.indicator
+      (fun x => ∏ i, g i (descendantTree (mixedCutRoots i) x)) | cut_optional.measurableSpace]
+      =ᵐ[generationPathLaw K initial] decision.indicator
+        (fun x => ∏ i, ∫ t, g i t ∂treeKernel K (stateAt (mixedCutRoots i) x)) := by
+  have hline : RootIndexed.IsLine (Set.range mixedCutRoots) := by
+    rw [range_mixedCutRoots]
+    exact mixedCut_isLine
+  simpa only [range_mixedCutRoots, containment_eq_decision] using
+    condExp_prod_on_optionalLine K initial cut_optional mixedCutRoots
+      mixedCutRoots_injective hline g hg hb
+
+end OptionalLineRandomCutExamples
+
+#print axioms OptionalLineRandomCutExamples.cut_optional
+#print axioms OptionalLineRandomCutExamples.branching_on_decision

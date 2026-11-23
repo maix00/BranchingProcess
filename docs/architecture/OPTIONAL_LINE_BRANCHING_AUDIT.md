@@ -160,3 +160,52 @@ Validated on 2026-11-23:
   configured axiom reports contain only the reviewed standard Lean axioms.
 * Mathlib style lint and the project import-boundary audit: successful.
 * The build/test infrastructure's 32 Python unit tests: successful.
+
+## Review of the completed optional-line interface
+
+Commit `81816fc3e` was reviewed against Jagers–Lagerås (2008), §2.2–2.3,
+including the empty-product convention in (1). The proof chain uses the
+canonical `generationPathLaw` and `treeKernel`: the full generation subtree
+joint law gives the singleton outside-subtree law, native tower and pull-out
+identities give deterministic-cut products, and stopped-information
+localization gives the optional-cut identities. This verifies the discrete
+kernel statement of the cited identity. Jagers (1989), Theorem 4.14, is the
+attributed original result; its full proof was not available for line-by-line
+comparison.
+
+The review additionally compared the pinned `HasCondDistrib`, `condDistrib`,
+`iCondIndepFun`, `condExpKernel`, product-measure and conditional-expectation
+APIs with the official Mathlib documentation. Native `iCondIndepFun` is defined
+through `condExpKernel` and requires a Standard Borel sample space at this
+revision. The explicit product `HasCondDistrib` theorem retains arbitrary
+measurable states and roots, so it remains the principal interface here.
+No second independence predicate or regular-conditional-law construction is
+introduced. The finite-product and supplied-kernel uniqueness extensions
+bridge native integration and measure uniqueness; the pinned library has no
+matching arbitrary-measurable-space optional-line theorem.
+
+Ownership and visibility were checked declaration by declaration. Coordinate
+information and conditional-identity transfer belong to `Process.Tree.Line`;
+state observations and actual branching laws belong to `BranchingProcess.State`;
+conditional integration and finite-product operations belong to `Kernel` and
+`MeasureTheory`, respectively. These are independently reusable mathematical
+results, so they stay outside `Lemmas/`. Single-file tactical helpers are
+`private`; there is no non-reusable cross-file assembly requiring an additional
+`Lemmas/` directory. `State/` has seven direct Lean files, `Descendants/` six,
+and `Observation/` three. Each new module's header inventories its public
+formulas and hypotheses.
+
+The regression now constructs an actual random cut: according to an observed
+initial Boolean state it is either empty or consists of two vertices at depths
+one and two. The localized strong branching identity is checked on exactly
+that initial decision event. This exercises random cardinality, empty lines,
+mixed depths and a state-dependent offspring kernel without an enumeration of
+the random line. Import guards now enforce the separation of generic line
+information, generic integration, state-kernel branching and BRW/spine models.
+The README's obsolete claim that optional-line strong branching remained open
+was removed; its remaining boundaries agree with the checklist.
+
+Review validation: the full 11,957-job library build, all 150 Lean tests,
+32 Python tests, Mathlib style lint over 1,788 modules and the strengthened
+import-boundary audit passed. The new random-cut axiom reports contain only
+`propext`, `Classical.choice` and `Quot.sound`.
