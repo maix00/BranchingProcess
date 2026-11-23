@@ -20,6 +20,10 @@ In namespace `ProbabilityTheory.BranchingProcess.State`:
   a specified generation history:
   $\operatorname{Law}((T_{r_i,u_i})_i\mid\text{history})
     =\bigotimes_i P_{X_a(r_i,u_i)}$ for distinct depth-$a$ addresses.
+* `descendantTrees_jointLaw` gives the joint-measure disintegration
+  `Law(history, (Tᵢ)ᵢ) = Law(history) ⊗ (⊗ᵢ P_(Xₐ(rᵢ,uᵢ)))`.
+  It allows arbitrary joint initial root states and measurable payoff functions
+  without an integrability condition on those payoffs.
 * `condExp_descendantTrees` gives the equivalent conditional-integral identity
   under the actual process law with any joint initial distribution:
   $E[g((T_{r_i,u_i})_i)\mid\mathcal F_a]
@@ -71,6 +75,37 @@ theorem traj_descendantTrees {Root ι α S : Type*} [MeasurableSpace S]
       funext i
       rw [treeKernel, Kernel.map_apply _ (by fun_prop)]
 
+/-- Joint disintegration of the observed history and the complete descendant-tree family. -/
+theorem descendantTrees_jointLaw {Root ι α S : Type*} [MeasurableSpace S]
+    (K : Kernel S (Step α S)) [IsMarkovKernel K]
+    (initial : Measure (Root → Option S)) [IsProbabilityMeasure initial]
+    (a : ℕ) (roots : ι → Root × (Fin a → α)) (hinj : Function.Injective roots) :
+    (generationPathLaw K initial).map (fun x : Π n : ℕ, (Root × (Fin n → α)) → Option S =>
+      (frestrictLe a x,
+      fun i (u : List α) =>
+        x (a + u.length) ((roots i).1, Fin.append (roots i).2 u.get))) =
+      (generationPathLaw K initial).map (frestrictLe a) ⊗ₘ
+        Kernel.infinitePi (fun i => (treeKernel K).comap
+          (fun history : Π k : Iic a, (Root × (Fin k.1 → α)) → Option S =>
+            history ⟨a, by simp⟩ (roots i)) (by fun_prop)) := by
+  let D (x : Π n : ℕ, (Root × (Fin n → α)) → Option S) i (u : List α) :=
+    x (a + u.length) ((roots i).1, Fin.append (roots i).2 u.get)
+  have hD : Measurable D := by fun_prop
+  have hm : (Kernel.traj
+      (X := fun n : ℕ => (Root × (Fin n → α)) → Option S)
+      (generationHistoryKernel (Root := Root) K) a).map D =
+      Kernel.infinitePi (fun i => (treeKernel K).comap
+        (fun history : Π k : Iic a, (Root × (Fin k.1 → α)) → Option S =>
+          history ⟨a, by simp⟩ (roots i)) (by fun_prop)) := by
+    apply Kernel.ext
+    intro history
+    rw [Kernel.map_apply _ hD, Kernel.infinitePi_apply]
+    exact traj_descendantTrees K a history roots hinj
+  unfold generationPathLaw
+  rw [← hm, Measure.compProd_map hD, Kernel.trajMeasure_compProd_traj,
+    Measure.map_map (by fun_prop) (by fun_prop)]
+  rfl
+
 /-- The state-dependent branching identity under an arbitrary joint initial law. -/
 theorem condExp_descendantTrees {Root ι α S E : Type*} [MeasurableSpace S]
     [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
@@ -88,27 +123,18 @@ theorem condExp_descendantTrees {Root ι α S E : Type*} [MeasurableSpace S]
       =ᵐ[generationPathLaw (Root := Root) K initial]
       fun x : Π n : ℕ, (Root × (Fin n → α)) → Option S ↦ ∫ trees, g trees ∂Measure.infinitePi
         (fun i : ι ↦ treeKernel K (x a (roots i))) := by
-  unfold generationPathLaw at hgi ⊢
-  have hd : Measurable (fun x : Π n : ℕ, (Root × (Fin n → α)) → Option S ↦
-      fun i (u : List α) ↦
+  have hD : Measurable (fun x : Π n : ℕ, (Root × (Fin n → α)) → Option S =>
+      fun i (u : List α) =>
         x (a + u.length) ((roots i).1, Fin.append (roots i).2 u.get)) := by fun_prop
-  have hf : StronglyMeasurable (fun x : Π n : ℕ, (Root × (Fin n → α)) → Option S ↦
-      g (fun i (u : List α) ↦ x (a + u.length) ((roots i).1, Fin.append (roots i).2 u.get))) :=
-    hg.comp_measurable hd
-  have hc := Kernel.condExp_trajMeasure (E := E)
-    (X := fun n : ℕ ↦ (Root × (Fin n → α)) → Option S)
-    (generationHistoryKernel (Root := Root) K)
-    (initial.map (fun s (p : Root × (Fin 0 → α)) ↦ s p.1)) a
-    (f := fun x : Π n : ℕ, (Root × (Fin n → α)) → Option S ↦
-      g (fun i (u : List α) ↦ x (a + u.length) ((roots i).1, Fin.append (roots i).2 u.get)))
-    hf hgi
-  filter_upwards [hc] with x hx
-  have ht := congrArg (fun μ ↦ ∫ trees, g trees ∂μ)
-    (traj_descendantTrees K a (frestrictLe a x) roots hinj)
-  have hi := integral_map (μ := Kernel.traj
-    (X := fun n : ℕ ↦ (Root × (Fin n → α)) → Option S)
-    (generationHistoryKernel K) a (frestrictLe a x))
-    hd.aemeasurable hg.aestronglyMeasurable
-  exact hx.trans (hi.symm.trans ht)
+  rw [Filtration.piLE_eq_comap_frestrictLe]
+  exact Kernel.condExp_of_jointLaw (generationPathLaw K initial)
+    (frestrictLe a) _ (measurable_frestrictLe a) hD
+    (Kernel.infinitePi (fun i => (treeKernel K).comap
+      (fun history : Π k : Iic a, (Root × (Fin k.1 → α)) → Option S =>
+        history ⟨a, by simp⟩ (roots i)) (by fun_prop)))
+    (descendantTrees_jointLaw K initial a roots hinj)
+    (hg.comp_measurable measurable_snd) hgi
 
 end ProbabilityTheory.BranchingProcess.State
+
+end

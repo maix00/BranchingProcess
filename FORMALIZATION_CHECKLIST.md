@@ -116,6 +116,19 @@ Primary references checked online on 2026-11-22:
   Search Tree via martingales*, [arXiv:math/0410318](https://arxiv.org/abs/math/0410318),
   discussion of the distinction between optional and ancestral stopping rules.
 
+### Countable suprema of optional lines
+
+`Combinatorics/UlamHarris/Line/Supremum.lean` defines ancestral supremum as
+first entrance into the intersection of descendant closures and proves its
+universal property. `Probability/Process/Tree/Line/Supremum.lean` proves that
+countable suprema of random lines are random and that countable suprema of
+optional lines are optional. It proves `⨆ i, F_(L_i) ≤ F_(sup_i L_i)`;
+equality is not asserted for an arbitrary deterministic-past family. Node
+countability, exhaustion, and monotonicity of the family are not required.
+The regression includes one root stopping immediately and another receding
+to unbounded depths. These properties do not establish strong branching.
+See the [abstraction audit](docs/architecture/SPINE_DISINTEGRATION_AND_LINE_SUPREMA.md).
+
 ### Ordered optional-line information and native convergence
 
 `IsOptionalLine.filtration` constructs `F_i = F_(L_i)` for pointwise ordered
@@ -193,8 +206,14 @@ branches never create an additional spine.
    with their original laws and proves the conditional product law at distinct
    current normal nodes. `Tree/FirstGeneration.lean` also proves the
    fixed-index first-generation (4.12) identity before summing over indices.
-   The remaining induction must recursively combine the joint biased family
-   and conditional subtree laws along the fixed address. Sum over terminal
+   `State.descendantTrees_jointLaw` now supplies the history/complete-tree
+   joint law for arbitrary joint initial states; the conditional-expectation
+   interface derives from that law. `State/Descendants/Disintegration.lean`
+   disintegrates the root family and all complete child trees.
+   `Tree/BranchingProperty.lean` combines this with the joint biased-family
+   law for a fixed first spine child, retaining arbitrary measurable payoffs
+   of the complete child trees, including future spine events.
+   The remaining induction must iterate this split along the fixed address. Sum over terminal
    addresses only after this identity, obtaining (4.11) and the full tree marginal.
    The all-depth fixed-address identity remains open.
    With harmonicity imposed only on the eligible region, finite-generation

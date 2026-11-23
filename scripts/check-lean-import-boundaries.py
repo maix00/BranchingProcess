@@ -31,6 +31,18 @@ FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
 GENERAL_LAYER_BOUNDARIES = {
+    "Combinatorics.UlamHarris.Line.Supremum": (
+        "MeasureTheory", "Probability",
+    ),
+    "Probability.Process.Tree.Line.Supremum": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.State.Descendants.Disintegration": (
+        "Probability.BranchingProcess.Spine", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.BranchingProperty": (
+        "Probability.BranchingRandomWalk",
+    ),
     "Probability.Kernel.IonescuTulcea.Map": (
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",

@@ -12,7 +12,7 @@ proof-support declarations are documented in their owning modules.
 | Ulam–Harris trees and marked trees | Locally finite tree spaces, completeness and density, equivalent tree metrics and their Borel sigma algebras | [`Tree`](Combinatorics/UlamHarris/Tree/) |
 | Lines in a forest | Ancestry antichains; meeting every infinite path is a separate property. Ancestral precedence orders lines, and distinct line members have disjoint descendant subtrees | [`Line/Basic`](Combinatorics/UlamHarris/Line/Basic.lean), [`Line/Order`](Combinatorics/UlamHarris/Line/Order.lean) |
 | First-entrance and truncated lines | First entrance consists of ancestry-minimal target nodes. Generation truncations are increasing cuts of bounded depth and meet every infinite address path | [`FirstEntrance`](Combinatorics/UlamHarris/Line/FirstEntrance.lean), [`Truncation`](Combinatorics/UlamHarris/Line/Truncation.lean) |
-| Optional random lines | Optionality tests `{L ≼ ℓ} ∈ F_ℓ`. Ancestrally observable first-entrance rules give optional lines; along a fixed path their entrance events equal Mathlib hitting-time events | [`Optional`](Probability/Process/Tree/Line/Optional.lean), [`FirstEntrance`](Probability/Process/Tree/Line/FirstEntrance.lean), [`PathHitting`](Probability/Process/Tree/Line/PathHitting.lean) |
+| Optional random lines | Optionality tests `{L ≼ ℓ} ∈ F_ℓ`; countable ancestral suprema remain optional. Ancestrally observable first-entrance rules give optional lines; along a fixed path their entrance events equal Mathlib hitting-time events | [`Optional`](Probability/Process/Tree/Line/Optional.lean), [`Supremum`](Probability/Process/Tree/Line/Supremum.lean), [`FirstEntrance`](Probability/Process/Tree/Line/FirstEntrance.lean), [`PathHitting`](Probability/Process/Tree/Line/PathHitting.lean) |
 | Information at an optional line | `L ≼ M` implies `F_L ⊆ F_M`; stopping at a deterministic line recovers its past. Ordered optional lines form a native filtration, admitting conditional-expectation martingales and Lévy upward convergence to the generated stopped information. Earlier stopped information can decide an ordered pasting | [`Stopped`](Probability/Process/Tree/Line/Information/Stopped.lean), [`Pasting`](Probability/Process/Tree/Line/Pasting.lean) |
 | First-entrance exponential mass | For an i.i.d. BRW with boundary-normalized tilt, `E[W_B] = P̂(∃ n, S_n ∈ B) ≤ 1`; expectation is one exactly when the tilted spine enters `B` almost surely | [`Spine/StoppingLine/FirstEntrance`](Probability/BranchingRandomWalk/Spine/StoppingLine/FirstEntrance.lean) |
 
@@ -52,9 +52,16 @@ Normal descendant trees have their original laws and the conditional product
 law at distinct current normal nodes:
 [`Spine/Tree/Normal`](Probability/BranchingProcess/Spine/Tree/Normal.lean).
 The root-family density and fixed first-spine-child weighted identity are
-derived from this same tree. The higher-generation
-tree-density theorem and full conditional spine/path decomposition remain open;
-the first-generation identity does not assert them. See the [proof checklist](FORMALIZATION_CHECKLIST.md#shis-general-spinal-decomposition).
+derived from this same tree. The recursive split retains complete child
+subtrees, including future spine events:
+[`Spine/Tree/BranchingProperty`](Probability/BranchingProcess/Spine/Tree/BranchingProperty.lean).
+The underlying root-family/child-tree disintegration is available for arbitrary
+state and child-slot spaces:
+[`State/Descendants/Disintegration`](Probability/BranchingProcess/State/Descendants/Disintegration.lean).
+The realized spine's measurable state path has the canonical Doob-chain law:
+[`Spine/Tree/PathLaw`](Probability/BranchingProcess/Spine/Tree/PathLaw.lean).
+The higher-generation tree-density theorem and the conditional spine location
+given the untyped tree remain open; the recursive split does not assert them. See the [proof checklist](FORMALIZATION_CHECKLIST.md#shis-general-spinal-decomposition).
 
 The endpoint and speed results formalize Theorems 1.1 and 1.2 (including the
 first-moment formulation) in Wang Yiyang, *Asymptotic Speed of the N-Branching
