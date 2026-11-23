@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingProcess.Offspring.Kernel
+public import Probability.BranchingProcess.Spine.LocalBias.Basic
 public import Probability.Kernel.DoobTransform.Basic
 public import Mathlib.Probability.Kernel.Composition.MapComap
 
@@ -50,8 +50,7 @@ variable {S ι : Type*} [MeasurableSpace S] [MeasurableSpace ι] [Countable ι]
 /-- Bias the family and distinguished child jointly, rather than defining two separate laws. -/
 noncomputable def biasedFamilyChild (Q : Kernel S (Step ι S)) [IsSFiniteKernel Q]
     (h : S → ℝ≥0∞) : Kernel S (Step ι S × ι) :=
-  Kernel.sum fun i =>
-    (Q.withDensity (fun s ξ => (ξ i).elim 0 h / h s)).map (fun ξ => (ξ, i))
+  LocalBias.familyChildKernel Q (LocalBias.ofWeight h)
 
 /-- The integral against the joint kernel is the sum of weighted family integrals. -/
 theorem lintegral_biasedFamilyChild (Q : Kernel S (Step ι S)) [IsSFiniteKernel Q]
@@ -59,15 +58,9 @@ theorem lintegral_biasedFamilyChild (Q : Kernel S (Step ι S)) [IsSFiniteKernel 
     {g : Step ι S × ι → ℝ≥0∞} (hg : Measurable g) (s : S) :
     (∫⁻ p, g p ∂biasedFamilyChild Q h s) =
       ∑' i, ∫⁻ ξ, ((ξ i).elim 0 h / h s) * g (ξ, i) ∂Q s := by
-  rw [biasedFamilyChild, Kernel.sum_apply, lintegral_sum_measure]
-  apply tsum_congr
-  intro i
-  rw [Kernel.lintegral_map _ (by fun_prop) s hg]
-  have hw : Measurable (Function.uncurry
-      (fun s (ξ : Step ι S) => (ξ i).elim 0 h / h s)) := by
-    exact ((measurable_option_elim 0 hh).comp
-      ((measurable_pi_apply i).comp measurable_snd)).div (hh.comp measurable_fst)
-  exact Kernel.lintegral_withDensity Q hw s (g := fun ξ => g (ξ, i)) (by fun_prop)
+  exact LocalBias.lintegral_familyChildKernel Q (LocalBias.ofWeight h)
+    (fun i => ((measurable_option_elim 0 hh).comp
+      ((measurable_pi_apply i).comp measurable_snd)).div (hh.comp measurable_fst)) hg s
 
 /-- The total mass is the normalized expected family weight. -/
 theorem biasedFamilyChild_mass (Q : Kernel S (Step ι S)) [IsSFiniteKernel Q]

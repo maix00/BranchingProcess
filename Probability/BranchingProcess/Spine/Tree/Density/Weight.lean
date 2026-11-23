@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingProcess.State.Generation
+public import Probability.BranchingProcess.Spine.LocalBias.Weight
 public import Mathlib.Data.Fin.Tuple.Take
 
 /-!
@@ -19,6 +19,7 @@ In `ProbabilityTheory.BranchingProcess.Spine`:
 * `addressWeight h n z x` is the product of the successive child/parent
   weight ratios along the fixed address `z` through the finite history `x`.
   A ratio is zero when its parent has zero or infinite weight; `W₀ = 1`.
+* `addressWeight_zero` and `addressWeight_succ` give its inherited recursion.
 * `measurable_addressWeight` proves measurability for any measurable `h`.
 * `totalWeight h n x = ∑_z W_z(x)` is the total density;
   `measurable_totalWeight` proves its measurability for countable child slots.
@@ -40,37 +41,50 @@ open MeasureTheory Combinatorics.Branching Finset Preorder
 open scoped ENNReal
 
 /-- Successive fixed-child Radon--Nikodym ratios, with eligibility checked at each parent. -/
-noncomputable def addressWeight {S ι : Type*} (h : S → ℝ≥0∞) :
-    (n : ℕ) → (Fin n → ι) → (Π k : Iic n, (Unit × (Fin k.1 → ι)) → Option S) → ℝ≥0∞
-  | 0, _, _ => 1
-  | n + 1, z, x =>
-    addressWeight h n (Fin.init z) (fun k => x ⟨k.1, mem_Iic.mpr
-      ((mem_Iic.mp k.2).trans (Nat.le_succ n))⟩) *
+noncomputable def addressWeight {S ι : Type*} (h : S → ℝ≥0∞) (n : ℕ)
+    (z : Fin n → ι) (x : Π k : Iic n, (Unit × (Fin k.1 → ι)) → Option S) : ℝ≥0∞ :=
+  LocalBias.addressWeight (LocalBias.ofWeight h) n z x
+
+private lemma stepWeight_ofWeight {S ι : Type*} (h : S → ℝ≥0∞)
+    (o : Option S) (ξ : Step ι S) (i : ι) :
+    LocalBias.stepWeight (LocalBias.ofWeight h) o ξ i =
+      if o.elim 0 h ≠ 0 ∧ o.elim 0 h ≠ ∞ then
+        (ξ i).elim 0 h / o.elim 0 h else 0 := by
+  classical
+  cases o with
+  | none => simp [LocalBias.stepWeight]
+  | some s =>
+    by_cases hz : h s = 0 <;> by_cases ht : h s = ∞ <;>
+      simp [LocalBias.stepWeight, LocalBias.ofWeight, LocalBias.weighted, hz, ht]
+
+@[simp] theorem addressWeight_zero {S ι : Type*} (h : S → ℝ≥0∞)
+    (z : Fin 0 → ι) (x : Π k : Iic 0, (Unit × (Fin k.1 → ι)) → Option S) :
+    addressWeight h 0 z x = 1 := rfl
+
+/-- The ratio-product recursion is inherited from the general local-bias product. -/
+theorem addressWeight_succ {S ι : Type*} (h : S → ℝ≥0∞) (n : ℕ)
+    (z : Fin (n + 1) → ι)
+    (x : Π k : Iic (n + 1), (Unit × (Fin k.1 → ι)) → Option S) :
+    addressWeight h (n + 1) z x =
+      addressWeight h n (Fin.init z) (fun k => x ⟨k.1, mem_Iic.mpr
+        ((mem_Iic.mp k.2).trans (Nat.le_succ n))⟩) *
       if (x ⟨n, by simp⟩ ((), Fin.init z)).elim 0 h ≠ 0 ∧
           (x ⟨n, by simp⟩ ((), Fin.init z)).elim 0 h ≠ ∞ then
         (x ⟨n + 1, by simp⟩ ((), z)).elim 0 h /
-          (x ⟨n, by simp⟩ ((), Fin.init z)).elim 0 h else 0
+          (x ⟨n, by simp⟩ ((), Fin.init z)).elim 0 h else 0 := by
+  unfold addressWeight
+  rw [LocalBias.addressWeight, stepWeight_ofWeight]
+  simp only [Fin.snoc_init_self]
 
 @[fun_prop]
 theorem measurable_addressWeight {S ι : Type*} [MeasurableSpace S]
     {h : S → ℝ≥0∞} (hh : Measurable h) (n : ℕ) (z : Fin n → ι) :
-    Measurable (addressWeight h n z) := by
-  induction n with
-  | zero => exact measurable_const
-  | succ n ih =>
-    have hp : Measurable (fun x : Π k : Iic (n + 1),
-        (Unit × (Fin k.1 → ι)) → Option S =>
-        (x ⟨n, by simp⟩ ((), Fin.init z)).elim 0 h) :=
-      (measurable_option_elim 0 hh).comp
-        ((measurable_pi_apply _).comp (measurable_pi_apply _))
-    have hc : Measurable (fun x : Π k : Iic (n + 1),
-        (Unit × (Fin k.1 → ι)) → Option S =>
-        (x ⟨n + 1, by simp⟩ ((), z)).elim 0 h) :=
-      (measurable_option_elim 0 hh).comp
-        ((measurable_pi_apply _).comp (measurable_pi_apply _))
-    exact ((ih (Fin.init z)).comp (by fun_prop)).mul
-      ((hc.div hp).ite ((hp (MeasurableSet.singleton 0).compl).inter
-        (hp (MeasurableSet.singleton ∞).compl)) measurable_const)
+    Measurable (addressWeight h n z) :=
+  LocalBias.measurable_addressWeight (LocalBias.ofWeight h)
+    ((hh (MeasurableSet.singleton 0).compl).inter
+      (hh (MeasurableSet.singleton ∞).compl))
+    (fun i => ((measurable_option_elim 0 hh).comp
+      ((measurable_pi_apply i).comp measurable_snd)).div (hh.comp measurable_fst)) n z
 
 /-- Total fixed-address density at a generation. -/
 noncomputable def totalWeight {S ι : Type*} (h : S → ℝ≥0∞) (n : ℕ)
@@ -99,12 +113,12 @@ theorem addressWeight_eq_endpointRatio {S ι : Type*} (h : S → ℝ≥0∞) (n 
   induction n with
   | zero =>
     have hz : z = (fun j : Fin 0 => j.elim0) := Subsingleton.elim _ _
-    simp [addressWeight, hz, ENNReal.div_self hroot.1 hroot.2]
+    simp [addressWeight_zero, hz, ENNReal.div_self hroot.1 hroot.2]
   | succ n ih =>
     let x' : Π k : Iic n, (Unit × (Fin k.1 → ι)) → Option S :=
       fun k => x ⟨k.1, mem_Iic.mpr ((mem_Iic.mp k.2).trans n.le_succ)⟩
     have hi := ih (Fin.init z) x' hroot
-    rw [addressWeight, hi]
+    rw [addressWeight_succ, hi]
     simp only [Fin.forall_fin_succ']
     simp only [Fin.val_castSucc, Fin.take_init, Fin.val_last, Fin.take_eq_init]
     dsimp only [x']

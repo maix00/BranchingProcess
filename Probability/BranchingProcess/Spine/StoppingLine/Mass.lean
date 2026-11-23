@@ -158,7 +158,7 @@ omit [MeasurableSpace S] in
 @[simp] theorem truncatedMass_zero (h : S → ℝ≥0∞)
     (L : (List ι → Option S) → Set (Unit × List ι)) (t : List ι → Option S) :
     truncatedMass h L 0 t = 1 := by
-  simp [truncatedMass, unexitedMass, addressWeight, tsum_fintype]
+  simp [truncatedMass, unexitedMass, addressWeight_zero, tsum_fintype]
 
 
 omit [MeasurableSpace S] in

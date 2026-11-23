@@ -105,12 +105,12 @@ restored either. No dependency revision is changed.
   complete-tree marginal results, including normalization.
 - `Tree/Density/Conditional.lean`: principal conditional spine-location
   identities, for both tagged events and their actual address observation.
-- `Tree/Observation.lean`: reusable state, address, and ray observations;
+- `Tree/Observation/Path.lean`: reusable state, address, and ray observations;
   these complete constructions remain outside `Lemmas/`.
-- `Tree/Density/Lemmas/`: only the tagged-generation assembly and raw
-  finite-history induction supporting those theorem entries. The latter is
-  an implementation representation of the public whole-tree result, not a
-  second public process or independent theorem family.
+- `LocalBias/Lemmas/`: the single tagged-generation assembly and fixed-address
+  induction for arbitrary local family bias. The former harmonic-only
+  `Tree/Density/Lemmas/` files are removed. Harmonic density entries now
+  specialize `LocalBias/Density`, with no second probability induction.
 - `Tree/Lemmas/Generation.lean`: shared construction-specific tagged-generation
   support for the state-path and tree-density proofs; renamed from
   `Tree/Lemmas/PathLaw.lean` to reflect its actual scope, with no compatibility
@@ -118,8 +118,9 @@ restored either. No dependency revision is changed.
 - `Process/Tree/Line/Information/Pasting.lean`: a reusable stopped-information
   theorem independent of branching models.
 
-The tree subject has seven direct Lean files; its density subdirectory has
-three public files and one `Lemmas/` directory containing two implementation
+The harmonic tree subject has seven direct Lean files; its density
+subdirectory contains the mathematical harmonic specializations. The
+local-density core has eight direct semantic modules and two implementation
 files. The general probabilistic line subject still has eight direct files;
 its new information theorem is grouped under `Information/`.
 
@@ -132,3 +133,8 @@ criterion and renewal/barrier BRW instantiations remain separate obligations in 
 assumptions in the proved fixed-address, tree-law, or conditional-location
 results. No global absolute continuity of infinite-horizon tree laws or
 strong branching at arbitrary optional lines is inferred from them.
+
+The 2026-11-23 local-density generalization is audited in
+[LOCAL_SPINE_BIAS_AUDIT.md](LOCAL_SPINE_BIAS_AUDIT.md). Its structural
+observations are independent of harmonicity and now live in
+`Tree/Observation/Path.lean`.

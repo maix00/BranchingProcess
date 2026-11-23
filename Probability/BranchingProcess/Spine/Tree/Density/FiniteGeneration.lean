@@ -8,7 +8,7 @@ module
 
 public import Probability.BranchingProcess.Spine.Tree.Density.Weight
 public import Probability.BranchingProcess.Spine.Tree.Observation
-import all Probability.BranchingProcess.Spine.Tree.Density.Lemmas.Induction
+import Probability.BranchingProcess.Spine.LocalBias.Density
 
 /-!
 # Fixed-address densities on the canonical distinguished tree
@@ -33,8 +33,8 @@ In `ProbabilityTheory.BranchingProcess.Spine`:
 
 The proof is Zhan Shi, *Branching Random Walks* (2015), §4.5,
 Theorem 4.3, (4.12)–(4.13), DOI 10.1007/978-3-319-25372-5.
-It fixes the address before induction, integrates ordinary parent families
-under their original laws, and multiplies the selected child's bias.
+The fixed-address induction is owned by `LocalBias.Density`; this module
+specializes its local factor to `h(child)/h(parent)`.
 Both sides are observations of the existing canonical complete trees.
 -/
 
@@ -44,20 +44,6 @@ namespace ProbabilityTheory.BranchingProcess.Spine
 
 open MeasureTheory Combinatorics.Branching Finset Preorder
 open scoped ENNReal
-
-private lemma treeKernel_history {S ι : Type*} [MeasurableSpace S]
-    (Q : Kernel S (Step ι S)) [IsMarkovKernel Q] (s : Option S) (n : ℕ) :
-    (State.treeKernel Q s).map (fun t (k : Iic n) (p : Unit × (Fin k.1 → ι)) =>
-      t (List.ofFn p.2)) =
-    Kernel.partialTraj (X := fun k => (Unit × (Fin k → ι)) → Option S)
-      (State.generationHistoryKernel Q) 0 n (fun _ _ => s) := by
-  change (State.treeKernel Q s).map ((frestrictLe n) ∘
-    (fun t k (p : Unit × (Fin k → ι)) => t (List.ofFn p.2))) = _
-  have hπ : Measurable (fun t : List ι → Option S =>
-      fun k : ℕ => fun p : Unit × (Fin k → ι) => t (List.ofFn p.2)) := by fun_prop
-  have hm := Measure.map_map (measurable_frestrictLe n) hπ (μ := State.treeKernel Q s)
-  rw [State.treeKernel_generations] at hm
-  exact hm.symm.trans (Kernel.traj_map_frestrictLe_apply 0 n _)
 
 /-- Shi (4.12)–(4.13): the fixed-address identity at arbitrary depth,
 for arbitrary nonnegative measurable observations through that generation. -/
@@ -75,36 +61,8 @@ theorem lintegral_treeKernel_fixedAddress {S ι : Type*} [MeasurableSpace S]
       ∂treeKernel Q hh harmonic (some (Sum.inr s))) =
     ∫⁻ t, addressWeight h n z (fun _k p => t (List.ofFn p.2)) *
       g (fun _k p => t (List.ofFn p.2)) ∂State.treeKernel Q (some s.1) := by
-  let := reproductionKernel_isMarkovKernel Q hh harmonic
-  let E := S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}
-  have he : Measurable (fun x : Π k : Iic n,
-      (Unit × (Fin k.1 → ι)) → Option E =>
-      fun k q => (x k q).map (Sum.elim id Subtype.val)) := by
-    have hm : Measurable (fun o : Option E => o.map (Sum.elim id Subtype.val)) :=
-      measurable_option_map (measurable_id.sumElim measurable_subtype_coe)
-    fun_prop
-  have htag : Measurable (fun o : Option E => o.any Sum.isRight) :=
-    measurable_option_elim false (measurable_const.sumElim measurable_const)
-  have hG : Measurable (fun x : Π k : Iic n,
-      (Unit × (Fin k.1 → ι)) → Option E =>
-      if (x ⟨n, by simp⟩ ((), z)).any Sum.isRight = true then
-        g (fun k q => (x k q).map (Sum.elim id Subtype.val)) else 0) :=
-    (hg.comp he).ite ((MeasurableSet.singleton true).preimage
-      (htag.comp ((measurable_pi_apply _).comp (measurable_pi_apply _)))) measurable_const
-  have hW : Measurable (fun x : Π k : Iic n,
-      (Unit × (Fin k.1 → ι)) → Option S => addressWeight h n z x * g x) :=
-    (measurable_addressWeight hh n z).mul hg
-  have hleft := lintegral_map hG (show Measurable
-    (fun t : List ι → Option E => fun k : Iic n =>
-      fun p : Unit × (Fin k.1 → ι) => t (List.ofFn p.2)) from by fun_prop)
-    (μ := State.treeKernel (reproductionKernel Q h) (some (Sum.inr s)))
-  rw [treeKernel_history] at hleft
-  have hright := lintegral_map hW (show Measurable
-    (fun t : List ι → Option S => fun k : Iic n =>
-      fun p : Unit × (Fin k.1 → ι) => t (List.ofFn p.2)) from by fun_prop)
-    (μ := State.treeKernel Q (some s.1))
-  rw [treeKernel_history] at hright
-  exact hleft.symm.trans ((lintegral_partialTraj_fixedAddress Q hh harmonic s n z hg).trans hright)
+  exact LocalBias.lintegral_treeKernel_fixedAddress Q (LocalBias.ofWeight h)
+    (LocalBias.ofWeight_isAdmissible Q hh harmonic) s n z hg
 
 /-- Summed fixed-address density, retaining dependence on both the selected
 address and the entire generation history (Shi, Theorem 4.3, (4.11)–(4.13)). -/

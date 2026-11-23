@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-import Probability.BranchingProcess.Spine.Tree.FirstGeneration
-import Probability.BranchingProcess.Spine.Tree.Normal
-import Probability.BranchingProcess.Spine.Tree.Observation
+import Probability.BranchingProcess.Spine.LocalBias.Ray
+import Probability.BranchingProcess.Spine.LocalBias.Weight
+import Probability.BranchingProcess.State.Generation
 
 /-!
 # Single-parent integration for the fixed-address induction
@@ -16,7 +16,7 @@ import Probability.BranchingProcess.Spine.Tree.Observation
 ## Internal proof declarations
 
 * `lintegral_generationKernel_fixedChild` integrates one fixed distinguished
-  child in the full next generation: its density is `h(child)/h(parent)`;
+  child in the full next generation: its density is the local `r(parent,family,index)`;
   all other parents reproduce with the original law.
 * `ae_generationKernel_normal_child` proves that a fixed child of a normal
   or absent parent has no distinguished tag, almost surely.
@@ -30,7 +30,9 @@ laws; the fixed distinguished parent's family contributes its child weight.
 open MeasureTheory ProbabilityTheory Combinatorics.Branching
 open scoped ENNReal
 
-namespace ProbabilityTheory.BranchingProcess.Spine
+set_option backward.isDefEq.respectTransparency false
+
+namespace ProbabilityTheory.BranchingProcess.Spine.LocalBias
 
 private noncomputable def joinAt {J X : Type*} (p : J) (a : X) (b : {j // j ≠ p} → X) : J → X := by
   classical
@@ -142,55 +144,78 @@ private lemma lintegral_infinitePi_transfer {J X Y : Type*}
 private lemma lintegral_reproduction_fixedChild {S ι : Type*} [MeasurableSpace S]
     [MeasurableSpace ι] [Countable ι] [MeasurableSingletonClass ι]
     (Q : Kernel S (Step ι S)) [IsMarkovKernel Q]
-    {h : S → ℝ≥0∞} (hh : Measurable h)
-    (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ →
-      (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
-    (s : {s // h s ≠ 0 ∧ h s ≠ ∞}) (i : ι)
+    (B : LocalBias S ι) (hB : B.IsAdmissible Q) (s : B.domain) (i : ι)
     {g : Step ι S → ℝ≥0∞} (hg : Measurable g) :
     (∫⁻ ξ, (if (ξ i).any Sum.isRight = true then (1 : ℝ≥0∞) else 0) *
-      g (Step.map (Sum.elim id Subtype.val) ξ) ∂reproductionKernel Q h (Sum.inr s)) =
-      ∫⁻ ξ, ((ξ i).elim 0 h / h s) * g ξ ∂Q s := by
-  let := reproductionKernel_isMarkovKernel Q hh harmonic
-  have htag : Measurable (fun o : Option (S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}) =>
-      o.any Sum.isRight) := measurable_option_elim false
-        (measurable_const.sumElim measurable_const)
-  have hG : Measurable (fun ξ : Step ι (S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}) =>
-      if (ξ i).any Sum.isRight = true then
-        g (Step.map (Sum.elim id Subtype.val) ξ) else 0) :=
-    (hg.comp (Step.map_measurable (measurable_id.sumElim measurable_subtype_coe))).ite
+      g (Step.map (Sum.elim id Subtype.val) ξ) ∂reproductionKernel Q B (Sum.inr s)) =
+      ∫⁻ ξ, B.density s ξ i * g ξ ∂Q s := by
+  classical
+  let E := S ⊕ B.domain
+  let G (ξ : Step ι E) := if (ξ i).any Sum.isRight = true then
+    g (Step.map (Sum.elim id Subtype.val) ξ) else 0
+  have htag : Measurable (fun o : Option E => o.any Sum.isRight) :=
+    measurable_option_elim false (measurable_const.sumElim measurable_const)
+  have hG : Measurable G :=
+    (hg.comp (Step.map_measurable
+      (measurable_id.sumElim measurable_subtype_coe))).ite
       ((MeasurableSet.singleton true).preimage (htag.comp (measurable_pi_apply i)))
       measurable_const
-  have hm := lintegral_map hG (show Measurable
-    (fun t : List ι → Option (S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}) =>
-      fun j => t [j]) from by fun_prop)
-    (μ := State.treeKernel (reproductionKernel Q h) (some (Sum.inr s)))
-  rw [State.treeKernel_children, Kernel.optionElim_some] at hm
-  have he := lintegral_treeKernel_firstSpineChild Q hh harmonic s i hg
-  simpa only [ite_mul, one_mul, zero_mul] using hm.trans he
+  have hindex : Measurable (fun p : Step ι S × ι => if p.2 = i then g p.1 else 0) :=
+    (hg.comp measurable_fst).ite
+      ((MeasurableSet.singleton i).preimage measurable_snd) measurable_const
+  calc
+    _ = ∫⁻ ξ, G ξ ∂reproductionKernel Q B (Sum.inr s) := by
+      simp only [G, ite_mul, one_mul, zero_mul]
+    _ = ∫⁻ p, G (Step.distinguishChild B.domain.Mem p.1 p.2)
+        ∂familyChildKernel Q B s := by
+      rw [reproductionKernel_distinguished Q B hB.measurableSet_domain]
+      have hm : Measurable (fun p : Step ι S × ι =>
+          Step.distinguishChild B.domain.Mem p.1 p.2) :=
+        Step.distinguishChild_measurable hB.measurableSet_domain
+      exact lintegral_map hG hm
+    _ = ∫⁻ p, (if p.2 = i then g p.1 else 0) ∂familyChildKernel Q B s := by
+      apply lintegral_congr_ae
+      filter_upwards [ae_familyChildKernel_eligible Q B hB s.1 s.2] with p hp
+      obtain ⟨t, ht, htD⟩ := hp
+      dsimp only [G]
+      have he : Step.map (Sum.elim id Subtype.val)
+          (Step.distinguishChild B.domain.Mem p.1 p.2) = p.1 :=
+        Step.distinguishChild_map B.domain.Mem p.1 p.2
+      erw [he]
+      by_cases hi : p.2 = i
+      · rw [← hi]
+        erw [Step.distinguishChild_selected B.domain.Mem p.1 p.2 ht htD]
+        simp
+      · erw [Step.distinguishChild_other B.domain.Mem p.1 p.2 i (Ne.symm hi)]
+        cases p.1 i <;> simp [hi]
+    _ = _ := by
+      rw [lintegral_familyChildKernel Q B hB.measurable_density hindex]
+      rw [tsum_eq_single i]
+      · simp
+      · intro j hji
+        simp [hji]
 
 lemma lintegral_generationKernel_fixedChild {S ι : Type*} [MeasurableSpace S]
     [MeasurableSpace ι] [Countable ι] [MeasurableSingletonClass ι]
     (Q : Kernel S (Step ι S)) [IsMarkovKernel Q]
-    {h : S → ℝ≥0∞} (hh : Measurable h)
-    (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ →
-      (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
+    (B : LocalBias S ι) (hB : B.IsAdmissible Q)
     (n : ℕ)
-    (x : (Unit × (Fin n → ι)) → Option (S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}))
-    (p : Unit × (Fin n → ι)) (s : {s // h s ≠ 0 ∧ h s ≠ ∞})
+    (x : (Unit × (Fin n → ι)) → Option (S ⊕ B.domain))
+    (p : Unit × (Fin n → ι)) (s : B.domain)
     (hp : x p = some (Sum.inr s))
     (ho : ∀ q, q ≠ p → (x q).any Sum.isRight ≠ true) (i : ι)
     {g : ((Unit × (Fin (n + 1) → ι)) → Option S) → ℝ≥0∞} (hg : Measurable g) :
-    letI := reproductionKernel_isMarkovKernel Q hh harmonic
+    letI := reproductionKernel_isMarkovKernel Q B hB
     (∫⁻ y, if (y (p.1, Fin.snoc p.2 i)).any Sum.isRight = true then
       g (fun q => (y q).map (Sum.elim id Subtype.val)) else 0
-      ∂State.generationKernel (reproductionKernel Q h) n x) =
-    ∫⁻ y, ((y (p.1, Fin.snoc p.2 i)).elim 0 h / h s) * g y
+      ∂State.generationKernel (reproductionKernel Q B) n x) =
+    ∫⁻ y, (B.density s (fun j => y (p.1, Fin.snoc p.2 j)) i) * g y
       ∂State.generationKernel Q n (fun q => (x q).map (Sum.elim id Subtype.val)) := by
-  let := reproductionKernel_isMarkovKernel Q hh harmonic
-  let E := S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}
+  let := reproductionKernel_isMarkovKernel Q B hB
+  let E := S ⊕ B.domain
   let μ (q : Unit × (Fin n → ι)) :=
     Kernel.optionElim (Measure.dirac (fun _ : ι => (none : Option E)))
-      (reproductionKernel Q h) (x q)
+      (reproductionKernel Q B) (x q)
   let ν (q : Unit × (Fin n → ι)) :=
     Kernel.optionElim (Measure.dirac (fun _ : ι => (none : Option S))) Q
       ((x q).map (Sum.elim id Subtype.val))
@@ -203,8 +228,8 @@ lemma lintegral_generationKernel_fixedChild {S ι : Type*} [MeasurableSpace S]
       ((show Measurable (fun o : Option E => o.any Sum.isRight) from
         measurable_option_elim false (measurable_const.sumElim measurable_const)).comp
           (measurable_pi_apply i))) measurable_const
-  have hw : Measurable (fun ξ : Step ι S => (ξ i).elim 0 h / h s) :=
-    ((measurable_option_elim 0 hh).comp (measurable_pi_apply i)).div_const _
+  have hw : Measurable (fun ξ : Step ι S => B.density s ξ i) :=
+    (hB.measurable_density i).comp (measurable_const.prodMk measurable_id)
   have hother : ∀ q, q ≠ p → (μ q).map f = ν q := by
     intro q hqp
     have hq := ho q hqp
@@ -218,17 +243,18 @@ lemma lintegral_generationKernel_fixedChild {S ι : Type*} [MeasurableSpace S]
       | inr a => simp [he] at hq
       | inl a =>
         simp only [μ, ν, he, Option.map_some, Kernel.optionElim_some,
-          Sum.elim_inl, id_eq, reproductionKernel_normal]
+          Sum.elim_inl, id_eq]
+        rw [reproductionKernel_normal Q B a]
         rw [Measure.map_map hf (Step.map_measurable measurable_inl)]
         have hcomp : (f ∘ Step.map (Sum.inl : S → E)) = id := by
           funext ξ j
           cases heξ : ξ j <;> simp [f, Step.map, heξ]
         rw [hcomp, Measure.map_id]
   have hfixed : ∀ G : Step ι S → ℝ≥0∞, Measurable G →
-      (∫⁻ a, r a * G (f a) ∂μ p) = ∫⁻ b, ((b i).elim 0 h / h s) * G b ∂ν p := by
+      (∫⁻ a, r a * G (f a) ∂μ p) = ∫⁻ b, (B.density s b i) * G b ∂ν p := by
     intro G hG
     simpa only [μ, ν, hp, Option.map_some, Sum.elim_inr, Kernel.optionElim_some]
-      using lintegral_reproduction_fixedChild Q hh harmonic s i hG
+      using lintegral_reproduction_fixedChild Q B hB s i hG
   let G (broods : (Unit × (Fin n → ι)) → Step ι S) :=
     g (fun q => broods (q.1, Fin.init q.2) (q.2 (Fin.last n)))
   have hG : Measurable G := hg.comp (by fun_prop)
@@ -246,8 +272,8 @@ lemma lintegral_generationKernel_fixedChild {S ι : Type*} [MeasurableSpace S]
         measurable_option_elim false (measurable_const.sumElim measurable_const)).comp
           (measurable_pi_apply _))) measurable_const
   have hright : Measurable (fun y : (Unit × (Fin (n + 1) → ι)) → Option S =>
-      ((y (p.1, Fin.snoc p.2 i)).elim 0 h / h s) * g y) :=
-    (((measurable_option_elim 0 hh).comp (measurable_pi_apply _)).div_const _).mul hg
+      B.density s (fun j => y (p.1, Fin.snoc p.2 j)) i * g y) :=
+    ((hB.measurable_density i).comp (measurable_const.prodMk (by fun_prop))).mul hg
   rw [State.generationKernel_apply, lintegral_map hleft (by fun_prop),
     State.generationKernel_apply, lintegral_map hright (by fun_prop)]
   simpa only [Fin.init_snoc, Fin.snoc_last, r, G, f, Step.map,
@@ -256,23 +282,21 @@ lemma lintegral_generationKernel_fixedChild {S ι : Type*} [MeasurableSpace S]
 lemma ae_generationKernel_normal_child {S ι : Type*} [MeasurableSpace S]
     [MeasurableSpace ι] [Countable ι] [MeasurableSingletonClass ι]
     (Q : Kernel S (Step ι S)) [IsMarkovKernel Q]
-    {h : S → ℝ≥0∞} (hh : Measurable h)
-    (harmonic : ∀ s, h s ≠ 0 → h s ≠ ∞ →
-      (∫⁻ ξ, ∑' i, (ξ i).elim 0 h ∂Q s) = h s)
+    (B : LocalBias S ι) (hB : B.IsAdmissible Q)
     (n : ℕ)
-    (x : (Unit × (Fin n → ι)) → Option (S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}))
+    (x : (Unit × (Fin n → ι)) → Option (S ⊕ B.domain))
     (p : Unit × (Fin n → ι)) (hn : (x p).any Sum.isRight ≠ true) (i : ι) :
-    letI := reproductionKernel_isMarkovKernel Q hh harmonic
-    ∀ᵐ y ∂State.generationKernel (reproductionKernel Q h) n x,
+    letI := reproductionKernel_isMarkovKernel Q B hB
+    ∀ᵐ y ∂State.generationKernel (reproductionKernel Q B) n x,
       (y (p.1, Fin.snoc p.2 i)).any Sum.isRight ≠ true := by
-  let := reproductionKernel_isMarkovKernel Q hh harmonic
-  let E := S ⊕ {s // h s ≠ 0 ∧ h s ≠ ∞}
+  let := reproductionKernel_isMarkovKernel Q B hB
+  let E := S ⊕ B.domain
   have htag : Measurable (fun o : Option E => o.any Sum.isRight) :=
     measurable_option_elim false (measurable_const.sumElim measurable_const)
   have hA : MeasurableSet {ξ : Step ι E | (ξ i).any Sum.isRight ≠ true} :=
     ((MeasurableSet.singleton true).preimage (htag.comp (measurable_pi_apply i))).compl
-  have hm := State.generationKernel_childFamily (reproductionKernel Q h) n x p
-  have hfamily : ∀ᵐ ξ ∂(State.generationKernel (reproductionKernel Q h) n x).map
+  have hm := State.generationKernel_childFamily (reproductionKernel Q B) n x p
+  have hfamily : ∀ᵐ ξ ∂(State.generationKernel (reproductionKernel Q B) n x).map
       (fun y => fun j => y (p.1, Fin.snoc p.2 j)), (ξ i).any Sum.isRight ≠ true := by
     rw [hm]
     cases he : x p with
@@ -292,4 +316,4 @@ lemma ae_generationKernel_normal_child {S ι : Type*} [MeasurableSpace S]
   exact ae_of_ae_map (show Measurable (fun y : (Unit × (Fin (n + 1) → ι)) → Option E =>
     fun j => y (p.1, Fin.snoc p.2 j)) from by fun_prop).aemeasurable hfamily
 
-end ProbabilityTheory.BranchingProcess.Spine
+end ProbabilityTheory.BranchingProcess.Spine.LocalBias
