@@ -1,5 +1,6 @@
 import Probability.BranchingProcess.Spine.Family.Conditional
 import Probability.BranchingProcess.Spine.StateChain
+import Probability.BranchingProcess.Spine.Tree.PathLaw
 import Probability.BranchingProcess.Spine.Tree.Ray
 import Probability.BranchingProcess.Spine.Tree.FirstGeneration
 import Probability.BranchingProcess.Spine.Tree.Normal
@@ -55,6 +56,20 @@ example : (BranchingProcess.Spine.eligibleStateKernel offspring (h := weight) (b
     ⟨false, by simp [weight]⟩).map Subtype.val =
       BranchingProcess.Spine.spineChildKernel offspring weight false :=
   BranchingProcess.Spine.eligibleStateKernel_map offspring (by fun_prop) harmonic_eligible _
+
+-- The states read from this actual tree have the complete Doob-chain law,
+-- including ordinary zero-weight branches which may later return to positive weight.
+example :
+    letI := BranchingProcess.Spine.eligibleStateKernel_isMarkovKernel offspring
+      (h := weight) (by fun_prop) harmonic_eligible
+    (BranchingProcess.Spine.treeKernel offspring (h := weight) (by fun_prop)
+      harmonic_eligible (some (Sum.inr ⟨false, by simp [weight]⟩))).map
+        (BranchingProcess.Spine.statePath ⟨false, by simp [weight]⟩) =
+      Kernel.traj (X := fun _ => {s // weight s ≠ 0 ∧ weight s ≠ ∞})
+        (Kernel.historyKernel (BranchingProcess.Spine.eligibleStateKernel offspring
+          (h := weight) (by fun_prop))) 0 (fun _ => ⟨false, by simp [weight]⟩) :=
+  BranchingProcess.Spine.treeKernel_statePath offspring (by fun_prop) harmonic_eligible
+    ⟨false, by simp [weight]⟩ ⟨false, by simp [weight]⟩
 
 -- Normal children outside the positive-weight domain are retained, not killed.
 example : Step.distinguishChild (fun s => weight s ≠ 0 ∧ weight s ≠ ∞)
@@ -194,3 +209,12 @@ end SpinalBiasExamples
 #print axioms ProbabilityTheory.isMarkovChain_traj_historyKernel
 #print axioms ProbabilityTheory.BranchingProcess.Spine.eligibleStateKernel_isMarkovChain
 #print axioms ProbabilityTheory.BranchingProcess.Spine.partialTraj_spineChildKernel
+
+#print axioms Function.uniquePresentValue_eq
+#print axioms measurable_uniquePresentValue
+#print axioms ProbabilityTheory.BranchingProcess.State.treeKernel_generations
+#print axioms ProbabilityTheory.BranchingProcess.Spine.reproductionKernel_distinguished_state
+#print axioms ProbabilityTheory.BranchingProcess.Spine.measurable_statePath
+#print axioms ProbabilityTheory.BranchingProcess.Spine.ae_treeKernel_statePath
+#print axioms ProbabilityTheory.BranchingProcess.Spine.treeKernel_statePath
+#print axioms ProbabilityTheory.BranchingProcess.Spine.statePath_isMarkovChain
