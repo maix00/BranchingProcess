@@ -1,5 +1,6 @@
 import Probability.BranchingRandomWalk.Assumptions.SpinalWeightTail
 import Probability.BranchingRandomWalk.Spine.Tilted.Marked
+import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Marked
 import Probability.BranchingRandomWalk.Spine.Tilted.FamilyCutoff
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.SecondMoment.FiniteVariance
 import Probability.Sequence.Maximal.QuadraticTail
@@ -11,7 +12,7 @@ open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open Combinatorics.Branching
 open Filter
-open scoped ENNReal Topology
+open scoped ENNReal Topology Classical
 
 -- Perfectly correlated displacement and mark: the joint law is supported
 -- on the diagonal, rather than constructed as a product of marginal laws.
@@ -82,6 +83,55 @@ example {S ι : Type*} [MeasurableSpace S] [MeasurableSpace ι] [Countable ι]
   BranchingProcess.Spine.LocalBias.lintegral_generationPayoff_eq Q B hB s defaultChild n G
     (fun u hu => by subst n; exact hG u rfl)
 
+-- This is the actual count of surviving addresses whose *every* parent
+-- family satisfies the logarithmic cutoff. It uses the original centered
+-- spine, not a renormalized or recentered cutoff offspring law.
+example {X : Type*} [MeasurableSpace X] (φ : Potential X)
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hb : HasBoundaryNormalization φ μ) (n : ℕ) (a : ℝ) :
+    (∫⁻ field, ∑' z : Fin n → ℕ,
+      if Combinatorics.Branching.surviveAlong field [] (List.ofFn z) ∧
+        ∀ j : Fin n, logTotalPotentialWeight φ
+          (field ((List.ofFn z).take j)) ≤ a then (1 : ℝ≥0∞) else 0
+      ∂BranchingProcess.offspringFieldLaw μ) =
+      ∫⁻ sequence, ENNReal.ofReal (Real.exp (∑ j : Fin n, (sequence j).1)) *
+        (if ∀ j : Fin n, (sequence j).2 ≤ a then 1 else 0)
+        ∂iidSequenceLaw (tiltedMarkedPotentialLaw φ (-1) μ
+          (fun p => logTotalPotentialWeight φ p.1)) := by
+  classical
+  have hm : Measurable (fun p : Step ℕ X × ℕ => logTotalPotentialWeight φ p.1) :=
+    (logTotalPotentialWeight_measurable φ).comp measurable_fst
+  have hs : MeasurableSet {records : Fin n → ℝ × ℝ | ∀ j, (records j).2 ≤ a} :=
+    by
+      simp only [Set.ofPred_forall]
+      exact MeasurableSet.iInter fun j => measurableSet_le
+        (show Measurable (fun records : Fin n → ℝ × ℝ => (records j).2) from
+          measurable_snd.comp (measurable_pi_apply j)) measurable_const
+  have hF : Measurable (fun records : Fin n → ℝ × ℝ =>
+      if ∀ j, (records j).2 ≤ a then (1 : ℝ≥0∞) else 0) :=
+    measurable_const.ite hs measurable_const
+  have hi := markedPathManyToOne φ μ hb hm n hF
+  refine Eq.trans ?_ hi
+  apply lintegral_congr
+  intro field
+  apply tsum_congr
+  intro z
+  by_cases hs : surviveAlong field [] (List.ofFn z)
+  · by_cases hc : ∀ j : Fin n, logTotalPotentialWeight φ
+        (field ((List.ofFn z).take j)) ≤ a
+    · simp [hs, hc, Combinatorics.UlamHarris.Mark.pathRecords]
+    · simp [hs, hc, Combinatorics.UlamHarris.Mark.pathRecords]
+  · simp [hs]
+
+
+-- The empty path has one record vector, including when there are no child
+-- labels. There is no hidden nonempty-slot or positive-time hypothesis.
+example (μ : Measure (Step Empty ℝ)) [IsProbabilityMeasure μ] :
+    (∫⁻ field, ∑' z : Fin 0 → Empty,
+      if surviveAlong field [] (List.ofFn z) then (1 : ℝ≥0∞) else 0
+      ∂BranchingProcess.offspringFieldLaw μ) = 1 := by
+  simp [surviveAlong]
+
 #print axioms ProbabilityTheory.BranchingProcess.Spine.LocalBias.lintegral_generationPayoff_eq
 #print axioms ProbabilityTheory.BranchingProcess.Spine.LocalBias.lintegral_pathPayoff_eq
 #print axioms MeasureTheory.HasVanishingQuadraticTail.scale_threshold
@@ -116,3 +166,11 @@ example {S ι : Type*} [MeasurableSpace S] [MeasurableSpace ι] [Countable ι]
 #print axioms ProbabilityTheory.BranchingRandomWalk.Spine.tiltedFamilyChildLaw_restrict_family
 #print axioms ProbabilityTheory.BranchingRandomWalk.Spine.exists_lintegral_pathGeneration_affineCorridor_sq_le_crossWeight_mul_exp_sum_of_finiteVariance
 #print axioms ProbabilityTheory.BranchingRandomWalk.Spine.exists_lintegral_pathGeneration_affineCorridor_sq_le_exp_sum_of_finiteVariance
+
+#print axioms MeasureTheory.Measure.pi_sum_map_withDensity
+#print axioms MeasureTheory.Measure.lintegral_pi_sum_map_withDensity
+#print axioms ProbabilityTheory.Tree.measurable_pathRecords
+#print axioms ProbabilityTheory.Tree.lintegral_sum_weighted_pathRecords
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.familyPathManyToOne
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.markedPathManyToOne
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.pathHistory_eq_finitePrefix_records

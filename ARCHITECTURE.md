@@ -460,6 +460,18 @@ Within `HorizontalTube/`, endpoint-window definitions and real-width estimates
 are grouped under `EndpointWindow/`, Donsker lower bounds under `Diffusive/`,
 and killed-kernel estimates under `Kernel/`; the single scaling theorem stays
 at the subject root.
+Complete records along a finite address are
+`Combinatorics/UlamHarris/Mark/Path.lean`'s `(field(z|j),zⱼ)`.
+`Probability/Process/Tree/Path/WeightedRecords.lean` integrates their
+address-weighted sum in an independent field, using the general finite
+weighted-pair expansion in `MeasureTheory/Measure/Pi/WeightedPairs.lean`.
+Neither interface requires branching survival or a harmonic state kernel.
+`Spine/Path/ManyToOne/Marked.lean` supplies the actual BRW family and marked
+many-to-one formulas from that law transport. Its scalar history specialization
+in `ManyToOne/Identity.lean` derives from the complete-record formula, with
+unchanged public assumptions. State-dependent kernels continue to use the
+independent general state-tree spine interface.
+
 BRW ancestral-path decompositions, including ordered generation-pair counts
 split by most recent common ancestor, live in `Spine/Path/`; affine-tube
 probability estimates and their use in the second-moment argument live in
