@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Spine.PointMeasure.RandomWalk
+public import Probability.BranchingRandomWalk.Spine.PointMeasure.Endpoint
+public import Probability.Sequence.IID.Basic
 public import Probability.RandomMeasure.ExponentialTilt
 public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Identity
 import Probability.Process.RandomWalk.Kernel.Endpoint
@@ -17,7 +18,13 @@ import all Probability.Process.RandomWalk.Path.Measure
 
 Generation path intensity is defined by iterated integration against an
 offspring random measure.  There is no child-slot type in these definitions,
-so the ambient mark space may be uncountable.
+so the ambient mark space may be uncountable. The outer measure need not
+be a probability measure and its values need not be counting measures. These
+are mean-measure identities, rather than a second law for indexed trees.
+The indexed-field adapters below use the canonical state-tree theorem.
+
+The auxiliary path uses `iidSequenceLaw` directly; no separate spine-walk
+construction or product-law interface is defined here.
 
 ## Public declarations
 
@@ -51,7 +58,6 @@ namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
 
-open Combinatorics.Branching.Walk
 open ProbabilityTheory.RandomWalk
 
 /-- Weighted intensity of complete ancestral histories through generation
@@ -231,10 +237,12 @@ theorem pointMeasureWeightedPathManyToOne
     ∀ (n : ℕ) {F : (Fin (n + 1) → ℝ) → ENNReal}, Measurable F → ∀ x : ℝ,
       pointMeasureWeightedPathIterate potential (-1) law n F x =
         ∫⁻ increment, F (history n x increment)
-          ∂pointMeasureIncrementLaw potential law
+          ∂(iidSequenceLaw (RandomMeasure.tiltedLaw potential (-1) law))
   | 0, F, hF, x => by
-      let _ : IsProbabilityMeasure (pointMeasureIncrementLaw potential law) :=
-        pointMeasureIncrementLaw_isProbability hpotential law hnormalization
+      let _ : IsProbabilityMeasure
+          (iidSequenceLaw (RandomMeasure.tiltedLaw potential (-1) law)) := by
+        let _ := RandomMeasure.tiltedLaw_isProbability hpotential (-1) law hnormalization
+        infer_instance
       have hhistory : ∀ increment : ℕ → ℝ,
           history 0 x increment = (fun _ : Fin 1 => x) := by
         intro increment
@@ -246,11 +254,10 @@ theorem pointMeasureWeightedPathManyToOne
       simp [pointMeasureWeightedPathIterate]
   | n + 1, F, hF, x => by
       let tilted := RandomMeasure.tiltedLaw potential (-1) law
-      let P := pointMeasureIncrementLaw potential law
+      let P := iidSequenceLaw (RandomMeasure.tiltedLaw potential (-1) law)
       let _ : IsProbabilityMeasure tilted :=
         RandomMeasure.tiltedLaw_isProbability hpotential (-1) law hnormalization
-      let _ : IsProbabilityMeasure P :=
-        pointMeasureIncrementLaw_isProbability hpotential law hnormalization
+      let _ : IsProbabilityMeasure P := by infer_instance
       let tailF : (Fin (n + 1) → ℝ) → ENNReal := fun tail =>
         F (prependHistory x tail)
       have htailF : Measurable tailF :=
@@ -292,10 +299,12 @@ theorem pointMeasurePathManyToOne
         ∫⁻ increment,
           ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
             F (history n x increment)
-          ∂pointMeasureIncrementLaw potential law
+          ∂(iidSequenceLaw (RandomMeasure.tiltedLaw potential (-1) law))
   | 0, F, hF, x => by
-      let _ : IsProbabilityMeasure (pointMeasureIncrementLaw potential law) :=
-        pointMeasureIncrementLaw_isProbability hpotential law hnormalization
+      let _ : IsProbabilityMeasure
+          (iidSequenceLaw (RandomMeasure.tiltedLaw potential (-1) law)) := by
+        let _ := RandomMeasure.tiltedLaw_isProbability hpotential (-1) law hnormalization
+        infer_instance
       have hhistory : ∀ increment : ℕ → ℝ,
           history 0 x increment = (fun _ : Fin 1 => x) := by
         intro increment
@@ -307,11 +316,10 @@ theorem pointMeasurePathManyToOne
       simp [pointMeasurePathIterate, AdditivePath.displacement]
   | n + 1, F, hF, x => by
       let tilted := RandomMeasure.tiltedLaw potential (-1) law
-      let P := pointMeasureIncrementLaw potential law
+      let P := iidSequenceLaw (RandomMeasure.tiltedLaw potential (-1) law)
       let _ : IsProbabilityMeasure tilted :=
         RandomMeasure.tiltedLaw_isProbability hpotential (-1) law hnormalization
-      let _ : IsProbabilityMeasure P :=
-        pointMeasureIncrementLaw_isProbability hpotential law hnormalization
+      let _ : IsProbabilityMeasure P := by infer_instance
       let tailF : (Fin (n + 1) → ℝ) → ENNReal := fun tail =>
         F (prependHistory x tail)
       have htailF : Measurable tailF :=
@@ -365,7 +373,7 @@ theorem pointMeasureWeightedPathIterate_map_stepPointMeasure
     (μ.map (Combinatorics.Branching.stepPointMeasure
       (ι := ι) (X := E)))
     (pointMeasure_hasNormalization φ μ hboundary) n hF x]
-  rw [pointMeasureIncrementLaw, pointMeasure_tiltedLaw_eq_tiltedPotentialLaw]
+  rw [pointMeasure_tiltedLaw_eq_tiltedPotentialLaw]
   exact (weightedPathManyToOneCore φ μ hboundary n hF x).symm
 
 /-- The unweighted path sum in a labelled pre-sampled genealogy realizes the
@@ -385,7 +393,7 @@ theorem pointMeasurePathIterate_map_stepPointMeasure
     (μ.map (Combinatorics.Branching.stepPointMeasure
       (ι := ι) (X := E)))
     (pointMeasure_hasNormalization φ μ hboundary) n hF x]
-  rw [pointMeasureIncrementLaw, pointMeasure_tiltedLaw_eq_tiltedPotentialLaw]
+  rw [pointMeasure_tiltedLaw_eq_tiltedPotentialLaw]
   exact (pathManyToOneCore φ μ hboundary n hF x).symm
 
 end ProbabilityTheory.BranchingRandomWalk.Spine

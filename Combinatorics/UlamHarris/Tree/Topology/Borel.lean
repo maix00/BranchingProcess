@@ -114,7 +114,7 @@ theorem borel_treePointwiseTopology_eq_cylinder :
     @borel (Tree α) treePointwiseTopology = instMeasurableSpaceTree := by
   unfold treePointwiseTopology instMeasurableSpaceTree
   rw [borel_comap, ← BorelSpace.measurable_eq (α := List α → Prop)]
-  rfl
+  exact MeasurableSpace.comap_comp.symm
 
 /-- For a countable label type, the default topology makes `Tree α` a Borel
 space with the cylinder σ-algebra. -/

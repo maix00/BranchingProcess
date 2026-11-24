@@ -122,7 +122,6 @@ theorem firstDescendingLadderTimeTailReal_eq_law_tail
   | coe n =>
     simp only [Set.mem_preimage, Set.mem_Ioi]
     simp only [firstDescendingLadderTimeValue, ht, WithTop.untopD_coe]
-    apply propext
     constructor
     · intro h
       exact (Nat.floor_lt hx).1 (WithTop.coe_lt_coe.mp h)

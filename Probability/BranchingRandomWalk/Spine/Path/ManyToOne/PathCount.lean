@@ -161,9 +161,9 @@ theorem measure_hasPathHistoryIn_ge_of_pathGeneration_moments
       φ n initial corridor ω
   simpa [Xcount, hsupport] using hPZ
 
-/-- First-moment bound for the number of surviving particles whose complete
+/-- First-moment bound for the number of selected particles whose complete
 ancestral history lies in a measurable corridor. This is the form of the
-many-to-one estimate used with Markov's inequality for a killed population. -/
+many-to-one estimate used with Markov's inequality for a selected population. -/
 theorem lintegral_pathGeneration_le_exp_mul_spineProbability
     {ι X : Type*} [Countable ι] [MeasurableSpace X]
     (φ : Potential X)
