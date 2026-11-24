@@ -22,6 +22,8 @@ of $\kappa_A$ and retains endpoints in $R$. The public declarations are:
 - `returnKernel`: the resulting transition kernel on the state space $R$.
 - `returnKernel_apply_univ`:
   $\rho_\ell(x,R)=(\kappa_A^\ell)(x,R)$ for $x\in R$.
+- `endsInPrefix_killedStep_iff`: the partial-step endpoint event is exactly
+  survival together with `initial + S_n ∈ target`.
 - `killedIncrementKernel_pow_apply_eq_staysIn_endsIn`: an $n$-step killed
   transition to a measurable target equals the IID probability of survival
   and endpoint membership.
@@ -119,7 +121,7 @@ private lemma runPartialSteps_killedStep_sequencePrefix_eq_none
 omit [MeasurableSpace E] [MeasurableAdd₂ E] in
 /-- The killed partial-step endpoint event is exactly path survival together
 with membership of the final partial-sum position in the target set. -/
-private lemma endsInPrefix_killedStep_iff
+theorem endsInPrefix_killedStep_iff
     (allowed target : Set E) (n : ℕ) (initial : E)
     (increment : ℕ → E) :
     Kernel.EndsInPrefix (killedStep allowed) target n initial increment ↔

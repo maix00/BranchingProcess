@@ -31,6 +31,21 @@ FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
 GENERAL_LAYER_BOUNDARIES = {
+    "Combinatorics.BranchingWalk.Selection.Family.Path": (
+        "Probability",
+    ),
+    "Probability.Kernel.Step.Noise.Map": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+        "Probability.Process.RandomWalk",
+    ),
+    "Probability.Kernel.Step.Noise.Restriction": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+        "Probability.Process.RandomWalk",
+    ),
+    "Probability.Kernel.Survival.Return.NoiseRestriction": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+        "Probability.Process.RandomWalk",
+    ),
     "Combinatorics.UlamHarris.Mark.Path": (
         "Probability", "MeasureTheory",
     ),

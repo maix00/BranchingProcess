@@ -122,19 +122,17 @@ unfinished theorem is promoted by placing its conclusion in an assumption.
 
 These are still open, not consequences already supplied by a new hypothesis:
 
-1. Concatenate the marked diffusion-block estimates, with the necessary
-   uniform return and endpoint-window bounds, to prove the full marked
-   affine-corridor small-deviation lower bound. A single unmarked
-   small-deviation probability minus the full-horizon bad-mark probability
-   is insufficient. The new maximal theorem applies at order `L²`, not `L³`.
-2. Apply MRCA decomposition to the *family-cutoff path count*, retaining the
-   cutoff at every reproducing ancestor and the corridor restriction at
-   child birth. The coefficient is then `C_K`. The new unmarked corridor
-   theorem has coefficient `C`; substituting `C_K` into that theorem
-   without changing its random count would be invalid.
-3. Use the marked first and second moments and capacity comparison to replace
-   the positive-initial-exponent upper-tail input. Only then transport the
-   new assumption through ordering and assemble the existing endpoint-mean,
+1. The centered affine-corridor survival lower bound is now proved for
+   arbitrary positive horizon sequences `Hₙ`, real widths `Lₙ→∞` and
+   `Lₙ²/Hₙ→0`, with correlated marks accepted on *every* step. The native
+   first-moment chain still needs the prescribed endpoint-window and general
+   initial-fraction adapters before it can replace all current endpoint
+   inputs. The full continuous-moving-boundary statement of Mallein's
+   Theorem 2.3 is not asserted by this affine-corridor theorem.
+2. Combine those marked first-moment inputs with the now proved actual
+   family-cutoff MRCA second moment and capacity comparison to replace the
+   positive-initial-exponent upper-tail input. Then transport the weak
+   assumption through ordering and assemble the existing endpoint-mean,
    continuation-mean, restart-mean and speed comparisons.
 
 The existing final endpoint and speed theorems therefore still take
@@ -210,3 +208,90 @@ Complete-record validation on 2026-11-25:
   only `propext`, `Classical.choice` and `Quot.sound`.
 * Mathlib style lint, the import-boundary audit (including the three new
   non-BRW owners) and all 32 Python tests passed.
+
+## Long-horizon marks and actual cutoff MRCA (2026-11-25)
+
+`Probability/Process/RandomWalk/SmallDeviation/Marked/FiniteVarianceLower.lean`
+proves, for the original IID **joint** law of `(X,B)`,
+
+`exp(-d Hₙ/Lₙ²) ≤ P(-Lₙ/2 ≤ S_k-ck/Lₙ² ≤ Lₙ/2 (1≤k≤Hₙ), Bⱼ≤αLₙ (j<Hₙ))`
+
+eventually, when `EX=0`, `EX²=σ²>0`, `t²P(B>t)→0`, `c≥0`, `α>0`,
+`d>π²σ²/2`, `Lₙ→∞`, `Hₙ>0` eventually and `Lₙ²/Hₙ→0`. The horizon
+sequence is arbitrary and need not be strictly monotone. In particular real
+widths and the time scales used by the BRW are allowed. There is no moment
+assumption on `B` and no independence assumption within `(X,B)`.
+
+`Kernel/Step/Noise/Map.lean` transports the existing partial-step execution
+and kernel through a measurable noise map. `Noise/Restriction.lean` identifies
+rejection exactly with killing at the first unaccepted noise value.
+`Kernel/Survival/Return/NoiseRestriction.lean` applies the previously proved
+weak-tail union bound only to blocks of order `L²` and then uses the existing
+return-kernel iteration for **arbitrary total horizons**. At the random-walk
+layer, the seven unmarked window estimates are derived from the existing
+finite-variance endpoint-window theorem, including the `c/L²` drift; no local
+return estimate is assumed in the final finite-variance theorem. Increasing
+the fixed diffusion-block constant absorbs the blockwise factor `1/2`.
+The general rounded block-count limit belongs in
+`Analysis/Asymptotics/Scale/Block/Count.lean` and has no probability dependency.
+The fixed seven-band geometry and parameter assembly are under
+`Marked/Lemmas/`; each is specific proof support, not a reusable public API.
+
+Whole-family selection uses the existing optional Step representation:
+`Step.selectFamily A ξ = ξ` on `A` and is the all-absent family otherwise.
+`Combinatorics/BranchingWalk/Selection/Family/Path.lean` proves that surviving
+paths are precisely original surviving paths with `field(u|j)∈A` at every
+**strict** ancestor. All retained displacements are identical, for arbitrary
+mark maps into an additive monoid. `Spine/Path/FamilySelection.lean` transports
+the independent-field law and proves path-count domination for arbitrary
+nonnegative measurable history tests. The actual count keeps the acceptance
+condition on every ancestor; acceptance of the generation-`N` endpoint's own
+family is not imposed.
+
+`Spine/Tube/MRCA/FamilySelection.lean` now bounds the actual selected-process
+MRCA term by the original spine's continuation and prefix bounds, retaining
+`C_A=∫_A crossWeight dμ`. The selected offspring law is a probability, but no
+boundary normalization or centering is asserted for it. The exact corridor
+square decomposition was weakened to arbitrary probability offspring laws,
+deriving directly from the existing pathwise MRCA identity; the unnecessary
+finite-first-moment cancellation route is avoided for this square identity.
+The separate existing distinct-pair comparison retains its own assumptions.
+
+`Tube/Corridor/SecondMoment/FamilySelection.lean` gives the actual count bound
+
+`E_(μ_A) Z_N² ≤ C_A exp(3Δᵛ+2U-2d(N-1)/Δ²) ∑_(m<N) exp(dm/Δ²-r_m)`
+`+ exp(U+Δᵛ-dN/Δ²)`,
+
+where `μ_A=μ.map (Step.selectFamily A)` and `r_m=l+cm/Δ²`. Its width threshold
+is uniform over all measurable `A`. For `A={W≤K}`, the **actual selected-law**
+cross coefficient equals the restricted original integral and is at most `K`.
+The corollary is uniform in `K`, in particular `K=exp(αΔ)`, without a finite
+untruncated cross moment. The previous unselected finite-variance second
+moment now derives from `A=univ`; its dedicated proof was removed. The old
+finite-cross-moment absorption is still a corollary of that unselected result.
+
+Mathlib overlap review used revision
+`26573066084e6e2aa8526ea358bc43b66d96f970`, in particular native
+`Measure.infinitePi_map_pi`, `Measure.map_apply`, `Kernel.comp_apply'`,
+`Kernel.pow_add_apply_eq_lintegral` and their
+[official composition documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Kernel/Composition/Comp.html).
+The existing local `ofPartialStep`, endpoint-law, return-kernel, prefix-factor
+and normalized child-pair APIs are reused. No second Markov-chain definition,
+branching recursion, normalized cutoff-spine law or compatibility alias is
+introduced. The literature comparison is Mallein, arXiv:1510.00602v2,
+§2.2, Theorem 2.3 and proof of Lemma 2.5, and the family-cutoff second moment
+in the proof of Lemma 3.4 of arXiv:1503.03762v2 and arXiv:1510.00602v2.
+
+
+Validation of the long-horizon and actual-cutoff additions (2026-11-25):
+
+* Full `lake build`: successful (12033 jobs).
+* All 154 working-tree Lean regression modules compiled successfully.
+* `MarkedCorridorCutoff.lean` checks arbitrary horizon sequences, correlated
+  increment/mark assumptions, actual strict-ancestor family selection,
+  generation zero, and the second-moment signature without a finite original
+  cross moment. All 31 configured new or affected axiom reports passed the
+  reviewed allowlist.
+* Mathlib style lint passed on 1826 production modules; the import-boundary
+  audit and all 32 Python unit tests passed.
+* No LaTeX source, bibliography or PDF was changed.
