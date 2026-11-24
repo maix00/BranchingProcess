@@ -19,8 +19,7 @@ import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 
 ## Internal proof declarations
 
-* `exists_positiveAParameters` chooses $b,v,c$ with positive first-stage
-  exponent margin $a-b-2v$, capacity margin $1-a+b-v-ct^{1/3}$, and a
+* `exists_positiveAParameters` chooses $b,v,c$ with capacity margin $1-a+b-v-ct^{1/3}$, and a
   terminal window strictly below $\zeta\log N$ eventually.
 * `positiveADrift_eq_rate` rewrites the tube displacement as $\kappa j/w^2$
   for $w=c(H-\ell)^{1/3}$.
@@ -52,8 +51,7 @@ open ProbabilityTheory.RandomWalk
 /-- The parameter inequalities in the positive-`a` construction are feasible
 whenever the target threshold is strictly above the limiting trajectory.
 Here `r` is the positive cube root of `t`; keeping `r^3 = t` explicit makes
-the algebraic choice of `c` transparent. The choice also leaves the positive
-margin $a-b-2v>0$ needed for the first-stage root-count estimate. -/
+the algebraic choice of `c` transparent. The first-stage success probability is supplied by the logarithmic-corridor survival theorem. -/
 lemma exists_positiveAParameters
     (a t r sigmaSq zeta : ℝ)
     (ha : 0 < a) (ht : 0 < t) (hr : 0 < r) (hrcube : r ^ 3 = t)
@@ -63,8 +61,7 @@ lemma exists_positiveAParameters
       0 < b ∧ b < a ∧ 0 < v ∧ v < b ∧ v ≤ c ∧ 0 < c ∧ c < r⁻¹ ∧
       c * r + (a - b) + v < 1 ∧
       -b + Real.pi ^ 2 / 2 * sigmaSq * (c⁻¹ ^ 2 * r) +
-        2 * v * (1 + r) < zeta ∧
-      0 < a - b - 2 * v := by
+        2 * v * (1 + r) < zeta := by
   let C : ℝ := Real.pi ^ 2 / 2 * sigmaSq
   let gap : ℝ := zeta - (-a + C * t)
   let K : ℝ := 1 / 2 + 8 * C * t + 1 / 4 * (1 + r)
@@ -128,7 +125,7 @@ lemma exists_positiveAParameters
       δ * K ≤ (gap / (2 * K)) * K :=
         mul_le_mul_of_nonneg_right hδGap hK.le
       _ = gap / 2 := by field_simp [hK.ne']
-  refine ⟨b, v, c, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨b, v, c, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · dsimp [b]
     nlinarith [ha, hδA, hδ]
   · dsimp [b]
@@ -172,11 +169,6 @@ lemma exists_positiveAParameters
       _ ≤ -a + C * t + gap / 2 := by linarith [hδK]
       _ < -a + C * t + gap := by linarith [hgapPos]
       _ = zeta := hgapEq
-  · change 0 < a - (a - δ / 2) - 2 * (δ / 8)
-    calc
-      0 < δ / 4 := div_pos hδ (by norm_num)
-      _ = a - (a - δ / 2) - 2 * (δ / 8) := by ring
-
 /-- The drift at any time in the second tube is bounded by its terminal
 diffusive scale. -/
 lemma positiveADrift_le_span

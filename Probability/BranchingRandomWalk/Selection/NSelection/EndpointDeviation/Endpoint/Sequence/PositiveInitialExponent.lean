@@ -70,15 +70,15 @@ theorem eventually_countableRootEndpointMinimum_ge_le_polynomial_of_initialExpon
     dsimp [r]
     rw [← Real.rpow_natCast, ← Real.rpow_mul ht.le,
       show (3⁻¹ : ℝ) * ↑(3 : ℕ) = 1 by norm_num, Real.rpow_one]
-  obtain ⟨b, v, c, hb, _, hv, hvb, hvc, hc, _, hmargin, hendpoint, hbudget⟩ :=
+  obtain ⟨b, v, c, hb, hba, hv, hvb, hvc, hc, _, hmargin, hendpoint⟩ :=
     exists_positiveAParameters a t r (sigma ^ 2) ζ ha ht hr hrcube (sq_nonneg _) hgap
   have hmargin' : a + (-b + v + c * r) < 1 := by linarith
   obtain ⟨q, hq, hcap⟩ := eventually_positiveASelectedBRWCapacityFailure_le_polynomial_of_criticalTube
     hN μ hboundary hcentered hsigma ha1 hb.le hvb.le hc hvc ht hmargin' hH
-  let δ := (a - b - 2 * v) / 2
-  let ε := (a - b - 2 * v) / 12
-  have hδ : 0 < δ := by dsimp [δ]; positivity
-  have hε : 0 < ε := by dsimp [ε]; positivity
+  let δ := (a - b + v) / 4
+  let ε := (a - b + v) / 12
+  have hδ : 0 < δ := by dsimp [δ]; linarith
+  have hε : 0 < ε := by dsimp [ε]; linarith
   have hterminal := eventually_measure_positiveASelectedBRWTerminalEmpty_le_exp_neg_power
     hN μ hboundary hcross hcentered hsigma ht ha hb hv hvb hc hε hδ
       (by dsimp [δ, ε]; linarith) hH horder

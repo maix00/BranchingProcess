@@ -15,6 +15,9 @@ public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDevia
 
 ## Public declarations
 
+* `positiveASelectedBRWEnoughRootEvent` is the event
+  $\{\#P_\ell\ge K\}$ for the constructed two-stage population.
+
 Write \(P\) for the restarted selected BRW population. Every generation slice is
 finite for each restarted field:
 
@@ -80,6 +83,20 @@ theorem positiveASelectedBRWPopulation_finiteSlices
     (positiveAWindowUpper ell ellN logN b v c κ)
     (positiveARestartedWindow_subset_Iic_upper
       ell ellN logN b v c κ)
+
+
+/-- The event that the first-stage selected BRW slice contains at least K
+particles. -/
+noncomputable def positiveASelectedBRWEnoughRootEvent
+    (m K ell ellN : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)] :
+    Set (RestartedField m) :=
+  let P := positiveASelectedBRWPopulation m ell ellN logN b v c κ
+  let hP : P.FiniteSlices :=
+    positiveASelectedBRWPopulation_finiteSlices m ell ellN logN b v c κ
+  secondStageEnoughRoots (K := K)
+    (fun _ : ℕ => P) (fun _ : ℕ => hP) (fun _ => ell) 0
+
 
 
 end
