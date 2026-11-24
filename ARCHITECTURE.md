@@ -104,6 +104,23 @@ then identifies the full descendant-family product kernel with native
 `State/Descendants/Observed.lean` derives the original generation and
 stopping-generation conclusions from this interface. See
 `docs/architecture/OPTIONAL_LINE_BRANCHING_AUDIT.md` for scope and references.
+`MeasureTheory/Measure/Tails/Quadratic.lean` owns vanishing quadratic upper
+tails and their finite-second-moment perturbation invariance. The maximal
+finite-horizon consequence belongs to `Probability/Sequence/Maximal/`;
+it needs only common marginal laws, not independence or a branching model.
+`BranchingRandomWalk/Spine/Tilted/FamilyChild.lean` retains the raw family
+and distinguished child. `Tilted/Law.lean` derives the original scalar
+increment measure and its compensation formula from that joint measure;
+`Tilted/Marked.lean` reads a possibly correlated reproductive mark from it.
+`BranchingProcess/Spine/LocalBias/ManyToOne.lean` retains arbitrary
+observed-generation tree payoffs; `LocalBias/Path.lean` derives the
+ancestral-state-path specialization from that interface.
+`Assumptions/SpinalWeightTail.lean` owns Mallein's reproductive tail condition
+and its equivalence with the total-weight tail. `Tilted/FamilyCutoff.lean`
+restricts complete families, whereas the existing `Tilted/Truncation.lean`
+truncates ordered child slots. These are different operations.
+See `docs/architecture/SPINAL_WEIGHT_TAIL_AUDIT.md` for the full-path,
+marked-corridor and final-theorem assembly obligations still open.
 The state-kernel spine construction belongs to
 `Probability/BranchingProcess/Spine/`. `Family/Joint.lean` owns the single
 joint family/selected-child bias; `Family/Marginals.lean` derives both

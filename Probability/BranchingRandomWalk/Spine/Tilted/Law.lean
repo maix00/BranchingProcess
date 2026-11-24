@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Spine.Tilted.Slot
+public import Probability.BranchingRandomWalk.Spine.Tilted.FamilyChild
 public import Mathlib.MeasureTheory.Measure.WithDensity
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
 
@@ -49,7 +49,10 @@ normalization \(\int^- W_{\varphi,-1}(\xi)\,\partial\mu(\xi)=1\), where
 - `tiltedPotentialLaw`: the unnormalized measure on real potential increments
   obtained by integrating each surviving slot's exponential weight against
   the branching-step law.
-- `tiltedPotentialLaw_apply`, `tiltedPotentialLaw_apply_univ`,
+- `tiltedFamilyChildLaw_map_potential` identifies the displacement marginal
+  of the joint family/child measure with the scalar law.
+- `tiltedPotentialLaw_eq_sum` gives its slot-sum expression;
+  `tiltedPotentialLaw_apply`, `tiltedPotentialLaw_apply_univ`,
   `lintegral_tiltedPotentialLaw`, and `survivingPotentialTest`: setwise,
   total-mass, and nonnegative-integral formulas for that measure.
 - `lintegral_tiltedPotentialLaw_cancel` and
@@ -70,10 +73,44 @@ open Combinatorics.Branching MeasureTheory
 child, integrated over the raw branching-step law. -/
 noncomputable def tiltedPotentialLaw {ι X : Type*}
     [Countable ι] [MeasurableSpace X]
-    (φ : Potential X) (θ : ℝ) (μ : Measure (Combinatorics.Branching.Step ι X)) : Measure ℝ :=
-  Measure.sum fun i : ι =>
-    Measure.map (fun ξ : Combinatorics.Branching.Step ι X => ξ.potentialValue' φ i)
-      (μ.withDensity (fun ξ => realizedPotentialWeight φ θ ξ i))
+    (φ : Potential X) (θ : ℝ) (μ : Measure (Combinatorics.Branching.Step ι X)) : Measure ℝ := by
+  letI : MeasurableSpace ι := ⊤
+  exact (tiltedFamilyChildLaw φ θ μ).map (fun p => p.1.potentialValue' φ p.2)
+
+/-- The scalar increment law is the displacement marginal of the joint
+family/child bias, expressed in its original sum-of-slot form. -/
+theorem tiltedPotentialLaw_eq_sum {ι X : Type*}
+    [Countable ι] [MeasurableSpace X]
+    (φ : Potential X) (θ : ℝ) (μ : Measure (Step ι X)) :
+    tiltedPotentialLaw φ θ μ =
+      Measure.sum fun i : ι => Measure.map
+        (fun ξ : Step ι X => ξ.potentialValue' φ i)
+        (μ.withDensity (fun ξ => realizedPotentialWeight φ θ ξ i)) := by
+  let : MeasurableSpace ι := ⊤
+  have : MeasurableSingletonClass ι := ⟨fun _ => trivial⟩
+  have hm : Measurable (fun p : Step ι X × ι => p.1.potentialValue' φ p.2) :=
+    measurable_from_prod_countable_left (fun i => Step.potentialValue'_measurable φ i)
+  unfold tiltedPotentialLaw tiltedFamilyChildLaw
+  rw [Measure.map_sum hm.aemeasurable]
+  congr 1
+  funext i
+  rw [Measure.map_map hm (show Measurable (fun ξ : Step ι X => (ξ, i)) from by fun_prop)]
+  rfl
+
+/-- The original increment measure is obtained by reading the selected potential
+from the joint family/child law, for any discrete measurable slot space. -/
+theorem tiltedFamilyChildLaw_map_potential {ι X : Type*}
+    [Countable ι] [MeasurableSpace ι] [MeasurableSingletonClass ι] [MeasurableSpace X]
+    (φ : Potential X) (θ : ℝ) (μ : Measure (Step ι X)) :
+    (tiltedFamilyChildLaw φ θ μ).map (fun p => p.1.potentialValue' φ p.2) =
+      tiltedPotentialLaw φ θ μ := by
+  have hm : Measurable (fun p : Step ι X × ι => p.1.potentialValue' φ p.2) :=
+    measurable_from_prod_countable_left (fun i => Step.potentialValue'_measurable φ i)
+  rw [tiltedFamilyChildLaw, Measure.map_sum hm.aemeasurable, tiltedPotentialLaw_eq_sum]
+  congr 1
+  funext i
+  rw [Measure.map_map hm (show Measurable (fun ξ : Step ι X => (ξ, i)) from by fun_prop)]
+  rfl
 
 /-- Evaluation of the integrated tilted law on a measurable set.  Slot
 multiplicity is retained by the outer countable sum. -/
@@ -85,7 +122,7 @@ theorem tiltedPotentialLaw_apply {ι X : Type*}
       ∑' i : ι, ∫⁻ ξ in
         (fun ξ : Combinatorics.Branching.Step ι X => ξ.potentialValue' φ i) ⁻¹' s,
         realizedPotentialWeight φ θ ξ i ∂μ := by
-  rw [tiltedPotentialLaw, Measure.sum_apply _ hs]
+  rw [tiltedPotentialLaw_eq_sum, Measure.sum_apply _ hs]
   apply tsum_congr
   intro i
   rw [Measure.map_apply (Step.potentialValue'_measurable φ i) hs,
@@ -116,7 +153,7 @@ theorem lintegral_tiltedPotentialLaw {ι X : Type*}
     ∫⁻ y, f y ∂tiltedPotentialLaw φ θ μ =
       ∫⁻ ξ, ∑' i : ι,
         realizedPotentialWeight φ θ ξ i * f (ξ.potentialValue' φ i) ∂μ := by
-  rw [tiltedPotentialLaw, lintegral_sum_measure]
+  rw [tiltedPotentialLaw_eq_sum, lintegral_sum_measure]
   have hslot : ∀ i : ι,
       (∫⁻ y, f y ∂Measure.map
           (fun ξ : Combinatorics.Branching.Step ι X =>
@@ -153,25 +190,15 @@ theorem lintegral_tiltedPotentialLaw_cancel {ι X : Type*}
         ∂tiltedPotentialLaw φ θ μ) =
       ∫⁻ ξ, ∑' i : ι,
         survivingPotentialTest φ f ξ i ∂μ := by
-  classical
-  have htest : Measurable
-      (fun y : ℝ => ENNReal.ofReal (Real.exp (-θ * y)) * f y) :=
-    by fun_prop
-  rw [lintegral_tiltedPotentialLaw φ θ μ _ htest]
-  congr 1
-  funext ξ
-  apply tsum_congr
-  intro i
-  unfold survivingPotentialTest
-  by_cases hi : survive ξ i
-  · simp only [realizedPotentialWeight, hi, ↓reduceIte]
-    rw [← mul_assoc, ← ENNReal.ofReal_mul (le_of_lt (Real.exp_pos _)),
-      ← Real.exp_add]
-    have hzero : θ * ξ.potentialValue' φ i +
-        -θ * ξ.potentialValue' φ i = 0 := by ring
-    rw [hzero]
-    simp
-  · simp [realizedPotentialWeight, hi]
+  let : MeasurableSpace ι := ⊤
+  have : MeasurableSingletonClass ι := ⟨fun _ => trivial⟩
+  have hr : Measurable (fun p : Step ι X × ι => p.1.potentialValue' φ p.2) :=
+    measurable_from_prod_countable_left (fun i => Step.potentialValue'_measurable φ i)
+  have htest : Measurable (fun y : ℝ =>
+      ENNReal.ofReal (Real.exp (-θ * y)) * f y) := by fun_prop
+  rw [tiltedPotentialLaw, lintegral_map htest hr]
+  simpa only [survivingPotentialTest, Function.comp_def] using
+    lintegral_tiltedFamilyChildLaw_cancel φ θ μ (hf.comp hr)
 
 /-- Boundary normalization makes the integrated tilted potential law a
 probability measure. -/

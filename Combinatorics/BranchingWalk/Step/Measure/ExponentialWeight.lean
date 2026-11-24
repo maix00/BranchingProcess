@@ -27,10 +27,14 @@ is inherited by every random step by composition.
 - `totalPotentialWeight φ θ ξ = ∑' i, realizedPotentialWeight φ θ ξ i`,
   and `totalPotentialWeight_measurable` proves its measurability for
   countable slot types.
+- `logTotalPotentialWeight` is `log (totalPotentialWeight φ (-1) ξ).toReal`;
+  `logTotalPotentialWeight_measurable` proves its measurability.
 - `crossPotentialWeight φ θ ξ` is the ordered off-diagonal pair sum
   \(\sum_{i\ne j}w_iw_j\), where
   \(w_i=\operatorname{realizedPotentialWeight}(\varphi,\theta,\xi,i)\).
   `crossPotentialWeight_measurable` proves measurability for countable slots;
+  `crossPotentialWeight_le_totalPotentialWeight_sq` gives `C ≤ W²`,
+  allowing infinite total weights;
   `crossPotentialWeight_real_neg_one_eq_sum` identifies its `θ = -1`
   specialization with the summed-potential exponential formula.
 - `realizedChildWeight ξ i` specializes this weight to real marks and
@@ -78,6 +82,16 @@ theorem totalPotentialWeight_measurable {ι X : Type*} [MeasurableSpace X]
     Measurable (totalPotentialWeight (ι := ι) φ θ) :=
   Measurable.tsum (realizedPotentialWeight_measurable φ θ)
 
+/-- The real log of the total negative-exponential offspring weight. -/
+noncomputable def logTotalPotentialWeight {ι X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (ξ : Step ι X) : ℝ :=
+  Real.log (totalPotentialWeight φ (-1) ξ).toReal
+
+theorem logTotalPotentialWeight_measurable {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (φ : Potential X) :
+    Measurable (logTotalPotentialWeight (ι := ι) φ) :=
+  ((totalPotentialWeight_measurable φ (-1)).ennreal_toReal).log
+
 /-- The ordered off-diagonal pair weight of a deterministic branching step.
 For each surviving slot, use its exponential potential weight; absent slots
 contribute zero through `realizedPotentialWeight`. Each ordered pair of
@@ -116,6 +130,24 @@ theorem crossPotentialWeight_measurable {ι X : Type*} [MeasurableSpace X]
     simp only [ite_eq_left hij]
     rw [heq]
     exact hprod
+
+/-- Including diagonal child pairs bounds the cross weight by the square of
+the total weight, including infinite offspring families. -/
+theorem crossPotentialWeight_le_totalPotentialWeight_sq
+    {ι X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (θ : ℝ) (ξ : Step ι X) :
+    crossPotentialWeight φ θ ξ ≤ (totalPotentialWeight φ θ ξ) ^ 2 := by
+  classical
+  unfold crossPotentialWeight totalPotentialWeight
+  rw [pow_two, ← ENNReal.tsum_mul_right]
+  apply _root_.tsum_le_tsum
+  intro i
+  dsimp only
+  rw [← ENNReal.tsum_mul_left]
+  apply _root_.tsum_le_tsum
+  intro j
+  dsimp only
+  split_ifs <;> simp_all
 
 /-- At exponent `-1`, the product of the individual child weights is the
 exponential of the sum of the two observed potentials. This formula exposes
