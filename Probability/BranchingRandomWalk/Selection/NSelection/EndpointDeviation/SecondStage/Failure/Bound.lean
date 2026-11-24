@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Roots.CountLowerBound
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Population
 public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Tube
 import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Roots.Selection
 import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Failure.Lemmas.Decomposition

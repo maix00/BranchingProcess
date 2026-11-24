@@ -9,7 +9,9 @@ module
 public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Failure.Bound
 public import Probability.BranchingRandomWalk.Assumptions.CrossWeight
 public import Probability.Distributions.Moments.Real
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.FirstStage.Cutoff
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.Critical.Survival
+import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Lemmas.RootCount
 import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage.Lemmas.Scales
 
 /-!
@@ -19,7 +21,7 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviatio
 
 * `eventually_measure_positiveASelectedBRWTerminalEmpty_le_exp_neg_power`:
   for $m_n=\lfloor N_n^a\rfloor$, $H_n/(\log N_n)^3\to t>0$, and admissible
-  first-stage parameters with $0<\delta<a-b-2v-3\varepsilon$, the probability
+  first-stage parameters with $0<\delta<a-b+v-3\varepsilon$, the probability
   of an empty terminal population is eventually at most
   $e^{-N_n^\delta}+e^{-N_n^{\delta/2}}$.
 
@@ -54,7 +56,7 @@ theorem eventually_measure_positiveASelectedBRWTerminalEmpty_le_exp_neg_power
       (tiltedPotentialLaw realPotential (-1) μ) (sigma ^ 2))
     (hsigma : 0 < sigma) (ht : 0 < t) (ha : 0 < a) (hb : 0 < b)
     (hv : 0 < v) (hvb : v < b) (hc : 0 < c)
-    (hε : 0 < ε) (hδ : 0 < δ) (hbudget : δ < a - b - 2 * v - 3 * ε)
+    (hε : 0 < ε) (hδ : 0 < δ) (hbudget : δ < a - b + v - 3 * ε)
     (hH : Tendsto (fun n => (H n : ℝ) / Real.log (N n : ℝ) ^ 3) atTop (𝓝 t))
     (horder : ∀ n, LinearOrder
       (RootIndexed.TreeNode (Fin (Nat.floor ((N n : ℝ) ^ a))) ℕ)) :
@@ -129,8 +131,8 @@ theorem eventually_measure_positiveASelectedBRWTerminalEmpty_le_exp_neg_power
     (a := δ) (r := -(δ / 4)) (δ := δ / 2) (C := 1) hδ (by linarith) (Eventually.of_forall fun _ => le_rfl)
   let ν := tiltedPotentialLaw realPotential (-1) μ
   let _ := tiltedPotentialLaw_isProbability realPotential μ hboundary
-  have hlow := eventually_measure_positiveASelectedBRWEnoughRoots_compl_le_exp_neg_power
-    hN μ hboundary hcross ν rfl hcentered hsigma ha hb hv hvb hε hbudget
+  have hlow := SecondStage.Lemmas.eventually_enoughRoots_compl_le_exp_neg_power
+    hN μ hboundary hcross ν rfl hcentered hsigma ha hv hvb hε hbudget
     (c := c) (κ := κ) H (fun _ => inferInstance)
   filter_upwards [hlow, hq, hlarge, horderH, hL.eventually_gt_atTop 0,
     (tendsto_positiveAFirstStageCutoff_atTop hN).eventually_gt_atTop 0,
