@@ -14,7 +14,8 @@ public import Probability.BranchingRandomWalk.Spine.Tube.Corridor.PairBound
 ## Public declarations
 
 * `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_pathGeneration_affineCorridor_sq_eq_firstMoment_add_mrcaContributions`
-  states the exact identity `E[X_N²] = E[X_N] + ∑ m : Fin N, C_m`, where
+  states the exact identity `E[X_N²] = E[X_N] + ∑ m : Fin N, C_m`
+  for any probability offspring law, without boundary normalization, where
   `X_N` is the path-generation count restricted to the affine corridor and
   `C_m` is the expected ordered-pair contribution with MRCA generation `m`.
 
@@ -52,21 +53,14 @@ open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk
 open ProbabilityTheory.RandomWalk
 
-/-- * `exists_lintegral_pathGeneration_affineCorridor_sq_le_exp_sum_of_finiteVariance`
-  gives, for finite cross-child weight and a centered spine of variance
-  $\sigma^2>0$, the uniform bound
-  $E[X_N^2]\le e^{4\Delta^v+2U-2d(N-1)/\Delta^2}
-  \sum_{m<N}e^{dm/\Delta^2-r_m}+e^{U+\Delta^v-dN/\Delta^2}$,
-  for $v>0$, $0<d<\pi^2\sigma^2/2$ and sufficiently large $\Delta$.
-
-The second moment of the generation-`N` affine-corridor count is its
-first moment plus the sum of the actual MRCA pair contributions. The
-ancestor prefix and the birth-generation corridor condition are retained in
-each contribution. -/
+/-- The actual corridor count satisfies the MRCA square decomposition in
+Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* (Fudan University, 2026), Chapter 3, Lemma 3.6, equation (3.7).
+The pathwise zero-one identity and branching property suffice; boundary
+normalization and finiteness of the first moment are not required. -/
 theorem lintegral_pathGeneration_affineCorridor_sq_eq_firstMoment_add_mrcaContributions
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    (hboundary : HasBoundaryNormalization φ μ)
     (N : ℕ) (initial lower drift width endpointUpper : ℝ) :
     (∫⁻ ω, (pathGeneration φ N
       ((affineCorridorThrough N lower drift width endpointUpper).indicator
@@ -78,35 +72,39 @@ theorem lintegral_pathGeneration_affineCorridor_sq_eq_firstMoment_add_mrcaContri
           affineTubeMRCAPairContribution φ μ m.val (N - m.val - 1)
             initial lower drift width endpointUpper := by
   let corridor := affineCorridorThrough N lower drift width endpointUpper
-  let F : (Fin (N + 1) → ℝ) → ℝ≥0∞ :=
-    corridor.indicator (fun _ => (1 : ℝ≥0∞))
-  have hcorridor : MeasurableSet corridor :=
-    measurableSet_affineCorridorThrough N lower drift width endpointUpper
-  have hF : Measurable F := measurable_const.indicator hcorridor
-  have hF01 : ∀ history, F history = 0 ∨ F history = 1 := by
-    intro history
-    by_cases hhistory : history ∈ corridor <;> simp [F, hhistory]
-  have hsecond :=
-    lintegral_pathGeneration_sq_eq_add_distinctAddressPairCount
-      φ μ N F hF hF01 initial
-  have hpair :=
-    lintegral_pathGenerationDistinctAddressPairCount_affineCorridor_eq_sum_MRCA
-      φ μ hboundary N initial lower drift width endpointUpper
+  let F := corridor.indicator (fun _ => (1 : ℝ≥0∞))
+  have hF : Measurable F := measurable_const.indicator
+    (measurableSet_affineCorridorThrough N lower drift width endpointUpper)
+  have hmeas (m : Fin N) : Measurable
+      (pathGenerationMRCAContribution φ m.val N F initial) := by
+    have hN : (N - m.val - 1 + 1) + m.val = N := by omega
+    have h := pathGenerationMRCAContribution_affineCorridor_measurable
+      φ m.val (N - m.val - 1) initial lower drift width endpointUpper
+    rw [hN] at h
+    exact h
   calc
+    _ = ∫⁻ ω, pathGeneration φ N F initial ω +
+        ∑ m : Fin N, pathGenerationMRCAContribution φ m.val N F initial ω
+        ∂offspringFieldLaw μ := by
+      apply lintegral_congr
+      intro ω
+      exact pathGeneration_indicator_sq_eq_self_add_sum_mrcaContribution
+        φ N corridor initial ω
     _ = (∫⁻ ω, pathGeneration φ N F initial ω ∂offspringFieldLaw μ) +
-          (∫⁻ ω, pathGenerationDistinctAddressPairCount φ N F initial ω
-            ∂offspringFieldLaw μ) := hsecond
-    _ = (∫⁻ ω, pathGeneration φ N F initial ω ∂offspringFieldLaw μ) +
-          ∑ m : Fin N,
-            affineTubeMRCAPairContribution φ μ m.val (N - m.val - 1)
-              initial lower drift width endpointUpper := by
-        rw [show (∫⁻ ω, pathGenerationDistinctAddressPairCount φ N F initial ω
-            ∂offspringFieldLaw μ) =
-            ∑ m : Fin N,
-              affineTubeMRCAPairContribution φ μ m.val (N - m.val - 1)
-                initial lower drift width endpointUpper by
-          simpa [F, corridor] using hpair]
-    _ = _ := by simp [F, corridor]
+        ∑ m : Fin N, ∫⁻ ω, pathGenerationMRCAContribution φ m.val N F initial ω
+          ∂offspringFieldLaw μ := by
+      rw [lintegral_add_left (pathGeneration_measurable φ N hF initial)]
+      congr 1
+      exact lintegral_finsetSum' Finset.univ (fun m _ => (hmeas m).aemeasurable)
+    _ = _ := by
+      congr 1
+      apply Finset.sum_congr rfl
+      intro m _
+      have hN : (N - m.val - 1 + 1) + m.val = N := by omega
+      have h := lintegral_pathGenerationMRCAContribution_affineCorridor_eq
+        φ μ m.val (N - m.val - 1) initial lower drift width endpointUpper
+      rw [hN] at h
+      exact h
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
 

@@ -809,3 +809,27 @@ there is no line or optionality input. The line payoff and mass formulas
 specialize this theorem. Their public random-line signatures and the
 frozen-mass martingale do not retain a separate optionality condition.
 See `OPTIONAL_LINE_MANY_TO_ONE_AUDIT.md` for the source-hypothesis review.
+
+
+## Marked corridors and whole-family selection (2026-11-25)
+
+`Probability/Kernel/Step/Noise/` owns measurable noise transport and rejection
+for the existing partial-step interface. `Kernel/Survival/Return/NoiseRestriction.lean`
+combines local weak-tail control with return-kernel iteration at arbitrary
+horizons. These modules depend on neither random walks nor branching processes.
+`Process/RandomWalk/SmallDeviation/Marked/Basic.lean` defines the joint marked
+corridor event; `FiniteVarianceLower.lean` is its centered affine lower-bound
+entry. The fixed seven-band geometry and return-block parameter choices belong
+in its single `Lemmas/` directory. This entry does not assert the general
+continuous moving-boundary theorem or a prescribed terminal-window estimate.
+
+Whole-family acceptance is a deterministic Step selection in
+`Combinatorics/BranchingWalk/Step/Selection/Family.lean`; its surviving-path
+semantics belongs in `Selection/Family/Path.lean`. The probabilistic coupling
+and nonnegative path-count comparison belongs in `Spine/Path/FamilySelection.lean`.
+`Spine/Tube/MRCA/FamilySelection.lean` owns the selected-law MRCA bound;
+`Tube/Corridor/SecondMoment/FamilySelection.lean` is the finite-variance
+second-moment entry. The unselected theorem derives by accepting every family.
+The cutoff coefficient is a restricted integral under the original law; the
+selected law is not assumed centered or boundary-normalized. See
+`docs/architecture/SPINAL_WEIGHT_TAIL_AUDIT.md` for formulas and proof coverage.

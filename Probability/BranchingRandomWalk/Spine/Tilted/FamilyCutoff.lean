@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Spine.Tilted.FamilyChild
+public import Combinatorics.BranchingWalk.Step.Selection.Family
 
 /-!
 # Truncating the total reproductive weight
@@ -19,6 +20,8 @@ In `ProbabilityTheory.BranchingRandomWalk.Spine`:
   `∫_(W ≤ K) C dμ ≤ K ∫ W dμ`, without any global cross-moment assumption.
 * `lintegral_crossPotentialWeight_on_totalWeight_le_of_boundary` gives
   `C_K ≤ K` under boundary normalization, in particular `C_L ≤ exp(α L)`.
+* `lintegral_crossPotentialWeight_selectFamily_eq_restrict` identifies the
+  cross coefficient of the actual selected family law with `∫_A C dμ`.
 * `tiltedFamilyChildLaw_restrict_family` identifies the unchanged spinal
   law restricted by a family event `A` with the joint bias of `μ.restrict A`.
   This is a restriction, with no new normalization or centering assertion.
@@ -29,7 +32,7 @@ restriction in B. Mallein, *N-branching random walk with α-stable spine*
 for the finite-variance specialization of the marked-walk argument in
 B. Mallein, *Necessary and sufficient conditions for the convergence of the
 consistent maximal displacement of the branching random walk*, proof of
-Lemma 3.3, arXiv:1510.00602v2. The displayed cross bound follows directly
+Lemma 3.4, arXiv:1510.00602v2. The displayed cross bound follows directly
 from `C ≤ W² ≤ K W`; it does not assert that the truncated law satisfies
 the boundary condition.
 -/
@@ -65,6 +68,23 @@ theorem lintegral_crossPotentialWeight_on_totalWeight_le_of_boundary {ι X : Typ
   have hb := lintegral_crossPotentialWeight_on_totalWeight_le φ (-1) μ K
   change (∫⁻ ξ, totalPotentialWeight φ (-1) ξ ∂μ) = 1 at h
   simpa only [h, mul_one] using hb
+
+/-- The cross coefficient of whole-family selection is the original cross
+weight integrated only over accepted families. -/
+theorem lintegral_crossPotentialWeight_selectFamily_eq_restrict {ι X : Type*}
+    [Countable ι] [MeasurableSpace X]
+    (φ : Potential X) (θ : ℝ) (μ : Measure (Step ι X))
+    {accepted : Set (Step ι X)} (ha : MeasurableSet accepted) :
+    (∫⁻ ξ, crossPotentialWeight φ θ ξ ∂μ.map (Step.selectFamily accepted)) =
+      ∫⁻ ξ in accepted, crossPotentialWeight φ θ ξ ∂μ := by
+  classical
+  rw [lintegral_map (crossPotentialWeight_measurable φ θ)
+    (Step.selectFamily_measurable ha), ← lintegral_indicator ha]
+  apply lintegral_congr
+  intro ξ
+  by_cases h : ξ ∈ accepted
+  · simp [h]
+  · simp [h, crossPotentialWeight, realizedPotentialWeight, survive]
 
 /-- Restricting the original family/child law retains exactly the original
 weights on the accepted family event; no rebiased increment law is introduced. -/
