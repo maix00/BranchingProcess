@@ -1,0 +1,118 @@
+import Probability.BranchingRandomWalk.Assumptions.SpinalWeightTail
+import Probability.BranchingRandomWalk.Spine.Tilted.Marked
+import Probability.BranchingRandomWalk.Spine.Tilted.FamilyCutoff
+import Probability.BranchingRandomWalk.Spine.Tube.Corridor.SecondMoment.FiniteVariance
+import Probability.Sequence.Maximal.QuadraticTail
+import Probability.Sequence.IID.Basic
+import Probability.BranchingProcess.Spine.LocalBias.Path
+
+open MeasureTheory ProbabilityTheory
+open ProbabilityTheory.BranchingRandomWalk
+open ProbabilityTheory.BranchingRandomWalk.Spine
+open Combinatorics.Branching
+open Filter
+open scoped ENNReal Topology
+
+-- Perfectly correlated displacement and mark: the joint law is supported
+-- on the diagonal, rather than constructed as a product of marginal laws.
+example (μ : Measure (Step ℕ ℝ)) :
+    tiltedMarkedPotentialLaw realPotential (-1) μ
+      (fun p => p.1.potentialValue' realPotential p.2) =
+      (tiltedPotentialLaw realPotential (-1) μ).map (fun x => (x, x)) := by
+  have hr : Measurable (fun p : Step ℕ ℝ × ℕ =>
+      p.1.potentialValue' realPotential p.2) :=
+    measurable_from_prod_countable_left (fun i => Step.potentialValue'_measurable _ i)
+  rw [← tiltedFamilyChildLaw_map_potential realPotential (-1) μ,
+    Measure.map_map (by fun_prop) hr]
+  rfl
+
+-- The cutoff bound requires neither a finite untruncated cross weight nor
+-- normalization of the cutoff offspring distribution.
+example {X : Type*} [MeasurableSpace X] (φ : Potential X)
+    (μ : Measure (Step ℕ X)) (hb : HasBoundaryNormalization φ μ) (α L : ℝ) :
+    (∫⁻ ξ in {ξ | totalPotentialWeight φ (-1) ξ ≤ ENNReal.ofReal (Real.exp (α * L))},
+      crossPotentialWeight φ (-1) ξ ∂μ) ≤ ENNReal.ofReal (Real.exp (α * L)) :=
+  lintegral_crossPotentialWeight_on_totalWeight_le_of_boundary φ μ hb _
+
+-- The weak tail hypothesis remains a tail hypothesis, not a log-moment
+-- assumption. Only the displacement's ordinary second moment is supplied.
+example {X : Type*} [MeasurableSpace X] (φ : Potential X)
+    (μ : Measure (Step ℕ X)) (hb : HasBoundaryNormalization φ μ)
+    (hsq : Integrable (fun x : ℝ => x ^ 2) (tiltedPotentialLaw φ (-1) μ)) :
+    HasSpinalWeightTail φ μ ↔
+      HasVanishingQuadraticTail (μ.withDensity (totalPotentialWeight φ (-1)))
+        (logTotalPotentialWeight φ) :=
+  hasSpinalWeightTail_iff_totalWeightTail φ μ hb hsq
+
+-- On an IID sequence of *joint* increments, the path event A may depend
+-- arbitrarily on the displacement and mark coordinates. No independence
+-- between the two coordinates of one increment is used.
+example (ν : Measure (ℝ × ℝ)) [IsProbabilityMeasure ν]
+    (ht : HasVanishingQuadraticTail ν Prod.snd)
+    {scale : ℕ → ℝ} (hs : Tendsto scale atTop atTop)
+    {length : ℕ → ℕ} {C α p : ℝ} (hα : 0 < α) (hp : 0 < p)
+    (hl : ∀ᶠ n in atTop, (length n : ℝ) ≤ C * scale n ^ 2) :
+    ∀ᶠ n in atTop, ∀ A : Set (ℕ → ℝ × ℝ), p ≤ (iidSequenceLaw ν).real A →
+      p / 2 ≤ (iidSequenceLaw ν).real
+        (A ∩ {ω | ∀ j < length n, (ω j).2 ≤ α * scale n}) := by
+  have hlaw (j : ℕ) : HasLaw (fun ω : ℕ → ℝ × ℝ => (ω j).2)
+      (ν.map Prod.snd) (iidSequenceLaw ν) := by
+    constructor
+    · exact (measurable_snd.comp (measurable_pi_apply j)).aemeasurable
+    · rw [show (fun ω : ℕ → ℝ × ℝ => (ω j).2) = Prod.snd ∘ (fun ω => ω j) from rfl,
+        ← Measure.map_map measurable_snd (measurable_pi_apply j), iidSequenceLaw_map_apply]
+  have htail : HasVanishingQuadraticTail (ν.map Prod.snd) id :=
+    (hasVanishingQuadraticTail_map_iff Prod.snd measurable_snd id measurable_id).2 ht
+  exact eventually_measureReal_inter_marks_ge hlaw htail hs hα hp hl
+
+-- The general compensation retains complete generation histories, including
+-- the families at every strict ancestor, instead of only ancestral states.
+example {S ι : Type*} [MeasurableSpace S] [MeasurableSpace ι] [Countable ι]
+    [MeasurableSingletonClass ι] (Q : Kernel S (Step ι S)) [IsMarkovKernel Q]
+    (B : BranchingProcess.Spine.LocalBias S ι) (hB : B.IsAdmissible Q)
+    (s : B.domain) (defaultChild : ι) (n : ℕ)
+    (G : List ι → (List ι → Option S) → ℝ≥0∞)
+    (hG : ∀ u, u.length = n → Measurable[BranchingProcess.State.treeFiltration n] (G u)) :
+    (∫⁻ t, ∑' u : List ι, if u.length = n then
+      B.addressWeight u.length u.get (BranchingProcess.State.treeHistory u.length t) *
+        G u t else 0 ∂BranchingProcess.State.treeKernel Q (some s.1)) =
+    ∫⁻ t, G (List.ofFn (BranchingProcess.Spine.spinePrefix defaultChild t n))
+      (fun v => (t v).map (Sum.elim id Subtype.val))
+      ∂BranchingProcess.Spine.LocalBias.treeKernel Q B hB (some (Sum.inr s)) :=
+  BranchingProcess.Spine.LocalBias.lintegral_generationPayoff_eq Q B hB s defaultChild n G
+    (fun u hu => by subst n; exact hG u rfl)
+
+#print axioms ProbabilityTheory.BranchingProcess.Spine.LocalBias.lintegral_generationPayoff_eq
+#print axioms ProbabilityTheory.BranchingProcess.Spine.LocalBias.lintegral_pathPayoff_eq
+#print axioms MeasureTheory.HasVanishingQuadraticTail.scale_threshold
+#print axioms MeasureTheory.hasVanishingQuadraticTail_map_iff
+#print axioms MeasureTheory.hasVanishingQuadraticTail_max_const_iff
+#print axioms MeasureTheory.HasVanishingQuadraticTail.mono
+#print axioms MeasureTheory.HasVanishingQuadraticTail.add
+#print axioms MeasureTheory.hasVanishingQuadraticTail_abs_of_integrable_sq
+#print axioms MeasureTheory.hasVanishingQuadraticTail_add_iff_of_integrable_sq
+#print axioms ProbabilityTheory.measureReal_exists_lt_le_of_hasLaw
+#print axioms ProbabilityTheory.tendsto_measureReal_exists_lt_of_vanishingQuadraticTail
+#print axioms ProbabilityTheory.eventually_measureReal_inter_marks_ge
+#print axioms Combinatorics.Branching.crossPotentialWeight_le_totalPotentialWeight_sq
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_tiltedFamilyChildLaw
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_tiltedFamilyChildLaw_cancel
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.ae_tiltedFamilyChildLaw_survive
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.tiltedFamilyChildLaw_fst
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.tiltedFamilyChildLaw_apply_univ
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.tiltedFamilyChildLaw_isProbability
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.tiltedPotentialLaw_eq_sum
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.tiltedFamilyChildLaw_map_potential
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_tiltedPotentialLaw_cancel
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.tiltedMarkedPotentialLaw_fst
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.tiltedMarkedPotentialLaw_isProbability
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_tiltedMarkedPotentialLaw
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_tiltedMarkedPotentialLaw_cancel
+#print axioms ProbabilityTheory.BranchingRandomWalk.relativeSpinalWeight_nonneg
+#print axioms ProbabilityTheory.BranchingRandomWalk.ae_relativeSpinalWeight_nonneg
+#print axioms ProbabilityTheory.BranchingRandomWalk.hasSpinalWeightTail_iff_totalWeightTail
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_crossPotentialWeight_on_totalWeight_le
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_crossPotentialWeight_on_totalWeight_le_of_boundary
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.tiltedFamilyChildLaw_restrict_family
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.exists_lintegral_pathGeneration_affineCorridor_sq_le_crossWeight_mul_exp_sum_of_finiteVariance
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.exists_lintegral_pathGeneration_affineCorridor_sq_le_exp_sum_of_finiteVariance

@@ -26,7 +26,8 @@ In `ProbabilityTheory.BranchingProcess.Spine.LocalBias`:
 
 This is the local-density version of Zhan Shi, *Branching Random Walks*
 (2015), Theorems 1.1 and 4.4(ii), DOI 10.1007/978-3-319-25372-5.
-It specializes the general adapted-payoff theorem and uses the actual ray.
+It specializes the general observed-generation payoff theorem and uses the actual ray.
+Reproduction-family payoffs retain the stronger interface in `ManyToOne.lean`.
 -/
 
 @[expose] public section
@@ -64,45 +65,33 @@ theorem lintegral_pathPayoff_eq {S ι : Type*} [MeasurableSpace S]
       ∂State.treeKernel Q (some s.1)) =
     ∫⁻ t, g (fun k => (statePath d t k).1)
       ∂treeKernel Q B hB (some (Sum.inr s)) := by
-  let F (u : List ι) (t : List ι → Option S) :=
-    if u.length = n then g (State.ancestralHistory d.1 n u t) else 0
-  have hF (u : List ι) : Measurable[State.treeFiltration u.length] (F u) :=
-    (hg.comp (State.measurable_ancestralHistory d.1 n u)).ite
-      (MeasurableSet.const _) measurable_const
-  have hi := lintegral_adaptedPayoff_eq Q B hB s F hF
-  refine (lintegral_congr fun t => ?_).trans (hi.trans ?_)
-  · apply tsum_congr
-    intro u
-    by_cases hu : u.length = n <;> simp [F, hu]
-  · apply lintegral_congr_ae
-    filter_upwards [ae_treeKernel_statePath Q B hB d s] with t ht
-    obtain ⟨f, ⟨hf, hc, hstates⟩, _⟩ := ht
-    rw [tsum_eq_single (lineagePrefix f n)]
-    · have htag : (t (lineagePrefix f n)).any Sum.isRight = true := hf n
-      rw [ite_eq_left htag]
-      dsimp only [F]
-      rw [ite_eq_left (length_lineagePrefix f n)]
-      congr 1
-      funext k
-      have hp := lineagePrefix_prefix f (Nat.le_of_lt_succ k.isLt)
-      have he : (lineagePrefix f n).take k = lineagePrefix f k := by
-        obtain ⟨tail, ht⟩ := hp
-        rw [← ht]
-        simp
-      simp only [State.ancestralHistory, he, hstates, Option.map_some,
-        Sum.elim_inr, Option.getD_some]
-    · intro u hune
-      by_cases htag : (t u).any Sum.isRight = true
-      · rw [ite_eq_left htag]
-        have hn : u.length ≠ n := by
-          intro hn
-          have hu : u ∈ distinguishedNodes t := htag
-          rw [hc] at hu
-          obtain ⟨k, hk⟩ := hu
-          have hkn : k = n := by simpa [hn] using congrArg List.length hk
-          exact hune (hkn ▸ hk.symm)
-        exact ite_eq_right hn
-      · exact ite_eq_right htag
+  have hι : Nonempty ι := by
+    by_contra h
+    have : IsEmpty ι := not_nonempty_iff.mp h
+    have hn := hB.normalized s.1 s.2
+    simp at hn
+  let defaultChild : ι := Classical.choice hι
+  let G (u : List ι) (t : List ι → Option S) :=
+    g (State.ancestralHistory d.1 n u t)
+  have hG (u : List ι) (_ : u.length = n) :
+      Measurable[State.treeFiltration u.length] (G u) :=
+    hg.comp (State.measurable_ancestralHistory d.1 n u)
+  have hi := lintegral_generationPayoff_eq Q B hB s defaultChild n G hG
+  refine hi.trans ?_
+  apply lintegral_congr_ae
+  filter_upwards [ae_treeKernel_statePath Q B hB d s] with t ht
+  obtain ⟨f, ⟨hf, hc, hstates⟩, _⟩ := ht
+  dsimp only [G]
+  rw [spinePrefix_eq_of_isRay defaultChild t f hf hc n]
+  congr 1
+  funext k
+  have hp := lineagePrefix_prefix f (Nat.le_of_lt_succ k.isLt)
+  have he : (lineagePrefix f n).take k = lineagePrefix f k := by
+    obtain ⟨tail, ht⟩ := hp
+    rw [← ht]
+    simp
+  simp only [State.ancestralHistory, he, hstates, Option.map_some,
+    Sum.elim_inr, Option.getD_some]
 
 end ProbabilityTheory.BranchingProcess.Spine.LocalBias
 
