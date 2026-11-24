@@ -12,6 +12,13 @@ import tempfile
 
 AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/Branching/SpinalWeightTail.lean"): (
+        "MeasureTheory.Measure.pi_sum_map_withDensity",
+        "MeasureTheory.Measure.lintegral_pi_sum_map_withDensity",
+        "ProbabilityTheory.Tree.measurable_pathRecords",
+        "ProbabilityTheory.Tree.lintegral_sum_weighted_pathRecords",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.familyPathManyToOne",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.markedPathManyToOne",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.pathHistory_eq_finitePrefix_records",
         "ProbabilityTheory.BranchingProcess.Spine.LocalBias.lintegral_generationPayoff_eq",
         "ProbabilityTheory.BranchingProcess.Spine.LocalBias.lintegral_pathPayoff_eq",
         "MeasureTheory.HasVanishingQuadraticTail.scale_threshold",

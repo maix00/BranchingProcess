@@ -8,8 +8,7 @@ module
 
 public import Probability.BranchingRandomWalk.Spine.Path.Decomposition.Generation
 public import Probability.BranchingRandomWalk.Spine.RandomWalk.IncrementProcess
-import Probability.BranchingRandomWalk.Spine.Additive.PathLaw
-import Probability.BranchingProcess.Spine.Tree.Density.PathPayoff
+import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Marked
 
 /-!
 # Path-functional many-to-one identities
@@ -17,9 +16,8 @@ import Probability.BranchingProcess.Spine.Tree.Density.PathPayoff
 The test function sees the complete ancestral position history at times
 `0, ..., n`.  The two identities correspond to the exponentially weighted
 and unweighted branching sums. The weighted identity is obtained from the
-general state-tree adapted-node theorem, through the independent-field law
-transport and the observed spine-path law. No branching expectation is
-reproved by induction. The right-hand measure is the auxiliary tilted IID
+complete-family many-to-one theorem by forgetting reproductive records.
+No branching expectation is reproved by induction. The right-hand measure is the auxiliary tilted IID
 law, whose position law equals the spine under the changed tree measure.
 Compare Zhan Shi, *Branching Random Walks* (2015), Theorems 1.1, 4.3 and
 4.4(ii), DOI 10.1007/978-3-319-25372-5.
@@ -52,82 +50,32 @@ open ProbabilityTheory.RandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory Finset Preorder
 
-private lemma stateTree_apply_additive {ι Mark : Type*} [MeasurableSpace Mark]
-    (φ : Potential Mark) (x : ℝ) (ω : StepField ι Mark) (u : List ι) :
-    stateTree (fun x e => x + φ e) x ω u =
-      if surviveAlong ω [] u then some (x + pathPotential φ ω u) else none := by
-  classical
-  by_cases hs : surviveAlong ω [] u <;>
-    simp [stateTree, stateAlong?, hs, stateAlong_add, pathPotential]
+private lemma tsum_lists_length {ι : Type*} (n : ℕ) (H : List ι → ℝ≥0∞) :
+    (∑' u : List ι, if u.length = n then H u else 0) =
+      ∑' z : Fin n → ι, H (List.ofFn z) := by
+  rw [← List.equivSigmaTuple.symm.tsum_eq]
+  change (∑' c : Σ k, Fin k → ι,
+    if (List.ofFn c.2).length = n then H (List.ofFn c.2) else 0) = _
+  simp only [List.length_ofFn]
+  rw [tsum_sigma', tsum_eq_single n]
+  · simp
+  · intro k hk
+    simp [hk]
 
-private lemma prefix_survives {ι Mark : Type*} (ω : StepField ι Mark) (u : List ι)
-    (hs : surviveAlong ω [] u) (k : ℕ) : surviveAlong ω [] (u.take k) :=
-  surviveAlong_prefix ω (u.take k) (u.drop k) (by simpa only [List.take_append_drop] using hs)
-
-private lemma tuple_take {ι : Type*} (u : List ι) {k : ℕ} (hk : k ≤ u.length) :
-    List.ofFn (Fin.take k hk u.get) = u.take k := by
-  apply List.ext_getElem
-  · simp [Nat.min_eq_left hk]
-  · intro i hi hj
-    simp [Fin.take]
-
-private lemma addressWeight_stateTree {ι Mark : Type*} [MeasurableSpace Mark]
-    (φ : Potential Mark) (x : ℝ) (ω : StepField ι Mark) (u : List ι) :
-    BranchingProcess.Spine.addressWeight Additive.weight u.length u.get
-      (BranchingProcess.State.treeHistory u.length
-        (stateTree (fun x e => x + φ e) x ω)) =
-      if surviveAlong ω [] u then ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) else 0 := by
-  classical
-  have hroot :
-      ((BranchingProcess.State.treeHistory u.length (stateTree (fun x e => x + φ e) x ω))
-        ⟨0, by simp⟩ ((), fun j : Fin 0 => j.elim0)).elim 0 Additive.weight ≠ 0 ∧
-      ((BranchingProcess.State.treeHistory u.length (stateTree (fun x e => x + φ e) x ω))
-        ⟨0, by simp⟩ ((), fun j : Fin 0 => j.elim0)).elim 0 Additive.weight ≠ ∞ := by
-    simp [BranchingProcess.State.treeHistory]
-  rw [BranchingProcess.Spine.addressWeight_eq_endpointRatio _ _ _ _ hroot]
-  by_cases hs : surviveAlong ω [] u
-  · have hparents (k : Fin u.length) :
-        ((BranchingProcess.State.treeHistory u.length (stateTree (fun x e => x + φ e) x ω))
-          ⟨k.1, mem_Iic.mpr k.isLt.le⟩ ((), Fin.take k.1 k.isLt.le u.get)).elim 0 Additive.weight ≠ 0 ∧
-        ((BranchingProcess.State.treeHistory u.length (stateTree (fun x e => x + φ e) x ω))
-          ⟨k.1, mem_Iic.mpr k.isLt.le⟩ ((), Fin.take k.1 k.isLt.le u.get)).elim 0 Additive.weight ≠ ∞ := by
-      simp only [BranchingProcess.State.treeHistory, tuple_take u k.isLt.le]
-      rw [stateTree_apply_additive, ite_eq_left (prefix_survives ω u hs k)]
-      simp
-    rw [ite_eq_left hparents, ite_eq_left hs]
-    simp only [BranchingProcess.State.treeHistory, List.ofFn_get]
-    rw [stateTree_apply_additive, ite_eq_left hs]
-    have hz : (List.ofFn (fun j : Fin 0 => j.elim0) : List ι) = [] := by simp
-    rw [hz, stateTree_root]
-    simp only [Option.elim_some]
-    have hweight : Additive.weight (x + pathPotential φ ω u) =
-        Additive.weight x * ENNReal.ofReal (Real.exp (-pathPotential φ ω u)) := by
-      unfold Additive.weight
-      rw [neg_add, Real.exp_add, ENNReal.ofReal_mul (Real.exp_pos _).le]
-    rw [hweight]
-    simpa only [div_eq_mul_inv, mul_assoc] using
-      (ENNReal.mul_div_cancel (Additive.weight_ne_zero x) (Additive.weight_ne_top x)
-        (b := ENNReal.ofReal (Real.exp (-pathPotential φ ω u))))
-  · rw [ite_eq_right hs]
-    split_ifs
-    · simp only [BranchingProcess.State.treeHistory, List.ofFn_get]
-      rw [stateTree_apply_additive, ite_eq_right hs]
-      simp
-    · rfl
-
-private lemma ancestralHistory_stateTree {ι Mark : Type*} [MeasurableSpace Mark]
-    (φ : Potential Mark) (x : ℝ) (ω : StepField ι Mark) (u : List ι)
-    (hs : surviveAlong ω [] u) (n : ℕ) :
-    BranchingProcess.State.ancestralHistory x n u
-      (stateTree (fun x e => x + φ e) x ω) = pathHistory φ n x ω u := by
-  funext k
-  simp only [BranchingProcess.State.ancestralHistory, pathHistory]
-  rw [stateTree_apply_additive, ite_eq_left (prefix_survives ω u hs k)]
-  rfl
-
+private lemma measurable_finitePrefix (n : ℕ) (x : ℝ) :
+    Measurable (AdditivePath.finitePrefix x : (Fin n → ℝ) → Fin (n + 1) → ℝ) := by
+  apply measurable_pi_iff.mpr
+  intro k
+  induction k using Fin.induction with
+  | zero => simpa only [AdditivePath.finitePrefix_zero] using
+      (measurable_const : Measurable (fun _ : Fin n → ℝ => x))
+  | succ k ih =>
+    simp only [AdditivePath.finitePrefix_succ]
+    exact measurable_add.comp (ih.prodMk (measurable_pi_apply k))
 
 /-- Weighted path-functional many-to-one identity for the pre-sampled
-branching field. -/
+branching field, obtained by forgetting the family data in the complete-record
+many-to-one identity. -/
 theorem weightedPathManyToOneCore
     {ι X : Type*} [Countable ι] [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
@@ -139,70 +87,71 @@ theorem weightedPathManyToOneCore
   let : MeasurableSpace ι := ⊤
   let : MeasurableSingletonClass ι := ⟨fun _ => trivial⟩
   intro n F hF x
-  let s : {y // Additive.weight y ≠ 0 ∧ Additive.weight y ≠ ∞} :=
-    ⟨x, Additive.weight_ne_zero x, Additive.weight_ne_top x⟩
-  let harmonic := fun y (_ : Additive.weight y ≠ 0) (_ : Additive.weight y ≠ ∞) =>
-    Additive.harmonic_weight φ μ hboundary y
-  let G (t : List ι → Option ℝ) : ENNReal := ∑' u : List ι, if u.length = n then
-    BranchingProcess.Spine.addressWeight Additive.weight u.length u.get
-      (BranchingProcess.State.treeHistory u.length t) *
-      F (BranchingProcess.State.ancestralHistory x n u t) else 0
-  have hG : Measurable G := by
-    apply Measurable.tsum
-    intro u
-    exact (((BranchingProcess.Spine.measurable_addressWeight Additive.measurable_weight _ _).comp
-      (BranchingProcess.State.measurable_treeHistory _)).mul
-      (hF.comp ((BranchingProcess.State.measurable_ancestralHistory x n u).mono
-        (BranchingProcess.State.treeFiltration.le _) le_rfl))).ite
-      (MeasurableSet.const _) measurable_const
-  have hupdate : Measurable (Function.uncurry (fun (y : ℝ) (e : X) => y + φ e)) :=
-    measurable_fst.add (φ.measurable_toFun.comp measurable_snd)
-  have hm : Measurable (stateTree (fun x e => x + φ e) x : StepField ι X → List ι → Option ℝ) :=
-    (stateTree_measurable (fun (y : ℝ) (e : X) => y + φ e) hupdate).comp
-      (show Measurable (fun ω : StepField ι X => (x, ω)) from
-        measurable_const.prodMk measurable_id)
-  have heq (ω : StepField ι X) : G (stateTree (fun x e => x + φ e) x ω) =
-      weightedPathGeneration φ n F x ω := by
-    dsimp only [G, weightedPathGeneration]
+  let : IsProbabilityMeasure (tiltedFamilyChildLaw φ (-1) μ) :=
+    tiltedFamilyChildLaw_isProbability φ μ hboundary
+  let : IsProbabilityMeasure (tiltedPotentialLaw φ (-1) μ) :=
+    tiltedPotentialLaw_isProbability φ μ hboundary
+  let read (p : Step ι X × ι) := p.1.potentialValue' φ p.2
+  let increments (records : Fin n → Step ι X × ι) := fun j => read (records j)
+  let G (records : Fin n → Step ι X × ι) :=
+    ENNReal.ofReal (Real.exp (-∑ j, read (records j))) *
+      F (AdditivePath.finitePrefix x (increments records))
+  have hr : Measurable read := measurable_from_prod_countable_left
+    (fun i => Step.potentialValue'_measurable φ i)
+  have hi : Measurable increments := measurable_pi_iff.mpr
+    (fun j => hr.comp (measurable_pi_apply j))
+  have hG : Measurable G :=
+    (Finset.measurable_sum _ (fun j _ => hr.comp (measurable_pi_apply j))).neg.exp.ennreal_ofReal.mul (hF.comp ((measurable_finitePrefix n x).comp hi))
+  have heq (field : StepField ι X) : weightedPathGeneration φ n F x field =
+      ∑' z : Fin n → ι, if surviveAlong field [] (List.ofFn z)
+        then G (Mark.pathRecords field z) else 0 := by
+    unfold weightedPathGeneration
+    have hh : (∑' u : List ι, weightedPathGenerationTerm φ n F x u field) =
+        ∑' u : List ι, if u.length = n then
+          (if surviveAlong field [] u then
+            ENNReal.ofReal (Real.exp (-pathPotential φ field u)) *
+              F (pathHistory φ n x field u) else 0) else 0 := by
+      apply tsum_congr
+      intro u
+      by_cases hn : u.length = n <;> by_cases hs : surviveAlong field [] u <;>
+        simp [weightedPathGenerationTerm, hn, hs]
+    rw [hh, tsum_lists_length]
     apply tsum_congr
-    intro u
-    rw [addressWeight_stateTree]
-    by_cases hn : u.length = n <;> by_cases hs : surviveAlong ω [] u <;>
-      simp [weightedPathGenerationTerm, hn, hs]
-    rw [ancestralHistory_stateTree φ x ω u hs]
-  have hmap := lintegral_map (μ := offspringFieldLaw μ) hG hm
-  rw [Additive.map_stateTree_law] at hmap
-  have hpath := BranchingProcess.Spine.lintegral_pathPayoff_eq
-    (Additive.offspringKernel φ μ) Additive.measurable_weight harmonic s s n hF
-  have hproj : Measurable (fun z : ℕ → ℝ => F (fun k : Fin (n + 1) => z k)) :=
-    hF.comp (measurable_pi_iff.mpr fun _ => measurable_pi_apply _)
-  have hobs : Measurable (fun t : List ι → Option
-      (ℝ ⊕ {y // Additive.weight y ≠ 0 ∧ Additive.weight y ≠ ∞}) =>
-      fun n => (BranchingProcess.Spine.statePath s t n).1) := by
-    apply measurable_pi_iff.mpr
-    intro k
-    exact measurable_subtype_coe.comp
-      ((measurable_pi_apply k).comp (BranchingProcess.Spine.measurable_statePath s))
-  have hright := lintegral_map
-    (μ := BranchingProcess.Spine.treeKernel (Additive.offspringKernel φ μ)
-      Additive.measurable_weight harmonic (some (Sum.inr s))) hproj hobs
-  rw [Additive.map_spinePath_law φ μ hboundary x,
-    lintegral_map hproj (RandomWalk.positionProcess_path_measurable x)] at hright
+    intro z
+    have hp := congrFun (pathHistory_eq_finitePrefix_records φ n 0 field z) (Fin.last n)
+    have ht : pathPotential φ field (List.ofFn z) =
+        ∑ j, read (Mark.pathRecords field z j) := by
+      simpa [pathHistory, AdditivePath.finitePrefix, Fin.partialSum,
+        List.take_of_length_le, List.sum_ofFn, read] using hp
+    simp only [G, increments, ht, pathHistory_eq_finitePrefix_records, read]
+  have hmany := familyPathManyToOne φ μ hboundary n hG
   calc
-    _ = ∫⁻ t, G t ∂BranchingProcess.State.treeKernel
-        (Additive.offspringKernel φ μ) (some x) := by
-      rw [hmap]
-      exact lintegral_congr fun ω => (heq ω).symm
-    _ = ∫⁻ t, F (fun k => (BranchingProcess.Spine.statePath s t k).1)
-        ∂BranchingProcess.Spine.treeKernel (Additive.offspringKernel φ μ)
-          Additive.measurable_weight harmonic (some (Sum.inr s)) := hpath
-    _ = _ := by
-      convert hright.symm using 1
+    _ = ∫⁻ field, ∑' z : Fin n → ι,
+        if surviveAlong field [] (List.ofFn z) then G (Mark.pathRecords field z) else 0
+        ∂offspringFieldLaw μ := lintegral_congr heq
+    _ = ∫⁻ records, ENNReal.ofReal (Real.exp (∑ j, read (records j))) * G records
+        ∂Measure.pi (fun _ : Fin n => tiltedFamilyChildLaw φ (-1) μ) := hmany
+    _ = ∫⁻ records, F (AdditivePath.finitePrefix x (increments records))
+        ∂Measure.pi (fun _ : Fin n => tiltedFamilyChildLaw φ (-1) μ) := by
       apply lintegral_congr
-      intro ξ
-      congr 1
-      funext k
-      exact congrFun (history_eq_fromIncrements n x ξ) k
+      intro records
+      dsimp only [G]
+      rw [← mul_assoc, ← ENNReal.ofReal_mul (Real.exp_nonneg _), ← Real.exp_add]
+      simp
+    _ = ∫⁻ v, F (AdditivePath.finitePrefix x v)
+        ∂Measure.pi (fun _ : Fin n => tiltedPotentialLaw φ (-1) μ) := by
+      have hm := lintegral_map (hF.comp (measurable_finitePrefix n x)) hi
+        (μ := Measure.pi (fun _ : Fin n => tiltedFamilyChildLaw φ (-1) μ))
+      rw [Measure.pi_map_pi (fun _ => hr.aemeasurable)] at hm
+      simpa only [tiltedFamilyChildLaw_map_potential, increments, read, Function.comp_def] using hm.symm
+    _ = _ := by
+      rw [← iidSequenceLaw_map_finPrefix (tiltedPotentialLaw φ (-1) μ) n]
+      have hm := lintegral_map
+        (show Measurable (fun v : Fin n → ℝ => F (AdditivePath.finitePrefix x v)) from
+          hF.comp (measurable_finitePrefix n x))
+        (show Measurable (fun v : ℕ → ℝ => fun j : Fin n => v j) from by fun_prop)
+        (μ := iidSequenceLaw (tiltedPotentialLaw φ (-1) μ))
+      exact hm
 
 /-- Unweighted path-functional many-to-one identity, with the reciprocal
 exponential weight determined by the terminal spine displacement. -/

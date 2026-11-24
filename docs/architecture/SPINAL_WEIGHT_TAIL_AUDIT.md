@@ -77,6 +77,24 @@ maintain an independent second scalar tilt or a second branching-tree law.
   Marks can take values in any measurable space. The displacement marginal
   is exactly the original scalar law. Marked one-generation many-to-one
   is derived from the joint compensation theorem.
+* `Spine/Path/ManyToOne/Marked.lean` now identifies the original BRW
+  generation sum with finite products of the existing joint family/child law
+  (`familyPathManyToOne`), and with the existing IID sequence law of correlated
+  displacement/marks (`markedPathManyToOne`). Every strict ancestor's complete
+  family and selected slot are retained. No moment, finite-offspring-count or
+  within-step independence hypothesis is added. The original scalar
+  `weightedPathManyToOneCore` is derived by forgetting these records and
+  cancelling the exponential factors; its dedicated state-tree representation
+  proof has been removed. General state-tree spine results remain available
+  for state-dependent branching kernels.
+* `Combinatorics/UlamHarris/Mark/Path.lean` defines only the deterministic
+  record `(field(z|j),zⱼ)`. `Probability/Process/Tree/Path/WeightedRecords.lean`
+  integrates these records in an independent address field using injective
+  ancestral-coordinate reindexing. These owners carry no BRW survival model.
+* `MeasureTheory/Measure/Pi/WeightedPairs.lean` expands a finite product of
+  countably weighted marked measures. It uses native product-measure
+  uniqueness, integration and pushforward APIs rather than adding a new
+  product measure or recursive branching-law construction.
 * `Assumptions/SpinalWeightTail.lean` defines the actual Mallein condition,
   proves that its relative mark is nonnegative almost surely, and proves the
   equivalence with the total-weight tail condition using finite spinal
@@ -109,17 +127,12 @@ These are still open, not consequences already supplied by a new hypothesis:
    affine-corridor small-deviation lower bound. A single unmarked
    small-deviation probability minus the full-horizon bad-mark probability
    is insufficient. The new maximal theorem applies at order `L²`, not `L³`.
-2. Identify the concrete BRW ancestral-family observations under the general
-   observed-generation many-to-one formula with the joint IID marked-increment
-   law. The full observed-generation compensation is proved, but this
-   BRW/IID law transport has not yet been assembled. The one-generation
-   marked compensation alone is not claimed to establish that transport.
-3. Apply MRCA decomposition to the *family-cutoff path count*, retaining the
+2. Apply MRCA decomposition to the *family-cutoff path count*, retaining the
    cutoff at every reproducing ancestor and the corridor restriction at
    child birth. The coefficient is then `C_K`. The new unmarked corridor
    theorem has coefficient `C`; substituting `C_K` into that theorem
    without changing its random count would be invalid.
-4. Use the marked first and second moments and capacity comparison to replace
+3. Use the marked first and second moments and capacity comparison to replace
    the positive-initial-exponent upper-tail input. Only then transport the
    new assumption through ordering and assemble the existing endpoint-mean,
    continuation-mean, restart-mean and speed comparisons.
@@ -146,3 +159,54 @@ Validated on 2026-11-25:
   all 57 configured downstream axiom reports passed.
 * Mathlib style lint, the import-boundary audit and all 32 Python unit tests
   passed. No new axiom or proof placeholder is introduced.
+
+## Complete-record law transport review (2026-11-25)
+
+The independent-field calculation reads distinct strict-ancestor coordinates
+for each fixed finite address, then sums over addresses. Finite time is
+arbitrary, including zero; countably many child labels and possibly infinitely
+many offspring are allowed. It does not replace the original offspring law
+by a normalized cutoff law. Family cutoffs are tests of the recorded marks.
+The scalar and marked statements share this calculation, with no compatibility
+aliases or independently maintained scalar branching expectation proof.
+
+Mathlib revision `26573066084e6e2aa8526ea358bc43b66d96f970` and the current
+official documentation were checked:
+
+* [finite products](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Constructions/Pi.html):
+  `Measure.pi_eq`, `Measure.pi_pi` and `Measure.pi_map_pi` provide the
+  rectangle uniqueness and coordinatewise pushforwards used directly;
+* [independent integration](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Independence/Integration.html):
+  `lintegral_prod_eq_prod_lintegral_of_indepFun` integrates the product of
+  independent coordinate functions;
+* pinned `Mathlib/Probability/Independence/InfinitePi.lean`:
+  `Measure.map_infinitePi_infinitePi_of_inj` identifies any fixed address's
+  distinct ancestral field coordinates with the finite IID product.
+
+These APIs do not already state the countable weighted-pair expansion or the
+address-sum identity. The new finite-measure identity is measure-level; its
+base coordinates have probability laws and its weighted joint measures are
+finite, without requiring their normalization or independence within a pair.
+Single-file sum rearrangement, coordinate integration and exponential
+cancellation helpers remain private. The record and law identities are
+complete reusable results outside `Lemmas/`.
+
+Reference alignment: B. Mallein, *N-branching random walk with α-stable spine*,
+§2.1, Proposition 2.1, Lemma 2.2 and proof of Lemma 3.4,
+[arXiv:1503.03762v2](https://arxiv.org/html/1503.03762v2), uses the reflected
+spatial convention. The repository keeps its existing bias `exp(-X)`.
+The family-mark use also follows the proof of Lemma 3.4 in B. Mallein,
+*Necessary and sufficient conditions for the convergence of the consistent
+maximal displacement of the branching random walk*,
+[arXiv:1510.00602v2](https://arxiv.org/pdf/1510.00602).
+
+Complete-record validation on 2026-11-25:
+
+* Full `LEAN_NUM_THREADS=2 lake build` passed (12009 jobs), including the
+  downstream corridor, endpoint and asymptotic-speed modules.
+* `SpinalWeightTail.lean` additionally checks the actual all-ancestor
+  family-cutoff count on the original raw field and the empty-address count
+  without a nonempty child-label type. All 41 registered axiom reports use
+  only `propext`, `Classical.choice` and `Quot.sound`.
+* Mathlib style lint, the import-boundary audit (including the three new
+  non-BRW owners) and all 32 Python tests passed.
