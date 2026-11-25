@@ -8,6 +8,7 @@ module
 
 public import Analysis.Asymptotics.Scale.Block.Length
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Analysis.Asymptotics.Scale.Power.Basic
 
 /-!
 # Intermediate power block lengths
@@ -42,12 +43,11 @@ private lemma tendsto_rpow_div_rpow_zero
     {width : ℕ → ℝ} (hwidth : Tendsto width atTop atTop)
     {p q : ℝ} (hpq : p < q) :
     Tendsto (fun n => width n ^ p / width n ^ q) atTop (𝓝 0) := by
-  have hpow := (tendsto_rpow_neg_atTop (sub_pos.mpr hpq)).comp hwidth
-  apply hpow.congr'
-  filter_upwards [hwidth.eventually (eventually_gt_atTop 0)] with n hn
-  calc
-    _ = width n ^ (p - q) := by dsimp; congr 1; ring
-    _ = _ := Real.rpow_sub hn p q
+  have hunit : Tendsto (fun n => width n ^ q / width n ^ q) atTop (𝓝 (1 : ℝ)) := by
+    apply tendsto_const_nhds.congr'
+    filter_upwards [hwidth.eventually_gt_atTop 0] with n hn
+    simp [(Real.rpow_pos_of_pos hn q).ne']
+  exact tendsto_rpow_div_of_ratio_limit hwidth hunit one_ne_zero hpq
 
 /-- For exponents `0 < p < q`, the floor of `x ^ q` eventually lies above
 the lower power `x ^ p`; the floor error is absorbed by that same lower

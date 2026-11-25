@@ -11,6 +11,8 @@ public import Probability.BranchingRandomWalk.Assumptions.SpinalWeightTail
 public import Probability.Process.RandomWalk.Path.Corridor.Affine
 public import Probability.Distributions.Moments.Real
 import Probability.Process.RandomWalk.SmallDeviation.Marked.FiniteVarianceLower
+import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceUpper.Basic
+import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.PathCount
 
 /-!
 # Actual family-cutoff corridor first moments under weak spinal tails
@@ -26,6 +28,13 @@ import Probability.Process.RandomWalk.SmallDeviation.Marked.FiniteVarianceLower
   path count starts at zero, has lower edge `-(a+1/2)Lₙ`, width `Lₙ`,
   slope `c/Lₙ²`, and terminal upper bound
   `(b+ρ-a)Lₙ+cHₙ/Lₙ²`.
+
+* `ProbabilityTheory.BranchingRandomWalk.Spine.exists_lintegral_sum_pathGeneration_affineCorridorPrefix_selectFamily_le_exp_of_finiteVariance`:
+  under original boundary normalization and centered spinal variance `σ²>0`,
+  for `c≥0`, `0<d<π²σ²/2`, `lower∈[-L,0]` and every measurable family
+  selection `A`, uniformly in `H` and large `L`,
+  `E_μA ∑_(j≤H) Zⱼ(prefix) ≤ (H+1) exp(lower+L+√L+max(c-d,0)H/L²)`.
+  This upper estimate uses no reproductive weak-tail hypothesis.
 
 Only the original spinal law is centered and boundary-normalized. The mark
 is `log₊W`, with its dependence on the chosen displacement retained. Every
@@ -183,5 +192,70 @@ theorem eventually_lintegral_pathGeneration_affineCorridor_cutoff_ge_of_finiteVa
     simp only [ite_eq_left hkeep, Set.indicator_of_mem (hfit ω hω), mul_one, le_refl]
   · rw [Set.indicator_of_notMem hω]
     exact bot_le
+
+/-- A uniform affine-tube first-moment bound controls cumulative population
+after arbitrary measurable whole-family selection. This is the population
+estimate used with Markov's inequality in B. Mallein, *N-branching random
+walk with α-stable spine*, proof of Lemma 3.4 (arXiv:1503.03762v2). -/
+theorem exists_lintegral_sum_pathGeneration_affineCorridorPrefix_selectFamily_le_exp_of_finiteVariance
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ι X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    {variance c d : ℝ}
+    (hcentered : IsCenteredSecondMoment (tiltedPotentialLaw φ (-1) μ) variance)
+    (hvariance : 0 < variance) (hc : 0 ≤ c) (hd : 0 < d)
+    (hcritical : d < (Real.pi ^ 2 / 2) * variance) :
+    ∃ L₀ : ℝ, 1 ≤ L₀ ∧ ∀ L ≥ L₀, ∀ A : Set (Step ι X), MeasurableSet A →
+      ∀ lower : ℝ, -L ≤ lower → lower ≤ 0 → ∀ H : ℕ,
+      (∫⁻ field, ∑ j : Fin (H + 1), pathGeneration φ j.val
+        ((affineCorridorPrefix j.val lower (c / L ^ 2) L).indicator
+          (fun _ => (1 : ℝ≥0∞))) 0 field
+        ∂offspringFieldLaw (μ.map (Step.selectFamily A))) ≤
+      ((H : ℝ≥0∞) + 1) * ENNReal.ofReal (Real.exp
+        (lower + L + L ^ (1 / 2 : ℝ) + max (c - d) 0 * (H : ℝ) / L ^ 2)) := by
+  let ν := tiltedPotentialLaw φ (-1) μ
+  let : IsProbabilityMeasure ν := tiltedPotentialLaw_isProbability φ μ hboundary
+  obtain ⟨L₀, hL₀, htube⟩ := SmallDeviation.DriftedTube.exists_driftedTubeProbability_le_exp_of_finiteVariance
+    ν hcentered hvariance (by norm_num : (0 : ℝ) < 1 / 2) hc hd hcritical
+  refine ⟨L₀, hL₀, ?_⟩
+  intro L hL A hA lower hlower hupper H
+  let B := lower + L + L ^ (1 / 2 : ℝ) + max (c - d) 0 * (H : ℝ) / L ^ 2
+  have hpoint (j : Fin (H + 1)) :
+      (∫⁻ field, pathGeneration φ j.val
+        ((affineCorridorPrefix j.val lower (c / L ^ 2) L).indicator
+          (fun _ => (1 : ℝ≥0∞))) 0 field ∂offspringFieldLaw (μ.map (Step.selectFamily A))) ≤
+        ENNReal.ofReal (Real.exp B) := by
+    let C := affineCorridorPrefix j.val lower (c / L ^ 2) L
+    have hC : MeasurableSet C := measurableSet_affineCorridorPrefix _ _ _ _
+    have hdom := lintegral_pathGeneration_selectFamily_le φ μ hA j.val
+      (F := C.indicator (fun _ => (1 : ℝ≥0∞))) (measurable_const.indicator hC) 0
+    have hmean := lintegral_pathGeneration_le_exp_mul_spineProbability φ μ hboundary j.val 0
+      (lower + c / L ^ 2 * (j.val : ℝ) + L) C hC (fun h hh => (hh (Fin.last j.val)).2)
+    have hprob : tiltedIncrementFieldLaw φ μ {z | history j.val 0 z ∈ C} ≤
+        ENNReal.ofReal (Real.exp (L ^ (1 / 2 : ℝ) - d * ((j.val : ℝ) / L ^ 2))) := by
+      refine (measure_mono
+        (SmallDeviation.DriftedTube.affineCorridorPrefix_history_subset_driftedTubeEvent
+          j.val 0 lower c L)).trans ?_
+      change iidSequenceLaw ν (SmallDeviation.DriftedTube.driftedTubeEvent j.val L c (lower - 0)) ≤ _
+      rw [sub_zero, ← ofReal_measureReal (measure_ne_top _ _)]
+      exact ENNReal.ofReal_le_ofReal (htube L hL lower hlower hupper j.val)
+    refine hdom.trans (hmean.trans ((mul_le_mul' le_rfl hprob).trans ?_))
+    rw [sub_zero, ← ENNReal.ofReal_mul (Real.exp_nonneg _), ← Real.exp_add]
+    apply ENNReal.ofReal_le_ofReal
+    apply Real.exp_le_exp.mpr
+    have h1 := mul_le_mul_of_nonneg_right (le_max_left (c - d) 0) (Nat.cast_nonneg j.val)
+    have hj : (j.val : ℝ) ≤ H := by exact_mod_cast (show j.val ≤ H by omega)
+    have h2 := mul_le_mul_of_nonneg_left hj (le_max_right (c - d) 0)
+    have h3 := div_le_div_of_nonneg_right (h1.trans h2) (sq_nonneg L)
+    dsimp [B]
+    rw [sub_mul, sub_div] at h3
+    rw [div_mul_eq_mul_div, ← mul_div_assoc]
+    linarith only [h3]
+  rw [lintegral_finsetSum' Finset.univ (fun j _ =>
+    (pathGeneration_measurable φ j.val
+      (measurable_const.indicator (measurableSet_affineCorridorPrefix _ _ _ _)) 0).aemeasurable)]
+  calc
+    _ ≤ ∑ _j : Fin (H + 1), ENNReal.ofReal (Real.exp B) := Finset.sum_le_sum (fun j _ => hpoint j)
+    _ = _ := by simp [B]
 
 end ProbabilityTheory.BranchingRandomWalk.Spine

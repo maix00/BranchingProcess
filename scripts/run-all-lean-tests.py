@@ -12,6 +12,10 @@ import tempfile
 
 AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/Branching/FamilyCutoffMoments.lean"): (
+        "Asymptotics.tendsto_rpow_div_of_ratio_limit",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.affineCorridorPrefix_history_subset_driftedTubeEvent",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.eventually_exp_le_measure_hasPathHistoryIn_affineCorridor_cutoff_of_cubicScale",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.exists_lintegral_sum_pathGeneration_affineCorridorPrefix_selectFamily_le_exp_of_finiteVariance",
         "ProbabilityTheory.BranchingRandomWalk.Spine.pathGeneration_eq_tsum_fin",
         "ProbabilityTheory.BranchingRandomWalk.Spine.pathManyToOne_selectFamily",
         "ProbabilityTheory.BranchingRandomWalk.Spine.pathManyToOneCore",

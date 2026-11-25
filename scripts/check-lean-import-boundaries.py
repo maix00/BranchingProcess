@@ -31,6 +31,9 @@ FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
 GENERAL_LAYER_BOUNDARIES = {
+    "Analysis.Asymptotics.Scale.Power.Basic": (
+        "Probability", "MeasureTheory", "Combinatorics",
+    ),
     "Probability.BranchingRandomWalk.Spine.Path.ManyToOne.FamilySelection": (
         "Probability.Process.RandomWalk.SmallDeviation",
         "Probability.BranchingRandomWalk.Selection.NSelection",
