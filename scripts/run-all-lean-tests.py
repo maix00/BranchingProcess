@@ -11,6 +11,17 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/WeakSpinalTail.lean"): (
+        "ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_tiltedFamilyChildLaw_otherWeight",
+        "ProbabilityTheory.BranchingRandomWalk.HasFiniteCrossWeight.hasSpinalWeightTail",
+        "ProbabilityTheory.BranchingRandomWalk.StepLaw.tiltedMarkedPotentialLaw_totalWeight_sortedPotentialImage",
+        "ProbabilityTheory.BranchingRandomWalk.StepLaw.tiltedPotentialLaw_sortedPotentialImage",
+        "ProbabilityTheory.BranchingRandomWalk.StepLaw.sortedPotentialImage_hasSpinalWeightTail_iff",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_countableRootEndpointMinimum_ge_le_polynomial_of_spinalWeightTail",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_countableRootEndpointMinimum_ge_le_polynomial_of_initialExponent",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.eventually_logSq_mul_speed_lt_of_firstMoment",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.exists_speed_with_logSq_limit",
+    ),
     Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SpinalWeight.lean"): (
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.lintegral_size_le_sum_pathGeneration_restartedWindow",
         "ProbabilityTheory.BranchingRandomWalk.Spine.measure_hasPathHistoryIn_selectFamily_le",

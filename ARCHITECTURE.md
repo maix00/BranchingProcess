@@ -928,3 +928,19 @@ upper-tail entries. Neither aliases nor old-path stubs remain. The capacity
 and causal-path directories each have at most five direct Lean files.
 References and detailed formulas are recorded in
 `docs/architecture/SPINAL_WEIGHT_TAIL_AUDIT.md`.
+
+
+`Step/Ordering/Spine.lean` preserves the full existing tilted
+`(displacement,total family weight)` law under ordering, at arbitrary tilt and
+without normalization or moment assumptions. Scalar law equality and weak-tail
+transport derive from this joint statement. The complete weak-tail
+positive-start polynomial endpoint entry lives in `Endpoint/Sequence/UpperTail/`;
+its joint logarithmic parameter selection and specific affine-budget conversion
+are internal under `Lemmas/SpinalWeight/`. The finite-cross specialization now
+derives from it, using the original-bias compensation for other-child weight.
+The principal `Frontier/AsymptoticSpeed/Limit/Speed.lean` accepts the original
+weak reproductive tail and leftmost first moment. Its expectation proof reuses
+two independent lineages, uniform stopped continuations and the existing
+restart-mean comparison. No parallel speed process or sorted bias is defined.
+See `docs/architecture/SPINAL_WEIGHT_TAIL_AUDIT.md` for formulas and the
+pinned Mathlib/native interface review.
