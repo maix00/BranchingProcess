@@ -10,6 +10,7 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.WithTop
 public import Mathlib.MeasureTheory.Measure.Prod
 public import MeasureTheory.Measure.LowerTail
 public import Probability.Process.HittingTime.PopulationOverflow
+public import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.Basic
 public import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Trajectory
 import Probability.BranchingRandomWalk.Population.Processes.Selected.ParameterizedRootIndexed
 import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Restarted.Coupling
@@ -20,6 +21,12 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.Resta
 # First-N comparison through population overflow
 
 ## Public declarations
+
+- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.measure_endpointMinimum_gt_le_terminalAvoidance_add_capacityFailure`:
+  under almost-sure left local finiteness and `N>0`, for any finite-slice causal
+  population `P` with an initial dominating injection,
+  `P(min NSelected_n>x) ≤ P(∀p∈P_n, position(p)>x)+P(Cap(N,n)ᶜ)`.
+  Empty minima are `+∞`; no normalization or moment hypothesis is imposed.
 
 - `RootIndexed.restartedRealPositionComparison_throughOverflow_ae`:
   $\tau=\inf\{n:|P_n|>N\}$ is a stopping time, and the installed and left
@@ -593,6 +600,98 @@ theorem RootIndexed.restartedRealPositionMinimum_lowerTailDominates
       (((Measure.dirac ()).prod Q).map (G ∘ Prod.snd)) := by
     simpa only [F, G, Function.comp_def, hτ, Q] using horder n
   rwa [hFmap, hGmap] at hspecialized
+
+set_option backward.isDefEq.respectTransparency false in
+/-- The stopped minimum comparison bounds the original first-`N` endpoint
+law by terminal avoidance in any causal comparison population and capacity
+failure. See Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk
+with Infinite Offspring* (Fudan University, 2026), Chapter 3, Lemma 3.15. -/
+theorem RootIndexed.measure_endpointMinimum_gt_le_terminalAvoidance_add_capacityFailure
+    {Root α : Type*} [Countable α]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)] [Countable (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)]
+    (μ : Measure (Step α ℝ)) [IsProbabilityMeasure μ]
+    (N : ℕ) (hN : 0 < N) (roots : Finset Root) (initialPosition : Root → ℝ)
+    (hleftFinite : ∀ᵐ ξ ∂μ, ξ.IsLeftLocallyFinite)
+    (P : RootIndexed.CausalPopulation (RootIndexed.StepField Root α ℝ) Root α ℝ
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := ℝ)) id)
+    (slices : P.FiniteSlices)
+    (initialInjection : ∀ field, Order.DominatingMap
+      (↑(slices.toFinset 0 field) : Set (RootIndexed.TreeNode Root α))
+      (↑(RootIndexed.initialPopulation (α := α) roots) : Set (RootIndexed.TreeNode Root α))
+      (fun p => initialPosition p.1) (fun q => initialPosition q.1))
+    (n : ℕ) (x : ℝ) :
+    let Q := RootIndexed.stepFieldLaw (Root := Root) μ
+    Q {field | (x : WithTop ℝ) <
+      (RootIndexed.selectedPopulationTotalized N roots initialPosition id id n field).inf
+        (fun p => ((RootIndexed.position initialPosition id field p.1 p.2 : ℝ) : WithTop ℝ))} ≤
+      Q {field | ¬ ∃ p ∈ P n field, RootIndexed.position initialPosition id field p.1 p.2 ≤ x} +
+        Q (P.capacityEvent N n)ᶜ := by
+  intro Q
+  let ℱ := RootIndexed.stepFiltration (Root := Root) (α := α) (X := ℝ)
+  let τ := finsetPopulationOverflowTime slices.toFinset N
+  let F := fun field : RootIndexed.StepField Root α ℝ => if (n : WithTop ℕ) ≤ τ field then
+    (slices.toFinset n field).inf fun p =>
+      ((RootIndexed.position initialPosition id field p.1 p.2 : ℝ) : WithTop ℝ) else ⊤
+  let G := fun field : RootIndexed.StepField Root α ℝ =>
+    (RootIndexed.selectedPopulationTotalized N roots initialPosition id id n field).inf fun p =>
+      ((RootIndexed.position initialPosition id field p.1 p.2 : ℝ) : WithTop ℝ)
+  have hpos (p : RootIndexed.TreeNode Root α) : Measurable fun field =>
+      RootIndexed.position initialPosition id field p.1 p.2 :=
+    (RootIndexed.position_measurable initialPosition id measurable_id p.1 p.2).mono
+      (ℱ.le p.2.length) le_rfl
+  have hstop : IsStoppingTime ℱ τ := by
+    apply populationOverflowTime_isStoppingTime_of_countable
+    intro k
+    exact (measurable_of_countable
+      (fun s : Finset (RootIndexed.TreeNode Root α) => (↑s : Set (RootIndexed.TreeNode Root α)))).comp
+      (slices.measurable_toFinset k)
+  have hF : Measurable F := (measurable_finsetMinimum
+    ((slices.measurable_toFinset n).mono (ℱ.le n) le_rfl) hpos).piecewise
+    (ℱ.le n _ (hstop.measurableSet_ge_of_countable n)) measurable_const
+  have hG : Measurable G := measurable_finsetMinimum
+    ((RootIndexed.selectedPopulationTotalized_adapted N roots initialPosition
+      id measurable_id id measurable_id n).mono (ℱ.le n) le_rfl) hpos
+  have horder := RootIndexed.restartedRealPositionMinimum_lowerTailDominates
+    μ N hN roots initialPosition hleftFinite P slices initialInjection n
+  have hlow : Q {field | F field ≤ (x : WithTop ℝ)} ≤
+      Q {field | G field ≤ (x : WithTop ℝ)} := by
+    have h := horder (x : WithTop ℝ)
+    change (Q.map F) (Set.Iic (x : WithTop ℝ)) ≤ (Q.map G) (Set.Iic (x : WithTop ℝ)) at h
+    rw [Measure.map_apply hF measurableSet_Iic, Measure.map_apply hG measurableSet_Iic] at h
+    exact h
+  have hstrict : Q {field | (x : WithTop ℝ) < G field} ≤
+      Q {field | (x : WithTop ℝ) < F field} := by
+    have hFset : MeasurableSet {field | F field ≤ (x : WithTop ℝ)} := hF measurableSet_Iic
+    have hGset : MeasurableSet {field | G field ≤ (x : WithTop ℝ)} := hG measurableSet_Iic
+    have hFcompl : {field | F field ≤ (x : WithTop ℝ)}ᶜ =
+        {field | (x : WithTop ℝ) < F field} := by ext field; simp
+    have hGcompl : {field | G field ≤ (x : WithTop ℝ)}ᶜ =
+        {field | (x : WithTop ℝ) < G field} := by ext field; simp
+    rw [← hFcompl, ← hGcompl, prob_compl_eq_one_sub hGset, prob_compl_eq_one_sub hFset]
+    exact tsub_le_tsub_left hlow 1
+  refine hstrict.trans ((measure_mono ?_).trans (measure_union_le _ _))
+  intro field hh
+  by_cases hcap : field ∈ P.capacityEvent N n
+  · left
+    rintro ⟨p, hp, hpx⟩
+    have hbefore : (n : WithTop ℕ) ≤ τ field := by
+      apply le_of_lt
+      apply lt_of_not_ge
+      intro hover
+      obtain ⟨j, hj, hcard⟩ := (finsetPopulationOverflowTime_le_iff _ N n field).1 hover
+      have hc := (P.mem_capacityEvent_iff N n field).1 hcap j hj
+      rw [(slices j field).encard_eq_coe_toFinset_card] at hc
+      exact (not_lt_of_ge (by exact_mod_cast hc)) hcard
+    have hpFin : p ∈ slices.toFinset n field := (slices.mem_toFinset n field p).2 hp
+    have hmin : F field ≤ (x : WithTop ℝ) := by
+      rw [show F field = (slices.toFinset n field).inf (fun q =>
+        ((RootIndexed.position initialPosition id field q.1 q.2 : ℝ) : WithTop ℝ)) by
+          simp only [F, ite_eq_left hbefore]]
+      exact (Finset.inf_le hpFin).trans (by exact_mod_cast hpx)
+    exact (not_lt_of_ge hmin) hh
+  · exact Or.inr hcap
+
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 

@@ -29,6 +29,10 @@ import all Probability.BranchingRandomWalk.Spine.Tube.Corridor.Lemmas.FamilySele
   `β>α+4ρ+a+1/2+2(dLower-dUpper)t`, then the same actual one-root
   success probability is eventually at least `exp(-βLₙ)`.
 
+* `ProbabilityTheory.BranchingRandomWalk.Spine.eventually_exp_le_measure_hasPathHistoryIn_affineCorridor_of_cubicScale`:
+  the same `exp(-βLₙ)` lower bound holds for the original BRW, since whole-family
+  selection only removes paths. It retains the original weak-tail assumption.
+
 The first and second moments refer to the same `pathGeneration` under the
 same actual selected offspring law. The success event is the existing
 `hasPathHistoryIn`. The proof calls the existing Paley--Zygmund interface.
@@ -163,5 +167,38 @@ theorem eventually_exp_le_measure_hasPathHistoryIn_affineCorridor_cutoff_of_cubi
     hscale hH ht hα.le hb hρ hdUpper.le hc hβ
   filter_upwards [hprob, hbudget] with n hp hbnd
   exact hbnd.trans hp
+
+/-- The original BRW inherits the cutoff process's weak-tail success bound.
+This removes the truncation only after its first/second moments have been used;
+the original spine remains the centered law throughout. See B. Mallein,
+*N-branching random walk with α-stable spine*, Lemma 3.4,
+arXiv:1503.03762v2. -/
+theorem eventually_exp_le_measure_hasPathHistoryIn_affineCorridor_of_cubicScale
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    {sigma c α dUpper dLower a b ρ t β : ℝ}
+    (hcentered : IsCenteredSecondMoment (tiltedPotentialLaw φ (-1) μ) (sigma ^ 2))
+    (hσ : 0 < sigma) (htail : HasSpinalWeightTail φ μ) (hα : 0 < α)
+    (hdUpper : 0 < dUpper) (hUpperCritical : dUpper < (Real.pi ^ 2 / 2) * sigma ^ 2)
+    (hLowerCritical : (Real.pi ^ 2 / 2) * sigma ^ 2 < dLower) (hc : dUpper ≤ c)
+    (ha : -(1 / 2 : ℝ) < a) (ha' : a < 1 / 2)
+    (hb : -(1 / 2 : ℝ) < b) (hb' : b < 1 / 2) (hρ : 0 < ρ) (ht : 0 < t)
+    (hβ : α + 4 * ρ + a + 1 / 2 + 2 * (dLower - dUpper) * t < β)
+    {scale : ℕ → ℝ} {horizon : ℕ → ℕ} (hscale : Tendsto scale atTop atTop)
+    (hH : Tendsto (fun n => (horizon n : ℝ) / scale n ^ 3) atTop (𝓝 t)) :
+    ∀ᶠ n in atTop, ENNReal.ofReal (Real.exp (-β * scale n)) ≤
+      offspringFieldLaw μ
+        (hasPathHistoryIn φ (horizon n) 0
+          (affineCorridorThrough (horizon n) (-(a + 1 / 2) * scale n)
+            (c / scale n ^ 2) (scale n)
+            ((b + ρ - a) * scale n + c * (horizon n : ℝ) / scale n ^ 2))) := by
+  have h := eventually_exp_le_measure_hasPathHistoryIn_affineCorridor_cutoff_of_cubicScale
+    φ μ hboundary hcentered hσ htail hα hdUpper hUpperCritical hLowerCritical hc
+    ha ha' hb hb' hρ ht hβ hscale hH
+  filter_upwards [h] with n hn
+  exact hn.trans (measure_hasPathHistoryIn_selectFamily_le φ μ
+    (measurableSet_le (totalPotentialWeight_measurable φ (-1)) measurable_const)
+    (horizon n) 0 _ (measurableSet_affineCorridorThrough _ _ _ _ _))
 
 end ProbabilityTheory.BranchingRandomWalk.Spine

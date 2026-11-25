@@ -1491,3 +1491,38 @@ definitions. The touched directories have at most 7 direct Lean files.
 This is the cutoff-budget step of B. Mallein, *N-branching random walk with
 α-stable spine*, proof of Lemma 3.4, arXiv:1503.03762v2; final causal capacity
 and endpoint/speed migration remain separate open obligations.
+
+
+## Finite-root weak-tail endpoint bridges (2026-11-25)
+
+The causal capacity first-moment owner now exposes the actual single-root
+count sum without boundary or moment hypotheses; its original spinal
+specializations derive from it. `Capacity/FamilySelection.lean` supplies the
+complete affine capacity bound, with one width threshold uniform across root
+label types, root counts, horizons, capacities and measurable whole-family
+selections. `Path/Survival.lean` owns the independent-root transfer from a
+compatible history event to a specified terminal-position region in the
+actual causal population; it needs only almost-sure finite family weight.
+These complete reusable probability statements remain outside `Lemmas/`.
+
+The original-law history-success comparison lives in
+`Spine/Path/ManyToOne/Event.lean`. The cutoff cubic-scale result now derives
+its original-BRW counterpart through this interface. The stopped minimum
+owner `Law/Causal/Restarted/Overflow.lean` derives the upper-tail decomposition
+from its existing lower-tail comparison and reuses its private measurability
+helper. No new coupling, process, endpoint observable or measurability
+abstraction is introduced. Mathlib's Markov, measure pushforward, complement
+and finite-infimum APIs and the existing independent-root interfaces are
+used directly; pinned revision `26573066084e6e2aa8526ea358bc43b66d96f970` and
+the official Markov documentation were checked.
+
+`Endpoint/Sequence/UpperTail/SpinalWeight.lean` is the public original first-N
+endpoint bound under the weak spinal tail. Its root count is arbitrary and
+its error is the sum of independent-root avoidance and capacity failure.
+The log-scale parameter optimization and final endpoint/speed migration are
+not yet discharged. The two existing complete upper-tail entries move with
+it into `UpperTail/`, leaving seven direct sequence files and three public
+upper-tail entries. Neither aliases nor old-path stubs remain. The capacity
+and causal-path directories each have at most five direct Lean files.
+References and detailed formulas are recorded in
+`docs/architecture/SPINAL_WEIGHT_TAIL_AUDIT.md`.

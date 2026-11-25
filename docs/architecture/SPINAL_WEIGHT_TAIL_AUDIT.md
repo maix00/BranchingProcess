@@ -122,16 +122,15 @@ unfinished theorem is promoted by placing its conclusion in an assumption.
 
 These are still open, not consequences already supplied by a new hypothesis:
 
-1. The actual family-cutoff first moment, MRCA second moment, and exponential
-   one-root success bound on cubic time scales are proved. A cumulative
-   selected-prefix first-moment upper bound is also proved. Choose the
-   internal window, tail cutoff and rate gaps on the target `log N` scales,
-   and connect these single-root count bounds to the actual finite-root
-   causal population used by capacity comparison.
-2. Combine the one-root bound with capacity comparison to replace the
-   positive-initial-exponent upper-tail input. Then transport the weak
-   assumption through ordering and assemble the existing endpoint-mean,
-   continuation-mean, restart-mean and speed comparisons.
+1. The actual finite-root causal capacity bridge, independent-root amplification,
+   and the original first-`N` endpoint bound with an explicit affine budget are
+   proved. Choose the internal window, tail cutoff and rate gaps on the target
+   `log N` scales and turn that budget into the polynomial upper tail for
+   `mₙ=⌊Nₙ^A⌋`, `0<A<1`.
+2. Replace the positive-initial-exponent upper-tail input with that weak-tail
+   polynomial result. Transport the weak assumption through ordering and
+   assemble the endpoint-mean, continuation-mean, restart-mean and speed
+   comparisons. These final interfaces still retain finite cross weight.
 
 The full continuous-moving-boundary statement of Mallein's Theorem 2.3 is
 outside the present affine-corridor coverage; it is not assumed in these
@@ -510,3 +509,141 @@ private: it is used only inside its own proof-support module and appears
 only in proof terms. Cross-file helpers retain ordinary lemma visibility.
 The principal success entry and its regression were rebuilt after this
 change; all 12 configured axiom reports passed again.
+
+
+## Actual finite-root capacity and endpoint transfer (2026-11-25)
+
+`Population/Processes/Causal/Capacity/FirstMoment.lean` now separates the
+finite-root actual-count inequality
+
+`E size(P_R,j) ≤ ∑_(r∈R) E pathGeneration(φ,j,Ψ,xᵣ)`
+
+from its spinal specialization. The count bridge uses no boundary or moment
+condition. Both previous one-root and finite-root spinal estimates derive
+from this common bridge, using existing root-marginal integration and
+many-to-one; their previous independent integration proofs were removed.
+
+`Capacity/FamilySelection.lean` applies it under
+`μA=μ.map(selectFamily A)` and the existing cumulative selected-count bound.
+For the existing relative affine-corridor population, with original centered
+spinal variance `σ²>0`, `c≥0`, `0<d<κ=π²σ²/2`, large `L`, and
+`lower∈[-L,0]`,
+
+`P_μA(Cap(N,H)ᶜ)`
+`≤ |R|(H+1)exp(lower+L+√L+max(c-d,0)H/L²)/(N+1)`.
+
+The same width threshold works for all measurable family events, root-label
+types with the stated countability/measurability, root sets, initial positions,
+horizons and capacities. In particular it supports varying root counts.
+This estimate uses neither the reproductive weak tail nor finite cross weight.
+Its original-law case is obtained by accepting every family.
+
+`Path/Survival.lean` transfers a measurable single-root history success event
+to the actual finite-root causal population. For a compatible history set
+whose endpoints are in `B`, and `q≤P_μ(hasPathHistoryIn φ H 0 C)`,
+
+`P_μ(∀p∈P_H, position(p)∉B)≤exp(-m q)`.
+
+Only almost-sure finite negative-exponential family weight is needed to
+activate the totalized population's guard. Boundary normalization, variance,
+nonempty offspring, and time positivity are absent from this generic theorem.
+The independent-root avoidance theorem and existing path-to-population
+inclusion supply the argument, without another branching law or population.
+
+`Spine/Path/ManyToOne/Event.lean` now proves that whole-family selection only
+decreases arbitrary measurable history-success probabilities. The cubic-scale
+success entry in `Spine/Tube/Corridor/FamilySelection.lean` consequently
+supplies the original BRW's `exp(-βLₙ)` bound from the cutoff bound. All
+retained positions agree pathwise. Thus the original comparison population
+and the original first-`N` field law can be used throughout the capacity and
+endpoint comparison; no filtered-field coupling is needed.
+
+`Selection/NSelection/Law/Causal/Restarted/Overflow.lean` derives
+
+`P(min NSelected_H>x)`
+`≤ P(∀p∈P_H, position(p)>x)+P(Cap(N,H)ᶜ)`
+
+from its existing stopped-minimum lower-tail domination. It reuses the
+same private finite-minimum measurability calculation and constructs no new
+coupling. The generic transfer assumes left local finiteness, positive
+capacity and an initial dominating injection, without boundary or moment
+conditions. Empty minima are `+∞`. The real totalized endpoint minimum is
+bounded by this extended minimum, including the empty case.
+
+The complete application is
+`EndpointDeviation/Endpoint/Sequence/UpperTail/SpinalWeight.lean`, theorem
+`eventually_measure_endpointMinimum_gt_le_affineBudget_of_spinalWeightTail`.
+Under the original boundary normalization, centered finite spinal variance,
+and `HasSpinalWeightTail`, let `Lₙ→∞`, `Hₙ/Lₙ³→t>0`,
+`0<dUpper<κ<dLower`, `c≥dUpper`, `α,ρ>0`, and internal centers `a,b`.
+For `β>α+4ρ+a+1/2+2(dLower-dUpper)t`, write
+`lowerₙ=-(a+1/2)Lₙ`, `Uₙ=(b+ρ-a)Lₙ+cHₙ/Lₙ²` and
+`Bₙ=lowerₙ+Lₙ+√Lₙ+max(c-dUpper,0)Hₙ/Lₙ²`. Then the original
+first-`Nₙ` real endpoint minimum from arbitrary `mₙ` zero-position roots obeys
+
+`P(Mₙ>Uₙ) ≤ exp(-mₙ exp(-βLₙ)) + mₙ(Hₙ+1)exp(Bₙ)/(Nₙ+1)`
+
+eventually, assuming only eventual positivity of `Nₙ`. The actual finite-root
+law is used on both sides. Finite cross weight, a logarithmic square moment,
+and nonempty offspring are not extra assumptions. This is a proved explicit
+endpoint bound; optimization of its logarithmic parameters and final weak-tail
+speed assembly are still open.
+
+Abstraction/native review: pinned Mathlib
+`26573066084e6e2aa8526ea358bc43b66d96f970` and its
+[Markov documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Integral/Lebesgue/Markov.html)
+were checked. The existing capacity theorem already calls
+`meas_ge_le_lintegral_div`; existing finite-root expectations and independent
+root avoidance supply the root operations. Native `Measure.map_apply`,
+`prob_compl_eq_one_sub`, `tsub_le_tsub_left`, and finite-infimum inequalities
+are used directly for the endpoint transfer. None of these native results is
+reimplemented. The finite-root count, capacity, avoidance and endpoint-law
+bridges are complete reusable mathematical statements outside `Lemmas/`.
+Single-file affine-history algebra remains private.
+
+Reference alignment: the cutoff moments follow B. Mallein, *N-branching
+random walk with α-stable spine*, Lemma 3.4; independent-root amplification
+appears in §4.4, proof of Lemma 4.8, arXiv:1503.03762v2. The original spatial
+convention is reflected. The capacity budget extends Wang Yiyang, *Asymptotic
+Speed of the N-Branching Random Walk with Infinite Offspring* (Fudan University,
+2026), Chapter 4, proof of Theorem 1.1, using Chapter 3, Lemma 3.4. The coupling
+is the existing implementation of Chapter 3, Lemma 3.15. The explicit fixed-
+horizon endpoint bound combines these ingredients; it is not claimed to be
+Mallein's interval-in-time statement of Lemma 4.8. No LaTeX changes are included.
+
+Directory review: the former nine direct sequence files would become ten.
+The two existing complete upper-tail entries `PositiveInitialExponent` and
+`SingleRoot`, together with the new weak-tail entry `SpinalWeight`, are grouped
+in `Sequence/UpperTail/`. Seven direct sequence files remain. Imports and
+recorded paths are migrated directly; old paths and compatibility aliases are
+absent. These are public results, so they are outside `Lemmas/`.
+
+
+The remaining logarithmic choice can be stated precisely. For
+`mₙ=⌊Nₙ^A⌋`, `Lₙ=w log Nₙ`, `Hₙ/(log Nₙ)³→T>0` and
+`lowerₙ=-b₀ log Nₙ`, the displayed bound is polynomially small once
+
+`βw<A`,
+`A+w-b₀+(c-dUpper)T/w²<1`,
+
+and the terminal coefficient
+`-b₀+(b+1/2+ρ)w+cT/w²` is below the desired endpoint coefficient.
+The success theorem additionally requires
+`αw+4ρw+b₀+2(dLower-dUpper)T/w²<βw`.
+Formalizing this joint parameter choice, its floor-root asymptotics, and
+transport to the final endpoint/speed interfaces remains the next obligation;
+these inequalities are explanatory parameter targets, not additional proved
+asymptotic theorems in this entry.
+
+
+Finite-root/endpoint validation (2026-11-25): `LEAN_NUM_THREADS=2 lake build`
+passed (12051 jobs), including the renamed upper-tail entries and all existing
+endpoint and speed clients. All 156 working-tree Lean tests passed with the
+configured axiom allowlists. The new `EndpointDeviation/SpinalWeight.lean`
+regression tests zero-horizon terminal success under finite family weight,
+without boundary normalization, positive variance or nonextinction; its 7
+named bridge/application axiom reports passed. Mathlib style lint passed on
+1835 production modules, import-boundary checks passed including the new
+weak-entry/strong-route separation guards, and all 32 Python tests passed.
+`git diff --check` passed. No axiom, placeholder, dependency change or LaTeX
+edit is introduced.

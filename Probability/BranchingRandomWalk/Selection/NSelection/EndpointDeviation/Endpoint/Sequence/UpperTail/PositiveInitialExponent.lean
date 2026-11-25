@@ -20,7 +20,7 @@ import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviatio
 
 ## Public declarations
 
-* `eventually_countableRootEndpointMinimum_ge_le_polynomial_of_initialExponent`:
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_countableRootEndpointMinimum_ge_le_polynomial_of_initialExponent`:
   when $0<a<1$, $H_n/(\log N_n)^3\to t>0$, and
   $\zeta>-a+\pi^2\sigma^2t/2$, the minimum $M_n$ from
   $\lfloor N_n^a\rfloor$ zero-position roots at capacity $N_n$ satisfies

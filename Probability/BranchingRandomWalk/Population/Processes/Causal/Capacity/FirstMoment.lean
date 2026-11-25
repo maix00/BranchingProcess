@@ -17,6 +17,10 @@ public import Probability.Process.RandomWalk.Path.Restart.FirstMoment
 
 ## Public declarations
 
+* `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.lintegral_size_le_sum_pathGeneration_restartedWindow`:
+  `E size(P_R,n) ≤ ∑_(r∈R) E pathGeneration(φ,n,Ψ,xᵣ)` for the actual
+  offspring law, without boundary normalization or moment assumptions.
+
 * `ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.lintegral_size_le_spine_restartedWindow` bounds the expected size of the
   one-root selected generation by the tilted-spine integral
   `∫⁻ increment, exp(displacement n increment) * restartedWindowTest ...`.
@@ -57,6 +61,42 @@ open ProbabilityTheory.BranchingRandomWalk.Spine
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
+/-- Finite-root population size is controlled by the actual single-root
+path counts under the same offspring law. No boundary normalization or moment
+assumption is required; root marginal integration is the only law transfer. -/
+theorem lintegral_size_le_sum_pathGeneration_restartedWindow
+    {Root α Mark : Type*} [Countable α] [MeasurableSpace Mark]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    (roots : Finset Root) (initialPosition : Root → ℝ) (d : Mark → ℝ)
+    (hd : Measurable d)
+    (μ : Measure (Combinatorics.Branching.Step α Mark))
+    [IsProbabilityMeasure μ]
+    (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (hwindow : ∀ n, MeasurableSet (window n))
+    (hzero : 0 ∈ window 0)
+    (upper : ℕ → ℝ) (hupper : ∀ n, window n ⊆ Set.Iic (upper n))
+    (n : ℕ) :
+    let P := ofRestartedRealPositionSets initialPosition d hd
+      (RootIndexed.initialPopulation (α := α) roots)
+      (by simp [RootIndexed.mem_initialPopulation_iff])
+      cutoff window hwindow upper hupper
+    (∫⁻ field, P.size n field
+        ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤
+      ∑ r ∈ roots, ∫⁻ tree,
+        pathGeneration (⟨d, hd⟩ : Potential Mark) n
+          (restartedWindowTest cutoff window) (initialPosition r) tree
+        ∂ProbabilityTheory.BranchingProcess.offspringFieldLaw μ := by
+  dsimp only
+  let test : (Fin (n + 1) → ℝ) → ENNReal := restartedWindowTest cutoff window
+  have htest : Measurable test := restartedWindowTest_measurable cutoff window hwindow
+  refine (lintegral_mono fun field =>
+    size_le_sum_pathGeneration_restartedWindow roots initialPosition d hd
+      cutoff window hwindow hzero upper hupper n field).trans_eq ?_
+  exact RootIndexed.lintegral_finset_root_observables μ roots
+    (fun r tree => pathGeneration (⟨d, hd⟩ : Potential Mark) n test (initialPosition r) tree)
+    (fun r _ => pathGeneration_measurable (⟨d, hd⟩ : Potential Mark) n htest
+      (initialPosition r))
+
 /-- The first moment of a one-root restarted selected generation is bounded by
 the corresponding spine path expectation.  This theorem contains no second
 moment or pair estimate. -/
@@ -84,37 +124,12 @@ theorem lintegral_size_le_spine_restartedWindow
             (history n (initialPosition r) increment)
         ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ := by
   dsimp only
-  let test : (Fin (n + 1) → ℝ) → ENNReal :=
-    restartedWindowTest cutoff window
-  have htest : Measurable test :=
-    restartedWindowTest_measurable cutoff window hwindow
-  calc
-    (∫⁻ field,
-        (ofRestartedRealPositionSets initialPosition d hd
-          ({(r, ([] : TreeNode α))} :
-            Finset (RootIndexed.TreeNode Root α))
-          (by simp) cutoff window hwindow upper hupper).size n field
-        ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤
-        ∫⁻ field,
-          pathGeneration (⟨d, hd⟩ : Potential Mark) n test
-            (initialPosition r) (field r)
-          ∂RootIndexed.stepFieldLaw (Root := Root) μ :=
-      lintegral_mono fun field =>
-        size_le_pathGeneration_restartedWindow r initialPosition d hd cutoff
-          window hwindow hzero upper hupper n field
-    _ = ∫⁻ tree : Combinatorics.Branching.StepField α Mark,
-          pathGeneration (⟨d, hd⟩ : Potential Mark) n test
-            (initialPosition r) tree
-          ∂ProbabilityTheory.BranchingProcess.offspringFieldLaw μ := by
-      exact RootIndexed.lintegral_root_observable μ r _
-        (pathGeneration_measurable (⟨d, hd⟩ : Potential Mark) n htest
-          (initialPosition r))
-    _ = ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
-          test (history n (initialPosition r) increment)
-        ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ :=
-      pathManyToOneCore (⟨d, hd⟩ : Potential Mark) μ hboundary n htest
-        (initialPosition r)
+  have h := lintegral_size_le_sum_pathGeneration_restartedWindow ({r} : Finset Root)
+    initialPosition d hd μ cutoff window hwindow hzero upper hupper n
+  simp only [RootIndexed.initialPopulation, Finset.map_singleton, Finset.sum_singleton,
+    Function.Embedding.coeFn_mk] at h
+  exact h.trans_eq (pathManyToOneCore (⟨d, hd⟩ : Potential Mark) μ hboundary n
+    (restartedWindowTest_measurable cutoff window hwindow) (initialPosition r))
 
 /-- The finite-root selected population needs only the sum of the corresponding
 one-dimensional spine expectations.  No independence between the summands
@@ -144,42 +159,12 @@ theorem lintegral_size_le_sum_spine_restartedWindow
             (history n (initialPosition r) increment)
         ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ := by
   dsimp only
-  let test : (Fin (n + 1) → ℝ) → ENNReal :=
-    restartedWindowTest cutoff window
-  have htest : Measurable test :=
-    restartedWindowTest_measurable cutoff window hwindow
-  calc
-    (∫⁻ field,
-        (ofRestartedRealPositionSets initialPosition d hd
-          (RootIndexed.initialPopulation (α := α) roots)
-          (by simp [RootIndexed.mem_initialPopulation_iff])
-          cutoff window hwindow upper hupper).size n field
-        ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤
-        ∫⁻ field, ∑ r ∈ roots,
-          pathGeneration (⟨d, hd⟩ : Potential Mark) n test
-            (initialPosition r) (field r)
-          ∂RootIndexed.stepFieldLaw (Root := Root) μ :=
-      lintegral_mono fun field =>
-        size_le_sum_pathGeneration_restartedWindow roots initialPosition d hd
-          cutoff window hwindow hzero upper hupper n field
-    _ = ∑ r ∈ roots,
-        ∫⁻ tree : Combinatorics.Branching.StepField α Mark,
-          pathGeneration (⟨d, hd⟩ : Potential Mark) n test
-            (initialPosition r) tree
-          ∂ProbabilityTheory.BranchingProcess.offspringFieldLaw μ := by
-      exact RootIndexed.lintegral_finset_root_observables μ roots
-        (fun r tree => pathGeneration (⟨d, hd⟩ : Potential Mark) n test
-          (initialPosition r) tree)
-        (fun r _ => pathGeneration_measurable
-          (⟨d, hd⟩ : Potential Mark) n htest (initialPosition r))
-    _ = ∑ r ∈ roots, ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
-          test (history n (initialPosition r) increment)
-        ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ := by
-      apply Finset.sum_congr rfl
-      intro r _
-      exact pathManyToOneCore (⟨d, hd⟩ : Potential Mark) μ hboundary n htest
-        (initialPosition r)
+  refine (lintegral_size_le_sum_pathGeneration_restartedWindow roots initialPosition d hd μ
+    cutoff window hwindow hzero upper hupper n).trans_eq ?_
+  apply Finset.sum_congr rfl
+  intro r _
+  exact pathManyToOneCore (⟨d, hd⟩ : Potential Mark) μ hboundary n
+    (restartedWindowTest_measurable cutoff window hwindow) (initialPosition r)
 
 end RootIndexed.CausalPopulation
 end ProbabilityTheory.BranchingRandomWalk

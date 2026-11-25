@@ -19,7 +19,7 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.EndpointO
 
 ## Public declarations
 
-* `eventually_singleRootEndpointMinimum_ge_le_polynomial`: if $N_i\to\infty$,
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_singleRootEndpointMinimum_ge_le_polynomial`: if $N_i\to\infty$,
   $H_i/\log^3 N_i\to t>0$ and $\zeta>\frac{\pi^2}2\sigma^2t$, the minimum of
   the $N_i$-selection process started from a single particle at zero
   satisfies $\mathbb P(M_{H_i}\ge\zeta\log N_i)\le N_i^{-b}$ eventually
