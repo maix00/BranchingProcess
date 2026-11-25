@@ -18,10 +18,6 @@ import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 * `ProbabilityTheory.BranchingRandomWalk.Spine.cutoffCorridor_cubicScaleFacts`:
   if `Lₙ→∞` and `Hₙ/Lₙ³→t>0`, then `Hₙ>0` eventually,
   `Lₙ²/Hₙ→0`, `Lₙ^(1/2)/Lₙ→0` and `log(Hₙ+1)/Lₙ→0`.
-* `ProbabilityTheory.BranchingRandomWalk.Spine.cutoffCorridor_expBudget_le_ratio`:
-  the explicit MRCA denominator `S` satisfies `exp(-G)≤M²/S`, with
-  `G=(α+4ρ+a+1/2)L+2(dLower-dUpper)H/L²+3√L+2dUpper/L²+log(H+1)`.
-  This uses `c≥dUpper≥0`, `α≥0` and the internal terminal-window margin.
 * `ProbabilityTheory.BranchingRandomWalk.Spine.eventually_cutoffCorridor_expBudget_le_ratio`:
   on the cubic scale, every
   `β>α+4ρ+a+1/2+2(dLower-dUpper)t` gives `exp(-βLₙ)≤Mₙ²/Sₙ` eventually.
@@ -72,7 +68,7 @@ lemma cutoffCorridor_cubicScaleFacts {L : ℕ → ℝ} {H : ℕ → ℕ} {t : �
     (by norm_num : (0 : ℝ) < 3) hpoly
   exact ⟨hHpos, hsmall, hsqrt, hlog⟩
 
-lemma cutoffCorridor_expBudget_le_ratio {L α a b ρ c dUpper dLower : ℝ} (H : ℕ)
+private lemma cutoffCorridor_expBudget_le_ratio {L α a b ρ c dUpper dLower : ℝ} (H : ℕ)
     (hL : 0 < L) (hα : 0 ≤ α) (hb : -(1 / 2 : ℝ) < b) (hρ : 0 < ρ)
     (hd : 0 ≤ dUpper) (hc : dUpper ≤ c) :
     let lower := -(a + 1 / 2) * L

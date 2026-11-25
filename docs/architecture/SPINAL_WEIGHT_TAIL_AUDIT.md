@@ -504,3 +504,9 @@ scale alone, and audits 12 named declarations. Mathlib style lint passed on
 1832 production modules. Import boundaries, all 32 Python unit tests, and
 `git diff --check` passed. No proof placeholder, new axiom, dependency-version
 change or LaTeX edit was introduced.
+
+The final visibility review made the finite-horizon exponent comparison
+private: it is used only inside its own proof-support module and appears
+only in proof terms. Cross-file helpers retain ordinary lemma visibility.
+The principal success entry and its regression were rebuilt after this
+change; all 12 configured axiom reports passed again.
