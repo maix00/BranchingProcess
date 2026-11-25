@@ -23,6 +23,8 @@ public import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 - `mul_le_returnKernel_apply_univ_of_entrance` combines a uniform entrance
   bound into a measurable core with a uniform transition from that core back
   to $A$, yielding a lower bound for one return block.
+- `mul_pow_mul_le_pow_of_returnKernel` combines entrance, `q` return blocks,
+  and a terminal transition: `p_in p_return^q p_out ≤ K^(i+qb+r)(x,A)`.
 - For a sub-Markov kernel, `pow_apply_preimage_le` and
   `remainingMass_returnKernel_le` compare repeated returns with unrestricted
   motion over the same elapsed time.
@@ -173,6 +175,40 @@ theorem pow_apply_preimage_le
             K (blocks * length) length (x : S) htarget
         _ = (K ^ ((blocks + 1) * length)) (x : S) target := by
           simp [Nat.add_mul]
+
+/-- An entrance block, repeated returns and a final transition to a target
+have the product lower bound supplied by the same ambient kernel. -/
+theorem mul_pow_mul_le_pow_of_returnKernel
+    (K : Kernel S S) [IsSubMarkovKernel K]
+    (core target : Set S) (hcore : MeasurableSet core) (htarget : MeasurableSet target)
+    (first block blocks last : ℕ) (start : S) (entrance returnMass terminalMass : ENNReal)
+    (henter : entrance ≤ (K ^ first) start core)
+    (hreturn : ∀ x ∈ core, returnMass ≤ (K ^ block) x core)
+    (hend : ∀ x ∈ core, terminalMass ≤ (K ^ last) x target) :
+    entrance * returnMass ^ blocks * terminalMass ≤
+      (K ^ (first + blocks * block + last)) start target := by
+  have hrow (x : core) : returnMass ≤
+      remainingMass (returnKernel K core hcore block) 1 x := by
+    simpa only [remainingMass, pow_one, returnKernel_apply_univ] using hreturn x x.property
+  have hrepeat (x : core) : returnMass ^ blocks ≤ (K ^ (blocks * block)) (x : S) core := by
+    have h := pow_le_remainingMass_mul (returnKernel K core hcore block)
+      1 blocks x returnMass hrow
+    have hpre : (Subtype.val ⁻¹' core : Set core) = Set.univ := by ext z; simp
+    have hh := pow_apply_preimage_le K core hcore block blocks x core hcore
+    rw [hpre] at hh
+    have h' : returnMass ^ blocks ≤
+        (returnKernel K core hcore block ^ blocks) x Set.univ := by
+      simpa only [remainingMass, Nat.one_mul, Nat.mul_one] using h
+    exact h'.trans hh
+  have htail (x : S) (hx : x ∈ core) :
+      terminalMass * returnMass ^ blocks ≤ (K ^ (blocks * block + last)) x target :=
+    (mul_le_mul' le_rfl (hrepeat ⟨x, hx⟩)).trans
+      (mul_pow_apply_le_pow_add_apply_of_mem K (blocks * block) last x
+        core target hcore htarget terminalMass hend)
+  have h := (mul_le_mul' (le_refl (terminalMass * returnMass ^ blocks)) henter).trans
+    (mul_pow_apply_le_pow_add_apply_of_mem K first (blocks * block + last)
+      start core target hcore htarget _ htail)
+  simpa only [Nat.add_assoc, mul_comm, mul_left_comm, mul_assoc] using h
 
 /-- Requiring a return after every block can only decrease the probability
 of surviving the ambient kernel for the same total elapsed time. -/

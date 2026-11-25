@@ -1,3 +1,4 @@
+import Probability.Kernel.Survival.Return.NoiseRestriction
 import Probability.Process.RandomWalk.SmallDeviation.Marked.FiniteVarianceLower
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.SecondMoment.FamilySelection
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.SecondMoment.FiniteVariance
@@ -22,6 +23,32 @@ example (ν : Measure (ℝ × ℝ)) [IsProbabilityMeasure ν]
         (c / L n ^ 2) (α * L n) (H n) 0) :=
   eventually_affineCorridorProbability_ge_exp_of_finiteVariance
     ν hν hσ hB hc hα hd hL hH hscale
+
+-- Internal starting fractions and prescribed terminal windows retain the
+-- same sharp exponent, for arbitrary real widths and horizon sequences.
+example (ν : Measure (ℝ × ℝ)) [IsProbabilityMeasure ν]
+    {σ c α d a b ρ : ℝ} (hν : IsCenteredSecondMoment (ν.map Prod.fst) (σ ^ 2))
+    (hσ : 0 < σ) (hB : HasVanishingQuadraticTail ν Prod.snd)
+    (hc : 0 ≤ c) (hα : 0 < α) (hd : (Real.pi ^ 2 / 2) * σ ^ 2 < d)
+    (ha : -(1 / 2 : ℝ) < a) (ha' : a < 1 / 2)
+    (hb : -(1 / 2 : ℝ) < b) (hb' : b < 1 / 2) (hρ : 0 < ρ)
+    {L : ℕ → ℝ} {H : ℕ → ℕ} (hL : Tendsto L atTop atTop)
+    (hH : ∀ᶠ n in atTop, 0 < H n)
+    (hscale : Tendsto (fun n => L n ^ 2 / (H n : ℝ)) atTop (𝓝 0)) :
+    ∀ᶠ n in atTop, ENNReal.ofReal (Real.exp (-d * H n / L n ^ 2)) ≤
+      iidSequenceLaw ν (corridorEndpointEvent (-(L n / 2)) (L n / 2)
+        (c / L n ^ 2) (α * L n) (H n) (a * L n)
+        (Set.Icc ((b - ρ) * L n) ((b + ρ) * L n))) :=
+  eventually_affineCorridorEndpointProbability_ge_exp_of_finiteVariance
+    ν hν hσ hB hc hα hd ha ha' hb hb' hρ hL hH hscale
+
+-- The endpoint formulation remains correct at time zero: the mark condition
+-- is vacuous, but membership of the initial position in the target is tested.
+example (ω : ℕ → ℝ × ℝ) (lower upper drift threshold initial : ℝ)
+    (target : Set ℝ) :
+    ω ∈ corridorEndpointEvent lower upper drift threshold 0 initial target ↔ initial ∈ target := by
+  simp [corridorEndpointEvent, corridorEvent, ProbabilityTheory.RandomWalk.StaysIn,
+    AdditivePath.displacement]
 
 -- The first child is counted even when its own family is rejected: the
 -- endpoint does not reproduce yet. At generation two that rejected family
@@ -97,3 +124,10 @@ example {X : Type*} [MeasurableSpace X] (φ : Potential X)
 #print axioms ProbabilityTheory.BranchingRandomWalk.Spine.exists_lintegral_pathGeneration_affineCorridor_sq_le_exp_sum_of_finiteVariance
 
 #print axioms Asymptotics.tendsto_succ_quotientBlockCount_mul_scale_div
+
+#print axioms ProbabilityTheory.Kernel.mul_pow_mul_le_pow_of_returnKernel
+#print axioms ProbabilityTheory.Kernel.eventually_pow_restrictNoise_ge
+#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Marked.endsInPrefix_restrictNoise_killedMarkedStep_iff
+#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Marked.measurableSet_corridorEndpointEvent
+#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Marked.eventually_affineCorridorEndpointProbability_ge_exp_of_finiteVariance
+#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Marked.eventually_lintegral_exp_affineCorridorEndpoint_ge_of_finiteVariance

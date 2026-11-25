@@ -20,6 +20,11 @@ In `ProbabilityTheory.RandomWalk.SmallDeviation.Marked`:
 * `corridorEvent lower upper drift threshold horizon initial` is
   `{ω | lower ≤ initial + ∑_(j<k)(Xⱼ-drift) ≤ upper (1≤k≤horizon),
   Bⱼ ≤ threshold (j<horizon)}` for joint observations `ωⱼ=(Xⱼ,Bⱼ)`.
+* `corridorEndpointEvent` intersects the marked corridor with
+  `initial+∑_(j<horizon)(Xⱼ-drift)∈target`.
+* `endsInPrefix_restrictNoise_killedMarkedStep_iff` identifies this event with
+  the existing partial-step endpoint event;
+  `measurableSet_corridorEndpointEvent` proves its measurability.
 * `killedMarkedStep` reads the displacement from a joint observation and uses
   the existing interval-killed partial step. Mark acceptance is imposed by
   `Kernel.restrictNoise`, rather than by a normalized increment law.
@@ -45,6 +50,12 @@ def corridorEvent (lower upper drift threshold : ℝ) (horizon : ℕ) (initial :
     Set (ℕ → ℝ × ℝ) :=
   {ω | StaysIn (Set.Icc lower upper) horizon initial (fun j => (ω j).1 - drift) ∧
     ∀ j < horizon, (ω j).2 ≤ threshold}
+
+/-- The marked corridor event with a prescribed terminal set in drifted coordinates. -/
+def corridorEndpointEvent (lower upper drift threshold : ℝ) (horizon : ℕ)
+    (initial : ℝ) (target : Set ℝ) : Set (ℕ → ℝ × ℝ) :=
+  corridorEvent lower upper drift threshold horizon initial ∩
+    {ω | initial + AdditivePath.displacement horizon (fun j => (ω j).1 - drift) ∈ target}
 
 /-- The original displacement update, with killing on exit from the interval. -/
 noncomputable def killedMarkedStep (lower upper drift : ℝ) (x : ℝ) (z : ℝ × ℝ) :
@@ -94,6 +105,17 @@ theorem endsInPrefix_killedMarkedStep_iff (lower upper drift : ℝ)
   simp only [Kernel.EndsInPrefix, Kernel.EndsIn] at h
   exact h
 
+theorem endsInPrefix_restrictNoise_killedMarkedStep_iff
+    (lower upper drift threshold : ℝ) (target : Set ℝ)
+    (horizon : ℕ) (initial : ℝ) (ω : ℕ → ℝ × ℝ) :
+    Kernel.EndsInPrefix
+      (Kernel.restrictNoise (killedMarkedStep lower upper drift) {z | z.2 ≤ threshold})
+      target horizon initial ω ↔
+      ω ∈ corridorEndpointEvent lower upper drift threshold horizon initial target := by
+  rw [Kernel.endsInPrefix_restrictNoise_iff, endsInPrefix_killedMarkedStep_iff]
+  simp only [corridorEndpointEvent, corridorEvent, Set.mem_inter_iff, Set.mem_ofPred_eq]
+  tauto
+
 theorem measurableSet_corridorEvent (lower upper drift threshold : ℝ)
     (horizon : ℕ) (initial : ℝ) :
     MeasurableSet (corridorEvent lower upper drift threshold horizon initial) := by
@@ -104,5 +126,17 @@ theorem measurableSet_corridorEvent (lower upper drift threshold : ℝ)
   convert hs using 1
   ext ω
   exact (survivesPrefix_restrictNoise_killedMarkedStep_iff lower upper drift threshold horizon initial ω).symm
+
+theorem measurableSet_corridorEndpointEvent (lower upper drift threshold : ℝ)
+    (horizon : ℕ) (initial : ℝ) {target : Set ℝ} (htarget : MeasurableSet target) :
+    MeasurableSet (corridorEndpointEvent lower upper drift threshold horizon initial target) := by
+  have hs := Kernel.measurableSet_endsInPrefix
+    (Kernel.restrictNoise (killedMarkedStep lower upper drift) {z | z.2 ≤ threshold})
+    (Kernel.measurable_restrictNoise _ (killedMarkedStep_measurable lower upper drift)
+      (measurableSet_le measurable_snd measurable_const)) htarget horizon initial
+  convert hs using 1
+  ext ω
+  exact (endsInPrefix_restrictNoise_killedMarkedStep_iff
+    lower upper drift threshold target horizon initial ω).symm
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Marked

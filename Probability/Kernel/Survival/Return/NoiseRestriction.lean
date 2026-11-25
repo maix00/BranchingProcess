@@ -8,7 +8,7 @@ module
 
 public import Probability.Kernel.Step.Noise.Restriction
 public import Probability.Kernel.Survival.Return.Basic
-public import Probability.Sequence.Maximal.QuadraticTail
+public import Probability.Kernel.Step.Noise.QuadraticTail
 
 /-!
 # Long-horizon survival with correlated noise restrictions
@@ -60,15 +60,7 @@ theorem eventually_pow_le_survival_restrictNoise
       ENNReal.ofReal (p / 2) ^ (total / length n + 1) ≤
         iidSequenceLaw ν {ω | SurvivesPrefix (step n) total (x : S) ω ∧
           ∀ j < total, mark (ω j) ≤ α * scale n} := by
-  have hmark (j : ℕ) : HasLaw (fun ω : ℕ → E => mark (ω j))
-      (ν.map mark) (iidSequenceLaw ν) := by
-    constructor
-    · exact (hm.comp (measurable_pi_apply j)).aemeasurable
-    · rw [show (fun ω : ℕ → E => mark (ω j)) = mark ∘ (fun ω => ω j) from rfl,
-        ← Measure.map_map hm (measurable_pi_apply j), iidSequenceLaw_map_apply]
-  have ht : HasVanishingQuadraticTail (ν.map mark) id :=
-    (hasVanishingQuadraticTail_map_iff mark hm id measurable_id).2 htail
-  have hretain := eventually_measureReal_inter_marks_ge hmark ht hscale hα hp hlength
+  have hretain := eventually_pow_restrictNoise_ge ν step hs hm htail hscale hα hp hlength
   filter_upwards [hretain, hpos, hrow] with n hn hlen hrowN
   let accepted := {z : E | mark z ≤ α * scale n}
   have ha : MeasurableSet accepted := measurableSet_le hm measurable_const
@@ -79,19 +71,9 @@ theorem eventually_pow_le_survival_restrictNoise
   have hret : ∀ x : core n,
       ENNReal.ofReal (p / 2) ≤ returnKernel K (core n) (hc n) (length n) x Set.univ := by
     intro x
-    have hx := hrowN x
-    rw [returnKernel_apply_univ,
-      pow_apply_ofPartialStep_eq_iidSequenceLaw ν (step n) (hs n) (hc n)] at hx
-    have h := hn {ω | EndsInPrefix (step n) (core n) (length n) (x : S) ω} hx
-    rw [returnKernel_apply_univ,
-      pow_apply_ofPartialStep_eq_iidSequenceLaw ν constrained hcon (hc n)]
-    have he : {ω | EndsInPrefix constrained (core n) (length n) (x : S) ω} =
-        {ω | EndsInPrefix (step n) (core n) (length n) (x : S) ω} ∩
-          {ω | ∀ j < length n, mark (ω j) ≤ α * scale n} := by
-      ext ω
-      exact endsInPrefix_restrictNoise_iff (step n) accepted (core n) (length n) x ω
-    rw [he, ← ofReal_measureReal (measure_ne_top _ _)]
-    exact ENNReal.ofReal_le_ofReal h
+    rw [returnKernel_apply_univ]
+    apply hn (length n) le_rfl x (core n) (hc n)
+    simpa only [returnKernel_apply_univ] using hrowN x
   intro total x
   have h := pow_succ_div_le_remainingMass_of_returnKernel
     K (core n) (hc n) hlen total x (ENNReal.ofReal (p / 2)) hret

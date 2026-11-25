@@ -14,30 +14,31 @@ import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.EndpointWind
 
 ## Internal proof declarations
 
-* `ProbabilityTheory.RandomWalk.SmallDeviation.Marked.band_subset_driftedReturn`:
-  a centered increment tube of width `D` and an endpoint band of half-width
-  `s/4`, translated from a core point with `x + is ∈ [0,s]`, stays in
-  `[-R,R]` and returns to `[-3s,3s]` after subtracting drift, provided
+* `ProbabilityTheory.RandomWalk.SmallDeviation.Marked.band_subset_driftedTransition`:
+  an increment tube centered at `-sourceCenter` and an endpoint band of half-width
+  `s/4`, translated from a core point with `x-sourceCenter+is∈[0,s]`, stays in
+  `[-R,R]` and ends in `targetCenter+[-3s,3s]` after subtracting drift, provided
   `D/2+4s ≤ R` and `0 ≤ drift · length ≤ s`.
 -/
 
 open scoped BigOperators
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Marked
 
-lemma band_subset_driftedReturn
-    {D spacing radius drift x : ℝ} {length : ℕ} {i : ℤ}
+lemma band_subset_driftedTransition
+    {D spacing radius drift x sourceCenter targetCenter : ℝ} {length : ℕ} {i : ℤ}
     (hs : 0 < spacing) (hd : 0 ≤ drift)
     (hmax : drift * (length : ℝ) ≤ spacing)
     (hfit : D / 2 + 4 * spacing ≤ radius)
-    (hx : x ∈ Set.Icc (-3 * spacing) (3 * spacing))
-    (hnear : x + (i : ℝ) * spacing ∈ Set.Icc 0 spacing)
+    (hx : x - sourceCenter ∈ Set.Icc (-3 * spacing) (3 * spacing))
+    (hnear : x - sourceCenter + (i : ℝ) * spacing ∈ Set.Icc 0 spacing)
     (ω : ℕ → ℝ)
-    (hpath : InHorizontalTube (1 / 2) D length ω)
+    (hpath : StaysIn (Set.Icc (-D / 2 - sourceCenter) (D / 2 - sourceCenter)) length 0 ω)
     (hend : AdditivePath.displacement length ω ∈
-      Set.Icc ((i : ℝ) * spacing - spacing / 4) ((i : ℝ) * spacing + spacing / 4)) :
+      Set.Icc (targetCenter - sourceCenter + (i : ℝ) * spacing - spacing / 4)
+        (targetCenter - sourceCenter + (i : ℝ) * spacing + spacing / 4)) :
     StaysIn (Set.Icc (-radius) radius) length x (fun j => ω j - drift) ∧
       x + AdditivePath.displacement length (fun j => ω j - drift) ∈
-        Set.Icc (-3 * spacing) (3 * spacing) := by
+        Set.Icc (targetCenter - 3 * spacing) (targetCenter + 3 * spacing) := by
   have hsum (k : ℕ) : AdditivePath.displacement k (fun j => ω j - drift) =
       AdditivePath.displacement k ω - (k : ℝ) * drift := by
     simp [AdditivePath.displacement, Finset.sum_sub_distrib]

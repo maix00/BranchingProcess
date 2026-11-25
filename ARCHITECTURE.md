@@ -820,8 +820,8 @@ horizons. These modules depend on neither random walks nor branching processes.
 `Process/RandomWalk/SmallDeviation/Marked/Basic.lean` defines the joint marked
 corridor event; `FiniteVarianceLower.lean` is its centered affine lower-bound
 entry. The fixed seven-band geometry and return-block parameter choices belong
-in its single `Lemmas/` directory. This entry does not assert the general
-continuous moving-boundary theorem or a prescribed terminal-window estimate.
+in its single `Lemmas/` directory. This entry includes prescribed terminal windows and fixed internal starting
+fractions; the general continuous moving-boundary theorem remains outside its scope.
 
 Whole-family acceptance is a deterministic Step selection in
 `Combinatorics/BranchingWalk/Step/Selection/Family.lean`; its surviving-path
@@ -833,3 +833,13 @@ second-moment entry. The unselected theorem derives by accepting every family.
 The cutoff coefficient is a restricted integral under the original law; the
 selected law is not assumed centered or boundary-normalized. See
 `docs/architecture/SPINAL_WEIGHT_TAIL_AUDIT.md` for formulas and proof coverage.
+
+
+The marked affine-corridor entry now includes internal starting fractions and
+prescribed terminal windows. Uniform weak-tail transition control is owned
+by `Probability/Kernel/Step/Noise/QuadraticTail.lean`; the return-survival
+corollary imports it. `Kernel/Survival/Return/Basic.lean` owns the general
+entrance/return/terminal product bound. The fixed seven-band geometry stays
+in `Marked/Lemmas/`; the centered survival theorem derives from the endpoint
+entry. The exponential endpoint-payoff lower bound is a direct corollary in
+that entry, rather than a second integration or branching construction.
