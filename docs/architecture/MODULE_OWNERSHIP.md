@@ -1519,10 +1519,35 @@ the official Markov documentation were checked.
 `Endpoint/Sequence/UpperTail/SpinalWeight.lean` is the public original first-N
 endpoint bound under the weak spinal tail. Its root count is arbitrary and
 its error is the sum of independent-root avoidance and capacity failure.
-The log-scale parameter optimization and final endpoint/speed migration are
-not yet discharged. The two existing complete upper-tail entries move with
+The logarithmic parameter optimization and final first-moment speed migration
+are now discharged, as recorded in the closure review below. The two existing complete upper-tail entries move with
 it into `UpperTail/`, leaving seven direct sequence files and three public
 upper-tail entries. Neither aliases nor old-path stubs remain. The capacity
 and causal-path directories each have at most five direct Lean files.
 References and detailed formulas are recorded in
 `docs/architecture/SPINAL_WEIGHT_TAIL_AUDIT.md`.
+
+
+## Weak-tail logarithmic and speed completion (2026-11-25)
+
+`Step/Ordering/Spine.lean` owns joint tilted displacement/family-weight law
+invariance for arbitrary tilt and raw measure; scalar invariance and weak-tail
+transport derive from it. It has no normalization or moment hypotheses.
+`Spine/Tilted/FamilyChild.lean` owns the other-child-weight compensation at
+arbitrary tilt. `Assumptions/SpinalWeightTail.lean` derives the weak condition
+from finite cross weight and finite spinal second moment; its pointwise bound
+is private. These complete reusable law/moment results are outside `Lemmas/`.
+
+`UpperTail/Lemmas/SpinalWeight/{Parameters,Logarithmic}.lean` owns only the
+non-reusable corridor-margin selection and explicit-budget conversion for the
+positive-start endpoint theorem. These ordinary lemmas use `import all`.
+`PositiveInitialExponent.lean` exposes the weak-tail polynomial theorem; the
+finite-cross specialization derives from it and the former parallel proof is
+removed. `ContinuationMean` uses the weak entry and the existing two-lineage
+first-moment domination. The principal `Limit/Speed.lean` now exposes the final
+speed formula with the original weak reproductive tail, no finite cross
+weight, and no additional logarithmic moment. Existing restart, endpoint
+observable and single-root block-comparison implementations are reused.
+The ordering directory has five direct files and the upper-tail directory has
+three, with one two-file internal grouping. Exact references and native API
+review are in `SPINAL_WEIGHT_TAIL_AUDIT.md`.

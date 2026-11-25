@@ -15,6 +15,10 @@ public import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
 
 ## Public declarations
 
+* `ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_tiltedFamilyChildLaw_otherWeight`:
+  `∫∑_(j≠i)wⱼ d μ̂(ξ,i)=∫∑_(i≠j)wᵢwⱼ dμ(ξ)` at every real tilt,
+  without normalization or moment hypotheses.
+
 In `ProbabilityTheory.BranchingRandomWalk.Spine`:
 
 * `tiltedFamilyChildLaw φ θ μ` is the native weighted measure
@@ -147,5 +151,38 @@ theorem tiltedFamilyChildLaw_isProbability {ι X : Type*}
     (φ : Potential X) (μ : Measure (Step ι X)) (h : HasBoundaryNormalization φ μ) :
     IsProbabilityMeasure (tiltedFamilyChildLaw φ (-1) μ) :=
   ⟨(tiltedFamilyChildLaw_apply_univ φ (-1) μ).trans h⟩
+
+/-- Under the family/child exponential bias, the expected weight of the other
+children is the original off-diagonal pair weight. This identity holds at any
+tilt and before normalization, as in the spinal decomposition of B. Mallein,
+*N-branching random walk with α-stable spine*, §2.1, arXiv:1503.03762v2. -/
+theorem lintegral_tiltedFamilyChildLaw_otherWeight
+    {ι X : Type*} [Countable ι] [MeasurableSpace ι] [MeasurableSingletonClass ι]
+    [MeasurableSpace X] (φ : Potential X) (θ : ℝ) (μ : Measure (Step ι X)) :
+    (∫⁻ p : Step ι X × ι, ∑' j : ι,
+      if j ≠ p.2 then realizedPotentialWeight φ θ p.1 j else 0
+      ∂tiltedFamilyChildLaw φ θ μ) =
+      ∫⁻ ξ, crossPotentialWeight φ θ ξ ∂μ := by
+  have hm : Measurable (fun p : Step ι X × ι => ∑' j : ι,
+      if j ≠ p.2 then realizedPotentialWeight φ θ p.1 j else 0) := by
+    apply Measurable.tsum
+    intro j
+    apply Measurable.ite
+    · exact by
+        convert (measurable_snd (measurableSet_singleton j)).compl using 1
+        ext p
+        simp [ne_comm]
+    · exact (realizedPotentialWeight_measurable φ θ j).comp measurable_fst
+    · exact measurable_const
+  rw [lintegral_tiltedFamilyChildLaw φ θ μ hm]
+  apply lintegral_congr
+  intro ξ
+  unfold crossPotentialWeight
+  apply tsum_congr
+  intro i
+  rw [← ENNReal.tsum_mul_left]
+  apply tsum_congr
+  intro j
+  by_cases h : i = j <;> simp [h, Ne.symm]
 
 end ProbabilityTheory.BranchingRandomWalk.Spine

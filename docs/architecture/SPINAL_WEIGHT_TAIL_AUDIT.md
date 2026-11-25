@@ -118,29 +118,32 @@ Each public result is a complete reusable measure, tail, bias or corridor
 statement. Single-module tactical helpers are private. No model-specific
 unfinished theorem is promoted by placing its conclusion in an assumption.
 
-## Remaining proof obligations
+## Current completed boundary (2026-11-25)
 
-These are still open, not consequences already supplied by a new hypothesis:
+The finite-variance weak-tail speed extension is now proved end to end.
+`UpperTail/PositiveInitialExponent.lean` gives the positive-start polynomial
+endpoint tail under `HasSpinalWeightTail`. `Step/Ordering/Spine.lean` preserves
+the complete biased displacement/family-weight joint law under ordering, so
+this is the weak condition on the original offspring law, not an assumption
+about a separately constructed sorted law. The existing two-lineage estimate,
+leftmost first moment, stopped continuation and restart-mean comparison give
+`Limit/Speed.lean: exists_speed_with_logSq_limit` with that weak hypothesis.
+The final statement includes common almost-sure and `L¹` speed from every
+nonempty deterministic initial cloud of size at most `N`, and
+`(log N)² v_N → π²σ²/2`.
 
-1. The actual finite-root causal capacity bridge, independent-root amplification,
-   and the original first-`N` endpoint bound with an explicit affine budget are
-   proved. Choose the internal window, tail cutoff and rate gaps on the target
-   `log N` scales and turn that budget into the polynomial upper tail for
-   `mₙ=⌊Nₙ^A⌋`, `0<A<1`.
-2. Replace the positive-initial-exponent upper-tail input with that weak-tail
-   polynomial result. Transport the weak assumption through ordering and
-   assemble the endpoint-mean, continuation-mean, restart-mean and speed
-   comparisons. These final interfaces still retain finite cross weight.
+The stronger finite-cross-weight polynomial endpoint theorem is a corollary:
+finite cross weight, boundary normalization and finite spinal second moment
+imply the weak reproductive tail. Its former separate two-stage polynomial
+proof is removed. Existing stronger-hypothesis `L²` endpoint interfaces remain
+valid through this corollary; their assumptions are not silently weakened.
 
-The full continuous-moving-boundary statement of Mallein's Theorem 2.3 is
-outside the present affine-corridor coverage; it is not assumed in these
-completed count and success results.
-
-The existing final endpoint and speed theorems therefore still take
-`HasFiniteCrossWeight`. They have not been relabeled as weak-tail results.
-A family cutoff generally changes both boundary normalization and centering;
-the cutoff law cannot be inserted into those final theorems as though its
-spine were the original centered law.
+The full continuous-moving-boundary statement of Mallein's Theorem 2.3 remains
+outside the present affine-corridor coverage. It is not required by the proved
+finite-variance speed result. A family cutoff still changes normalization and
+centering; all cutoff calculations here use marks under the original law.
+Earlier dated progress sections below record intermediate boundaries, which
+are superseded by this completed boundary and the final review at the end.
 
 ## Regression and axiom review
 
@@ -647,3 +650,88 @@ named bridge/application axiom reports passed. Mathlib style lint passed on
 weak-entry/strong-route separation guards, and all 32 Python tests passed.
 `git diff --check` passed. No axiom, placeholder, dependency change or LaTeX
 edit is introduced.
+
+
+## Logarithmic endpoint, ordering and final speed closure (2026-11-25)
+
+For `0<A<1` and target `ζ>-A+κT`, with `κ=π²σ²/2`, the numeric
+proof chooses, for sufficiently small `ε>0`,
+
+`w=1-2ε`, `a=(A-ε)/w-1/2`, `b=-1/2+ε²`,
+`α=ρ=ε²`, `dUpper=κ-ε²`, `dLower=κ+ε²`, `β=(A-ε/2)/w`.
+
+Then `L_n=w log N_n`, `m_n=⌊N_n^A⌋`, `H_n/(log N_n)³→T>0`
+satisfy the one-root success, capacity and terminal margins simultaneously:
+
+`α+4ρ+a+1/2+2(dLower-dUpper)T/w³ < β`, `βw<A`,
+
+`A+(1/2-a)w+max(κ-dUpper,0)T/w²<1`,
+
+`(b+ρ-a)w+κT/w²<ζ`.
+
+Thus `m_n exp(-βL_n)` dominates a positive power of `N_n`, the capacity
+error is polynomially small, and the existing explicit endpoint budget gives
+`P(M_n≥ζ log N_n)≤N_n^(-p)` for some `p>0`. The numerical selection and
+this specific budget conversion are ordinary internal lemmas under the single
+`UpperTail/Lemmas/SpinalWeight/` directory, accessed with `import all`.
+The complete endpoint theorem remains public in `PositiveInitialExponent`.
+
+`Step/Ordering/Spine.lean` proves equality of the existing joint tilted laws
+of `(φ(child), W_φ(family))` for every real tilt and arbitrary raw measure.
+The scalar law identity and weak-tail equivalence derive from this equality.
+These interfaces need neither probability normalization nor moment assumptions
+and remain outside `Lemmas/`. No new bias or sorted-spine definition is added.
+
+`Spine/Tilted/FamilyChild.lean` supplies the unnormalized compensation
+`∫Σ_(j≠i)w_j dμ̂=∫C dμ`, at arbitrary tilt. With `O=Σ_(j≠i)w_j` and
+`M=log W+X`, the existing original joint law satisfies
+`M²≤8X²+8(1+O.toReal)` almost surely. Hence finite cross weight and spinal
+second moment imply integrability of `M²`, then the native vanishing quadratic
+tail theorem gives `HasSpinalWeightTail`. Only this implication has the stronger
+hypothesis. The final speed proof does not pass through finite cross weight.
+
+`Limit/Lemmas/ContinuationMean.lean` now calls the weak-tail polynomial
+endpoint theorem after native ordering transport. Its existing two independent
+lineages bound the positive endpoint tail in `L²` using only the leftmost
+first moment; this is an auxiliary domination and imposes no second moment
+on the leftmost increment. The same subsequence argument supplies uniform
+remaining-horizon means. `RestartMean`, the reset estimate and the existing
+single-root block comparison are reused unchanged. `SpeedUpperBound` and the
+principal `Speed` theorem now accept the original raw-law weak tail instead
+of finite cross weight. Speed existence and the lower bound already use
+first moments only. No new process, reset law or endpoint observable is added.
+
+Native audit: pinned Mathlib `26573066084e6e2aa8526ea358bc43b66d96f970`,
+its official [with-density documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/WithDensity.html),
+and existing project floor-product, logarithmic-scale, power-ratio and finite
+exponential-sum limits were checked. Native `Measure.ext_of_lintegral`,
+`lintegral_map`, `Measurable.tsum`, `tsum_eq_add_tsum_ite`,
+`integrable_toReal_iff` and `Integrable.mono'` are called directly.
+Generic analytic estimates are not reimplemented. The ordering directory has
+five direct files; the upper-tail directory has three; its single internal
+spinal-weight grouping has two. Each new header states exact declarations,
+formulas and assumptions, with exact source citations.
+
+Reference alignment: B. Mallein, *N-branching random walk with α-stable spine*,
+Theorem 1.1 condition (1.9), §2.1, Lemma 3.4 and §4.4 proof of Lemma 4.8,
+arXiv:1503.03762v2, supplies the original joint law, cutoff-moment strategy
+and independent-root amplification. The endpoint and first-moment speed
+assembly follows Wang Yiyang, *Asymptotic Speed of the N-Branching Random
+Walk with Infinite Offspring* (Fudan University, 2026), Chapter 4, Theorems
+1.1 and 1.2. The spatial convention is reflected. No LaTeX change is included.
+
+The regression `Frontier/AsymptoticSpeed/WeakSpinalTail.lean` compiles the
+final speed formula from `HasSpinalWeightTail` and `HasLeftmostFirstMoment`,
+without supplying finite cross weight or a logarithmic square moment. Its
+explicit axiom inventory covers ordering, compensation, the strong-to-weak
+implication, both endpoint entries, and the principal speed chain.
+
+
+Closure validation (2026-11-25): `LEAN_NUM_THREADS=2 lake build` passed
+(12057 jobs); all 157 working-tree Lean tests compiled and their configured
+axiom checks passed. The new speed contract and its 9 named axiom reports
+passed with only `propext`, `Classical.choice` and `Quot.sound`. Mathlib style
+lint passed on 1838 production modules, the import-boundary audit passed,
+all 32 Python unit tests passed, and `git diff --check` passed. Dependency
+pins are unchanged. No axiom, proof placeholder, compatibility alias or
+LaTeX edit is introduced.

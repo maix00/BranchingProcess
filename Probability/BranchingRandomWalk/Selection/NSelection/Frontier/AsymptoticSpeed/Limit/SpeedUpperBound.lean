@@ -12,19 +12,24 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.En
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.RestartMean
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.Lemmas.ContinuationMean
 
+public import Probability.BranchingRandomWalk.Assumptions.SpinalWeightTail
+
 /-!
 # Upper asymptotic bound for the speed of N-selection
 
 ## Public declarations
 
-* `eventually_logSq_mul_speed_lt_of_firstMoment`: under boundary normalization,
-  finite spine variance and the leftmost first moment, for every
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.eventually_logSq_mul_speed_lt_of_firstMoment`:
+  under boundary normalization, supercritical nonempty offspring, the weak
+  reproductive tail, centered finite positive spinal variance and the leftmost first moment, for every
   $r>\pi^2\sigma^2/2$ the common speed satisfies $(\log N)^2v_N<r$
   for sufficiently large $N$.
 
 This is the upper bound of Wang Yiyang, *Asymptotic Speed of the
 N-Branching Random Walk with Infinite Offspring* (Fudan University, 2026),
-Chapter 4, §4.3.
+Chapter 4, Theorem 1.2, §4.3, using the weak reproductive condition (1.9)
+of B. Mallein, *N-branching random walk with α-stable spine*, Theorem 1.1,
+arXiv:1503.03762v2.
 -/
 
 open Asymptotics MeasureTheory ProbabilityTheory Filter
@@ -38,13 +43,17 @@ open EndpointDeviation ProbabilityTheory.BranchingRandomWalk.Spine
 noncomputable local instance (m : ℕ) : LinearOrder (RootIndexed.TreeNode (Fin m) ℕ) :=
   RootIndexed.addressLinearOrder (Fin m) ℕ
 
+/-- The first-moment restart and continuation comparison gives the strict
+upper speed bound under Mallein's condition (1.9), arXiv:1503.03762v2,
+following Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with
+Infinite Offspring* (Fudan University, 2026), Chapter 4, Theorem 1.2, §4.3. -/
 public theorem eventually_logSq_mul_speed_lt_of_firstMoment
     (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
     (hsuper : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.IsSupercritical
       (⟨L.raw, inferInstance⟩ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ℕ ℝ))
     (hnonempty : L.raw nonemptySupport = 1)
     (hboundary : HasBoundaryNormalization L.potential L.raw)
-    (hcross : HasFiniteCrossWeight L.potential L.raw)
+    (htail : HasSpinalWeightTail L.potential L.raw)
     (hfirst : HasLeftmostFirstMoment L)
     {sigma : ℝ} (hsigma : 0 < sigma)
     (hspine : IsCenteredSecondMoment
@@ -79,7 +88,7 @@ public theorem eventually_logSq_mul_speed_lt_of_firstMoment
         (∫ field, firstNSelectedEndpointMinimum ⌊(N n : ℝ) ^ a⌋₊ (N n) (H n - i) field
              ∂finiteRootStepFieldLaw μ ⌊(N n : ℝ) ^ a⌋₊) ≤
           (c * t + 1) * Real.log (N n : ℝ) := by
-    have hmean := eventually_endpointMean_sub_horizon_le_of_firstMoment L hnonempty hboundary hcross hfirst
+    have hmean := eventually_endpointMean_sub_horizon_le_of_firstMoment L hnonempty hboundary htail hfirst
       hsigma hspine ha ha1 ht one_pos hN hH hT
     filter_upwards [hmean, eventually_gt_atTop (0 : ℕ)] with n hn hpos i hi
     have hlog : 0 < Real.log (N n : ℝ) :=

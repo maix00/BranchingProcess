@@ -8,19 +8,26 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticS
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.SpeedUpperBound
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.Lemmas.LowerBound
 
+import Probability.BranchingRandomWalk.Assumptions.SpinalWeightTail
+
 /-!
 # The asymptotic speed of the N-branching random walk
 
 ## Public declarations
 
-* `exists_speed_with_logSq_limit`: from each deterministic nonempty
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.exists_speed_with_logSq_limit`: from each deterministic nonempty
   initial population of size at most $N$, the minimum divided by time
   converges almost surely and in $L^1$ to the common speed $v_N$.
-  Under boundary normalization and the stated first-moment assumptions,
-  $v_N(\log N)^2\to\pi^2\sigma^2/2$.
+  Under boundary normalization, supercritical nonempty offspring, the weak
+  reproductive tail `x² μ̂{log W+X>x}→0`, centered spinal variance `σ²>0`
+  and the leftmost first moment, $v_N(\log N)^2\to\pi^2\sigma^2/2$.
+  Finite cross-child weight and a logarithmic square moment are unnecessary.
 
 This is the first-moment speed formula of Wang Yiyang, *Asymptotic Speed of the N-Branching
-Random Walk with Infinite Offspring* (Fudan University, 2026), Chapter 4.
+Random Walk with Infinite Offspring* (Fudan University, 2026), Chapter 4,
+Theorem 1.2, with the reproductive assumption weakened to B. Mallein,
+*N-branching random walk with α-stable spine*, Theorem 1.1, condition (1.9),
+arXiv:1503.03762v2, in the reflected finite-variance setting.
 -/
 
 open Asymptotics MeasureTheory ProbabilityTheory Filter
@@ -34,14 +41,18 @@ open EndpointDeviation ProbabilityTheory.BranchingRandomWalk.Spine
 noncomputable local instance (m : ℕ) : LinearOrder (RootIndexed.TreeNode (Fin m) ℕ) :=
   RootIndexed.addressLinearOrder (Fin m) ℕ
 
-/-- Common speed and its logarithmic asymptotic, from the two block comparisons. -/
+/-- Common almost-sure and `L¹` speed and its logarithmic asymptotic under
+Mallein's weak reproductive tail (Theorem 1.1, condition (1.9),
+arXiv:1503.03762v2), by the first-moment block comparisons of Wang Yiyang,
+*Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
+(Fudan University, 2026), Chapter 4, Theorem 1.2. -/
 theorem exists_speed_with_logSq_limit
     (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
     (hsuper : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.IsSupercritical
       (⟨L.raw, inferInstance⟩ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ℕ ℝ))
     (hnonempty : L.raw nonemptySupport = 1)
     (hboundary : HasBoundaryNormalization L.potential L.raw)
-    (hcross : HasFiniteCrossWeight L.potential L.raw)
+    (htail : HasSpinalWeightTail L.potential L.raw)
     (hfirst : HasLeftmostFirstMoment L)
     {sigma : ℝ} (hsigma : 0 < sigma)
     (hspine : IsCenteredSecondMoment
@@ -64,7 +75,7 @@ theorem exists_speed_with_logSq_limit
     exact eventually_lt_logSq_mul_speed_of_firstMoment L hnonempty hboundary hfirst
       hsigma hspine speed hL1 hr
   · intro r hr
-    exact eventually_logSq_mul_speed_lt_of_firstMoment L hsuper hnonempty hboundary hcross hfirst
+    exact eventually_logSq_mul_speed_lt_of_firstMoment L hsuper hnonempty hboundary htail hfirst
       hsigma hspine speed hL1 hr
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed

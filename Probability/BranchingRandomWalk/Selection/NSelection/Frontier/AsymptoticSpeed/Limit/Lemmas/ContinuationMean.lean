@@ -9,6 +9,7 @@ module
 import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.Lemmas.TwoLineages
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.UpperTail.PositiveInitialExponent
 import Probability.BranchingRandomWalk.Assumptions.Moments
+import Probability.BranchingRandomWalk.Step.Ordering.Spine
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.Lemmas.FailureExpectation
 
 import MeasureTheory.Integral.MeasurePreserving
@@ -20,11 +21,11 @@ import Mathlib.MeasureTheory.Function.L2Space
 
 ## Internal proof declarations
 
-* `eventually_endpointMean_sub_horizon_le_of_firstMoment`: the upper mean
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.eventually_endpointMean_sub_horizon_le_of_firstMoment`: the upper mean
   bound holds uniformly for $H_N-i$, $0\le i\le T_N$, when
   $T_N=o(\log^3 N)$.
 
-* `eventually_endpointMean_div_log_le_of_firstMoment`: if $0<a<1$ and
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.eventually_endpointMean_div_log_le_of_firstMoment`: if $0<a<1$ and
   $H_N/\log^3 N\to t>0$, the normalized endpoint mean from
   $\lfloor N^a\rfloor$ zero-position roots is eventually at most
   $-a+\pi^2\sigma^2t/2+\varepsilon$ for every $\varepsilon>0$.
@@ -32,6 +33,10 @@ import Mathlib.MeasureTheory.Function.L2Space
   *Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring*
   (Fudan University, 2026), Theorem 1.1, and two independent lineages to
   control the tail integral under the leftmost first-moment assumption.
+  The reproductive hypothesis is Mallein's weak condition (1.9),
+  *N-branching random walk with α-stable spine*, Theorem 1.1,
+  arXiv:1503.03762v2. Sorting preserves its joint displacement/family law;
+  no finite cross weight or logarithmic square moment is used.
 -/
 
 open MeasureTheory Filter ProbabilityTheory
@@ -47,7 +52,7 @@ lemma eventually_endpointMean_div_log_le_of_firstMoment
     (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
     (hne : L.raw nonemptySupport = 1)
     (hboundary : HasBoundaryNormalization L.potential L.raw)
-    (hcross : HasFiniteCrossWeight L.potential L.raw)
+    (htail : HasSpinalWeightTail L.potential L.raw)
     (hfirst : HasLeftmostFirstMoment L)
     {sigma a t ε : ℝ} (hsigma : 0 < sigma)
     (hspine : IsCenteredSecondMoment
@@ -75,9 +80,9 @@ lemma eventually_endpointMean_div_log_le_of_firstMoment
   have hlog : Tendsto logN atTop atTop := Real.tendsto_log_atTop.comp hNr
   have hz : -a + (Real.pi ^ 2 / 2) * sigma ^ 2 * t < z := by dsimp [z]; linarith
   obtain ⟨b, hb, htprob⟩ :=
-    eventually_countableRootEndpointMinimum_ge_le_polynomial_of_initialExponent hN μ
+    eventually_countableRootEndpointMinimum_ge_le_polynomial_of_spinalWeightTail hN μ
       (L.sortedPotentialImage_hasBoundaryNormalization hboundary)
-      (L.sortedPotentialImage_hasFiniteCrossWeight hboundary hcross) hsigma hspine ha ha1 ht hz hH I
+      (L.sortedPotentialImage_hasSpinalWeightTail_iff.mpr htail) hsigma hspine ha ha1 ht hz hH I
   have hprob : ∀ᶠ n in atTop, P.real (A n) ≤ Real.exp (-b * logN n) := by
     filter_upwards [htprob] with n hn
     change P (A n) ≤ _ at hn
@@ -174,7 +179,7 @@ lemma eventually_endpointMean_sub_horizon_le_of_firstMoment
     (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
     (hnonempty : L.raw nonemptySupport = 1)
     (hboundary : HasBoundaryNormalization L.potential L.raw)
-    (hcross : HasFiniteCrossWeight L.potential L.raw)
+    (htail : HasSpinalWeightTail L.potential L.raw)
     (hfirst : HasLeftmostFirstMoment L)
     {sigma a t ε : ℝ} (hsigma : 0 < sigma)
     (hspine : IsCenteredSecondMoment
@@ -222,7 +227,7 @@ lemma eventually_endpointMean_sub_horizon_le_of_firstMoment
     filter_upwards [hnTop.eventually hTH] with k hk
     simp [logN, Nat.cast_sub ((hi k).trans hk), sub_div]
   obtain ⟨k, hk⟩ := (eventually_endpointMean_div_log_le_of_firstMoment L
-    hnonempty hboundary hcross hfirst hsigma hspine ha ha1 ht (half_pos hε)
+    hnonempty hboundary htail hfirst hsigma hspine ha ha1 ht (half_pos hε)
     (hN.comp hnTop) hremaining).exists
   exact (hbad k).not_ge (hk.trans (by dsimp [c]; linarith))
 
