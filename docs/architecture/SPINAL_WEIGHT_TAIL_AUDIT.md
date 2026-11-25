@@ -122,11 +122,12 @@ unfinished theorem is promoted by placing its conclusion in an assumption.
 
 These are still open, not consequences already supplied by a new hypothesis:
 
-1. The actual family-cutoff first moment and the quantitative one-root
-   corridor-success bound `Mₙ²/Sₙ` are now proved, using the same selected
-   process as the MRCA second moment. The remaining numerical step is to
-   choose the internal window, tail cutoff, and rate gaps and simplify that
-   ratio on the logarithmic BRW scales.
+1. The actual family-cutoff first moment, MRCA second moment, and exponential
+   one-root success bound on cubic time scales are proved. A cumulative
+   selected-prefix first-moment upper bound is also proved. Choose the
+   internal window, tail cutoff and rate gaps on the target `log N` scales,
+   and connect these single-root count bounds to the actual finite-root
+   causal population used by capacity comparison.
 2. Combine the one-root bound with capacity comparison to replace the
    positive-initial-exponent upper-tail input. Then transport the weak
    assumption through ordering and assemble the existing endpoint-mean,
@@ -428,3 +429,78 @@ cutoff corridor mean under the weak tail alone. Its 8 new/affected named
 axiom reports passed the reviewed allowlist. Mathlib style lint passed on
 1830 production modules; import boundaries and all 32 Python tests passed.
 LaTeX source, bibliographies and PDFs were unchanged.
+
+
+## Cubic-scale success and cumulative population (2026-11-25)
+
+The existing actual-count Paley–Zygmund ratio now has an exponential
+consequence in `Tube/Corridor/FamilySelection.lean`. Write `κ=π²σ²/2`,
+let `Lₙ→∞`, `Hₙ/Lₙ³→t>0`, and assume
+`0<dUpper<κ<dLower`, `c≥dUpper`, `α,ρ>0`, and internal start and target
+centers `a,b∈(-1/2,1/2)`. Under the original boundary normalization,
+centered finite spinal variance and weak spinal weight tail, every
+
+`β>Γ := α+4ρ+a+1/2+2(dLower-dUpper)t`
+
+gives `exp(-βLₙ)≤P_(μₙ)(hasPathHistoryIn φ Hₙ 0 corridorₙ)` eventually.
+Here `μₙ=μ.map(selectFamily {W≤exp(αLₙ)})` and the corridor is exactly the
+one in the actual first/second moment statements above. No normalization
+or centering of `μₙ` is assumed. The sum in the MRCA denominator is bounded
+by `Hₙ exp(-lowerₙ)` since `c≥dUpper`; the diagonal term fits the same
+exponential bound. Dividing the resulting exponent by `Lₙ` leaves `Γ`.
+The `√Lₙ`, `Lₙ⁻²` and `log(Hₙ+1)` errors vanish after division by `Lₙ`.
+The finite-horizon algebra and this particular exponent assembly are
+non-reusable proof support under `Corridor/Lemmas/FamilySelection/`.
+No separate public budget object is defined.
+
+`FirstMoment/FamilySelection.lean` also gives, uniformly over measurable
+family events `A`, horizons `H`, and `lower∈[-L,0]`, for sufficiently large
+real `L`,
+
+`E_(μ.map(selectFamily A)) ∑_(j≤H) Zⱼ(prefix)`
+`≤ (H+1) exp(lower+L+√L+max(c-d,0)H/L²)`,
+
+where `c≥0`, `0<d<κ`, and `prefix` has lower edge
+`lower+cj/L²` and width `L`. This upper bound needs boundary normalization
+and the original centered finite spinal variance, without a weak-tail or
+finite-cross-weight assumption. It follows by actual selected-count
+domination, the existing many-to-one upper bound, the uniform drifted-tube
+estimate, and finite summation. It is a reusable cumulative-count theorem,
+so it remains outside `Lemmas/`.
+
+The deterministic inclusion from affine finite histories to positive-time
+drifted-tube events now belongs to `DriftedTube/Event.lean`. It holds for
+arbitrary initial position and real parameters, with no sign or moment
+hypotheses. First and second moments use that same inclusion; the previous
+private measure-level copy in the second-moment module was removed.
+
+Abstraction review: the pinned Mathlib revision listed above and the
+[official power-asymptotics documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.html)
+provide `tendsto_rpow_neg_atTop`, real-power subtraction and quotient
+limits. They do not state the combined normalized-power implication
+`L→∞`, `H/L^q→t≠0`, `p<q` ⇒ `L^p/H→0`. Its reusable version allows
+any filter, real exponents and signed `H`, and belongs in
+`Analysis/Asymptotics/Scale/Power/Basic.lean`. The existing intermediate-block
+power-ratio helper now derives from it instead of maintaining another
+negative-power proof. Cubic-scale integer-horizon facts remain private to
+the corridor proof chain. Existing logarithmic power-bound limits are used
+directly.
+
+The proof follows the cutoff moment and population-budget steps in
+B. Mallein, *N-branching random walk with α-stable spine*, proof of Lemma 3.4,
+[arXiv:1503.03762v2](https://arxiv.org/html/1503.03762v2), with the repository's
+reflected spatial convention. These results supply the numerical success
+estimate and a capacity input; the actual finite-root causal capacity bridge,
+positive-initial-exponent replacement and final weak-tail endpoint/speed
+assembly remain open. No LaTeX changes are part of this step.
+
+
+Cubic-scale/cumulative validation (2026-11-25): full
+`LEAN_NUM_THREADS=2 lake build` passed (12045 jobs), including all existing
+endpoint and speed clients. All 155 working-tree Lean tests compiled, with
+the configured axiom allowlist checks passing. `FamilyCutoffMoments.lean`
+now checks actual cutoff success positivity from the weak tail and cubic
+scale alone, and audits 12 named declarations. Mathlib style lint passed on
+1832 production modules. Import boundaries, all 32 Python unit tests, and
+`git diff --check` passed. No proof placeholder, new axiom, dependency-version
+change or LaTeX edit was introduced.

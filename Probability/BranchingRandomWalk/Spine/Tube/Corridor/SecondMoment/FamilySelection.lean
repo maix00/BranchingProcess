@@ -46,21 +46,6 @@ open ProbabilityTheory.BranchingProcess (offspringFieldLaw)
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube
 
-private lemma measure_affineCorridorPrefix_le_driftedTube
-    (ν : Measure (ℕ → ℝ)) (n : ℕ) (initial lower c width : ℝ) :
-    ν {increment | history n initial increment ∈
-      affineCorridorPrefix n lower (c / width ^ 2) width} ≤
-      ν (driftedTubeEvent n width c (lower - initial)) := by
-  apply measure_mono
-  intro increment h j _ hj
-  have hk := h (⟨j, by omega⟩ : Fin (n + 1))
-  change lower + (c / width ^ 2) * (j : ℝ) ≤
-    history n initial increment ⟨j, by omega⟩ ∧
-      history n initial increment ⟨j, by omega⟩ ≤
-        lower + (c / width ^ 2) * (j : ℝ) + width at hk
-  simp only [history_apply, div_mul_eq_mul_div] at hk
-  constructor <;> linarith [hk.1, hk.2]
-
 /-- Whole-family-selection extension of equation (3.7) of Wang Yiyang, *Asymptotic Speed of the N-Branching Random
 Walk with Infinite Offspring* (master's thesis, Fudan University, 2026),
 Chapter 3, Lemma 3.6. Apply the tilted-tube estimate to both descendants after
@@ -101,7 +86,7 @@ theorem exists_lintegral_pathGeneration_affineCorridor_selectFamily_sq_le_crossW
   have hprefix (n : ℕ) (a x : ℝ) (hx : a ≤ x ∧ x ≤ a + width) :
       tiltedIncrementFieldLaw φ μ
         {increment | history n x increment ∈ affineCorridorPrefix n a s width} ≤ q n := by
-    apply (measure_affineCorridorPrefix_le_driftedTube _ n x a c width).trans
+    apply (measure_mono (affineCorridorPrefix_history_subset_driftedTubeEvent n x a c width)).trans
     change iidSequenceLaw ν (driftedTubeEvent n width c (a - x)) ≤ q n
     rw [← MeasureTheory.ofReal_measureReal (measure_ne_top _ _)]
     exact ENNReal.ofReal_le_ofReal

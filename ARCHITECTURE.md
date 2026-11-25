@@ -863,3 +863,33 @@ existing Paley–Zygmund interface. These are complete mathematical APIs, so
 they belong outside `Lemmas/`. No new count, tree law, success event or budget
 construction is introduced. The touched subject directories have at most
 7 direct Lean files; no parallel proof-support grouping is needed.
+
+
+## Cubic-scale cutoff success and cumulative bounds (2026-11-25)
+
+`Analysis/Asymptotics/Scale/Power/Basic.lean` owns the filter-general
+normalized-power implication `H/L^q→t≠0`, `p<q` ⇒ `L^p/H→0` when
+`L→∞`. It permits real exponents and signed `H`; intermediate-block
+limits now derive from it. Pinned Mathlib
+`26573066084e6e2aa8526ea358bc43b66d96f970` and the official power-asymptotics
+module were checked: its negative-power and quotient limits are reused,
+with no duplicate combined implication found.
+
+`RandomWalk/SmallDeviation/DriftedTube/Event.lean` owns the deterministic
+inclusion from affine finite histories to increment-tube events, translated
+by an arbitrary initial position. Its interface imposes no probabilistic or
+sign assumptions; both BRW first and second moments reuse it. The old
+private measure wrapper in `SecondMoment/FamilySelection.lean` is removed.
+
+The actual selected cumulative-count upper bound remains in
+`Tube/Corridor/FirstMoment/FamilySelection.lean`: it is uniform over arbitrary
+measurable whole-family selections and horizons, and needs no weak-tail or
+cross-weight assumption. `Tube/Corridor/FamilySelection.lean` exposes the
+complete exponential one-root success bound on cubic time scales. Only its
+specific exponent assembly and the bundle of cubic-scale facts are placed
+under the single `Corridor/Lemmas/FamilySelection/` directory. They are ordinary
+internal lemmas accessed by `import all`, without re-export or public budget
+definitions. The touched directories have at most 7 direct Lean files.
+This is the cutoff-budget step of B. Mallein, *N-branching random walk with
+α-stable spine*, proof of Lemma 3.4, arXiv:1503.03762v2; final causal capacity
+and endpoint/speed migration remain separate open obligations.

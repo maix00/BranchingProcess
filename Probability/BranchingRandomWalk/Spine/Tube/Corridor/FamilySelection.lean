@@ -9,6 +9,7 @@ module
 public import Probability.BranchingRandomWalk.Spine.Tube.Corridor.FirstMoment.FamilySelection
 public import Probability.BranchingRandomWalk.Spine.Tube.Corridor.SecondMoment.FamilySelection
 public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.PathCount
+import all Probability.BranchingRandomWalk.Spine.Tube.Corridor.Lemmas.FamilySelection.ExponentBudget
 
 /-!
 # Success probabilities for actual family-selected corridors
@@ -22,6 +23,11 @@ public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.PathCount
   `Mₙ=exp((b-ρ-a)Lₙ+(c-dLower)Hₙ/Lₙ²)` and `Sₙ` is the explicit
   cutoff MRCA second-moment bound displayed in the theorem. Here
   `0<dUpper<π²σ²/2<dLower`, `Lₙ→∞` and `Lₙ²/Hₙ→0`.
+
+* `ProbabilityTheory.BranchingRandomWalk.Spine.eventually_exp_le_measure_hasPathHistoryIn_affineCorridor_cutoff_of_cubicScale`:
+  if `Hₙ/Lₙ³→t>0`, `c≥dUpper`, and
+  `β>α+4ρ+a+1/2+2(dLower-dUpper)t`, then the same actual one-root
+  success probability is eventually at least `exp(-βLₙ)`.
 
 The first and second moments refer to the same `pathGeneration` under the
 same actual selected offspring law. The success event is the existing
@@ -123,5 +129,39 @@ theorem eventually_measure_hasPathHistoryIn_affineCorridor_cutoff_ge_of_finiteVa
   have hpz := measure_hasPathHistoryIn_ge_of_pathGeneration_moments φ μA H 0 C hC
     _ S rfl hsecondN hSpos hSfinite
   refine (ENNReal.div_le_div_right (pow_le_pow_left' hfirstN 2) S).trans hpz
+
+/-- Exponential one-root success on cubic time scales, obtained by simplifying
+Mallein's cutoff first/second-moment ratio. See B. Mallein, *N-branching
+random walk with α-stable spine*, proof of Lemma 3.4 (arXiv:1503.03762v2). -/
+theorem eventually_exp_le_measure_hasPathHistoryIn_affineCorridor_cutoff_of_cubicScale
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    {sigma c α dUpper dLower a b ρ t β : ℝ}
+    (hcentered : IsCenteredSecondMoment (tiltedPotentialLaw φ (-1) μ) (sigma ^ 2))
+    (hσ : 0 < sigma) (htail : HasSpinalWeightTail φ μ) (hα : 0 < α)
+    (hdUpper : 0 < dUpper) (hUpperCritical : dUpper < (Real.pi ^ 2 / 2) * sigma ^ 2)
+    (hLowerCritical : (Real.pi ^ 2 / 2) * sigma ^ 2 < dLower) (hc : dUpper ≤ c)
+    (ha : -(1 / 2 : ℝ) < a) (ha' : a < 1 / 2)
+    (hb : -(1 / 2 : ℝ) < b) (hb' : b < 1 / 2) (hρ : 0 < ρ) (ht : 0 < t)
+    (hβ : α + 4 * ρ + a + 1 / 2 + 2 * (dLower - dUpper) * t < β)
+    {scale : ℕ → ℝ} {horizon : ℕ → ℕ} (hscale : Tendsto scale atTop atTop)
+    (hH : Tendsto (fun n => (horizon n : ℝ) / scale n ^ 3) atTop (𝓝 t)) :
+    ∀ᶠ n in atTop, ENNReal.ofReal (Real.exp (-β * scale n)) ≤
+      offspringFieldLaw (μ.map (Step.selectFamily
+        {ξ | totalPotentialWeight φ (-1) ξ ≤ ENNReal.ofReal (Real.exp (α * scale n))}))
+        (hasPathHistoryIn φ (horizon n) 0
+          (affineCorridorThrough (horizon n) (-(a + 1 / 2) * scale n)
+            (c / scale n ^ 2) (scale n)
+            ((b + ρ - a) * scale n + c * (horizon n : ℝ) / scale n ^ 2))) := by
+  obtain ⟨hpos, hsmall, _, _⟩ := cutoffCorridor_cubicScaleFacts hscale hH ht
+  have hprob := eventually_measure_hasPathHistoryIn_affineCorridor_cutoff_ge_of_finiteVariance
+    (v := 1 / 2) φ μ hboundary hcentered hσ htail (by norm_num)
+    (hdUpper.le.trans hc) hα hdUpper hUpperCritical hLowerCritical ha ha' hb hb' hρ
+    hscale hpos hsmall
+  have hbudget := eventually_cutoffCorridor_expBudget_le_ratio
+    hscale hH ht hα.le hb hρ hdUpper.le hc hβ
+  filter_upwards [hprob, hbudget] with n hp hbnd
+  exact hbnd.trans hp
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
