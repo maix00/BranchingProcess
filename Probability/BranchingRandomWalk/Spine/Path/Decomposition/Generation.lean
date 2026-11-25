@@ -11,9 +11,6 @@ public import Probability.BranchingRandomWalk.Spine.Path.Basic
 /-!
 # Actual generation observables of ancestral paths
 
-The sums range over all addresses and use the same realization event as the
-endpoint observables. Empty generations contribute zero.
-
 ## Public declarations
 
 - `weightedPathGenerationTerm` and `pathGenerationTerm` are the weighted and
@@ -23,6 +20,8 @@ endpoint observables. Empty generations contribute zero.
   $\widehat Z_{n,u}=e^{-V(u)}Z_{n,u}$ for each address contribution.
 - `weightedPathGeneration` and `pathGeneration` sum those terms over all
   addresses.
+- `pathGeneration_eq_tsum_fin` enumerates the same count by finite addresses:
+  `Zₙ(F,x)=∑_(z:Fin n→ι) 1_survive(z) F(Hₙ(z))`.
 - `weightedPathGenerationTerm_measurable` and
   `pathGenerationTerm_measurable` prove measurability of one-address terms
   for measurable $F$; `weightedPathGeneration_measurable` and
@@ -35,12 +34,15 @@ endpoint observables. Empty generations contribute zero.
   $n$.
 - `pathGeneration_eq_weightedPathGeneration` recovers the unweighted count
   by multiplying each weighted term by its reciprocal endpoint factor.
+
+The sums range over all addresses and use the same realization event as the
+endpoint observables. Empty generations contribute zero.
 -/
 
 @[expose] public section
 
 open MeasureTheory
-open scoped ENNReal
+open scoped ENNReal Classical
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
@@ -95,6 +97,26 @@ noncomputable def pathGeneration
     (F : (Fin (n + 1) → ℝ) → ENNReal) (x : ℝ)
     (ω : Combinatorics.Branching.StepField ι X) : ENNReal :=
   ∑' u : TreeNode ι, pathGenerationTerm φ n F x u ω
+
+/-- Enumerate actual generation paths by finite child-label vectors, using
+Mathlib's list/finite-tuple equivalence. The surviving address test is retained. -/
+theorem pathGeneration_eq_tsum_fin {ι X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (n : ℕ) (F : (Fin (n + 1) → ℝ) → ENNReal)
+    (x : ℝ) (field : Combinatorics.Branching.StepField ι X) :
+    pathGeneration φ n F x field =
+      ∑' z : Fin n → ι, if surviveAlong field [] (List.ofFn z) then
+        F (pathHistory φ n x field (List.ofFn z)) else 0 := by
+  classical
+  unfold pathGeneration
+  rw [← List.equivSigmaTuple.symm.tsum_eq]
+  change (∑' p : Σ k, Fin k → ι,
+    pathGenerationTerm φ n F x (List.ofFn p.2) field) = _
+  rw [tsum_sigma', tsum_eq_single n]
+  · apply tsum_congr
+    intro z
+    simp [pathGenerationTerm, Set.indicator]
+  · intro k hk
+    simp [pathGenerationTerm, hk]
 
 theorem weightedPathGenerationTerm_measurable
     {ι X : Type*} [MeasurableSpace X]

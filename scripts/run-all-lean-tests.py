@@ -11,6 +11,16 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Branching/FamilyCutoffMoments.lean"): (
+        "ProbabilityTheory.BranchingRandomWalk.Spine.pathGeneration_eq_tsum_fin",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.pathManyToOne_selectFamily",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.pathManyToOneCore",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.weightedPathManyToOneCore",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.pathManyToOne",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.weightedPathManyToOne",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.eventually_lintegral_pathGeneration_affineCorridor_cutoff_ge_of_finiteVariance",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.eventually_measure_hasPathHistoryIn_affineCorridor_cutoff_ge_of_finiteVariance",
+    ),
     Path("BranchingProcessTest/Branching/MarkedCorridorCutoff.lean"): (
         "ProbabilityTheory.Kernel.mul_pow_mul_le_pow_of_returnKernel",
         "ProbabilityTheory.Kernel.eventually_pow_restrictNoise_ge",
