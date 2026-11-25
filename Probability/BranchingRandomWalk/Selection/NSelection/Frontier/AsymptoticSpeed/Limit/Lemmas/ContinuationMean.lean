@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 import all Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.Lemmas.TwoLineages
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.PositiveInitialExponent
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.UpperTail.PositiveInitialExponent
 import Probability.BranchingRandomWalk.Assumptions.Moments
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.Lemmas.FailureExpectation
 

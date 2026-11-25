@@ -31,6 +31,20 @@ FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
 GENERAL_LAYER_BOUNDARIES = {
+    "Probability.BranchingRandomWalk.Population.Processes.Causal.Path.Survival": (
+        "Probability.Process.RandomWalk.SmallDeviation",
+        "Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation",
+    ),
+    "Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.FamilySelection": (
+        "Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation",
+        "Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed",
+    ),
+    "Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.UpperTail.SpinalWeight": (
+        "Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage",
+        "Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.UpperTail.PositiveInitialExponent",
+        "Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.UpperTail.SingleRoot",
+        "Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed",
+    ),
     "Analysis.Asymptotics.Scale.Power.Basic": (
         "Probability", "MeasureTheory", "Combinatorics",
     ),

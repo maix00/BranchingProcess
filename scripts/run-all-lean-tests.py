@@ -11,6 +11,15 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/SpinalWeight.lean"): (
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.lintegral_size_le_sum_pathGeneration_restartedWindow",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.measure_hasPathHistoryIn_selectFamily_le",
+        "ProbabilityTheory.BranchingRandomWalk.Spine.eventually_exp_le_measure_hasPathHistoryIn_affineCorridor_of_cubicScale",
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.exists_measure_capacityEvent_compl_affine_selectFamily_le_exp_of_finiteVariance",
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.CausalPopulation.measure_terminalPosition_avoidance_le_exp_of_pathSuccess",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.measure_endpointMinimum_gt_le_terminalAvoidance_add_capacityFailure",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_measure_endpointMinimum_gt_le_affineBudget_of_spinalWeightTail",
+    ),
     Path("BranchingProcessTest/Branching/FamilyCutoffMoments.lean"): (
         "Asymptotics.tendsto_rpow_div_of_ratio_limit",
         "ProbabilityTheory.RandomWalk.SmallDeviation.DriftedTube.affineCorridorPrefix_history_subset_driftedTubeEvent",
