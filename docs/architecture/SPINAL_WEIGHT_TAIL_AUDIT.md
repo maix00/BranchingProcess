@@ -122,13 +122,15 @@ unfinished theorem is promoted by placing its conclusion in an assumption.
 
 These are still open, not consequences already supplied by a new hypothesis:
 
-1. The centered affine-corridor survival lower bound is now proved for
-   arbitrary positive horizon sequences `Hₙ`, real widths `Lₙ→∞` and
-   `Lₙ²/Hₙ→0`, with correlated marks accepted on *every* step. The native
-   first-moment chain still needs the prescribed endpoint-window and general
-   initial-fraction adapters before it can replace all current endpoint
-   inputs. The full continuous-moving-boundary statement of Mallein's
-   Theorem 2.3 is not asserted by this affine-corridor theorem.
+1. The affine-corridor lower bound now includes arbitrary fixed internal
+   starting fractions and prescribed internal terminal windows, for arbitrary
+   positive horizon sequences `Hₙ`, real widths `Lₙ→∞` and `Lₙ²/Hₙ→0`, with
+   correlated marks accepted on every step. Its nonnegative exponential
+   endpoint-payoff corollary supplies the spinal first-moment input. The
+   native BRW first-moment chain still needs the actual selected-count law
+   bridge to this event before replacing the endpoint inputs. The full
+   continuous-moving-boundary statement of Mallein's Theorem 2.3 is not
+   asserted by this affine-corridor theorem.
 2. Combine those marked first-moment inputs with the now proved actual
    family-cutoff MRCA second moment and capacity comparison to replace the
    positive-initial-exponent upper-tail input. Then transport the weak
@@ -295,3 +297,53 @@ Validation of the long-horizon and actual-cutoff additions (2026-11-25):
 * Mathlib style lint passed on 1826 production modules; the import-boundary
   audit and all 32 Python unit tests passed.
 * No LaTeX source, bibliography or PDF was changed.
+
+
+## Internal starts and terminal windows (2026-11-25)
+
+`Marked/FiniteVarianceLower.lean` now proves the endpoint version first. For
+`a,b∈(-1/2,1/2)`, `ρ>0` and `d>π²σ²/2`, put
+
+`Eₙ={-Lₙ/2≤aLₙ+S_k-ck/Lₙ²≤Lₙ/2 (1≤k≤Hₙ),`
+`aLₙ+S_Hₙ-cHₙ/Lₙ²∈[(b-ρ)Lₙ,(b+ρ)Lₙ], Bⱼ≤αLₙ (j<Hₙ)}`.
+
+Then `exp(-dHₙ/Lₙ²)≤P(Eₙ)` eventually under the same centered finite-variance
+and weak quadratic mark-tail hypotheses. For every `θ≥0`, its direct corollary is
+
+`exp(θ((b-ρ-a)Lₙ+cHₙ/Lₙ²)-dHₙ/Lₙ²)≤E[exp(θS_Hₙ); Eₙ]`.
+
+The former centered survival theorem now follows by forgetting the endpoint;
+its separate proof was removed. The unmarked estimates still call Wang
+Yiyang's Lemma 3.1(ii) through the existing real-width endpoint-window API.
+The added mark retention and concatenation follow B. Mallein, *Necessary and
+sufficient conditions for the convergence of the consistent maximal
+displacement of the branching random walk*, §2.2, proof of Lemma 2.5,
+equations (2.5)–(2.7), arXiv:1510.00602v2. No new offspring-law normalization,
+centering or untruncated cross-moment hypothesis is introduced.
+
+The exact horizon is an entrance block, `q` return blocks, and a final block
+of length between `bₙ` and `2bₙ`. The final block absorbs the remainder.
+Fixed entrance and terminal probabilities disappear after multiplication of
+the logarithm by `Lₙ²/Hₙ`; the middle blocks retain the sharp rate. The
+fixed seven-band transition geometry remains internal in `Marked/Lemmas/`.
+
+The generic finite-transition restriction theorem belongs in
+`Kernel/Step/Noise/QuadraticTail.lean`: it is uniform over every transition
+time below a diffusive maximum and all measurable targets. The existing
+return-survival theorem derives its local estimate from this interface.
+`Kernel/Survival/Return/Basic.lean` combines entrance, repeated returns and
+terminal kernels using the native Chapman–Kolmogorov inequality and the
+existing return-kernel domination. It assumes no random-walk structure.
+Mathlib overlap was checked against revision
+`26573066084e6e2aa8526ea358bc43b66d96f970`, including
+`Kernel.pow_add_apply_eq_lintegral` and `setLIntegral_mono'`.
+The latter directly proves the weighted-payoff corollary; no separate
+integration-bound framework was added.
+
+
+Endpoint-window validation (2026-11-25): full `LEAN_NUM_THREADS=2 lake build`
+passed (12035 jobs); all 154 working-tree Lean test modules passed; the
+marked-corridor regression passed all 37 configured axiom reports; Mathlib
+style lint passed on 1827 production modules; import boundaries and all 32
+Python unit tests passed. The regression includes prescribed terminal windows
+and the exact horizon-zero endpoint semantics. LaTeX was unchanged.

@@ -12,6 +12,12 @@ import tempfile
 
 AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/Branching/MarkedCorridorCutoff.lean"): (
+        "ProbabilityTheory.Kernel.mul_pow_mul_le_pow_of_returnKernel",
+        "ProbabilityTheory.Kernel.eventually_pow_restrictNoise_ge",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Marked.endsInPrefix_restrictNoise_killedMarkedStep_iff",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Marked.measurableSet_corridorEndpointEvent",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Marked.eventually_affineCorridorEndpointProbability_ge_exp_of_finiteVariance",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Marked.eventually_lintegral_exp_affineCorridorEndpoint_ge_of_finiteVariance",
         "ProbabilityTheory.Kernel.runPartialSteps_comp_noise",
         "ProbabilityTheory.Kernel.ofPartialStep_map_noise",
         "ProbabilityTheory.Kernel.measurable_restrictNoise",
