@@ -1441,3 +1441,23 @@ entrance/return/terminal product bound. The fixed seven-band geometry stays
 in `Marked/Lemmas/`; the centered survival theorem derives from the endpoint
 entry. The exponential endpoint-payoff lower bound is a direct corollary in
 that entry, rather than a second integration or branching construction.
+
+
+## Actual family-selected corridor moments (2026-11-25)
+
+`Spine/Path/ManyToOne/FamilySelection.lean` owns the general marked identity
+for the existing path count under an actual whole-family selected law.
+Ordinary path many-to-one is its universal-family specialization; weighted
+many-to-one follows by terminal compensation. The old scalar-record proof
+and private generic list-sum/measurability helpers were removed.
+The pointwise finite-address enumeration stays with generation observables
+in `Path/Decomposition/Generation.lean` and uses native list/tuple reindexing.
+
+`Tube/Corridor/FirstMoment/FamilySelection.lean` owns the actual cutoff mean
+under the weak spinal tail. Its one-use totalized-log map calculation stays
+private. `Tube/Corridor/FamilySelection.lean` is the one-root success entry;
+it combines that mean and `SecondMoment/FamilySelection.lean` through the
+existing Paley–Zygmund interface. These are complete mathematical APIs, so
+they belong outside `Lemmas/`. No new count, tree law, success event or budget
+construction is introduced. The touched subject directories have at most
+7 direct Lean files; no parallel proof-support grouping is needed.

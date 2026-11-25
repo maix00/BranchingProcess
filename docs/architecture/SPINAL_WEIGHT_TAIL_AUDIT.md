@@ -122,20 +122,19 @@ unfinished theorem is promoted by placing its conclusion in an assumption.
 
 These are still open, not consequences already supplied by a new hypothesis:
 
-1. The affine-corridor lower bound now includes arbitrary fixed internal
-   starting fractions and prescribed internal terminal windows, for arbitrary
-   positive horizon sequences `Hₙ`, real widths `Lₙ→∞` and `Lₙ²/Hₙ→0`, with
-   correlated marks accepted on every step. Its nonnegative exponential
-   endpoint-payoff corollary supplies the spinal first-moment input. The
-   native BRW first-moment chain still needs the actual selected-count law
-   bridge to this event before replacing the endpoint inputs. The full
-   continuous-moving-boundary statement of Mallein's Theorem 2.3 is not
-   asserted by this affine-corridor theorem.
-2. Combine those marked first-moment inputs with the now proved actual
-   family-cutoff MRCA second moment and capacity comparison to replace the
+1. The actual family-cutoff first moment and the quantitative one-root
+   corridor-success bound `Mₙ²/Sₙ` are now proved, using the same selected
+   process as the MRCA second moment. The remaining numerical step is to
+   choose the internal window, tail cutoff, and rate gaps and simplify that
+   ratio on the logarithmic BRW scales.
+2. Combine the one-root bound with capacity comparison to replace the
    positive-initial-exponent upper-tail input. Then transport the weak
    assumption through ordering and assemble the existing endpoint-mean,
    continuation-mean, restart-mean and speed comparisons.
+
+The full continuous-moving-boundary statement of Mallein's Theorem 2.3 is
+outside the present affine-corridor coverage; it is not assumed in these
+completed count and success results.
 
 The existing final endpoint and speed theorems therefore still take
 `HasFiniteCrossWeight`. They have not been relabeled as weak-tail results.
@@ -347,3 +346,85 @@ marked-corridor regression passed all 37 configured axiom reports; Mathlib
 style lint passed on 1827 production modules; import boundaries and all 32
 Python unit tests passed. The regression includes prescribed terminal windows
 and the exact horizon-zero endpoint semantics. LaTeX was unchanged.
+
+
+## Actual selected-count first moments and success (2026-11-25)
+
+`Spine/Path/ManyToOne/FamilySelection.lean` proves the exact identity
+
+`E_(μ_A) Zₙ(F,x)=E_ν̂[exp(Sₙ) F(x+S₀,…,x+Sₙ); Bⱼ∈A, j<n]`,
+
+where `μ_A=μ.map (Step.selectFamily (mark⁻¹A))` and `ν̂` is the original
+joint displacement/family-mark law. Marks may take values in any measurable
+space. The count is the existing `pathGeneration`, with selection at every
+strict ancestor; the endpoint's own family is not inspected. No moment,
+nonextinction or finite offspring assumption is used. The proof uses the
+existing marked many-to-one identity and original-field pushforward, rather
+than a second branching induction or normalized selected spine.
+
+`Path/Decomposition/Generation.lean` owns the finite-address enumeration of
+that same count, using Mathlib's `List.equivSigmaTuple.symm.tsum_eq` and
+`tsum_sigma'`. The general list/tuple operations are reused directly;
+no new generic list-summation module is introduced. Ordinary
+`pathManyToOneCore` now follows by accepting every family and forgetting the
+unit mark, using native coordinatewise IID pushforward. The weighted formula
+then follows by terminal exponential cancellation. The old independent
+scalar-record transport proof and private reindex/measurability helpers have
+been removed. The existing general `Fin.measurable_partialSum` supplies finite
+history measurability in the selected-count proof.
+
+`Tube/Corridor/FirstMoment/FamilySelection.lean` connects the original weak
+spinal tail to the joint `log₊W` mark and the marked affine estimate. With
+`μₙ=μ.map(selectFamily {W≤exp(αLₙ)})`, it proves
+
+`Mₙ=exp((b-ρ-a)Lₙ+(c-dLower)Hₙ/Lₙ²) ≤ E_(μₙ) Z_Hₙ`,
+
+for the corridor with lower edge `-(a+1/2)Lₙ`, slope `c/Lₙ²`, width `Lₙ`
+and terminal upper bound `Uₙ=(b+ρ-a)Lₙ+cHₙ/Lₙ²`. The original centered
+spine has variance `σ²>0`, `dLower>π²σ²/2`, the start and target centers
+are internal, and the original weak spinal weight-tail condition is the only
+reproductive tail hypothesis. Finite spinal square integrability follows
+from the positive second moment in the existing centered-moment predicate.
+The raw boundary normalization implies `W<∞` almost surely. This handles
+the totalized real logarithm at infinite weight without adding a finiteness
+assumption; equivalence of the actual cutoff and log cutoff is only needed
+almost surely. Its one-use map lemma remains private in the first-moment file.
+
+`Tube/Corridor/FamilySelection.lean` combines this mean with the existing
+actual family-cutoff MRCA bound and the existing Paley--Zygmund interface:
+
+`Mₙ²/Sₙ ≤ P_(μₙ)(hasPathHistoryIn φ Hₙ 0 corridorₙ)`,
+
+where `Sₙ` is the explicit second-moment bound with
+`Kₙ=exp(αLₙ)` and any `0<dUpper<π²σ²/2`. Its width threshold is uniform
+in `Kₙ`, so the cutoff can grow with `Lₙ`. Both moments and the success
+event use the same actual process. No separate success event, counted
+process or public budget definition is introduced.
+
+The three new modules expose complete reusable count or probability results;
+all single-use proof support is local/private. The touched directories have
+6 direct public files in `Path/ManyToOne/`, 2 in `Path/Decomposition/`,
+7 in `Tube/Corridor/`, and 1 in `Corridor/FirstMoment/`.
+
+The reference is B. Mallein, *N-branching random walk with α-stable spine*,
+proof of Lemma 3.4, arXiv:1503.03762v2, and *Necessary and sufficient
+conditions for the convergence of the consistent maximal displacement of
+the branching random walk*, §2.1, §2.2 and proof of Lemma 3.4,
+arXiv:1510.00602v2. The affine second-moment input is the extension of Wang
+Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
+Offspring* (Fudan University, 2026), Chapter 3, Lemma 3.6, equation (3.7).
+Pinned Mathlib revision `26573066084e6e2aa8526ea358bc43b66d96f970` and the
+[official list/finite-tuple documentation](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/List/OfFn.html)
+were checked; the implementation uses the native equivalence, product
+pushforward, `Measure.map_congr`, and ENNReal finite-sum/quotient bounds.
+
+
+Actual-count validation (2026-11-25): full `LEAN_NUM_THREADS=2 lake build`
+passed (12041 jobs), including all existing endpoint and speed clients of the
+refactored scalar many-to-one identities. All 155 working-tree Lean tests
+passed. `FamilyCutoffMoments.lean` verifies the distinction between counting
+a child and inspecting its own reproduction, and positivity of the actual
+cutoff corridor mean under the weak tail alone. Its 8 new/affected named
+axiom reports passed the reviewed allowlist. Mathlib style lint passed on
+1830 production modules; import boundaries and all 32 Python tests passed.
+LaTeX source, bibliographies and PDFs were unchanged.
