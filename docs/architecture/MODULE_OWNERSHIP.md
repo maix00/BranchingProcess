@@ -1577,3 +1577,16 @@ positive leftmost first moment, weak reproductive tails and infinite cross
 weight. The option-singleton instance is derived in its existing measurable-
 option owner. Semantic and native API review is recorded in
 `SPINAL_WEIGHT_TAIL_AUDIT.md`.
+
+
+### Replicated-offspring bias and the independent leftmost moment (2026-11-26)
+
+`Spine/Tilted/Replicated.lean` owns fixed finite-arity common-displacement bias:
+`ν̂(dx)=m exp(θx)ν(dx)` and the deterministic relative mark `log m` for `m>0`.
+It provides complete reusable spinal identities; it is not proof-only support.
+`Examples/LeftmostMoment.lean` owns the calibrated heavy-positive-displacement
+counterexample. Its parameters, mixture weights and calibration proofs are
+private. The original infinite-cross-weight binary example now calls the same
+generic bias and relative-mark interfaces, rather than keeping its previous
+parallel slot-sum and weak-tail proofs. The tilted directory has eight direct
+source files after this addition; the examples directory has two.

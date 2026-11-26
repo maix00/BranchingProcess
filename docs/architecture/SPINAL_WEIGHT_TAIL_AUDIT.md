@@ -798,9 +798,9 @@ relative reproductive mark is identically `log2`. Nevertheless,
 cross weight is strictly stronger than the weak tail even within the boundary-
 normalized, nonempty, centered finite-variance, finite-positive-first-moment
 setting. This is a different explicit witness from the heavy-count examples
-in the audit, using native geometric laws. It does not claim that the separate
-audit illustrations with infinite spinal log-square moment or infinite positive
-leftmost first moment have been formalized.
+in the audit, using native geometric laws. The independent positive-leftmost-first-moment illustration is now proved by
+`Examples/LeftmostMoment.lean`, as detailed below. The separate illustration
+with infinite spinal log-square moment remains open.
 
 The option-valued coordinate representation lacked a measurable-singleton
 instance. `MeasureTheory/MeasurableSpace/Option.lean` now derives that instance
@@ -823,3 +823,56 @@ Validation of this closure batch: the full Lake build completed successfully
 passed. Mathlib style lint covered 1842 project modules, import-boundary checks
 passed, and all 32 Python tooling tests passed. Only the reviewed foundational
 axioms are reported by the named declaration checks.
+
+
+## Independence of the leftmost first moment (2026-11-26)
+
+`Examples/LeftmostMoment.lean` proves
+`exists_boundaryLaw_spinalWeightTail_not_integrable_leftmost`. Its witness has
+two present, identically displaced siblings, satisfies boundary normalization,
+has a centered spinal law with an explicitly integrable square and strictly
+positive variance, and has the weak reproductive tail. Nevertheless the raw
+positive leftmost displacement is not integrable. Thus the first-moment input
+to the endpoint and speed results is independent of the weak tail even under
+the other boundary and finite-variance hypotheses.
+
+The raw positive component is `H=8+2^G`, `G~Geom(1/2)`, so `E[H]=∞`, whereas
+`E[H^k exp(-H)]<∞` for every natural `k`. Write
+`a=E[exp(-H)]`, `b=E[H exp(-H)]`,
+`A=1-a-b(1-exp(-1))`, `p=1/(2A)`, `q=p b exp(-1)`, and `r=1-p-q`.
+The displacement measure is
+`ν=p Law(H)+q δ_(-1)+r δ_0`.
+The elementary estimate `a+b≤1/4` gives positive mixture weights. Their
+identities are `2 Eν[exp(-D)]=1` and `2 Eν[D exp(-D)]=0`.
+The atom at `-1` gives positive spinal variance. The heavy component gives
+`Eν[D⁺]=∞` because `p>0`. Native geometric integrability, exponential decay,
+finite-measure sums, pushforwards and with-density integrals provide the
+measure calculations; no alternate probability law is defined.
+
+`Spine/Tilted/Replicated.lean` owns the reusable fixed-arity identities:
+`ν.map (x↦m children at x)` has tilted increment measure
+`ν.withDensity (m exp(θx))`, and every surviving child's relative mark is
+`log m` for `m>0`. The latter implies the weak tail for arbitrary raw `ν`,
+without any moment or boundary hypothesis. These are complete spinal facts,
+so they belong outside `Lemmas/`. Example-specific mixture parameters and all
+calibration proofs remain private in the example module. The previous binary
+cross-weight example now derives its scalar-bias and weak-tail calculations
+from the same generic replicated-offspring interfaces, removing the former
+parallel finite-slot and bounded-mark proofs. No compatibility aliases remain.
+
+The native API review used the pinned Mathlib geometric measure,
+`integrable_geometricMeasure_iff`, `integrable_map_measure`,
+`integrable_add_measure`, `integral_add_measure`,
+`integrable_withDensity_iff_integrable_smul'`, and
+`integral_withDensity_eq_integral_toReal_smul`.
+The repository's single joint family/child bias and scalar pushforward remain
+the owners; Mathlib's generic change-of-measure and sum-measure results are
+called directly. This batch leaves one supplemental audit example open:
+weak relative reproductive tails with infinite spinal mark second moment.
+It introduces no LaTeX change.
+
+Validation: both example modules and the generic replicated-offspring owner
+compiled successfully (6197 Lake jobs). The spinal-tail regression compiled,
+and all 47 configured named axiom reports use only the reviewed foundational
+allowlist. Mathlib style lint passed on the three changed production modules;
+import-boundary checks and all 32 Python tooling tests passed.
