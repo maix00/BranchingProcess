@@ -799,8 +799,8 @@ cross weight is strictly stronger than the weak tail even within the boundary-
 normalized, nonempty, centered finite-variance, finite-positive-first-moment
 setting. This is a different explicit witness from the heavy-count examples
 in the audit, using native geometric laws. The independent positive-leftmost-first-moment illustration is now proved by
-`Examples/LeftmostMoment.lean`, as detailed below. The separate illustration
-with infinite spinal log-square moment remains open.
+`Examples/LeftmostMoment.lean`, as detailed below. The independent infinite-spinal-mark-second-moment illustration is now
+proved by `Examples/SpinalMarkMoment.lean`, as detailed below.
 
 The option-valued coordinate representation lacked a measurable-singleton
 instance. `MeasureTheory/MeasurableSpace/Option.lean` now derives that instance
@@ -867,8 +867,8 @@ The native API review used the pinned Mathlib geometric measure,
 `integral_withDensity_eq_integral_toReal_smul`.
 The repository's single joint family/child bias and scalar pushforward remain
 the owners; Mathlib's generic change-of-measure and sum-measure results are
-called directly. This batch leaves one supplemental audit example open:
-weak relative reproductive tails with infinite spinal mark second moment.
+called directly. The supplemental example with infinite spinal mark second moment was still
+open at this stage; the following closure now proves it.
 It introduces no LaTeX change.
 
 Validation: both example modules and the generic replicated-offspring owner
@@ -876,3 +876,68 @@ compiled successfully (6197 Lake jobs). The spinal-tail regression compiled,
 and all 47 configured named axiom reports use only the reviewed foundational
 allowlist. Mathlib style lint passed on the three changed production modules;
 import-boundary checks and all 32 Python tooling tests passed.
+
+
+## Infinite spinal mark square under the weak tail (2026-11-26)
+
+`Examples/SpinalMarkMoment.lean` proves
+`exists_boundaryLaw_spinalWeightTail_infinite_mark_secondMoment` for an actual
+original offspring law on `Step ℕ ℝ`. It simultaneously gives probability
+normalization, boundary normalization, nonempty reproduction, a centered
+spinal increment with an integrable square and variance `σ²>0`, finite raw
+positive leftmost first moment, the weak reproductive tail, and an infinite
+extended second moment of the original relative spinal mark. The theorem
+also asserts that child zero is present and every present sibling has the
+same displacement, so the named coordinate is indeed the leftmost child.
+Thus all three supplemental strictness/independence examples from the audit
+are now formalized, alongside the already completed principal conclusions
+(6) and (7). This does not promote the optional moving-boundary or single-root
+endpoint generalizations previously recorded as outside those conclusions.
+
+The reusable measure-level example is owned by
+`MeasureTheory/Measure/Tails/Examples.lean`. With
+`u_n=4^(-n)/(n+1)` and `b_n=u_n-u_(n+1)`, native Dirac sums give a probability
+measure `ν` with `ν[n,∞)=u_n`. For `X(n)=2^n`, dyadic thresholds give
+`x²ν{X>x}→0`. Meanwhile `b_n≥(3/4)u_n`, so the second-moment series dominates
+`(3/4)∑1/(n+1)=∞`. This is a complete measure-theoretic counterexample, not
+BRW-specific proof support, and therefore lives outside `Lemmas/`.
+All auxiliary sequences and telescoping proofs remain private.
+
+To build the BRW law, set `ε=1/16`, `d=log 2`, `K_n=2^(2^n)`,
+`c_n=ε/K_n`, `δ=∫c_n dν`, `t=2(ε-δ)` and `z=1-ε-2t`.
+The original measure assigns `c_n ν(dn)` to a family of `K_n` children all at
+zero, and assigns raw masses `2t`, `t/2`, `z` to single-child families at
+`d`, `-d`, `0`, respectively. The bound `δ≤1/32` gives `t>0` and `z≥0`;
+`δ+2t+t/2+z=1` normalizes the original measure.
+The same existing family/child bias, rather than a separately defined biased
+process, has the following two computed pushforwards:
+
+* displacement: `(ε+z)δ_0+tδ_d+tδ_(-d)`, with variance `2t d²>0`;
+* relative mark: `ε Law_ν(dX)+(1-ε)δ_0`.
+
+The second identity proves both the weak tail and the infinite mark square
+under exactly the same spinal measure. The original leftmost displacement
+is bounded by `d` in positive part. The finite-prefix slot calculations are
+private adapters for varying family sizes; the law and its mark continue to
+use `tiltedFamilyChildLaw`, `tiltedPotentialLaw`,
+`lintegral_tiltedFamilyChildLaw`, `lintegral_tiltedPotentialLaw`,
+`relativeSpinalWeight`, and the existing quadratic-tail scaling interface.
+No alternate bias, mark definition, cutoff condition, or compatibility alias
+is introduced. No LaTeX source is modified.
+
+Native review uses the pinned Mathlib `HasSum.isProbabilityMeasure_sum_dirac`,
+`hasSum_iff_tendsto_nat_of_nonneg`, `sum_measureReal_singleton`,
+`measureReal_compl`, the native harmonic-series divergence theorem,
+`lintegral_sum_measure`, `lintegral_const_mul`, with-density and pushforward
+integration, and finite atomic Bochner integrability. The original native
+Pareto module provides its density and normalization, rather than the needed
+little-o quadratic-tail counterexample; no Pareto API is reimplemented.
+The new generic example imports only measure/analysis owners.
+
+Validation: full Lake build passed (12075 jobs); all 158 working-tree Lean
+regression modules and configured axiom inventories passed, including all
+49 named reports in the spinal-tail regression. Mathlib style lint passed
+for all 1846 project modules. Import-boundary checks and all 32 Python tooling
+tests passed. The final local cleanup factors the coefficient integrability
+and finite-atomic integrability calculations into their existing private
+owners; it introduces no parallel proof or public alias.

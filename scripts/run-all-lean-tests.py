@@ -97,6 +97,8 @@ AXIOM_EXPECTATIONS = {
         "Asymptotics.tendsto_succ_quotientBlockCount_mul_scale_div",
     ),
     Path("BranchingProcessTest/Branching/SpinalWeightTail.lean"): (
+        "MeasureTheory.exists_probabilityMeasure_nat_vanishingQuadraticTail_infinite_secondMoment",
+        "ProbabilityTheory.BranchingRandomWalk.Examples.exists_boundaryLaw_spinalWeightTail_infinite_mark_secondMoment",
         "ProbabilityTheory.BranchingRandomWalk.Spine.tiltedPotentialLaw_map_replicated",
         "ProbabilityTheory.BranchingRandomWalk.Spine.relativeSpinalWeight_replicated",
         "ProbabilityTheory.BranchingRandomWalk.Spine.hasSpinalWeightTail_map_replicated",

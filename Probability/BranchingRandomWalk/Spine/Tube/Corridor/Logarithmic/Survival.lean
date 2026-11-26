@@ -38,7 +38,7 @@ open Combinatorics.Branching
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw)
 open ProbabilityTheory.RandomWalk
 
-/-- Equation (3.10) of Wang Yiyang, *Asymptotic Speed of the N-Branching
+/-- Equation (3.12) of Wang Yiyang, *Asymptotic Speed of the N-Branching
 Random Walk with Infinite Offspring* (master's thesis, Fudan University,
 2026), Chapter 3, Lemma 3.8. Use the first and second moments in the corridor
 with lower edge raised by $u\log n$, then take $u$ up to $v$. -/

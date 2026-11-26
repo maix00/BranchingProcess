@@ -11,6 +11,7 @@ public import Probability.Process.RandomWalk.Path.Corridor.Affine
 public import Probability.Distributions.Moments.Real
 import Probability.BranchingRandomWalk.Spine.Tube.Corridor.IndependentRoot
 import Probability.Process.RandomWalk.SmallDeviation.DriftedTube.FiniteVarianceLower.EndpointBounds
+import Probability.Process.RandomWalk.SmallDeviation.HorizontalTube.FiniteVarianceUpper.Basic
 
 /-!
 # Expected terminal population in a logarithmic corridor
@@ -67,7 +68,7 @@ private lemma narrowerEndpointWindow_subset (H : ℕ) {t b v u : ℝ}
   · simpa only [history_apply, zero_add] using htermUpper
   · simpa only [Set.mem_ofPred_eq, history_apply, zero_add] using hTerminal.1
 
-/-- Equation (3.12) of Wang Yiyang, *Asymptotic Speed of the N-Branching
+/-- Equation (3.14) of Wang Yiyang, *Asymptotic Speed of the N-Branching
 Random Walk with Infinite Offspring* (master's thesis, Fudan University,
 2026), Chapter 3, Lemma 3.8. In the lower bound, raise the corridor floor
 to $(u-b)\log n$ for $0<u<v$, then send $u$ up to $v$. -/
@@ -101,6 +102,50 @@ theorem tendsto_log_expectedTerminalPopulation_div_log
     simp only [sub_zero]
     exact mul_le_of_le_one_right' prob_le_one
   have hfinite (n : ℕ) : M n ≠ ⊤ := ne_top_of_le_ne_top ENNReal.ofReal_ne_top (hupper n)
+  -- Use the horizontal-tube upper estimate as in the source proof.
+  let d : ℝ := (Real.pi ^ 2 / 2) * sigma ^ 2 / 2
+  have hd : 0 < d := by dsimp [d]; positivity
+  have hrate : 0 < (Real.pi ^ 2 / 2) * sigma ^ 2 := by positivity
+  obtain ⟨width₀, _, htube⟩ :=
+    ProbabilityTheory.RandomWalk.SmallDeviation.HorizontalTube.iidSequenceLaw_intervalProbability_le_exp_of_finiteVariance
+      ν hcentered.1 (by rw [hcentered.2]; positivity)
+      (v := (1 / 2 : ℝ)) (by norm_num) hd
+      (by rw [hcentered.2]; dsimp [d]; linarith)
+  have hwidth : Tendsto (fun n => b * t n) atTop atTop := ht.const_mul_atTop (by linarith)
+  have hupperTube : ∀ᶠ n : ℕ in atTop,
+      M n ≤ ENNReal.ofReal (Real.exp ((v - b) * t n + (b * t n) ^ (1 / 2 : ℝ) -
+        d * ((H n : ℝ) / (b * t n) ^ 2))) := by
+    filter_upwards [hwidth.eventually_ge_atTop width₀, ht.eventually_ge_atTop 1] with n hw hn
+    have hH : 1 ≤ H n := Nat.le_floor (by
+      simpa only [Nat.cast_one] using Real.one_le_rpow hn (by norm_num : (0 : ℝ) ≤ 5 / 2))
+    have hpath : tiltedIncrementFieldLaw φ μ {z | history (H n) 0 z ∈ A n} ≤
+        ENNReal.ofReal (Real.exp ((b * t n) ^ (1 / 2 : ℝ) - d * ((H n : ℝ) / (b * t n) ^ 2))) := by
+      change iidSequenceLaw ν _ ≤ _
+      refine (measure_mono ?_).trans (htube (b * t n) hw (-(b * t n))
+        (by nlinarith) (by simp) (H n) hH)
+      intro z hz j
+      have hh := hz.1 j.succ
+      simpa only [history_apply, zero_add, zero_mul, add_zero, neg_mul, Fin.val_succ, Set.mem_Icc] using hh
+    have hm := lintegral_pathGeneration_le_exp_mul_spineProbability φ μ hboundary (H n) 0 _
+      (A n) (hA n) (fun _ hx => hx.2)
+    refine hm.trans ((mul_le_mul_right hpath _).trans_eq ?_)
+    simp only [sub_zero, ← ENNReal.ofReal_mul (Real.exp_nonneg _), ← Real.exp_add]
+    congr 2
+    ring
+  have herror : Tendsto (fun n => (b * t n) ^ (1 / 2 : ℝ) / t n) atTop (𝓝 0) := by
+    have hhalf := (tendsto_rpow_atTop (by norm_num : (0 : ℝ) < 1 / 2)).comp ht
+    apply ((tendsto_const_nhds (x := b ^ (1 / 2 : ℝ))).div_atTop hhalf).congr'
+    filter_upwards [ht.eventually_gt_atTop 0] with n hn
+    rw [Real.mul_rpow (by linarith : 0 ≤ b) hn.le]
+    have hp : 0 < t n ^ (1 / 2 : ℝ) := Real.rpow_pos_of_pos hn _
+    have heq : t n ^ (1 / 2 : ℝ) * t n ^ (1 / 2 : ℝ) = t n := by
+      rw [← Real.rpow_add hn]; norm_num
+    apply (eq_div_iff hn.ne').2
+    change b ^ (1 / 2 : ℝ) / t n ^ (1 / 2 : ℝ) * t n = _
+    calc
+      _ = b ^ (1 / 2 : ℝ) / t n ^ (1 / 2 : ℝ) *
+          (t n ^ (1 / 2 : ℝ) * t n ^ (1 / 2 : ℝ)) := by rw [heq]
+      _ = _ := by field_simp
   have hlower {u : ℝ} (hu : 0 < u) (huv : u < v) :
       ∀ᶠ n : ℕ in atTop, ENNReal.ofReal (Real.exp ((u - b) * t n -
         ((Real.pi ^ 2 / 2) * sigma ^ 2 + 1) * (H n : ℝ) / ((b - u) * t n) ^ 2)) ≤ M n := by
@@ -200,12 +245,20 @@ theorem tendsto_log_expectedTerminalPopulation_div_log
       change (d / (b - u) ^ 2) / t n ^ (1 / 2 : ℝ) < u - b - a at hcost
       linarith)
   · intro a ha
-    filter_upwards [hpositive, ht.eventually_gt_atTop 0] with n hpos htn
-    have hreal := ENNReal.toReal_mono ENNReal.ofReal_ne_top (hupper n)
+    filter_upwards [hpositive, ht.eventually_gt_atTop 0, hupperTube,
+      herror.eventually (Iio_mem_nhds (sub_pos.mpr ha))] with n hpos htn hup herr
+    have hreal := ENNReal.toReal_mono ENNReal.ofReal_ne_top hup
     rw [ENNReal.toReal_ofReal (Real.exp_nonneg _)] at hreal
     have hlog := Real.log_le_log hpos hreal
     rw [Real.log_exp] at hlog
-    exact lt_of_le_of_lt ((div_le_iff₀ htn).2 hlog) ha
+    have hcost : 0 ≤ d * ((H n : ℝ) / (b * t n) ^ 2) := by positivity
+    have hbound : Real.log (M n).toReal / t n ≤ v - b + (b * t n) ^ (1 / 2 : ℝ) / t n := by
+      apply (div_le_iff₀ htn).2
+      have heq : (v - b + (b * t n) ^ (1 / 2 : ℝ) / t n) * t n =
+          (v - b) * t n + (b * t n) ^ (1 / 2 : ℝ) := by field_simp
+      rw [heq]
+      linarith
+    exact hbound.trans_lt (by linarith)
 
 end ProbabilityTheory.BranchingRandomWalk.Spine.LogarithmicCorridor
 

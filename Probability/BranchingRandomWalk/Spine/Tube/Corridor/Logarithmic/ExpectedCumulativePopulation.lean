@@ -30,7 +30,7 @@ open Combinatorics.Branching
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw)
 open ProbabilityTheory.RandomWalk
 
-/-- Equation (3.11) of Wang Yiyang, *Asymptotic Speed of the N-Branching
+/-- Equation (3.13) of Wang Yiyang, *Asymptotic Speed of the N-Branching
 Random Walk with Infinite Offspring* (Fudan University, 2026), Chapter 3,
 Lemma 3.8. The sum indexed by n + 1 counts all positive generations. -/
 theorem exists_eventually_lintegral_cumulativePopulation_le_log

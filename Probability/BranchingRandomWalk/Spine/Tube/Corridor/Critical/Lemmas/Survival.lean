@@ -54,7 +54,7 @@ private lemma endpointWindow_subset_affineCorridor (N : ℕ) (width K u : ℝ)
       simpa [history_apply, div_mul_eq_mul_div] using h
   · simpa [history_apply] using hz.2.2
 
-/-- The finite-horizon Paley--Zygmund estimate in the proof of equation (3.8)
+/-- The finite-horizon Paley--Zygmund estimate in the proof of equation (3.10)
 of Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
 Offspring* (master's thesis, Fudan University, 2026), Chapter 3, Lemma 3.7.
 The corridor slope is the critical small-deviation rate divided by the
