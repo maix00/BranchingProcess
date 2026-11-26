@@ -105,11 +105,6 @@ theorem eventually_measure_endpointMinimum_gt_le_affineBudget_of_spinalWeightTai
     (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin (m n))))
     (by simp [RootIndexed.mem_initialPopulation_iff]) 0 window (fun _ => measurableSet_Icc)
     upper (fun _ _ h => h.2)
-  let slices := RootIndexed.CausalPopulation.ofRestartedRealPositionSets_finiteSlices
-    (fun _ : Fin (m n) => (0 : ℝ)) id measurable_id
-    (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin (m n))))
-    (by simp [RootIndexed.mem_initialPopulation_iff]) 0 window (fun _ => measurableSet_Icc)
-    upper (fun _ _ h => h.2)
   let C := affineCorridorThrough (H n) lower (c / L n ^ 2) (L n) U
   have hprob : Real.exp (-β * L n) ≤
       (ProbabilityTheory.BranchingProcess.offspringFieldLaw μ).real
@@ -137,18 +132,20 @@ theorem eventually_measure_endpointMinimum_gt_le_affineBudget_of_spinalWeightTai
     exact Step.selectFamily_of_mem (Set.mem_univ ξ)
   rw [hselect, Measure.map_id] at hcap
   simp only [Finset.card_univ, Fintype.card_fin] at hcap
-  have hinit : ∀ field, Order.DominatingMap
-      (↑(slices.toFinset 0 field) : Set (RootIndexed.TreeNode (Fin (m n)) ℕ))
+  have hinit : ∀ field, Order.DominatingMap (P 0 field)
       (↑(RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin (m n)))) :
         Set (RootIndexed.TreeNode (Fin (m n)) ℕ)) (fun _ => (0 : ℝ)) (fun _ => (0 : ℝ)) := by
     intro field
     refine ⟨id, ?_, fun _ _ _ _ h => h, fun _ _ => le_rfl⟩
     intro p hp
-    have hp' := (slices.mem_toFinset 0 field p).1 hp
-    exact hp'
+    change p ∈ (RootIndexed.initialPopulation (α := ℕ)
+      (Finset.univ : Finset (Fin (m n)))) at hp
+    exact hp
   have hcompare := RootIndexed.measure_endpointMinimum_gt_le_terminalAvoidance_add_capacityFailure
     μ (N n) hNn (Finset.univ : Finset (Fin (m n))) (fun _ => 0)
-    hboundary.ae_isLeftLocallyFinite P slices hinit (H n) U
+    hboundary.ae_isLeftLocallyFinite P
+    hinit
+    (H n) U
   have hreal : finiteRootStepFieldLaw μ (m n)
       {field | U < firstNSelectedEndpointMinimum (m n) (N n) (H n) field} ≤
       finiteRootStepFieldLaw μ (m n) {field | (U : WithTop ℝ) <

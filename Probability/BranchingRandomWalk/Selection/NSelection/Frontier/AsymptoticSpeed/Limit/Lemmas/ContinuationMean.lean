@@ -22,7 +22,7 @@ The complete endpoint `L¹` and expectation limits are public in
 entry and extracts a deterministic violating sequence if uniformity fails.
 It is the remaining-horizon step of Wang Yiyang, *Asymptotic Speed of the
 N-Branching Random Walk with Infinite Offspring* (Fudan University, 2026),
-Chapter 4, Theorem 1.2, under Mallein's weak reproductive condition
+Appendix A.3, Theorem 1.2′, under Mallein's weak reproductive condition
 (Theorem 1.1 (1.9), arXiv:1503.03762v2).
 -/
 

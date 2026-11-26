@@ -11,6 +11,13 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/Law/Overflow.lean"): (
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.measure_selectedPopulation_lowerTail_le_firstN",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.measure_selectedPopulation_lowerTail_le_firstN_of_randomInitial",
+    ),
+    Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/FourthMoment.lean"): (
+        "BranchingProcessTest.NSelectionSpeed.singleRootMean_via_secondMoment",
+    ),
     Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/FirstMoment.lean"): (
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_countableRootEndpointMinimum_ge_le_polynomial_of_positiveExponent",
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_countableRootEndpointMinimum_abs_div_sub_le_polynomial_of_spinalWeightTail",
@@ -1002,6 +1009,21 @@ def main() -> int:
         for test in missing_axiom_tests:
             print(f"  {test}", file=sys.stderr)
         return 1
+
+    # Some module-syntax regressions expose test-only proof assemblies to
+    # legacy-syntax regressions. Build only those imported test modules first.
+    support_modules = sorted({
+        module
+        for test in tests
+        for module in re.findall(
+            r"^(?:public )?import (?:all )?(BranchingProcessTest\.[A-Za-z0-9_.]+)",
+            test.read_text(), re.MULTILINE,
+        )
+    })
+    if support_modules:
+        support_build = subprocess.run(["lake", "build", *support_modules])
+        if support_build.returncode:
+            return support_build.returncode
 
     def compile_test(index: int, test: Path) -> tuple[Path, subprocess.CompletedProcess[str]]:
         print(f"[{index}/{len(tests)}] lake env lean {test}", flush=True)

@@ -18,8 +18,7 @@ import Mathlib.MeasureTheory.Integral.DominatedConvergence
 # First-moment estimate on restart failure
 
 The endpoint is the one in Wang Yiyang, *Asymptotic Speed of the N-Branching
-Random Walk with Infinite Offspring* (Fudan University, 2026), Chapter 4,
-§4.3. Truncate the sampled displacements before the deadline and use the
+Random Walk with Infinite Offspring* (Fudan University, 2026), Appendix A.3. Truncate the sampled displacements before the deadline and use the
 generation filtration for the terms at and after it.
 
 ## Internal proof declarations
