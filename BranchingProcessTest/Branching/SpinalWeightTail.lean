@@ -1,6 +1,8 @@
 import Probability.BranchingRandomWalk.Assumptions.SpinalWeightTail
 import Probability.BranchingRandomWalk.Examples.SpinalWeight
 import Probability.BranchingRandomWalk.Examples.LeftmostMoment
+import Probability.BranchingRandomWalk.Examples.SpinalMarkMoment
+import MeasureTheory.Measure.Tails.Examples
 import Probability.BranchingRandomWalk.Spine.Tilted.Marked
 import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Marked
 import Probability.BranchingRandomWalk.Spine.Tilted.FamilyCutoff
@@ -191,3 +193,25 @@ example (ν : Measure ℝ) {m : ℕ} (hm : 0 < m) :
 #print axioms ProbabilityTheory.BranchingRandomWalk.Spine.relativeSpinalWeight_replicated
 #print axioms ProbabilityTheory.BranchingRandomWalk.Spine.hasSpinalWeightTail_map_replicated
 #print axioms ProbabilityTheory.BranchingRandomWalk.Examples.exists_boundaryLaw_spinalWeightTail_not_integrable_leftmost
+
+
+-- The counterexample is an actual original reproduction law, with finite
+-- displacement variance under its existing spinal measure. Its mark square
+-- fails integrability under that same measure, rather than under a new law.
+example : ∃ μ : Measure (Step ℕ ℝ), IsProbabilityMeasure μ ∧
+    HasBoundaryNormalization realPotential μ ∧ HasSpinalWeightTail realPotential μ ∧
+    (∃ σ : ℝ, 0 < σ ∧ IsCenteredSecondMoment
+      (tiltedPotentialLaw realPotential (-1) μ) (σ ^ 2)) ∧
+    ¬ Integrable (fun p => relativeSpinalWeight realPotential p ^ 2)
+      (tiltedFamilyChildLaw realPotential (-1) μ) := by
+  obtain ⟨μ, hp, hb, _, _, ht, _, ⟨σ, hσ, hs, _⟩, hinf⟩ :=
+    Examples.exists_boundaryLaw_spinalWeightTail_infinite_mark_secondMoment
+  refine ⟨μ, hp, hb, ht, ⟨σ, hσ, hs⟩, ?_⟩
+  intro hi
+  have he := ofReal_integral_eq_lintegral_ofReal hi
+    (ae_of_all _ (fun p => sq_nonneg (relativeSpinalWeight realPotential p)))
+  rw [hinf] at he
+  exact ENNReal.ofReal_ne_top he
+
+#print axioms MeasureTheory.exists_probabilityMeasure_nat_vanishingQuadraticTail_infinite_secondMoment
+#print axioms ProbabilityTheory.BranchingRandomWalk.Examples.exists_boundaryLaw_spinalWeightTail_infinite_mark_secondMoment

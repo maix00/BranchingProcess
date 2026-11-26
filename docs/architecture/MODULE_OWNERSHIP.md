@@ -1590,3 +1590,19 @@ private. The original infinite-cross-weight binary example now calls the same
 generic bias and relative-mark interfaces, rather than keeping its previous
 parallel slot-sum and weak-tail proofs. The tilted directory has eight direct
 source files after this addition; the examples directory has two.
+
+
+### Weak quadratic tails and infinite spinal mark square (2026-11-26)
+
+`MeasureTheory/Measure/Tails/Examples.lean` owns an independently reusable
+probability-measure counterexample: `X(n)=2^n` has `x²P(X>x)→0` and
+`∫⁻X²=∞`. Native Dirac sums and harmonic-series divergence implement it.
+The generic statement belongs outside `Lemmas/`; its particular sequences
+and proof helpers remain private.
+`Probability/BranchingRandomWalk/Examples/SpinalMarkMoment.lean` owns the
+calibrated original reproduction-law counterexample. Private finite-prefix
+adapters handle varying offspring counts, while the existing joint spinal
+bias supplies both computed marginal laws. No new bias framework or mark
+observable is defined. The tail directory has five direct source files and
+the BRW examples directory has three. No new proof-support directory is
+needed for the single-module private calculations.
