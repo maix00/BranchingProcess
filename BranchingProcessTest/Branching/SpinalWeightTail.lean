@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Assumptions.SpinalWeightTail
+import Probability.BranchingRandomWalk.Examples.SpinalWeight
 import Probability.BranchingRandomWalk.Spine.Tilted.Marked
 import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Marked
 import Probability.BranchingRandomWalk.Spine.Tilted.FamilyCutoff
@@ -174,3 +175,6 @@ example (μ : Measure (Step Empty ℝ)) [IsProbabilityMeasure μ] :
 #print axioms ProbabilityTheory.BranchingRandomWalk.Spine.familyPathManyToOne
 #print axioms ProbabilityTheory.BranchingRandomWalk.Spine.markedPathManyToOne
 #print axioms ProbabilityTheory.BranchingRandomWalk.Spine.pathHistory_eq_finitePrefix_records
+
+#print axioms ProbabilityTheory.BranchingRandomWalk.Examples.exists_boundaryLaw_spinalWeightTail_not_finiteCrossWeight
+#print axioms MeasureTheory.optionMeasurableSingletonClass

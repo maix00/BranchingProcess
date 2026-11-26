@@ -32,6 +32,8 @@ f\text{ measurable}\Longrightarrow
 * `MeasureTheory.measurableSet_option_none` and
   `MeasureTheory.measurableSet_option_some_image` show that `{none}` and the
   image `some '' s` of a measurable set are measurable.
+* `MeasureTheory.optionMeasurableSingletonClass`: measurable singletons in `X`
+  give measurable singletons `{none}` and `{some x}` in `Option X`.
 * `MeasureTheory.measurable_option_some` and
   `MeasureTheory.measurableEmbedding_option_some` state that `some` is a
   measurable embedding. `MeasureTheory.measurable_option_map` proves
@@ -69,6 +71,17 @@ theorem measurableSet_option_some_image {X : Type*} [MeasurableSpace X]
     MeasurableSet (some '' s) := by
   change MeasurableSet (some ⁻¹' (some '' s))
   rwa [Set.preimage_image_eq s (Option.some_injective X)]
+
+/-- Optional values have measurable singletons whenever their value type does. -/
+instance optionMeasurableSingletonClass {X : Type*} [MeasurableSpace X]
+    [MeasurableSingletonClass X] : MeasurableSingletonClass (Option X) where
+  measurableSet_singleton o := by
+    cases o with
+    | none => exact measurableSet_option_none
+    | some x =>
+      convert measurableSet_option_some_image (measurableSet_singleton x) using 1
+      ext o
+      simp
 
 theorem measurable_option_some {X : Type*} [MeasurableSpace X] :
     Measurable (some : X → Option X) := fun _s hs => hs
