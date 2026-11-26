@@ -10,6 +10,7 @@ public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.Asym
 public import Combinatorics.UlamHarris.Order
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.LogarithmicScales
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.RestartMean
+import MeasureTheory.Integral.MeasurePreserving
 import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.Lemmas.ContinuationMean
 
 public import Probability.BranchingRandomWalk.Assumptions.SpinalWeightTail

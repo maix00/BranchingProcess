@@ -119,8 +119,8 @@ ancestral-state-path specialization from that interface.
 and its equivalence with the total-weight tail. `Tilted/FamilyCutoff.lean`
 restricts complete families, whereas the existing `Tilted/Truncation.lean`
 truncates ordered child slots. These are different operations.
-See `docs/architecture/SPINAL_WEIGHT_TAIL_AUDIT.md` for the full-path,
-marked-corridor and final-theorem assembly obligations still open.
+See `docs/architecture/SPINAL_WEIGHT_TAIL_AUDIT.md` for the completed full-path,
+marked-corridor, endpoint and speed chains and the scope of auxiliary examples.
 The state-kernel spine construction belongs to
 `Probability/BranchingProcess/Spine/`. `Family/Joint.lean` owns the single
 joint family/selected-child bias; `Family/Marginals.lean` derives both
@@ -944,3 +944,24 @@ two independent lineages, uniform stopped continuations and the existing
 restart-mean comparison. No parallel speed process or sorted bias is defined.
 See `docs/architecture/SPINAL_WEIGHT_TAIL_AUDIT.md` for formulas and the
 pinned Mathlib/native interface review.
+
+
+`EndpointDeviation/Endpoint/Sequence/FirstMoment.lean` owns the complete
+positive-start endpoint `L¹` and expectation limits under the original weak
+reproductive tail and positive leftmost first moment, including full capacity.
+`Sequence/FiniteVariance.lean` owns the moment-free two-sided polynomial tails
+and probability limit; `UpperTail/FullCapacity.lean` extends the common upper
+tail through root monotonicity. The former full-capacity probability proof in
+`L2Limit.lean` and speed-local endpoint mean implementation are removed.
+`Limit/Lemmas/ContinuationMean.lean` now specializes the public mean limit.
+`Probability/MeasureTheory/Convergence/FirstMoment/FromTails.lean` owns the
+general varying-probability-law `L¹` criterion using negative exponential tails
+and upper means. The generic exceptional-event estimate is finite-measure
+rather than probability-specific and lives in
+`MeasureTheory/Integral/Convergence/ExceptionalEvent.lean`, with arbitrary
+scales, filters and real polynomial exponents. The old speed-local file is
+removed; both clients use the general interface. The binary strictness witness
+is a complete example in `Probability/BranchingRandomWalk/Examples/SpinalWeight.lean`;
+its construction helpers are private. See the 2026-11-26 review in
+`docs/architecture/SPINAL_WEIGHT_TAIL_AUDIT.md` for exact hypotheses and native
+Mathlib overlap checks.

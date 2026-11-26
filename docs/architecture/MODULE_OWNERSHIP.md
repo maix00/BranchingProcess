@@ -1551,3 +1551,29 @@ observable and single-root block-comparison implementations are reused.
 The ordering directory has five direct files and the upper-tail directory has
 three, with one two-file internal grouping. Exact references and native API
 review are in `SPINAL_WEIGHT_TAIL_AUDIT.md`.
+
+
+## Positive-start weak-tail endpoint limits (2026-11-26)
+
+`Sequence/FirstMoment.lean` exposes the `0<a≤1` endpoint `L¹` and expectation
+limits with only the positive leftmost first moment and the weak reproductive
+tail. Its internal two-lineage upper-mean calculation replaces the former
+speed-local copy. `FiniteVariance.lean` combines existing lower tails with the
+shared closed-range upper tail and derives the moment-free probability limit.
+The full-capacity probability proof is owned once in `UpperTail/FullCapacity`;
+the old fourth-moment result calls it. The speed continuation specializes the
+public mean limit, so there is one endpoint moment proof chain.
+
+The exceptional-event estimate has a finite-measure, arbitrary-filter,
+arbitrary-scale and real-power formulation in
+`MeasureTheory/Integral/Convergence/ExceptionalEvent.lean`; its old BRW speed
+support file is deleted. The first-moment convergence criterion for varying
+probability laws lives in `Probability/MeasureTheory/Convergence/FirstMoment/`.
+Both are complete reusable results outside `Lemmas/`. The exact binary
+strictness model is in `BranchingRandomWalk/Examples/SpinalWeight.lean`, with
+private helpers and native geometric laws; its existence theorem certifies
+boundary normalization, centered positive finite spinal variance, finite
+positive leftmost first moment, weak reproductive tails and infinite cross
+weight. The option-singleton instance is derived in its existing measurable-
+option owner. Semantic and native API review is recorded in
+`SPINAL_WEIGHT_TAIL_AUDIT.md`.

@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Basic
-import Analysis.Asymptotics.Sequence.ExponentialSum
-import Analysis.Asymptotics.Sequence.LogarithmicScale
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Basic
+public import Analysis.Asymptotics.Sequence.ExponentialSum
+public import Analysis.Asymptotics.Sequence.LogarithmicScale
 /-!
 # Polynomial bound for the selected-population endpoint sublevel
 
@@ -25,6 +27,8 @@ limits.
 
 open Filter MeasureTheory
 open scoped ENNReal Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 

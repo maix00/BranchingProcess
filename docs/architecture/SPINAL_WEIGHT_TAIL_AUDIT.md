@@ -118,32 +118,39 @@ Each public result is a complete reusable measure, tail, bias or corridor
 statement. Single-module tactical helpers are private. No model-specific
 unfinished theorem is promoted by placing its conclusion in an assumption.
 
-## Current completed boundary (2026-11-25)
+## Current completed boundary (2026-11-26)
 
-The finite-variance weak-tail speed extension is now proved end to end.
-`UpperTail/PositiveInitialExponent.lean` gives the positive-start polynomial
-endpoint tail under `HasSpinalWeightTail`. `Step/Ordering/Spine.lean` preserves
-the complete biased displacement/family-weight joint law under ordering, so
-this is the weak condition on the original offspring law, not an assumption
-about a separately constructed sorted law. The existing two-lineage estimate,
-leftmost first moment, stopped continuation and restart-mean comparison give
-`Limit/Speed.lean: exists_speed_with_logSq_limit` with that weak hypothesis.
-The final statement includes common almost-sure and `L¹` speed from every
-nonempty deterministic initial cloud of size at most `N`, and
-`(log N)² v_N → π²σ²/2`.
+Both principal strengthened conclusions in `audit-20261124.txt` are now
+proved: equation (6), the positive-initial-exponent endpoint `L¹` limit for
+`0<a≤1`, and equation (7), the speed limit. `Sequence/FiniteVariance.lean`
+gives the two-sided polynomial endpoint tail and convergence in probability
+under the original weak reproductive tail, without any leftmost-child moment.
+`Sequence/FirstMoment.lean` adds only `E[Y⁺]<∞` to obtain
+`‖M_(⌊N^a⌋,N)(H_N)/log N-(-a+π²σ²t/2)‖₁→0` and the expectation limit.
+The horizon is any sequence with `H_N/log³N→t>0`; no supercriticality is
+needed for these positive-start endpoint results. Boundary normalization,
+nonempty offspring and a centered spinal variance `σ²>0` are retained.
 
-The stronger finite-cross-weight polynomial endpoint theorem is a corollary:
-finite cross weight, boundary normalization and finite spinal second moment
-imply the weak reproductive tail. Its former separate two-stage polynomial
-proof is removed. Existing stronger-hypothesis `L²` endpoint interfaces remain
-valid through this corollary; their assumptions are not silently weakened.
+`UpperTail/FullCapacity.lean` extends the open-exponent estimate through
+root monotonicity. It exposes one closed-range `0<a≤1` entry; the full-
+capacity statement derives from it. The earlier independent full-capacity
+probability comparison in `L2Limit.lean` is removed. `Step/Ordering/Spine.lean`
+retains the original-law weak condition under ordering.
 
-The full continuous-moving-boundary statement of Mallein's Theorem 2.3 remains
-outside the present affine-corridor coverage. It is not required by the proved
-finite-variance speed result. A family cutoff still changes normalization and
-centering; all cutoff calculations here use marks under the original law.
-Earlier dated progress sections below record intermediate boundaries, which
-are superseded by this completed boundary and the final review at the end.
+The speed proof now calls the public endpoint expectation limit, then reuses
+its uniform remaining-horizon, stopped continuation and restart-mean comparisons.
+Its former internally maintained endpoint upper-mean proof has moved into the
+single endpoint-limit proof. The final statement includes common almost-sure
+and `L¹` speed from every nonempty deterministic initial cloud of size at most
+`N`, and `(log N)² v_N→π²σ²/2`.
+
+The finite-cross-weight polynomial endpoint theorem derives from the weak-tail
+entry. Existing stronger-hypothesis `L²` interfaces remain valid; they are not
+claimed to follow under the positive first moment in all single-root cases.
+The full continuous-moving-boundary form of Mallein's Theorem 2.3 and the
+single-root `a=0` endpoint `L¹` limit under the new assumptions are not required
+by equations (6) and (7). Earlier progress sections below record intermediate
+boundaries, superseded by this boundary and the closure reviews at the end.
 
 ## Regression and axiom review
 
@@ -735,3 +742,84 @@ lint passed on 1838 production modules, the import-boundary audit passed,
 all 32 Python unit tests passed, and `git diff --check` passed. Dependency
 pins are unchanged. No axiom, proof placeholder, compatibility alias or
 LaTeX edit is introduced.
+
+
+## Positive-start endpoint closure and strictness review (2026-11-26)
+
+The original lower-tail estimate is reused unchanged. The weak upper-tail
+entry covers `0<a<1`; its full-capacity extension chooses `b<1` close to one
+and uses the existing nested-root stochastic comparison. The closed-range
+entry unifies those cases; `P(|M/log N-c|≥ε)≤2 exp(-p log N)` for some
+`p>0` and every fixed `ε>0`, with `c=-a+π²σ²t/2`. Native
+`tendstoInMeasure_iff_measureReal_norm` supplies the probability limit. No
+leftmost-child moment appears in either probability statement.
+
+The first-moment proof keeps the two independent leftmost-child lineages
+from `PositiveMoment/Lemmas/TwoLineages.lean`. Their positive endpoint square
+bound uses only the original leftmost first moment. The old speed-local upper
+mean proof is now a private part of the public endpoint-limit owner, generalized
+to the full range `0<a≤1`; its old copy is removed. The negative exponential
+bound `E exp(-M)≤m≤N` and the lower polynomial tail invoke a general `L¹`
+convergence criterion: truncate at `zL`, use the existing one-sided exponential
+expectation bound, and apply `|X-z|=X+z-2 min(X,z)`. The criterion permits
+arbitrary filters, varying probability laws and arbitrary diverging real scales.
+It does not impose uniform integrability as a premise or assume a higher
+moment. Expectation convergence is derived by native `tendsto_integral_of_L1'`.
+The speed-local uniform horizon proof now calls this public expectation theorem.
+
+The old `Limit/Lemmas/FailureExpectation.lean` is removed. Its useful content
+is generalized, rather than copied, in
+`MeasureTheory/Integral/Convergence/ExceptionalEvent.lean`: a finite measure,
+an arbitrary filter and scale `L_i→∞`, and a real polynomial envelope
+`‖Y_i‖₂≤C L_i^r` suffice for `∫_(A_i)Y_i/L_i→0` when
+`μ(A_i)≤exp(-b L_i)`, `b>0`. Probability normalization, the logarithmic
+sample-size parameter and the fixed power three are unnecessary. Both endpoint
+and restart proofs call that interface. Its private Hölder calculation is
+retained once; the polynomial/exponential limit calls Mathlib directly.
+
+Native review used pinned Mathlib `26573066084e6e2aa8526ea358bc43b66d96f970`
+and current official documentation for
+[uniform integrability](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Function/UniformIntegrable.html),
+[set integrals](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Integral/Bochner/Set.html),
+[power/exponential asymptotics](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/SpecialFunctions/Pow/Asymptotics.html),
+and [geometric laws](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Distributions/Geometric.html).
+Vitali's native theorem requires uniform integrability as an input; here the
+new quantitative criterion proves first-moment convergence from the actual tail
+and mean inputs, using the existing one-sided inequality. Native Bochner,
+Hölder, geometric-measure and geometric-series results are not reimplemented.
+
+`Examples/SpinalWeight.lean` gives a fully constructed binary BRW law with
+`D=(2-G)log2`, `G~Geom(2/3)`. Every family has two identical displacements;
+its mean offspring number is therefore two. Exponential bias changes the
+geometric parameter to `1/3`, giving centered spinal variance `6(log2)²`.
+The original positive leftmost displacement is bounded by `2log2` and the
+relative reproductive mark is identically `log2`. Nevertheless,
+`E[2exp(-2D)]=∞`, since its geometric series has ratio `4/3`. Thus finite
+cross weight is strictly stronger than the weak tail even within the boundary-
+normalized, nonempty, centered finite-variance, finite-positive-first-moment
+setting. This is a different explicit witness from the heavy-count examples
+in the audit, using native geometric laws. It does not claim that the separate
+audit illustrations with infinite spinal log-square moment or infinite positive
+leftmost first moment have been formalized.
+
+The option-valued coordinate representation lacked a measurable-singleton
+instance. `MeasureTheory/MeasurableSpace/Option.lean` now derives that instance
+from the existing measurable sets `{none}` and `some '' {x}`; no alternate
+option measurable space is introduced. The countable family-image support
+calculation in the example then uses native `ae_map_mem_range`.
+
+To let the public endpoint module be consumed directly by the existing
+module-syntax speed chain, the lower-tail dependency chain `Sublevel`,
+`FiniteVariance`, and `Roots/Monotonicity` is migrated together to module syntax.
+Existing public declarations and private proof helpers retain their roles.
+There are no compatibility files or aliases. The sequence directory has eight
+direct files, the upper-tail directory has four, and the generic moment
+criterion has one file under `Convergence/FirstMoment/`. The finite-measure
+exceptional-event result belongs under `MeasureTheory/Integral/Convergence/`.
+No LaTeX edit is included.
+
+Validation of this closure batch: the full Lake build completed successfully
+(12067 jobs); all 158 working-tree Lean tests and their configured axiom checks
+passed. Mathlib style lint covered 1842 project modules, import-boundary checks
+passed, and all 32 Python tooling tests passed. Only the reviewed foundational
+axioms are reported by the named declaration checks.

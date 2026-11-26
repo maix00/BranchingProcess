@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.NestedRoots
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.CountableRoots
-import Combinatorics.UlamHarris.Order
-import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.Law.Causal.NestedRoots
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.CountableRoots
+public import Combinatorics.UlamHarris.Order
+public import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
 set_option linter.style.haveILetI false
 
 /-!
@@ -41,6 +43,8 @@ pathwise comparison transfers to their endpoint probabilities.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 

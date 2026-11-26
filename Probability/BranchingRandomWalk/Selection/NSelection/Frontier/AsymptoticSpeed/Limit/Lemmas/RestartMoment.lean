@@ -14,7 +14,7 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Stoppin
 import MeasureTheory.Integral.UpperTailOrder
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.FirstMoment
 import Mathlib.MeasureTheory.Function.L2Space
-import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.Lemmas.FailureExpectation
+import MeasureTheory.Integral.Convergence.ExceptionalEvent
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Success
 import Combinatorics.UlamHarris.Order
 import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Basic
@@ -350,15 +350,18 @@ lemma tendsto_restartEndpoint_badIntegral_div_log
       Filter.atTop (nhds 0) := by
   have hlog : Filter.Tendsto (fun n => Real.log (N n : ℝ)) Filter.atTop Filter.atTop :=
     Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop.comp hN)
-  refine tendsto_setIntegral_div_log_of_failure P F (fun n => (E n)ᶜ) hF hN
-    (C := C * (t + 1)) (by positivity) hb ?_ hprob
+  refine tendsto_setIntegral_div_of_polynomial_second_moment_and_exponential_probability
+    P F (fun n => (E n)ᶜ)
+    (Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop.comp hN)) hF
+    (C := C * (t + 1)) (r := 3) (by positivity) hb ?_ hprob
   filter_upwards [hF, hnorm, hlog.eventually_gt_atTop 0,
     hH (gt_mem_nhds (lt_add_of_pos_right t one_pos))] with n hFn hn hl hT
   rw [eLpNorm_two_eq_ofReal_sqrt hFn] at hn
   have hnorm' := (ENNReal.ofReal_le_ofReal_iff (mul_nonneg hC (Nat.cast_nonneg _))).mp hn
   have ht' : (H n : ℝ) ≤ (t + 1) * Real.log (N n : ℝ) ^ 3 :=
     (div_le_iff₀ (pow_pos hl 3)).mp hT.le
-  exact hnorm'.trans ((mul_le_mul_of_nonneg_left ht' hC).trans_eq (by ring))
+  simpa only [Real.rpow_ofNat] using
+    hnorm'.trans ((mul_le_mul_of_nonneg_left ht' hC).trans_eq (by ring))
 
 open EndpointDeviation in
 /-- Decompose the restart mean into the entrance displacement, the centered

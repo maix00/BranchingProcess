@@ -11,6 +11,18 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/FirstMoment.lean"): (
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_countableRootEndpointMinimum_ge_le_polynomial_of_positiveExponent",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_countableRootEndpointMinimum_abs_div_sub_le_polynomial_of_spinalWeightTail",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.tendstoInMeasure_countableRootEndpointMinimum_div_of_spinalWeightTail",
+        "ProbabilityTheory.tendsto_eLpNorm_one_div_sub_of_lower_tails_and_upper_mean",
+        "MeasureTheory.tendsto_setIntegral_div_of_polynomial_second_moment_and_exponential_probability",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_countableRootEndpointMinimum_ge_le_polynomial_of_fullCapacity",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.tendsto_eLpNorm_one_countableRootEndpointMinimum_div_sub_of_spinalWeightTail",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.tendsto_integral_countableRootEndpointMinimum_div_of_spinalWeightTail",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub_of_fullCapacity",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.exists_speed_with_logSq_limit",
+    ),
     Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/WeakSpinalTail.lean"): (
         "ProbabilityTheory.BranchingRandomWalk.Spine.lintegral_tiltedFamilyChildLaw_otherWeight",
         "ProbabilityTheory.BranchingRandomWalk.HasFiniteCrossWeight.hasSpinalWeightTail",
@@ -85,6 +97,8 @@ AXIOM_EXPECTATIONS = {
         "Asymptotics.tendsto_succ_quotientBlockCount_mul_scale_div",
     ),
     Path("BranchingProcessTest/Branching/SpinalWeightTail.lean"): (
+        "ProbabilityTheory.BranchingRandomWalk.Examples.exists_boundaryLaw_spinalWeightTail_not_finiteCrossWeight",
+        "MeasureTheory.optionMeasurableSingletonClass",
         "MeasureTheory.Measure.pi_sum_map_withDensity",
         "MeasureTheory.Measure.lintegral_pi_sum_map_withDensity",
         "ProbabilityTheory.Tree.measurable_pathRecords",

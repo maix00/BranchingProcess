@@ -9,7 +9,7 @@ import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.En
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.PositiveMoment.Sequence
 import Probability.MeasureTheory.Convergence.SecondMoment.FromPolynomialTails
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.UpperTail.PositiveInitialExponent
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Roots.Monotonicity
+import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.UpperTail.FullCapacity
 import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.UpperTail.SingleRoot
 
 /-!
@@ -288,54 +288,13 @@ theorem tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub_of_fullCapacity
     (fun _ => inferInstance) hcapacity hcapacity (Eventually.of_forall fun _ => le_rfl)
     (Eventually.of_forall fun _ => by rw [Real.rpow_one]) hN hH
   intro ε hε
-  let d := min (1 / 2 : ℝ) (ε / 4)
-  let b := 1 - d
-  have hd : 0 < d := lt_min (by norm_num) (by positivity)
-  have hb : 0 < b := by dsimp [b]; linarith [show d ≤ 1 / 2 from min_le_left _ _]
-  have hb1 : b < 1 := by dsimp [b]; linarith
-  have hgap : -b + Real.pi ^ 2 / 2 * sigma ^ 2 * t < c + ε / 2 := by
-    dsimp [b, c]
-    linarith [show d ≤ ε / 4 from min_le_right _ _]
-  obtain ⟨p, hp, hupper⟩ :=
-    eventually_countableRootEndpointMinimum_ge_le_polynomial_of_initialExponent hN
-      L.sortedPotentialImage hboundaryμ hcrossμ hsigma hspine hb hb1 ht hgap hH
-      (fun _ => inferInstance)
-  refine ⟨p, hp, ?_⟩
-  have hlog : Tendsto (fun n => Real.log (N n : ℝ)) atTop atTop :=
-    Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop.comp hN)
-  filter_upwards [hupper, hlog.eventually_gt_atTop 0] with n hup hlogn
-  let m := Nat.floor ((N n : ℝ) ^ b)
-  let x := (c + ε / 2) * Real.log (N n : ℝ)
-  let y := (c + ε) * Real.log (N n : ℝ)
-  let small := countableRootEndpointMinimum m (N n) (H n)
-  let large := countableRootEndpointMinimum (N n) (N n) (H n)
-  have hN1 : (1 : ℝ) ≤ (N n : ℝ) := by exact_mod_cast hcapacity n
-  have hm : 0 < m := Nat.floor_pos.mpr (Real.one_le_rpow hN1 hb.le)
-  have hmN : m ≤ N n := by
-    apply Nat.floor_le_of_le
-    simpa only [Real.rpow_one] using Real.rpow_le_rpow_of_exponent_le hN1 hb1.le
-  have hmono := measure_countableRootEndpointMinimum_le_mono_roots L.sortedPotentialImage
-    hboundaryμ hnonemptyμ hm hmN (hcapacity n) (H n) x
-  have hsmall : MeasurableSet {field | small field ≤ x} :=
-    (measurable_countableRootEndpointMinimum m (N n) (H n)) measurableSet_Iic
-  have hlarge : MeasurableSet {field | large field ≤ x} :=
-    (measurable_countableRootEndpointMinimum (N n) (N n) (H n)) measurableSet_Iic
-  have hxy : x < y := mul_lt_mul_of_pos_right (by linarith) hlogn
-  change P {field | y ≤ large field} ≤ _
-  calc
-    _ ≤ P {field | large field ≤ x}ᶜ := by
-      apply measure_mono
-      intro field hf hle
-      exact hxy.not_ge ((show y ≤ large field from hf).trans hle)
-    _ ≤ P {field | small field ≤ x}ᶜ := by
-      rw [prob_compl_eq_one_sub hlarge, prob_compl_eq_one_sub hsmall]
-      exact tsub_le_tsub_left hmono _
-    _ ≤ P {field | x ≤ small field} := by
-      apply measure_mono
-      intro field hf
-      change x ≤ small field
-      exact le_of_lt (lt_of_not_ge (show ¬ small field ≤ x from hf))
-    _ ≤ _ := hup
+  have hsq : Integrable (fun x : ℝ => x ^ 2)
+      (tiltedPotentialLaw realPotential (-1) L.sortedPotentialImage) :=
+    Integrable.of_integral_ne_zero (by rw [hspine.2]; exact pow_ne_zero 2 hsigma.ne')
+  exact eventually_countableRootEndpointMinimum_ge_le_polynomial_of_fullCapacity
+    hN L.sortedPotentialImage hboundaryμ hnonemptyμ
+    (hcrossμ.hasSpinalWeightTail realPotential L.sortedPotentialImage hboundaryμ hsq)
+    hsigma hspine ht hH (by linarith)
 
 /-- The trajectory limit of Wang Yiyang, *Asymptotic Speed of the
 N-Branching Random Walk with Infinite Offspring* (Fudan University, 2026),
