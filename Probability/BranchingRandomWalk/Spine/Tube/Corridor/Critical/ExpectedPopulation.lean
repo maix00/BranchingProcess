@@ -56,7 +56,7 @@ private lemma criticalPrefix_iff_driftedTube (j : ℕ) (width K : ℝ)
     · have h := hz i.val (by omega) hi
       simpa [history_apply, div_mul_eq_mul_div] using h
 
-/-- Equation (3.9) of Wang Yiyang, *Asymptotic Speed of the N-Branching Random
+/-- Equation (3.11) of Wang Yiyang, *Asymptotic Speed of the N-Branching Random
 Walk with Infinite Offspring* (master's thesis, Fudan University, 2026),
 Chapter 3, Lemma 3.7. The upper bound sums the generation bounds from Lemma
 3.4; the lower bound uses only the last generation and the upper endpoint

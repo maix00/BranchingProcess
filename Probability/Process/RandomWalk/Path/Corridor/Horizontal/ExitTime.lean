@@ -36,7 +36,7 @@ import MeasureTheory.Function.FinPartialSum
 
 Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
 Offspring* (Fudan University, 2026), Chapter 3, Lemma 3.8, uses the linear
-mean exit time from the boundary in the proof of equation (3.11).
+mean exit time from the boundary in the proof of equation (3.13).
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -336,7 +336,7 @@ private lemma exists_neg_jump (ν : Measure ℝ) (h : 0 < ν (Set.Iio 0)) :
 
 /-- Linear mean exit time for the centered finite-variance spine in Wang
 Yiyang, *Asymptotic Speed of the N-Branching Random Walk with Infinite
-Offspring* (Fudan University, 2026), Chapter 3, Lemma 3.8, equation (3.11).
+Offspring* (Fudan University, 2026), Chapter 3, Lemma 3.8, equation (3.13).
 The variance hypothesis supplies positive mass of downward steps. -/
 theorem exists_lintegral_upperBoundaryExitTime_le_linear
     (ν : Measure ℝ) [IsProbabilityMeasure ν] {sigma : ℝ}

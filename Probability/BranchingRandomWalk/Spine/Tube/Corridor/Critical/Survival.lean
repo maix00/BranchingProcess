@@ -43,7 +43,7 @@ open ProbabilityTheory.RandomWalk
 
 /-- The lower bound in the proof of Wang Yiyang, *Asymptotic Speed of the
 N-Branching Random Walk with Infinite Offspring* (Fudan University, 2026),
-Chapter 3, Lemma 3.7, equation (3.8), in probability form. -/
+Chapter 3, Lemma 3.7, equation (3.10), in probability form. -/
 theorem eventually_survival_ge_exp_mul_cubeRoot
     {X : Type*} [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
@@ -145,7 +145,7 @@ theorem eventually_survival_ge_exp_mul_cubeRoot
   rw [← Real.exp_log hratioPos]
   exact Real.exp_le_exp.mpr (hlogRatio.symm ▸ ((lt_div_iff₀ htN).mp hBudget).le)
 
-/-- Equation (3.8) of Wang Yiyang, *Asymptotic Speed of the N-Branching Random
+/-- Equation (3.10) of Wang Yiyang, *Asymptotic Speed of the N-Branching Random
 Walk with Infinite Offspring* (master's thesis, Fudan University, 2026),
 Chapter 3, Lemma 3.7. The lower bound uses a narrower terminal window and
 the Paley--Zygmund estimates from Lemmas 3.4--3.6. -/
