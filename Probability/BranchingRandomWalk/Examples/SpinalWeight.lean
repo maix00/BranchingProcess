@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Assumptions.SpinalWeightTail
+public import Probability.BranchingRandomWalk.Spine.Tilted.Replicated
 public import Probability.Distributions.Moments.Real
 import Mathlib.Probability.Distributions.Geometric
 import Mathlib.Analysis.SpecificLimits.Normed
@@ -66,41 +66,32 @@ private lemma weight_identity (n : ℕ) :
 
 private lemma scalar_law : tiltedPotentialLaw realPotential (-1) familyLaw =
     (geometricMeasure spinalParameter).map displacement := by
+  have hm : Measurable (fun x : ℝ => fun _ : Fin 2 => some x) :=
+    Measurable.of_eval (fun _ => measurable_option_some)
+  have he : familyLaw = ((geometricMeasure rawParameter).map displacement).map
+      (fun x : ℝ => fun _ : Fin 2 => some x) := by
+    rw [Measure.map_map hm measurable_displacement]
+    rfl
+  rw [he, tiltedPotentialLaw_map_replicated]
   apply Measure.ext_of_lintegral
   intro f hf
-  rw [lintegral_tiltedPotentialLaw realPotential (-1) familyLaw f hf]
-  have hm : Measurable (fun ξ : Step (Fin 2) ℝ => ∑' i : Fin 2,
-      realizedPotentialWeight realPotential (-1) ξ i * f (ξ.potentialValue' realPotential i)) := by
-    apply Measurable.tsum
-    intro i
-    exact (realizedPotentialWeight_measurable realPotential (-1) i).mul
-      (hf.comp (Step.potentialValue'_measurable realPotential i))
-  rw [familyLaw, lintegral_map hm measurable_family,
+  rw [lintegral_withDensity_eq_lintegral_mul _ (by fun_prop) hf,
+    lintegral_map (by fun_prop) measurable_displacement,
     lintegral_map hf measurable_displacement,
-    geometricMeasure_eq (by exact ne_of_gt (show (0 : unitInterval) < rawParameter from by change (0 : ℝ) < 2 / 3; norm_num) : rawParameter ≠ 0),
-    geometricMeasure_eq (by exact ne_of_gt (show (0 : unitInterval) < spinalParameter from by change (0 : ℝ) < 1 / 3; norm_num) : spinalParameter ≠ 0),
+    geometricMeasure_eq (by exact ne_of_gt (show (0 : unitInterval) < rawParameter from
+      by change (0 : ℝ) < 2 / 3; norm_num) : rawParameter ≠ 0),
+    geometricMeasure_eq (by exact ne_of_gt (show (0 : unitInterval) < spinalParameter from
+      by change (0 : ℝ) < 1 / 3; norm_num) : spinalParameter ≠ 0),
     lintegral_sum_measure, lintegral_sum_measure]
   apply tsum_congr
   intro n
-  rw [lintegral_smul_measure, lintegral_smul_measure,
-    lintegral_dirac, lintegral_dirac]
-  norm_num only [rawParameter, spinalParameter, Subtype.coe_mk]
-  have hfamily : (∑' i : Fin 2,
-      realizedPotentialWeight realPotential (-1) (family n) i *
-        f ((family n).potentialValue' realPotential i)) =
-      (2 : ℝ≥0∞) * ENNReal.ofReal (Real.exp (-displacement n)) * f (displacement n) := by
-    simp [tsum_fintype, realizedPotentialWeight, family, survive,
-      Step.potentialValue', Step.potentialAt?, realPotential, two_mul, add_mul]
-  rw [hfamily]
-  have hw : ENNReal.ofReal ((1 / 3 : ℝ) ^ n * (2 / 3)) *
-      ((2 : ℝ≥0∞) * ENNReal.ofReal (Real.exp (-displacement n))) =
-      ENNReal.ofReal ((2 / 3 : ℝ) ^ n * (1 / 3)) := by
-    rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2),
-      ← ENNReal.ofReal_mul (by positivity), weight_identity]
+  rw [lintegral_smul_measure, lintegral_smul_measure, lintegral_dirac, lintegral_dirac]
+  norm_num only [rawParameter, spinalParameter, Subtype.coe_mk, Nat.cast_ofNat, neg_one_mul,
+    Pi.mul_apply, Function.comp_def]
   change ENNReal.ofReal ((1 / 3 : ℝ) ^ n * (2 / 3)) *
-    ((2 : ℝ≥0∞) * ENNReal.ofReal (Real.exp (-displacement n)) * f (displacement n)) =
+    (ENNReal.ofReal (2 * Real.exp (-displacement n)) * f (displacement n)) =
       ENNReal.ofReal ((2 / 3 : ℝ) ^ n * (1 / 3)) * f (displacement n)
-  simpa only [mul_assoc] using congrArg (fun x : ℝ≥0∞ => x * f (displacement n)) hw
+  rw [← mul_assoc, ← ENNReal.ofReal_mul (by positivity), weight_identity]
 
 private lemma boundary : HasBoundaryNormalization realPotential familyLaw := by
   have hprob : IsProbabilityMeasure (tiltedPotentialLaw realPotential (-1) familyLaw) := by
@@ -114,44 +105,15 @@ private instance familyLaw_probability : IsProbabilityMeasure familyLaw := by
   unfold familyLaw
   infer_instance
 
-private lemma relative_mark (n : ℕ) (i : Fin 2) :
-    relativeSpinalWeight realPotential (family n, i) = Real.log 2 := by
-  have hw : totalPotentialWeight realPotential (-1) (family n) =
-      ENNReal.ofReal (2 * Real.exp (-displacement n)) := by
-    simp [totalPotentialWeight, realizedPotentialWeight, family, survive,
-      Step.potentialValue', Step.potentialAt?, realPotential, tsum_fintype,
-      ← ENNReal.ofReal_add (Real.exp_nonneg _) (Real.exp_nonneg _), two_mul]
-  unfold relativeSpinalWeight logTotalPotentialWeight
-  rw [hw, ENNReal.toReal_ofReal (by positivity),
-    Real.log_mul (by norm_num : (2 : ℝ) ≠ 0) (Real.exp_ne_zero _), Real.log_exp]
-  simp [family, Step.potentialValue', Step.potentialAt?, realPotential]
-
 private lemma weak_tail : HasSpinalWeightTail realPotential familyLaw := by
-  let P := tiltedFamilyChildLaw realPotential (-1) familyLaw
-  have hraw : ∀ᵐ ξ ∂familyLaw, ξ ∈ Set.range family :=
-    ae_map_mem_range (Set.countable_range family).measurableSet measurable_family.aemeasurable
-  have hweighted : ∀ᵐ ξ ∂familyLaw.withDensity (totalPotentialWeight realPotential (-1)),
-      ξ ∈ Set.range family :=
-    hraw.filter_mono (Measure.ae_le_iff_absolutelyContinuous.mpr
-      (withDensity_absolutelyContinuous familyLaw _))
-  have hfst : ∀ᵐ ξ ∂P.map Prod.fst, ξ ∈ Set.range family := by
-    rwa [tiltedFamilyChildLaw_fst]
-  have hmark : ∀ᵐ p ∂P, relativeSpinalWeight realPotential p = Real.log 2 := by
-    filter_upwards [ae_of_ae_map measurable_fst.aemeasurable hfst] with p hp
-    obtain ⟨n, hn⟩ := hp
-    change relativeSpinalWeight realPotential (p.1, p.2) = _
-    rw [← hn]
-    exact relative_mark n p.2
-  change Tendsto (fun x : ℝ => x ^ 2 * P.real
-    {p | x < relativeSpinalWeight realPotential p}) atTop (𝓝 0)
-  apply tendsto_const_nhds.congr'
-  filter_upwards [eventually_ge_atTop (Real.log 2)] with x hx
-  have he : {p | x < relativeSpinalWeight realPotential p} =ᵐ[P] (∅ : Set _) := by
-    filter_upwards [hmark] with p hp
-    simp only [Set.mem_empty_iff_false, iff_false]
-    rw [hp]
-    exact not_lt.mpr hx
-  simp only [measureReal_def, measure_congr he, measure_empty, ENNReal.toReal_zero, mul_zero]
+  have hm : Measurable (fun x : ℝ => fun _ : Fin 2 => some x) :=
+    Measurable.of_eval (fun _ => measurable_option_some)
+  have he : familyLaw = ((geometricMeasure rawParameter).map displacement).map
+      (fun x : ℝ => fun _ : Fin 2 => some x) := by
+    rw [Measure.map_map hm measurable_displacement]
+    rfl
+  rw [he]
+  exact hasSpinalWeightTail_map_replicated _ (by norm_num)
 
 private lemma cross_weight : ¬ HasFiniteCrossWeight realPotential familyLaw := by
   have hfamily (n : ℕ) : crossPotentialWeight realPotential (-1) (family n) =

@@ -1,5 +1,6 @@
 import Probability.BranchingRandomWalk.Assumptions.SpinalWeightTail
 import Probability.BranchingRandomWalk.Examples.SpinalWeight
+import Probability.BranchingRandomWalk.Examples.LeftmostMoment
 import Probability.BranchingRandomWalk.Spine.Tilted.Marked
 import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Marked
 import Probability.BranchingRandomWalk.Spine.Tilted.FamilyCutoff
@@ -178,3 +179,15 @@ example (μ : Measure (Step Empty ℝ)) [IsProbabilityMeasure μ] :
 
 #print axioms ProbabilityTheory.BranchingRandomWalk.Examples.exists_boundaryLaw_spinalWeightTail_not_finiteCrossWeight
 #print axioms MeasureTheory.optionMeasurableSingletonClass
+
+-- Fixed finite arity controls the relative reproductive mark independently
+-- of every displacement moment, without boundary normalization.
+example (ν : Measure ℝ) {m : ℕ} (hm : 0 < m) :
+    HasSpinalWeightTail realPotential
+      (ν.map (fun x : ℝ => fun _ : Fin m => some x)) :=
+  hasSpinalWeightTail_map_replicated ν hm
+
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.tiltedPotentialLaw_map_replicated
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.relativeSpinalWeight_replicated
+#print axioms ProbabilityTheory.BranchingRandomWalk.Spine.hasSpinalWeightTail_map_replicated
+#print axioms ProbabilityTheory.BranchingRandomWalk.Examples.exists_boundaryLaw_spinalWeightTail_not_integrable_leftmost
