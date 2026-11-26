@@ -28,7 +28,7 @@ public import Probability.BranchingRandomWalk.Assumptions.SpinalWeightTail
 
 This is the upper bound of Wang Yiyang, *Asymptotic Speed of the
 N-Branching Random Walk with Infinite Offspring* (Fudan University, 2026),
-Chapter 4, Theorem 1.2, §4.3, using the weak reproductive condition (1.9)
+Appendix A.3, Theorem 1.2′, using the weak reproductive condition (1.9)
 of B. Mallein, *N-branching random walk with α-stable spine*, Theorem 1.1,
 arXiv:1503.03762v2.
 -/
@@ -47,7 +47,7 @@ noncomputable local instance (m : ℕ) : LinearOrder (RootIndexed.TreeNode (Fin 
 /-- The first-moment restart and continuation comparison gives the strict
 upper speed bound under Mallein's condition (1.9), arXiv:1503.03762v2,
 following Wang Yiyang, *Asymptotic Speed of the N-Branching Random Walk with
-Infinite Offspring* (Fudan University, 2026), Chapter 4, Theorem 1.2, §4.3. -/
+Infinite Offspring* (Fudan University, 2026), Appendix A.3, Theorem 1.2′. -/
 public theorem eventually_logSq_mul_speed_lt_of_firstMoment
     (L : StepLaw ℕ ℕ ℝ) [IsProbabilityMeasure L.raw]
     (hsuper : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.IsSupercritical

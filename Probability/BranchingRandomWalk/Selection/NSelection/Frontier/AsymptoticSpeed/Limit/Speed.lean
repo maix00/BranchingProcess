@@ -24,8 +24,8 @@ import Probability.BranchingRandomWalk.Assumptions.SpinalWeightTail
   Finite cross-child weight and a logarithmic square moment are unnecessary.
 
 This is the first-moment speed formula of Wang Yiyang, *Asymptotic Speed of the N-Branching
-Random Walk with Infinite Offspring* (Fudan University, 2026), Chapter 4,
-Theorem 1.2, with the reproductive assumption weakened to B. Mallein,
+Random Walk with Infinite Offspring* (Fudan University, 2026), Appendix A.3,
+Theorem 1.2′, with the reproductive assumption weakened to B. Mallein,
 *N-branching random walk with α-stable spine*, Theorem 1.1, condition (1.9),
 arXiv:1503.03762v2, in the reflected finite-variance setting.
 -/
