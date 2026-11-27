@@ -10,6 +10,8 @@ import re
 import subprocess
 import sys
 
+from lean_test_registry import expected_declarations
+
 ROOT = Path(__file__).resolve().parents[1]
 PROOF_ROOT = Path('LiteratureProofTest')
 
@@ -34,7 +36,7 @@ def check_entry(entry, output_dir, run=subprocess.run):
     """A failed entry is reported; callers continue with the other references."""
     module = entry['module']
     path = validated_entry_path(module)
-    expected = entry['axioms']
+    expected = expected_declarations(path, 'literature')
     if not expected:
         raise ValueError(f'{module}: at least one named axiom audit is required')
     log = output_dir / path.with_suffix('.log')

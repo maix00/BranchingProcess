@@ -617,13 +617,14 @@ def imported_modules(source: str) -> list[str]:
     return imports[path.resolve()]
 
 
-def load_import_graph(root: Path) -> tuple[dict[str, list[str]], list[str]]:
-    """Parse all local Lean headers once and return module-name adjacency lists."""
+def load_import_graph(root: Path, include_advisory: bool = False) -> tuple[dict[str, list[str]], list[str]]:
+    """Parse local headers; advisory parse failures stay out of required checks."""
     root = root.resolve()
     paths = sorted(
         path
         for path in root.rglob("*.lean")
         if not {".lake", ".git"}.intersection(path.relative_to(root).parts)
+        and (include_advisory or path.relative_to(root).parts[0] != "LiteratureProofTest")
     )
     parsed, issues = parse_imports_from_paths(paths)
     graph = {
