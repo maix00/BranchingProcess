@@ -8,8 +8,10 @@ module
 
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Basic
 public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitTime.Basic
-public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.Failure.PreSampledLineage
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Lineage
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Measurability
+import Probability.BranchingRandomWalk.Genealogy.Exploration.IndependentSubtreeIntegration
 import Probability.Process.Filtration.GeneratedByCoordinates
 
 /-!
@@ -67,7 +69,6 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial
 
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.Failure
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial
 open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 
@@ -545,9 +546,10 @@ theorem integral_selectedSubtree_abs_on_growthTrialFailure_le
     ext ω
     simp [completion, success, test, ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.successEventAtRoot]
   rw [hevent]
-  rw [RootIndexed.integral_selectedSubtree_abs_on_candidateFailure
-    μ completion success hobs candidates hcandidates chosen
-    hchosenRangeCountable hchosenFiberMeasurable hchosenDepth
-    hchosenInjective g hg hint]
+  rw [RootIndexed.integral_selectedSubtree_observable_abs_on_event
+    μ chosen hchosenRangeCountable hchosenFiberMeasurable hchosenDepth
+    hchosenInjective g hg _
+    (ProbabilityTheory.Trial.successfulCandidateWithin_measurable
+      F completion success hobs candidates hcandidates T).compl hint]
   exact mul_le_mul hmoment hprob' (by positivity) hB
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial

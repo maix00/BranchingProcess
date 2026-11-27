@@ -19,10 +19,24 @@ then the first-\(N\) selected partners dominate every threshold count of
 `objectsToMatch`. When \(N>0\), each object in `objectPopulation` also has a
 selected partner whose order key is no larger than the object's key.
 
-The public declarations are `filter_card_le_filter_selectFirstN` for the
-threshold-count inequality and `exists_selectFirstN_le_of_mem` for the
-one-object consequence. The two sets may use different label types; the keys
-provide the comparison between them.
+## Public declarations
+
+Write $A=\mathrm{objectsToMatch}$, $P=\mathrm{objectPopulation}$,
+$Q=\mathrm{availablePartners}$, $f=\mathrm{objectOrderKey}$ and
+$g=\mathrm{partnerOrderKey}$.
+
+* `Combinatorics.Selection.NSelection.filter_card_le_filter_selectFirstN`:
+  if $A\subseteq P$, $\#A\le N$, and
+  $\#\{x\in P:f(x)\le a\}\le\#\{y\in Q:g(y)\le a\}$ for every $a$,
+  with partner-label order refining $g$, then
+  $\#\{x\in A:f(x)\le a\}\le
+    \#\{y\in\operatorname{selectFirstN}(N,Q):g(y)\le a\}$.
+* `Combinatorics.Selection.NSelection.exists_selectFirstN_le_of_mem`:
+  under the same threshold domination, $N>0$ and $x\in P$ give
+  $\exists y\in\operatorname{selectFirstN}(N,Q),\ g(y)\le f(x)$.
+
+The object and partner sets may use different label types; their order keys
+provide the comparison.
 -/
 
 @[expose] public section

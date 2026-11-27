@@ -4,11 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+import Probability.BranchingRandomWalk.Genealogy.Exploration.IndependentSubtreeIntegration
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Lineage
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.Failure.Estimate
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitTime.Basic
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.FirstSplit.BranchingProperty
-import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.Failure.PreSampledLineage
+import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitTime.BranchingProperty
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Roots
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Lineage
@@ -54,10 +53,10 @@ times.
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.PreSampledLineages.failureWithin_measurable
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.Failure.RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidateFailure
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.integral_selectedSubtree_observable_abs_on_event
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.Failure.RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidateFailure_le
+  ProbabilityTheory.Trial.successfulCandidateWithin_measurable
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.growthTrialSuccess_measurable
@@ -90,7 +89,7 @@ times.
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.PreSampledLineages.sigma_eq_tau_add_one
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.Failure.RootIndexed.integral_disjointRootFamily_abs_on_candidateFailure_le
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.integral_disjointRootFamily_abs_on_event
 
 #print axioms
   ProbabilityTheory.Process.HittingTime.Examples.lookahead_time_not_stopping
@@ -161,4 +160,4 @@ times.
   ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.siblingField_factorization_on_finite
 
 #print axioms
-  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.FirstSplit.selectedPopulation_firstSplit_subtree_vector_factorization
+  ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime.selectedPopulation_firstSplit_subtree_vector_factorization

@@ -118,35 +118,34 @@ def main() -> int:
                     pending.cancel()
                 return result.returncode
             expected = expected_declarations(test, "required")
-            if expected or "depends on axioms:" in result.stdout:
-                if args.output_dir is not None:
-                    axiom_log = args.output_dir / f"{test}.log"
-                else:
-                    temporary = tempfile.NamedTemporaryFile(
-                        mode="w", encoding="utf-8", suffix=".log", delete=False
-                    )
-                    axiom_log = Path(temporary.name)
-                    temporary.close()
-                    axiom_log.write_text(result.stdout)
-                try:
-                    checked = subprocess.run(
-                        [
-                            sys.executable,
-                            "scripts/check-lean-axioms.py",
-                            str(axiom_log),
-                            "--expected",
-                            *expected,
-                        ],
-                        text=True,
-                    )
-                finally:
-                    if args.output_dir is None:
-                        axiom_log.unlink(missing_ok=True)
-                if checked.returncode:
-                    print(f"Axiom check failed: {test}", file=sys.stderr)
-                    for pending in futures:
-                        pending.cancel()
-                    return checked.returncode
+            if args.output_dir is not None:
+                axiom_log = args.output_dir / f"{test}.log"
+            else:
+                temporary = tempfile.NamedTemporaryFile(
+                    mode="w", encoding="utf-8", suffix=".log", delete=False
+                )
+                axiom_log = Path(temporary.name)
+                temporary.close()
+                axiom_log.write_text(result.stdout)
+            try:
+                checked = subprocess.run(
+                    [
+                        sys.executable,
+                        "scripts/check-lean-axioms.py",
+                        str(axiom_log),
+                        "--expected",
+                        *expected,
+                    ],
+                    text=True,
+                )
+            finally:
+                if args.output_dir is None:
+                    axiom_log.unlink(missing_ok=True)
+            if checked.returncode:
+                print(f"Axiom check failed: {test}", file=sys.stderr)
+                for pending in futures:
+                    pending.cancel()
+                return checked.returncode
 
     print(f"All {len(tests)} working-tree Lean tests compiled successfully.")
     return 0

@@ -11,7 +11,7 @@ from lean_test_registry import allowed_axioms
 
 ALLOWED_AXIOMS = allowed_axioms()
 AXIOM_REPORT = re.compile(
-    r"(?m)^'([^\r\n]+)' depends on axioms:\s*\[([^\]]*)\]"
+    r"(?m)^'([^\r\n]+)' (?:depends on axioms:\s*\[([^\]]*)\]|does not depend on any axioms)"
 )
 
 
@@ -21,7 +21,7 @@ def parse_axiom_reports(output: str) -> list[tuple[str, set[str]]]:
             match.group(1),
             {
                 item.strip()
-                for item in match.group(2).replace("\n", " ").split(",")
+                for item in (match.group(2) or "").replace("\n", " ").split(",")
                 if item.strip()
             },
         )

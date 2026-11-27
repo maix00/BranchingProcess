@@ -32,11 +32,13 @@ def api_surface(source):
     source = re.sub(r'/\-.*?\-/', '', source, flags=re.S)
     source = re.sub(r'--[^\n]*', '', source)
     signatures = re.findall(
-        r'(?ms)^[ \t]*(?:(?:private|protected|public|noncomputable|unsafe)\s+)*'
+        r'(?ms)^[ \t]*(?:@\[[^\]]*\][ \t\r\n]*)*(?:(?:private|protected|public|noncomputable|unsafe)\s+)*'
         r'(?:def|abbrev|lemma|theorem|structure|class|inductive|instance|opaque|axiom)\b'
         r'.*?(?=:=|\bwhere\b|\Z)', source)
-    signatures = [s for s in signatures if not re.match(r'\s*private\b', s)]
-    contexts = re.findall(r'(?m)^[ \t]*(?:(?:namespace|section|open)\b|@\[).*$', source)
+    signatures = [s for s in signatures if not re.match(
+        r'\s*(?:@\[[^\]]*\]\s*)*private\b', s)]
+    contexts = re.findall(r'(?m)^[ \t]*(?:namespace|section|open)\b.*$', source)
+    contexts += re.findall(r'(?m)^[ \t]*@\[[^\]]*\]', source)
     contexts += re.findall(r'(?ms)^[ \t]*(?:variable|universe|local notation|notation|attribute|set_option)\b.*?(?=\n\s*\n|\Z)', source)
     return [' '.join(s.split()) for s in signatures + contexts]
 
@@ -46,7 +48,7 @@ def definition_surface(source):
     source = re.sub(r'/\-.*?\-/', '', source, flags=re.S)
     source = re.sub(r'--[^\n]*', '', source)
     starts = list(re.finditer(
-        r'(?m)^[ \t]*(?:(?:private|protected|public|noncomputable|unsafe)\s+)*'
+        r'(?m)^[ \t]*(?:@\[[^\]]*\][ \t\r\n]*)*(?:(?:private|protected|public|noncomputable|unsafe)\s+)*'
         r'(?P<kind>def|abbrev|lemma|theorem|structure|class|inductive|instance|opaque|axiom)\b', source))
     return [source[m.start():starts[i+1].start() if i+1 < len(starts) else len(source)].strip()
             for i, m in enumerate(starts) if m['kind'] not in {'lemma', 'theorem'}]

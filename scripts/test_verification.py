@@ -85,6 +85,22 @@ class VerificationTests(unittest.TestCase):
         for p in ['scripts/helper.py', '.github/workflows/build.yml', 'Vendor/Mathlib', 'lean-toolchain']:
             self.assertTrue(checks.requires_full([p], {}, {}))
 
+    def test_attributed_multiline_signature_changes_require_full_checks(self):
+        path = 'Analysis/Example.lean'
+        for attributes in ['@[simp]', '@[simp]\n@[congr]', '@[simp, fun_prop]']:
+            old = attributes + ' theorem value_zero (x : ℕ)\n    (y : ℕ) : x = x := by rfl\n'
+            new = old.replace('    (y : ℕ)', '    (_newAssumption : True)\n    (y : ℕ)')
+            with self.subTest(attributes=attributes):
+                self.assertTrue(checks.requires_full([path], {path: old}, {path: new}))
+                self.assertEqual(checks.requires_full([path], {path: old},
+                    {path: old.replace('by rfl', 'by decide')}), [])
+
+    def test_attributed_definition_and_adjacent_proof_are_distinguished(self):
+        path = 'Analysis/Example.lean'
+        old = '@[reducible] def value : ℕ := 1\n\n@[simp] theorem one : 1 = 1 := by rfl\n'
+        self.assertTrue(checks.requires_full([path], {path: old}, {path: old.replace(':= 1', ':= 2')}))
+        self.assertEqual(checks.requires_full([path], {path: old}, {path: old.replace('by rfl', 'by decide')}), [])
+
     def test_multiline_variable_context_is_part_of_public_surface(self):
         a = 'variable\n  {X : Type}\n\ntheorem same (x : X) : x = x := by rfl\n'
         b = a.replace('{X : Type}', '{X : Type} [Nonempty X]')
