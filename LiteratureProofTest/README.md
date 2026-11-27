@@ -9,11 +9,13 @@ from importing this root.
 Run the independent checks with:
 
 ```sh
-python3 scripts/run-literature-proof-tests.py --output-dir .lake/literature-proof-reports
+python3 scripts/check.py --scope literature --output-dir .lake/literature-proof-reports
 ```
 
 Each manifest records the full reference, exact results, recovery revisions,
-entry modules, named axiom audits, and source correspondence. Reports retain
+entry modules and source correspondence. The single registry
+`scripts/lean-test-registry.json` owns named axiom audits and their required
+or advisory category. Reports retain
 compiler logs and environment revisions. A failure produces a diagnostic report
 and a nonzero runner exit, while the separately named GitHub Actions workflow
 uses job-level `continue-on-error: true`; it is not a merge requirement.

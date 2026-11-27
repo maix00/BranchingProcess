@@ -21,6 +21,22 @@ axioms = load_script("lean_axiom_check", "check-lean-axioms.py")
 
 
 class ImportBoundaryCheckTests(unittest.TestCase):
+    def test_advisory_header_failure_is_not_a_required_parse_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            required = root / 'Probability/Valid.lean'
+            advisory = root / 'LiteratureProofTest/Citation/Broken.lean'
+            required.parent.mkdir(parents=True)
+            advisory.parent.mkdir(parents=True)
+            required.write_text('module\n')
+            advisory.write_text('module\nimport\n')
+            graph, issues = imports.load_import_graph(root)
+            self.assertIn('Probability.Valid', graph)
+            self.assertEqual(issues, [])
+            self.assertNotIn('LiteratureProofTest.Citation.Broken', graph)
+            _, advisory_issues = imports.load_import_graph(root, include_advisory=True)
+            self.assertTrue(advisory_issues)
+
     def test_required_modules_cannot_import_advisory_proofs(self):
         graph = {
             "Probability.Example": ["LiteratureProofTest.Citation.Result"],

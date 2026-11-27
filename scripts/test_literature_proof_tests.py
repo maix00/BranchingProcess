@@ -4,6 +4,7 @@ import subprocess
 import tempfile
 import tomllib
 import unittest
+from unittest.mock import patch
 
 SCRIPTS = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location('literature_runner', SCRIPTS / 'run-literature-proof-tests.py')
@@ -12,8 +13,14 @@ spec.loader.exec_module(runner)
 
 
 class LiteratureProofRunnerTests(unittest.TestCase):
+    def setUp(self):
+        self.expected = patch.object(runner, 'expected_declarations',
+                                     side_effect=lambda path, category: (path.stem,))
+        self.expected.start()
+        self.addCleanup(self.expected.stop)
+
     def entry(self, name):
-        return {'module': f'LiteratureProofTest.Citation.{name}', 'axioms': [name],
+        return {'module': f'LiteratureProofTest.Citation.{name}',
                 'source_correspondence': 'Recorded reference steps and assumptions.'}
 
     def test_invalid_path_cannot_escape_advisory_root(self):

@@ -39,7 +39,7 @@ jobs:
           lint: false
           use-mathlib-cache: false
       - name: Compile and audit reference proofs
-        run: python3 scripts/run-literature-proof-tests.py --output-dir "$RUNNER_TEMP/literature-proof-reports"
+        run: python3 scripts/check.py --scope literature --output-dir "$RUNNER_TEMP/literature-proof-reports"
       - name: Retain advisory results and compiler diagnostics
         if: always()
         uses: actions/upload-artifact@v7

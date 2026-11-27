@@ -99,11 +99,15 @@ Lean and dependencies are pinned in [`lean-toolchain`](lean-toolchain),
 
 ```sh
 git submodule update --init --recursive
-lake exe cache get
-lake build
-python3 scripts/run-all-lean-tests.py --jobs 2
+python3 scripts/check.py --scope full
+# After local proof edits:
+python3 scripts/check.py
 ```
 
+The first checkout uses the explicit full scope; later local proof changes use
+affected checks by default. See [verification](docs/development/VERIFICATION.md)
+for public-interface escalation, advisory proofs and measured reports. Request a
+dependency download cache only when one is available for the pinned revision.
 Keep `.lake/build` for incremental builds. A missing fork download cache
 means uncached modules must be built locally; it does not invalidate existing
 local build artifacts. Refresh dependency revisions only intentionally.

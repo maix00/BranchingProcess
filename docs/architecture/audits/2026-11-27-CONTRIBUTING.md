@@ -1,0 +1,358 @@
+> Historical snapshot at `bfdd298e5`, before governance consolidation.
+> This preserves evidence and former wording; current responsibilities and rules
+> are indexed by the root documents. Historical status labels require reconciliation
+> against the current theorem entry before being used as a completion claim.
+
+# Contributing to BranchingProcess
+
+Thank you for helping build this formalization. Mathematical corrections,
+small reusable lemmas, better module boundaries, documentation, and examples
+are all useful contributions.
+
+## Before you start
+
+1. Search the pinned Mathlib source and the existing library before introducing
+   a new definition. When the abstraction boundary is unclear, inspect the
+   current official Mathlib documentation/source and relevant mathematical
+   references as well; then check that the candidate API exists in the pinned
+   revision used by this repository. Network results inform the design, while
+   the pinned dependencies determine what the implementation can use.
+2. Read [`ARCHITECTURE.md`](../../../ARCHITECTURE.md) and place a result in the lowest
+   layer that does not depend on the specific construction being formalized.
+   Choose the owner from the mathematical object in the declaration, not
+   merely from a typeclass assumption or a familiar word in its name. For
+   example, a capacity-$N$ rule `M : Set ι → Finset ι` with
+   $M(S)\subseteq S$ and the prescribed cardinality is a generic
+   candidate-set selector, so its deterministic interface belongs in
+   combinatorics.
+   Measurability results for that interface belong with measurable selection.
+   The branching-walk update
+   $P_{n+1}=M(\bigcup_{x\in P_n}\operatorname{children}(x))$ depends on
+   offspring and generation data, so it belongs under `BranchingWalk`; its
+   random law belongs in the probability layer. A `MeasurableSpace`
+   hypothesis alone does not make a declaration part of
+   `MeasureTheory/MeasurableSpace/`.
+3. Import narrow modules. A named result entry point such as
+   `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Theorems.lean`
+   may re-export a coherent list of principal published results for discovery;
+   it does not replace the semantic modules that own those declarations.
+   Proofs and ordinary clients should import the narrow owner module rather
+   than depend on a catch-all aggregate.
+4. Check the proof boundary in
+   [`FORMALIZATION_CHECKLIST.md`](../../../FORMALIZATION_CHECKLIST.md) before describing
+   a result as complete.
+
+## Formalizing proofs from references
+
+Identify the source for the result being formalized, whether it is an article,
+thesis, book, or another reference. Cite the specific theorem, lemma, or proof
+that the implementation follows. Check that the Lean proof follows that
+argument on the same mathematical objects, with the corresponding hypotheses
+and parameter choices.
+
+A local correction may fix a bound, index, or missing justification while
+preserving the proof strategy. Document the discrepancy and apply the same
+correction to any corresponding exposition maintained in this repository.
+If a demonstrated error cannot be repaired locally within the source's proof
+strategy, document the obstruction and obtain the maintainer's agreement
+before changing the strategy.
+
+## Generalizations and special cases
+
+Treat a reference's assumptions as sufficient conditions to audit, not as
+necessary restrictions on the public API. Seek stronger useful conclusions
+under weaker natural conditions. Record which assumptions the proof actually
+uses, remove unnecessary source-specific hypotheses, and derive the published
+version from the general theorem. Distinguish a restriction of the current
+proof from a proved mathematical necessity; a necessity claim needs evidence
+such as a counterexample. Generalization must preserve the meaning of the
+objects and the correctness of the conclusion.
+
+Use one fundamental implementation when generalizing a construction. Define
+additive, fixed-law, or other special cases from that implementation. Proving
+an equality between two independently maintained interfaces does not finish
+the migration: update clients and remove the replaced definitions and aliases.
+A concrete probability-space realization may remain when a construction needs
+its underlying randomness, but identify its pushforward with the canonical
+law rather than define a second law interface. Keep its model-specific
+conditional-law adapters in a namespace that names that model or realization.
+
+
+### Preserve the reference's proof when specializing a general theorem
+
+When an existing special-case formalization is replaced by a call to a more
+general theorem, preserve its original proof route before removing that route
+from production. Move the reference-specific argument and necessary local
+support into `LiteratureProofTest/<CitationKey>/<MathematicalTopic>.lean`.
+Use one stable bibliography key per article, book, or dissertation; organize
+by the cited work rather than by the current production module or an agent's
+implementation history. Cite the full work, version, exact theorem/lemma,
+and relevant pages. Record the originating Git revision and the production
+specialization that replaced the original implementation. Apply the same rule
+to earlier migrations: recover the original route from Git history when it
+has already been removed. Until its correspondence and proof obligations are
+verified, do not describe the original reference's proof as fully reproduced.
+
+The production special case must derive from the general public interface.
+The literature test must retain the reference's actual argument: deriving the
+same conclusion from the replacement general theorem does not preserve that
+argument. Reuse current public foundations and independently reusable lemmas;
+keep reference-specific supporting declarations private or within the test
+namespace. Move genuinely reusable mathematical results to their semantic
+production owners instead of copying them into both proof routes. Do not
+retain old production-path aliases or a parallel public special-case API.
+
+Each preserved test must describe its mathematical objects, assumptions and
+conclusion, and give a correspondence between the reference's main steps and
+the Lean argument. Distinguish the original argument from any correction,
+extra assumption or alternative step. Record unresolved obligations explicitly;
+new unproved axioms, `sorry`, an assumed target conclusion, or an unproved external input
+cannot certify that the reference's argument has been verified.
+
+### Non-blocking literature-proof checks
+
+`LiteratureProofTest/` is an advisory test root, separate from the required
+`BranchingProcessTest/` regression root and from the production Lake library.
+Production modules and required regressions must not import literature tests.
+A migration introducing literature tests must also provide their dedicated CI
+runner and reporting; moving files outside the required runner without
+executing and reporting their checks is insufficient.
+
+Run these tests in a separately named advisory CI job/workflow. Its failures,
+cancellations and pending status must not block PR merge. Do not register it
+as a required branch-protection check, include it in a required aggregate
+check, or make required jobs depend on it. Where applicable, use job-level
+`continue-on-error: true`. Merge scripts must distinguish required checks
+from this advisory category instead of waiting for every workflow to succeed.
+These rules do not weaken production builds, ordinary regressions, import
+boundaries, or their axiom checks.
+
+Report each literature proof separately, retaining its compilation output,
+toolchain/dependency revisions, axiom audit, source correspondence and any
+unresolved mathematical obligations. A successful compilation with permitted
+axioms and a reviewed correspondence supports the precise cited argument
+under the recorded assumptions. A failure is diagnostic evidence for review;
+it may arise from an API change, the formalization, or a gap in the reference,
+and by itself does not establish that the published argument is incorrect.
+State a verified source error only after identifying the exact mathematical
+step and justifying the discrepancy. Advisory status changes merge policy,
+not the standard of evidence required for a mathematical verification claim.
+A verified error affecting production statements or proofs must still be
+handled through the ordinary required checks and mathematical review.
+
+## Pull requests
+
+Keep a pull request focused on one mathematical or architectural change.
+Include:
+
+- the statement and assumptions of each new theorem;
+- a short explanation of why the definition belongs in its module;
+- a targeted `lake build` command, or the full build when the dependency
+  boundary changed;
+- documentation updates when a theorem moves from an open obligation to a
+  verified result, or when a path is renamed.
+
+## Lean module headers and mathematical references
+
+Each Lean module docstring must begin with a list of its public theorem
+declarations, using their exact Lean names and a short description. State the
+mathematical content with a formula whenever the conclusion is quantitative or
+relational; include the essential assumptions in the description. For a
+definition, say what object it defines. Keep private proof helpers out of this
+list. Update it whenever a public declaration is added, removed, or renamed.
+
+An implementation module under `Lemmas/` should instead label its local
+proof-support inventory `## Internal proof declarations`. Give the exact
+declaration names and state their defining identity or mathematical role, with
+a formula for quantitative or relational statements. This section documents
+the proof chain; it does not make those declarations part of the reusable
+public API. Keep single-file tactical helpers private and out of the inventory.
+
+When a declaration formalizes or specializes an external result, cite the work
+by author and title, identify the exact theorem/lemma/proposition (and section
+or page when useful), and give its bibliography key or stable identifier (DOI,
+arXiv ID, or URL). For results from a thesis, identify its exact title,
+chapter, and displayed theorem number. Do not use `the paper`, `the thesis`,
+or `the source` as a substitute for a reference. Apply the same rule to
+Mogul'skii's results; for example, identify Theorem 3, Section 4, p. 764 of
+the 1974 Russian original
+by A. A. Mogul'skii, “Small deviations in the sample function space,”
+*Teoriya Veroyatnostei i ee Primeneniya* 19(4) (1974), 755--765, together
+with its English translation, “Small Deviations in a Space of Trajectories,”
+*Theory of Probability and Its Applications* 19(4) (1975), 726--736, DOI
+10.1137/1119081. Include the exact Lean theorem name in the module header and
+the exact source result in that theorem's docstring.
+
+Avoid source names such as `paper...` in private declaration identifiers.
+Name helpers for the mathematical object or proof operation they implement.
+
+Prefer explicit assumptions over hidden instances. Reuse Mathlib objects for
+measures, filtrations, kernels, point measures, and topological spaces. A
+formalized theorem should compile from a clean checkout with the pinned
+`lean-toolchain` and Lake manifest.
+
+Cross-module use alone does not justify moving a declaration to a more general
+public layer. It triggers an abstraction review. For every proposed promotion
+or outward move, search the pinned Mathlib source and repository, inspect the
+official Mathlib documentation and relevant dependencies online, and consult
+the mathematical literature when it can identify a more general statement.
+Compare the weakest natural assumptions and the exact semantics, not just
+similar names. Public definitions and theorems should expose the most abstract
+useful mathematical structure and the weakest natural assumptions supported
+by their meaning. Judge generality by the mathematical interface, not by
+mechanically dropping hypotheses or enlarging types. Add a public abstraction
+only when it states a meaningful reusable mathematical operation or theorem
+beyond a thin restatement of an existing API. A module having several clients
+is a reason to audit its abstraction, not evidence by itself that the
+declaration belongs at a higher level. Record the sources and exact candidate
+statements examined, compare
+their assumptions and conclusions with the actual use sites, and explain why
+the chosen statement is the most general useful one and belongs at that
+semantic layer. Identify the pinned revision for every dependency API checked.
+Keep model-specific names and corollaries with their owning subject.
+
+## Entry points and supporting lemmas
+
+Keep a principal theorem in a plainly named entry module at the mathematical
+subject's directory level. When several files serve only that theorem's proof,
+put them under a sibling `Lemmas/` directory, subdivided by mathematical steps
+such as `Blocks`, `Entrance`, or `Staircase`. **Files in `Lemmas/` must contain
+only helpers that are not independently reusable:** their statements depend on
+the specific event, binning, constants, or assembly of that result. A complete
+reusable theorem, construction, event definition, or proof technique belongs
+in its mathematical subject's directory outside `Lemmas/`, even when the
+current result is its only caller. Before moving a file into `Lemmas/`, review
+each declaration in it against this rule; split mixed files so reusable
+declarations remain outside. A `Lemmas/` directory belongs to one principal
+result or a coherent theorem family; do not collect unrelated results in it.
+
+An entry module may import its proof chain, but it must not use `public import`
+for modules under `Lemmas/`; reserve that for mathematical dependencies that
+belong to the entry module's exposed interface. Keep cross-file proof helpers
+in `Lemmas/` as ordinary `lemma` declarations, not `public lemma` or
+`theorem`. For files using Lean's `module` syntax, the direct proof caller
+should use `import all` for that helper module, never `public import`; this
+allows access to proof support without re-exporting it downstream. Legacy
+files without `module` syntax cannot use the `all` import modifier, and a
+module-syntax file cannot import a legacy module. Until that whole dependency
+chain is migrated together, keep both files in the legacy syntax and use plain
+`import` for the helper. Do not add `module` solely to obtain `import all`.
+If a result needs to be available as a public declaration, move it outside
+`Lemmas/` to its mathematical subject. A helper module may import earlier
+steps in its own proof chain; those imports do not make the earlier steps
+independently reusable.
+
+Proof groupings may be nested when a proof step has its own substantial chain,
+including paths such as `FiniteVarianceUpper/Lemmas/JumpPattern/Lemmas/`.
+Each `Lemmas/` level continues to hold only non-reusable steps for its parent
+result or sub-result. Reusable definitions and theorems move outward to their
+semantic owner, even when that means moving them above more than one nested
+`Lemmas/` directory. At any one directory level, use at most one direct
+`Lemmas.lean` file or one `Lemmas/` directory; group the supporting files
+under that single entry rather than creating parallel `Lemmas` groupings.
+This use of `Lemmas/` as a marker for non-reusable proof support is a local
+repository convention, not a Mathlib naming convention: the pinned
+[`Mathlib` source tree](https://github.com/leanprover-community/mathlib4/tree/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib)
+has no directory named `Lemmas/`. Mathlib organizes source modules by
+mathematical subject and can expose reusable lemmas there; never move a
+reusable API into this repository's `Lemmas/` directory just because its
+current use is proof support.
+
+When a subject directory contains several independent mathematical families,
+group the public modules into semantic subdirectories such as `Ordering/`,
+`Selection/`, or `PointMeasure/`. Keep the subject level for shared core
+definitions and direct entry modules. Do not place a reusable public interface
+under `Lemmas/` just to reduce the number of files at the subject level.
+Name directories for their mathematical subject or proof role, not for a
+parameter value or a sign condition that only selects one theorem instance;
+for example, a first-stage population estimate belongs under `FirstStage/`,
+with the sign condition stated among the theorem's hypotheses.
+Use filenames relative to their semantic directory: prefer
+`PointMeasure/Basic.lean` or `Tilted/Law.lean` to repeating the full directory
+name in every child filename. Mathlib uses same-level `Foo.lean` and `Foo/`
+pairs for deliberate umbrella or entry modules; for example,
+[`MeasureTheory/Measure/Dirac.lean`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/MeasureTheory/Measure/Dirac.html)
+re-exports `Dirac.Def` and `Dirac.Basic`; the pinned
+[`Mathlib/Tactic/Basify.lean`](https://github.com/leanprover-community/mathlib4/blob/380f2aafb622cb2c1c93dac545b6389083c68c51/Mathlib/Tactic/Basify.lean)
+is another substantive entry module beside `Tactic/Basify/`. The same pattern
+is allowed here when the root file presents a real interface and the directory
+groups related components. Do not add an import-only file merely to re-export
+a directory. If a root file and child directory would obscure ownership, put
+core declarations in `Basic.lean` or `Core.lean`, or give child modules names
+that identify their mathematical roles. Also avoid a direct child file whose
+stem repeats its parent directory, such as `Scale/Scale.lean`; use a semantic
+name such as `Scale/Basic.lean`. These path choices do not change Lean
+declaration namespaces.
+Count direct `.lean` files during directory reviews. More than eight is a
+review trigger for semantic grouping, not an automatic move: keep a flat
+directory only when its modules are genuinely peer interfaces for one subject,
+and record that reason in the architecture audit. A large group of independent
+interfaces can still be split by the mathematical objects or operations they
+describe.
+
+Directory placement communicates which files users should read first; it does
+not change Lean declaration visibility. Mark a helper `private` when all its
+uses are in its defining module and it is absent from the type of a
+module-visible declaration and the body of a module-visible definition. A
+private helper may still occur in the proof term of a public theorem. A named
+event or construction used in the body of an exported definition must remain
+module-visible; list it in the module docstring even when it is specific to
+that proof chain. A helper used across proof modules also needs module
+visibility, but that alone does not make it a principal public result.
+Declare supporting results as `lemma`; principal results may be declared as
+`theorem` or `lemma` according to mathematical usage. In Lean, this choice does
+not alter visibility or proof behavior: use `private lemma` for same-module
+proof steps, and a module-visible `lemma` when another declaration imports it.
+The declaration keyword alone does not determine reusability or directory
+placement.
+The module docstring lists the public declarations required by the header rule
+above; directory READMEs or architecture documentation identify the intended
+entry modules. When reorganizing a proof tree, update imports and documentation
+and build every affected entry module.
+
+## Issues and questions
+
+Open an issue for a suspected mathematical error, a missing measurability
+argument, a dependency or naming problem, a reproducible build failure, or a
+theorem you would like to formalize. Include the relevant module, Lean and
+Mathlib revisions, the command that fails, and the smallest useful error
+excerpt. For mathematical claims, give a complete bibliographic reference and
+the exact theorem, lemma, equation, or page that supports it.
+
+Pull requests are welcome even when they formalize only an intermediate lemma.
+If a proposed statement is not yet proved, label it as an interface or open
+obligation instead of weakening the assumptions silently.
+
+## Local checks
+
+From the repository root:
+
+```sh
+lake build
+python3 -m unittest discover -s scripts -p 'test_*.py' -v
+python3 scripts/run-all-lean-tests.py
+python3 scripts/check-lean-import-boundaries.py
+python3 scripts/run-mathlib-lint-style.py
+git diff --check
+```
+
+For a focused change, use the narrowest target first, for example:
+
+```sh
+lake build Probability.Process.IndepIncrements.FiniteDimensional
+```
+
+Do not commit `.lake/` build products. Dependency versions are pinned in
+`lakefile.toml`, `lake-manifest.json`, and `lean-toolchain`.
+
+Pull requests are checked by the repository's GitHub Actions workflow with the
+same pinned toolchain and Lake manifest. `run-mathlib-lint-style.py` invokes
+Mathlib's own `lint-style` over every project source module. The no-argument
+Mathlib command selects the Lake target name `BranchingProcess`, which is not a
+Lean source module in this repository, so the wrapper supplies the module names.
+
+## License and contributions
+
+The repository is distributed under the Apache License 2.0; see
+[`LICENSE`](../../../LICENSE). Unless a contribution is explicitly marked otherwise,
+submissions are understood to be offered under the same license.

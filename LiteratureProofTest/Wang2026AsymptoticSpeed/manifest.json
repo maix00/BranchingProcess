@@ -28,35 +28,21 @@
   "entries": [
     {
       "module": "LiteratureProofTest.Wang2026AsymptoticSpeed.EndpointUpperTail.Theorem",
-      "axioms": [
-        "LiteratureProofTest.Wang2026AsymptoticSpeed.endpointUpperTail_twoStage"
-      ],
       "source_correspondence": "Horizontal first-stage count; independent tilted-tube descendants; capacity estimate; endpoint comparison, matching the 0<a<1 argument.",
       "source_review_status": "route_correspondence_checked"
     },
     {
       "module": "LiteratureProofTest.Wang2026AsymptoticSpeed.EndpointConvergence",
-      "axioms": [
-        "LiteratureProofTest.Wang2026AsymptoticSpeed.tendsto_eLpNorm_two_countableRootEndpointMinimum_div_sub",
-        "LiteratureProofTest.Wang2026AsymptoticSpeed.tendsto_eLpNorm_two_selectedPopulationEndpoint_div_sub"
-      ],
       "source_correspondence": "Historical L2 assembly; positive and full-capacity cases use the preserved two-stage argument. Single-root continuation is redirected to the preserved argument.",
       "source_review_status": "route_correspondence_checked"
     },
     {
       "module": "LiteratureProofTest.Wang2026AsymptoticSpeed.Speed.FourthMoment",
-      "axioms": [
-        "LiteratureProofTest.Wang2026AsymptoticSpeed.Speed.FourthMoment.singleRootMean_via_secondMoment",
-        "LiteratureProofTest.Wang2026AsymptoticSpeed.Speed.FourthMoment.exists_speed_with_logSq_limit"
-      ],
       "source_review_status": "reference_fourth_moment_route_preserved",
       "source_correspondence": "Preserved May 2026 fourth-moment/Cauchy-Schwarz speed argument, migrated from the required regression root. Remaining-horizon expectations now use the archived L2 endpoint argument, including its two-stage positive-start proof."
     },
     {
       "module": "LiteratureProofTest.Wang2026AsymptoticSpeed.Speed.Limit",
-      "axioms": [
-        "LiteratureProofTest.Wang2026AsymptoticSpeed.Speed.exists_speed_with_logSq_limit"
-      ],
       "source_correspondence": "Historical first-moment speed assembly, with its positive-start continuation mean fed by the preserved two-stage proof. This is a historical strengthening of the result under first-moment assumptions; correspondence to every detail of the dissertation speed proof is not certified solely by compilation.",
       "source_review_status": "historical_variant"
     }
