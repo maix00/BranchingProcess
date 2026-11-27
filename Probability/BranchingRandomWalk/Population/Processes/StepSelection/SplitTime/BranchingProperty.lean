@@ -20,7 +20,7 @@ empty or never splits.
 
 ## Public declarations
 
-- `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.FirstSplit.selectedPopulation_firstSplit_subtree_vector_factorization`:
+- `ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime.selectedPopulation_firstSplit_subtree_vector_factorization`:
   writing $\tau_R=\operatorname{selectedPopulationSplitCompletion}(R)$ and
   $Z_R=\operatorname{selectedSubtreeStepFieldVector}
   (\operatorname{selectedPopulationFirstSplitRoots}(R))$, for $A$ measurable
@@ -35,7 +35,7 @@ open MeasureTheory ProbabilityTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.FirstSplit
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 
 open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw offspringFieldLaw_coordinate offspringFieldLaw_independent offspringFieldLaw_mapMarks)
@@ -80,6 +80,6 @@ theorem selectedPopulation_firstSplit_subtree_vector_factorization
   exact stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
     μ σ hσ roots hcount hfiber hdepth hinj A B hA hB
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.FirstSplit
+end ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 
 end

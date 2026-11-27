@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Sibling
-import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.FirstSplit.BranchingProperty
+import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitTime.BranchingProperty
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Law
 
 /-!
@@ -56,7 +56,7 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.As
 
 open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial
 open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.FirstSplit
+open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw)
 

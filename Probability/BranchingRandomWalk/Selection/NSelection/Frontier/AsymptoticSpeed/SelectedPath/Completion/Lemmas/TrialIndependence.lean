@@ -6,10 +6,11 @@ Authors: WANG Yiyang
 
 module
 
-import all Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.FirstSplit.BranchingProperty
+import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitTime.BranchingProperty
 import Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.Recursive
 
 import Probability.Sequence.IID.GeometricReward.FirstMoment
+import Mathlib.Probability.Independence.Integration
 import Mathlib.MeasureTheory.Integral.Prod
 
 /-!
@@ -48,7 +49,7 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.As
 open Combinatorics.Branching Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingProcess (offspringFieldLaw)
 open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
-open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.FirstSplit
+open ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime
 open SelectedPath.GrowthTrial
 
 variable {α X D E : Type*} [Countable α] [MeasurableSpace α] [MeasurableSingletonClass α]

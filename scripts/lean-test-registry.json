@@ -352,8 +352,8 @@
     "BranchingProcessTest/Branching/Selection/NSelection/Frontier/AsymptoticSpeed/SelectedPath/GeometricFirstMoment.lean": {
       "category": "required",
       "declarations": [
-        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.GrowthTrial.iidGeometricFailureLeftmostPositiveDisplacement_le",
-        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.GrowthTrial.exists_nat_cutoff_iidGeometricFailureLeftmostPositiveDisplacement_le"
+        "BranchingProcessTest.GeometricSplitReward.iidGeometricFailureLeftmostPositiveDisplacement_le",
+        "BranchingProcessTest.GeometricSplitReward.exists_nat_cutoff_iidGeometricFailureLeftmostPositiveDisplacement_le"
       ]
     },
     "BranchingProcessTest/Branching/Selection/NSelection/Frontier/AsymptoticSpeed/SelectedPath/GrowthTrial/Expectation.lean": {
@@ -401,8 +401,8 @@
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.PreSampledLineages.first_success_within_isStoppingTime",
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.PreSampledLineages.successfulWithin_measurable",
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.PreSampledLineages.failureWithin_measurable",
-        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.Failure.RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidateFailure",
-        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.Failure.RootIndexed.PreSampledLineages.integral_selectedSubtree_abs_on_candidateFailure_le",
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.integral_selectedSubtree_observable_abs_on_event",
+        "ProbabilityTheory.Trial.successfulCandidateWithin_measurable",
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.growthTrialSuccess_measurable",
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.successAtSelectedRoot_measurable",
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.growthTrialRootAt_fiber_measurable",
@@ -413,7 +413,7 @@
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.candidatesWithin_measurable",
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.integral_selectedSubtree_abs_on_growthTrialFailure_le",
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.PreSampledLineages.sigma_eq_tau_add_one",
-        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.Failure.RootIndexed.integral_disjointRootFamily_abs_on_candidateFailure_le",
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.integral_disjointRootFamily_abs_on_event",
         "ProbabilityTheory.Process.HittingTime.Examples.lookahead_time_not_stopping",
         "ProbabilityTheory.Process.HittingTime.Examples.lookahead_completion_isStoppingTime",
         "ProbabilityTheory.Process.HittingTime.Examples.delayed_lookahead_completion_not_stopping",
@@ -437,7 +437,7 @@
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite",
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.sigmaGrowthTrialAndContinuationRoots",
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.SelectedPath.GrowthTrial.siblingField_factorization_on_finite",
-        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Lemmas.FirstSplit.selectedPopulation_firstSplit_subtree_vector_factorization"
+        "ProbabilityTheory.BranchingRandomWalk.Selection.Stepwise.SplitTime.selectedPopulation_firstSplit_subtree_vector_factorization"
       ]
     },
     "BranchingProcessTest/Branching/Selection/NSelection/Frontier/AsymptoticSpeed/SelectedPath/Splits.lean": {
@@ -1782,6 +1782,12 @@
       "category": "literature",
       "declarations": [
         "LiteratureProofTest.Wang2026AsymptoticSpeed.Speed.exists_speed_with_logSq_limit"
+      ]
+    },
+    "BranchingProcessTest/Logic/Axioms.lean": {
+      "category": "required",
+      "declarations": [
+        "True.intro"
       ]
     }
   }

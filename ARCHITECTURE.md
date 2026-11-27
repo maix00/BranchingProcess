@@ -297,6 +297,7 @@ The additive and potential-displacement measurability proofs likewise invoke
 | Restart schedules | `Probability/Process/Path/Restart/` owns model-independent schedules and observable path bounds; branching growth trials remain with their target model. |
 | Tree lines | `Combinatorics/UlamHarris/Line/` owns deterministic cuts; `Probability/Process/Tree/Line/` owns information and optionality. State-dependent branching supplies descendant-law specializations. |
 | Small-deviation entry | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Theorems.lean` identifies the original numbered results; semantic owner modules contain their proofs and explicit hypotheses. |
+| Selected-population first split | `Probability/BranchingRandomWalk/Population/Processes/StepSelection/SplitTime/` owns the observable completion, selected sibling roots and their stopped descendant-law factorization for arbitrary finite selection rules. |
 | Endpoint and speed estimates | `Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/` and `Frontier/AsymptoticSpeed/` own the selected BRW results, not generic restart theory. |
 | Required regressions | `BranchingProcessTest/` tests production interfaces. The central registry owns expected axiom declarations. |
 | Reference arguments | `LiteratureProofTest/<CitationKey>/` preserves displaced reference-specific routes and support; production and required regressions cannot import it. Its CI is advisory. |

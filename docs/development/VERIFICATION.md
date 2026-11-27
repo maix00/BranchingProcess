@@ -18,7 +18,8 @@ Without `--base`, compare tracked changes to HEAD and include nonignored new
 files. CI compares to the PR base or previous push. Missing/zero/unavailable CI
 bases select full checks. Removed modules remain seeds in reverse-import
 selection, so stale clients fail rather than being silently omitted. Source
-comparison is a conservative convenience, not a Lean parser or proof of semantic
+comparison includes attributed multiline declarations, and remains a heuristic
+convenience, not a Lean parser or proof of semantic
 equivalence. Maintainers must flag meaning-changing public changes even when
 signatures are textually unchanged. An explicit local scope cannot override an
 automatic required full-check decision. No changes or only prose changes can
@@ -42,7 +43,8 @@ reports for every required test and manifested literature entry. Empty lists
 are explicit: an unexpected report is still rejected. There is no fallback
 that silently accepts whatever declarations happen to remain in a test file.
 The shared checker rejects missing, extra, duplicate, ambiguous and unapproved
-reports. Shared JSON syntax and the allowed-axiom policy are common check
+reports, including Lean's “does not depend on any axioms” output. Empty axiom
+inventories are audited unconditionally. Shared JSON syntax and the allowed-axiom policy are common check
 infrastructure; individual advisory entry/proof failures belong to their own scope. The ordinary test runner and advisory runner consume the same registry.
 Literature manifests own bibliographic and source-correspondence metadata only.
 
