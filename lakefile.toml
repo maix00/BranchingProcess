@@ -22,3 +22,8 @@ globs = ["Algebra.+", "Analysis.+", "Combinatorics.+", "LinearAlgebra.+", "Measu
 [[lean_lib]]
 name = "BranchingProcessTest"
 globs = ["BranchingProcessTest.+"]
+
+# Advisory reference-proof tests; excluded from defaultTargets.
+[[lean_lib]]
+name = "LiteratureProofTest"
+globs = ["LiteratureProofTest.+"]

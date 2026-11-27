@@ -21,6 +21,16 @@ axioms = load_script("lean_axiom_check", "check-lean-axioms.py")
 
 
 class ImportBoundaryCheckTests(unittest.TestCase):
+    def test_required_modules_cannot_import_advisory_proofs(self):
+        graph = {
+            "Probability.Example": ["LiteratureProofTest.Citation.Result"],
+            "BranchingProcessTest.Example": ["LiteratureProofTest.Citation.Result"],
+            "LiteratureProofTest.Citation.Result": ["Probability.Generic"],
+        }
+        issues = imports.inspect_literature_test_boundaries(graph)
+        self.assertEqual(len(issues), 2)
+        self.assertTrue(all("Required module" in issue for issue in issues))
+
     def test_feedback_module_stems_are_forbidden(self):
         for name in (
             "Probability.Process.Stable.SmallDeviation.Blocks.Lower.FeedbackEntrance",

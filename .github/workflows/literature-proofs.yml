@@ -1,0 +1,50 @@
+name: Literature proofs (advisory)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  literature:
+    name: Literature proofs (advisory, not required)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true
+    env:
+      LEAN_NUM_THREADS: 2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Identify pinned Mathlib
+        id: mathlib
+        run: echo "sha=$(git -C Vendor/Mathlib rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Restore pinned Mathlib build cache
+        uses: actions/cache/restore@v5
+        with:
+          path: Vendor/Mathlib/.lake/build
+          key: mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib.outputs.sha }}
+          restore-keys: |
+            mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-
+      - name: Install pinned Lean and restore project cache
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+          use-mathlib-cache: false
+      - name: Compile and audit reference proofs
+        run: python3 scripts/run-literature-proof-tests.py --output-dir "$RUNNER_TEMP/literature-proof-reports"
+      - name: Retain advisory results and compiler diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: literature-proof-reports
+          path: ${{ runner.temp }}/literature-proof-reports
+          if-no-files-found: warn
+          retention-days: 14

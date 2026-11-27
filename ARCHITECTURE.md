@@ -965,3 +965,54 @@ is a complete example in `Probability/BranchingRandomWalk/Examples/SpinalWeight.
 its construction helpers are private. See the 2026-11-26 review in
 `docs/architecture/SPINAL_WEIGHT_TAIL_AUDIT.md` for exact hypotheses and native
 Mathlib overlap checks.
+
+
+## Literature-proof preservation and advisory tests
+
+`LiteratureProofTest/<CitationKey>/<MathematicalTopic>.lean` owns preserved
+reference-specific proofs whose production special cases now derive from a
+general theorem. The citation key identifies the article, book or dissertation;
+file headers record its full reference, version, exact result, mathematical
+statement, proof-step correspondence, originating Git revision and replacement
+production entry. These are tests of a cited argument, not alternate public
+implementations of the production result. They may import public foundations;
+production modules and required regressions must not import them. Reusable
+mathematics stays in its semantic production owner. Reference-specific support
+stays inside the literature test's own namespace or private declarations.
+
+This root is separate from both the production library globs and the blocking
+`BranchingProcessTest/` discovery path. When proofs are migrated into it, a
+separate advisory runner and CI report must be supplied. Advisory failures,
+cancellations or pending checks must not block PR merge, including through
+required aggregates, job dependencies, branch protection or merge scripts.
+Their reports retain compiler diagnostics and axiom-audit results; only a
+successful, appropriately axiomatized and source-faithful proof certifies the
+recorded argument. An advisory failure alone does not certify a source error.
+The detailed preservation and merge rules are in `CONTRIBUTING.md`, under
+“Generalizations and special cases”.
+
+
+### Applied reference-proof preservation: WANG Yiyang (2026)
+
+The positive-initial-exponent two-stage assembly removed by `c8009bf1d` is
+restored in `LiteratureProofTest/Wang2026AsymptoticSpeed/EndpointUpperTail/Theorem.lean`.
+Its exclusive stage/window/population support is moved out of the production
+glob, rather than leaving advisory dependencies in the required build.
+`EndpointConvergence.lean` restores the endpoint L2 closure and its full-
+capacity comparison, routing the single-root remaining-horizon argument back
+to the preserved two-stage proof. `Speed/` preserves the historical finite-
+cross-weight first-moment variant; its distinction from a line-by-line source
+proof is recorded in the manifest and reference README.
+The runner reports mechanical and source-review status separately, audits
+named declarations, and retains logs and pinned revisions. The independent
+`literature-proofs.yml` job is non-blocking. Required source and regression
+imports into that root are rejected by the normal import-boundary check.
+The production library and required regression runner retain their existing
+blocking behavior. The subtree publication script watches only `build.yml`.
+
+The original fourth-moment/Cauchy–Schwarz speed regression is preserved at
+`LiteratureProofTest/Wang2026AsymptoticSpeed/Speed/FourthMoment.lean`, with
+its exclusive remaining-horizon proof support. It calls the archived endpoint
+L2/two-stage chain. Its two former required regression modules are excluded
+from the blocking runner; the shared reset and moment foundations stay in
+production. The first-moment historical variant remains separately labeled.

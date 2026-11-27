@@ -72,6 +72,69 @@ its underlying randomness, but identify its pushforward with the canonical
 law rather than define a second law interface. Keep its model-specific
 conditional-law adapters in a namespace that names that model or realization.
 
+
+### Preserve the reference's proof when specializing a general theorem
+
+When an existing special-case formalization is replaced by a call to a more
+general theorem, preserve its original proof route before removing that route
+from production. Move the reference-specific argument and necessary local
+support into `LiteratureProofTest/<CitationKey>/<MathematicalTopic>.lean`.
+Use one stable bibliography key per article, book, or dissertation; organize
+by the cited work rather than by the current production module or an agent's
+implementation history. Cite the full work, version, exact theorem/lemma,
+and relevant pages. Record the originating Git revision and the production
+specialization that replaced the original implementation. Apply the same rule
+to earlier migrations: recover the original route from Git history when it
+has already been removed. Until its correspondence and proof obligations are
+verified, do not describe the original reference's proof as fully reproduced.
+
+The production special case must derive from the general public interface.
+The literature test must retain the reference's actual argument: deriving the
+same conclusion from the replacement general theorem does not preserve that
+argument. Reuse current public foundations and independently reusable lemmas;
+keep reference-specific supporting declarations private or within the test
+namespace. Move genuinely reusable mathematical results to their semantic
+production owners instead of copying them into both proof routes. Do not
+retain old production-path aliases or a parallel public special-case API.
+
+Each preserved test must describe its mathematical objects, assumptions and
+conclusion, and give a correspondence between the reference's main steps and
+the Lean argument. Distinguish the original argument from any correction,
+extra assumption or alternative step. Record unresolved obligations explicitly;
+new unproved axioms, `sorry`, an assumed target conclusion, or an unproved external input
+cannot certify that the reference's argument has been verified.
+
+### Non-blocking literature-proof checks
+
+`LiteratureProofTest/` is an advisory test root, separate from the required
+`BranchingProcessTest/` regression root and from the production Lake library.
+Production modules and required regressions must not import literature tests.
+A migration introducing literature tests must also provide their dedicated CI
+runner and reporting; moving files outside the required runner without
+executing and reporting their checks is insufficient.
+
+Run these tests in a separately named advisory CI job/workflow. Its failures,
+cancellations and pending status must not block PR merge. Do not register it
+as a required branch-protection check, include it in a required aggregate
+check, or make required jobs depend on it. Where applicable, use job-level
+`continue-on-error: true`. Merge scripts must distinguish required checks
+from this advisory category instead of waiting for every workflow to succeed.
+These rules do not weaken production builds, ordinary regressions, import
+boundaries, or their axiom checks.
+
+Report each literature proof separately, retaining its compilation output,
+toolchain/dependency revisions, axiom audit, source correspondence and any
+unresolved mathematical obligations. A successful compilation with permitted
+axioms and a reviewed correspondence supports the precise cited argument
+under the recorded assumptions. A failure is diagnostic evidence for review;
+it may arise from an API change, the formalization, or a gap in the reference,
+and by itself does not establish that the published argument is incorrect.
+State a verified source error only after identifying the exact mathematical
+step and justifying the discrepancy. Advisory status changes merge policy,
+not the standard of evidence required for a mathematical verification claim.
+A verified error affecting production statements or proofs must still be
+handled through the ordinary required checks and mathematical review.
+
 ## Pull requests
 
 Keep a pull request focused on one mathematical or architectural change.
