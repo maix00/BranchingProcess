@@ -734,12 +734,26 @@ def inspect_general_layer_boundaries(
     return issues
 
 
+def inspect_literature_test_boundaries(import_graph: dict[str, list[str]]) -> list[str]:
+    """Required production and regression modules cannot depend on advisory proofs."""
+    required_roots = {"Algebra", "Analysis", "Combinatorics", "LinearAlgebra",
+                      "MeasureTheory", "Order", "Probability", "Topology", "BranchingProcessTest"}
+    return [
+        f"Required module imports advisory literature proof: {module} -> {imported}"
+        for module, dependencies in import_graph.items()
+        if module.split(".")[0] in required_roots
+        for imported in dependencies
+        if imported == "LiteratureProofTest" or imported.startswith("LiteratureProofTest.")
+    ]
+
+
 def main() -> int:
     import_graph, parse_issues = load_import_graph(LEAN_ROOT)
     counts, issues = inspect_entries(
         ENTRY_MODULES, import_graph=import_graph, parse_issues=parse_issues
     )
     issues.extend(inspect_general_layer_boundaries(import_graph=import_graph))
+    issues.extend(inspect_literature_test_boundaries(import_graph))
     module_count, module_issues = inspect_required_module_headers(LEAN_ROOT)
     issues.extend(module_issues)
     if issues:

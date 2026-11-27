@@ -15,9 +15,6 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.measure_selectedPopulation_lowerTail_le_firstN",
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.measure_selectedPopulation_lowerTail_le_firstN_of_randomInitial",
     ),
-    Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/Frontier/AsymptoticSpeed/FourthMoment.lean"): (
-        "BranchingProcessTest.NSelectionSpeed.singleRootMean_via_secondMoment",
-    ),
     Path("BranchingProcessTest/Probability/BranchingRandomWalk/Selection/NSelection/EndpointDeviation/FirstMoment.lean"): (
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_countableRootEndpointMinimum_ge_le_polynomial_of_positiveExponent",
         "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_countableRootEndpointMinimum_abs_div_sub_le_polynomial_of_spinalWeightTail",

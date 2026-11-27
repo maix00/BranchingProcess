@@ -941,3 +941,27 @@ for all 1846 project modules. Import-boundary checks and all 32 Python tooling
 tests passed. The final local cleanup factors the coefficient integrability
 and finite-atomic integrability calculations into their existing private
 owners; it introduces no parallel proof or public alias.
+
+
+## Preservation of the displaced dissertation argument (2026-11-27)
+
+The separate finite-cross-weight two-stage upper proof was replaced in
+production by the general weak-tail theorem. It is now recovered from the
+parent of `c8009bf1d` under the citation-key literature-test root, together with
+its dedicated stage, population and window modules. The L2 closure/full-
+capacity proof from the parent of `24e272fd`, and the single-root horizon
+adapter, call that preserved argument. The historical finite-cross-weight
+continuation-mean and speed assembly are preserved separately as an explicitly
+labeled historical variant. The reference README and manifest distinguish
+source-route review from compiler/axiom success. This evidence does not
+retroactively make the production weak-tail proof the original dissertation
+argument. Required builds and regressions cannot import the advisory root;
+a separate non-blocking workflow compiles and audits it. No LaTeX change is
+included in this preservation migration.
+
+The original fourth-moment/Cauchy–Schwarz speed regression is preserved at
+`LiteratureProofTest/Wang2026AsymptoticSpeed/Speed/FourthMoment.lean`, with
+its exclusive remaining-horizon proof support. It calls the archived endpoint
+L2/two-stage chain. Its two former required regression modules are excluded
+from the blocking runner; the shared reset and moment foundations stay in
+production. The first-moment historical variant remains separately labeled.
