@@ -1,0 +1,62 @@
+name: Prepare pinned Lean workspace
+description: Install Lean and restore a Lake workspace; callers save it after successful checks.
+inputs:
+  category:
+    description: Required or advisory cache writer; both may reuse completed workspace builds.
+    required: true
+outputs:
+  cache-key:
+    description: Exact source and pinned-dependency cache key to save after checks.
+    value: ${{ steps.keys.outputs.key }}
+  cache-hit:
+    description: Whether that exact key was restored.
+    value: ${{ steps.restore.outputs.cache-hit }}
+runs:
+  using: composite
+  steps:
+    - name: Install pinned Lean
+      uses: leanprover/lean-action@v1
+      with:
+        auto-config: false
+        build: false
+        test: false
+        lint: false
+        use-mathlib-cache: false
+        # lean-action would save here, before the caller's manual checks.
+        use-github-cache: false
+    - name: Identify workspace cache
+      id: keys
+      shell: bash
+      env:
+        CACHE_CATEGORY: ${{ inputs.category }}
+        TOOLCHAIN_HASH: ${{ hashFiles('lean-toolchain') }}
+        MANIFEST_HASH: ${{ hashFiles('lake-manifest.json') }}
+      run: |
+        set -euo pipefail
+        case "$CACHE_CATEGORY" in required|advisory) ;; *) exit 2 ;; esac
+        cache_mathlib_rev=$(git -C Vendor/Mathlib rev-parse HEAD)
+        cache_brownian_rev=$(git -C Vendor/BrownianMotion rev-parse HEAD)
+        cache_seed="lake-${RUNNER_OS}-${RUNNER_ARCH}-${TOOLCHAIN_HASH}-${MANIFEST_HASH}-"
+        cache_pins="${cache_mathlib_rev}-${cache_brownian_rev}"
+        cache_required="${cache_seed}required-${cache_pins}-"
+        cache_advisory="${cache_seed}advisory-${cache_pins}-"
+        echo "key=${cache_seed}${CACHE_CATEGORY}-${cache_pins}-${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+        {
+          echo 'restore-keys<<CACHE_KEYS'
+          if [ "$CACHE_CATEGORY" = advisory ]; then
+            echo "${cache_required}${GITHUB_SHA}"
+            echo "$cache_advisory"
+          fi
+          echo "$cache_required"
+          # A compatible workspace may seed dependencies; Lake still validates
+          # source traces. New snapshots identify both pinned submodules.
+          echo "$cache_seed"
+          echo CACHE_KEYS
+        } >> "$GITHUB_OUTPUT"
+    - name: Restore completed workspace build
+      id: restore
+      uses: actions/cache/restore@v5
+      with:
+        path: ./.lake
+        key: ${{ steps.keys.outputs.key }}
+        restore-keys: ${{ steps.keys.outputs.restore-keys }}

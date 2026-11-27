@@ -36,6 +36,24 @@ registry reconciliation in their own check category before that scope runs.
 Required checks do not parse advisory manifests or validate advisory entry
 inventories; those diagnostics belong to the non-blocking literature scope.
 
+## Import-graph ownership
+
+Only owned Lean sources are import-graph nodes. Directory traversal prunes
+`Vendor/`, `.lake/` and `.git/` before descending, and required checks also
+exclude the advisory source tree. The native Lean header parser is retained.
+Imports such as `Mathlib.Foo` remain terminal dependency edges; removing vendor
+nodes does not remove those edges. Dependency typechecking and the transitive
+axiom audit still run through the pinned Lake workspace. Changes to a dependency
+pin remain full-check triggers; fork-internal architectural audits are separate
+from this repository's ownership graph.
+
+Related Lean edits load the owned graph for reverse-import selection. Full,
+literature and prose-only plans avoid that planning scan. Full verification
+still performs its required import-boundary check. A failed local-header parse
+cannot silently select a partial related test set: it escalates to full checks.
+Reports say whether the planning graph was loaded and record its node count and
+parse issues; node counts are scope information, not timing evidence.
+
 ## One axiom registry, two check categories
 
 `scripts/lean-test-registry.json` owns allowed axioms and the explicit expected
@@ -78,3 +96,32 @@ caches or proof/module architecture. Preserve failure diagnostics in every run.
 The required CI uploads these reports and uses the same front door; the advisory
 CI uses `--scope literature` and retains its independent report. Check failures
 are reported without weakening mathematical hypotheses or axiom policy.
+
+## Independent CI preparation and cache lifecycle
+
+The required and advisory workflows stay on separate runners and have no `needs`
+or `workflow_run` dependency on each other. Each runner necessarily checks out
+sources, installs the pinned toolchain and restores dependencies. Combining the
+preparation code does not by itself eliminate that runner cost or establish a
+wall-time improvement.
+
+Both use `.github/actions/prepare-lean` to install Lean and restore the Lake
+workspace. Its embedded lean-action GitHub-cache save is disabled: with manual
+checks outside that action, its normal save would occur before those checks.
+The workflows explicitly save `./.lake` only after their own checks succeed.
+Required and advisory writers use distinct keys containing OS, architecture,
+toolchain/manifest fingerprints, both pinned submodule revisions and source SHA.
+The advisory runner can reuse a completed required snapshot for the same source,
+then its own prior snapshot or another compatible dependency seed, without waiting
+for an in-progress required job. Seeds do not certify current proofs: Lake checks
+source traces and all selected builds, regression tests and axiom audits still run.
+Mathlib's separate build cache and the existing PR artifact bridge remain intact.
+
+Record the exact checked SHA, workflow/run URLs, individual step results and
+uploaded timing report when reporting CI status. Distinguish preparation, checks,
+cache persistence, queue time and total runner elapsed time. Inspect cache hits
+rather than equating a successful restore step with an exact hit. Compare the
+same mathematical verification scope under comparable cache conditions; a first
+run under new keys and a warm rerun are different workloads. The measured baseline
+and the bounded changes are recorded in
+[the import/cache audit](../architecture/audits/2026-11-27-IMPORT_GRAPH_AND_CI_CACHE.md).

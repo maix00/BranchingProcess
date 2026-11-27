@@ -30,15 +30,13 @@ jobs:
           key: mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib.outputs.sha }}
           restore-keys: |
             mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-
-      - name: Install pinned Lean and restore project cache
-        uses: leanprover/lean-action@v1
+      - name: Prepare pinned Lean workspace
+        id: workspace
+        uses: ./.github/actions/prepare-lean
         with:
-          auto-config: false
-          build: false
-          test: false
-          lint: false
-          use-mathlib-cache: false
+          category: advisory
       - name: Compile and audit reference proofs
+        id: checks
         run: python3 scripts/check.py --scope literature --output-dir "$RUNNER_TEMP/literature-proof-reports"
       - name: Retain advisory results and compiler diagnostics
         if: always()
@@ -48,3 +46,9 @@ jobs:
           path: ${{ runner.temp }}/literature-proof-reports
           if-no-files-found: warn
           retention-days: 14
+      - name: Save completed advisory workspace
+        if: success() && steps.checks.outcome == 'success' && steps.workspace.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: ./.lake
+          key: ${{ steps.workspace.outputs.cache-key }}

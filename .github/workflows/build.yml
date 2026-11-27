@@ -101,18 +101,14 @@ jobs:
           tar --zstd -xf "$RUNNER_TEMP/mathlib-build-artifact/mathlib-build.tar.zst" \
             -C Vendor/Mathlib/.lake
 
-      - name: Install pinned Lean and restore project cache
-        uses: leanprover/lean-action@v1
+      - name: Prepare pinned Lean workspace
+        id: workspace
+        uses: ./.github/actions/prepare-lean
         with:
-          # Mathlib has not published a cache for this fork; use the pinned
-          # GitHub build cache or the matching short-lived artifact instead.
-          use-mathlib-cache: false
-          auto-config: false
-          build: false
-          test: false
-          lint: false
+          category: required
 
       - name: Unified required checks
+        id: checks
         env:
           CHECK_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: python3 scripts/check.py --base "$CHECK_BASE" --jobs 4 --output-dir "$RUNNER_TEMP/check-reports"
@@ -125,6 +121,13 @@ jobs:
           path: ${{ runner.temp }}/check-reports
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Save completed required workspace
+        if: success() && steps.checks.outcome == 'success' && steps.workspace.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: ./.lake
+          key: ${{ steps.workspace.outputs.cache-key }}
 
       - name: Save the Mathlib build cache
         if: success() && steps.mathlib-build-cache.outputs.cache-hit != 'true'

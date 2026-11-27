@@ -169,6 +169,34 @@ def make_plan(args, changed, before, after, graph):
     return scope, reasons, steps
 
 
+def plan_checks(args, changed, before, after, load_graph):
+    """Load the local graph only when a related Lean check needs reverse imports."""
+    scope, reasons, steps = make_plan(args, changed, before, after, {})
+    graph = None
+    graph_info = {'loaded': False, 'module_count': None, 'parse_issues': []}
+    if scope == 'related' and (args.module or any(p.endswith('.lean') for p in changed)):
+        graph, issues = load_graph(ROOT)
+        graph_info = {'loaded': True, 'module_count': len(graph), 'parse_issues': issues}
+        if issues:
+            forced = argparse.Namespace(**(vars(args) | {'scope': 'full'}))
+            scope, reasons, steps = make_plan(forced, changed, before, after, graph)
+            reasons.append('local import parsing failed; require full verification')
+        else:
+            scope, reasons, steps = make_plan(args, changed, before, after, graph)
+    if graph is None:
+        allowed = PRODUCTION_ROOTS | {'BranchingProcessTest'}
+        if scope == 'literature':
+            allowed.add('LiteratureProofTest')
+        known = {name for name in args.module if name.split('.')[0] in allowed
+                 and (ROOT / (name.replace('.', '/') + '.lean')).is_file()}
+    else:
+        known = set(graph)
+    unknown = set(args.module) - known
+    if unknown:
+        raise ValueError(f'Unknown local modules: {sorted(unknown)}')
+    return scope, reasons, steps, graph_info
+
+
 def main():
     started = time.perf_counter()
     parser = argparse.ArgumentParser(description=__doc__)
@@ -192,16 +220,19 @@ def main():
         args.base = None
         args.scope = 'full' if args.scope != 'literature' else 'literature'
     changed, before, after = change_data(args.base, args.changed)
-    spec = importlib.util.spec_from_file_location('import_boundaries', ROOT / 'scripts/check-lean-import-boundaries.py')
-    imports = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(imports)
-    graph, _ = imports.load_import_graph(ROOT, include_advisory=args.scope == "literature")
-    scope, reasons, steps = make_plan(args, changed, before, after, graph)
-    unknown = set(args.module) - set(graph)
-    if unknown:
-        parser.error(f'Unknown local modules: {sorted(unknown)}')
+    def load_graph(root):
+        spec = importlib.util.spec_from_file_location(
+            'import_boundaries', ROOT / 'scripts/check-lean-import-boundaries.py')
+        imports = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(imports)
+        return imports.load_import_graph(root)
+
+    try:
+        scope, reasons, steps, graph_info = plan_checks(args, changed, before, after, load_graph)
+    except ValueError as error:
+        parser.error(str(error))
     report = {'commit': git('rev-parse', 'HEAD'), 'dirty': bool(git('status', '--porcelain')),
-              'scope': scope, 'reasons': reasons, 'changed': changed,
+              'scope': scope, 'reasons': reasons, 'changed': changed, 'import_graph': graph_info,
               'toolchain': (ROOT / 'lean-toolchain').read_text().strip(),
               'mathlib': git('-C', 'Vendor/Mathlib', 'rev-parse', 'HEAD'),
               'platform': platform.platform(), 'jobs': args.jobs,

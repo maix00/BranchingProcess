@@ -21,6 +21,20 @@ axioms = load_script("lean_axiom_check", "check-lean-axioms.py")
 
 
 class ImportBoundaryCheckTests(unittest.TestCase):
+    def test_vendor_and_cache_trees_are_not_parsed_but_external_edges_remain(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            owned = root / 'Probability/Owned.lean'
+            owned.parent.mkdir(parents=True)
+            owned.write_text('module\nimport Mathlib.Foo\n')
+            for folder in ['Vendor/Dependency', '.lake/packages/Dependency', '.git/cache']:
+                bad = root / folder / 'Broken.lean'
+                bad.parent.mkdir(parents=True)
+                bad.write_text('module\nimport\n')
+            graph, issues = imports.load_import_graph(root)
+        self.assertEqual(issues, [])
+        self.assertEqual(graph, {'Probability.Owned': ['Mathlib.Foo']})
+
     def test_advisory_header_failure_is_not_a_required_parse_failure(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

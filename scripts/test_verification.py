@@ -25,6 +25,37 @@ class VerificationTests(unittest.TestCase):
                     merge_main=False, module=[], jobs=2, output_dir=Path('/tmp/check-test'))
         return SimpleNamespace(**(data | kwargs))
 
+    def test_full_literature_and_prose_plans_do_not_load_import_graph(self):
+        for args, changed in [(self.args(scope='full'), []),
+                              (self.args(scope='literature'), []),
+                              (self.args(), ['README.md'])]:
+            with self.subTest(scope=args.scope):
+                loader = unittest.mock.Mock(side_effect=AssertionError('unnecessary graph scan'))
+                _, _, _, info = checks.plan_checks(args, changed, {}, {}, loader)
+                self.assertFalse(info['loaded'])
+                loader.assert_not_called()
+
+    def test_related_lean_plan_loads_owned_graph_once(self):
+        path = 'Analysis/Owner.lean'
+        old = 'lemma ok : True := by trivial\n'
+        new = old.replace('trivial', 'exact True.intro')
+        loader = unittest.mock.Mock(return_value=({'Analysis.Owner': []}, []))
+        scope, _, steps, info = checks.plan_checks(self.args(), [path], {path: old}, {path: new}, loader)
+        self.assertEqual(scope, 'related')
+        self.assertEqual(info['module_count'], 1)
+        loader.assert_called_once_with(checks.ROOT)
+        self.assertEqual(steps[0], ('build', ['lake', 'build', 'Analysis.Owner']))
+
+    def test_import_parse_failure_cannot_silently_select_partial_checks(self):
+        path = 'Analysis/Owner.lean'
+        source = 'lemma ok : True := by trivial\n'
+        loader = unittest.mock.Mock(return_value=({}, ['invalid owned header']))
+        scope, reasons, _, info = checks.plan_checks(
+            self.args(), [path], {path: source}, {path: source}, loader)
+        self.assertEqual(scope, 'full')
+        self.assertTrue(info['parse_issues'])
+        self.assertTrue(any('parsing failed' in reason for reason in reasons))
+
     def test_current_inventory_is_complete_and_categories_are_separate(self):
         checks.validate_inventory()
         self.assertEqual({e['category'] for e in registry_entries('required').values()}, {'required'})
