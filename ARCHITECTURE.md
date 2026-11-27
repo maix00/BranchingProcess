@@ -965,3 +965,28 @@ is a complete example in `Probability/BranchingRandomWalk/Examples/SpinalWeight.
 its construction helpers are private. See the 2026-11-26 review in
 `docs/architecture/SPINAL_WEIGHT_TAIL_AUDIT.md` for exact hypotheses and native
 Mathlib overlap checks.
+
+
+## Literature-proof preservation and advisory tests
+
+`LiteratureProofTest/<CitationKey>/<MathematicalTopic>.lean` owns preserved
+reference-specific proofs whose production special cases now derive from a
+general theorem. The citation key identifies the article, book or dissertation;
+file headers record its full reference, version, exact result, mathematical
+statement, proof-step correspondence, originating Git revision and replacement
+production entry. These are tests of a cited argument, not alternate public
+implementations of the production result. They may import public foundations;
+production modules and required regressions must not import them. Reusable
+mathematics stays in its semantic production owner. Reference-specific support
+stays inside the literature test's own namespace or private declarations.
+
+This root is separate from both the production library globs and the blocking
+`BranchingProcessTest/` discovery path. When proofs are migrated into it, a
+separate advisory runner and CI report must be supplied. Advisory failures,
+cancellations or pending checks must not block PR merge, including through
+required aggregates, job dependencies, branch protection or merge scripts.
+Their reports retain compiler diagnostics and axiom-audit results; only a
+successful, appropriately axiomatized and source-faithful proof certifies the
+recorded argument. An advisory failure alone does not certify a source error.
+The detailed preservation and merge rules are in `CONTRIBUTING.md`, under
+“Generalizations and special cases”.
