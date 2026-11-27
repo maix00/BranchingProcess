@@ -147,8 +147,8 @@ def make_plan(args, changed, before, after, graph):
     steps = []
     if scope == 'full':
         steps = [('tooling', [sys.executable, '-m', 'unittest', 'discover', '-s', 'scripts', '-p', 'test_*.py']),
-                 ('visualizers', ['node', 'scripts/check-visualizer-manifest.mjs']),
                  ('build', ['lake', 'build']),
+                 ('visualizers', ['node', 'scripts/check-visualizer-manifest.mjs']),
                  ('regressions', [sys.executable, 'scripts/run-all-lean-tests.py', '--jobs', str(args.jobs),
                                   '--output-dir', str(args.output_dir / 'lean-tests')]),
                  ('imports', [sys.executable, 'scripts/check-lean-import-boundaries.py']),

@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
 
 jobs:
@@ -20,16 +21,87 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Identify pinned Mathlib
-        id: mathlib
+      - name: Identify the pinned Mathlib revision
+        id: mathlib-revision
         run: echo "sha=$(git -C Vendor/Mathlib rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-      - name: Restore pinned Mathlib build cache
+
+      # The Mathlib cache service has no matching artifact set for this pinned source
+      # tree. lean-action caches the root .lake directory, while this path belongs to
+      # the Mathlib submodule and needs its own stable cache.
+      - name: Restore the Mathlib build cache
+        id: mathlib-build-cache
         uses: actions/cache/restore@v5
         with:
           path: Vendor/Mathlib/.lake/build
-          key: mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib.outputs.sha }}
+          key: mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib-revision.outputs.sha }}
           restore-keys: |
             mathlib-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-
+
+      # A pull_request run cannot restore a cache saved by a push to its head
+      # branch. Transfer the build through a short-lived artifact from preflight.
+      - name: Find the preflight Mathlib build artifact
+        id: mathlib-build-artifact
+        if: >-
+          steps.mathlib-build-cache.outputs.cache-hit != 'true' &&
+          ((github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository) ||
+          (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const artifactName = `mathlib-build-${{ hashFiles('lean-toolchain', 'Vendor/Mathlib/lean-toolchain') }}-${{ steps.mathlib-revision.outputs.sha }}`;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const repoFullName = `${owner}/${repo}`;
+            const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+            for (let attempt = 0; attempt < 40; attempt++) {
+              const artifacts = await github.paginate(
+                github.rest.actions.listArtifactsForRepo,
+                { owner, repo, per_page: 100 }
+              );
+              const candidates = artifacts
+                .filter(a => a.name === artifactName && !a.expired && a.workflow_run?.id)
+                .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+
+              for (const artifact of candidates) {
+                const { data: run } = await github.rest.actions.getWorkflowRun({
+                  owner, repo, run_id: artifact.workflow_run.id
+                });
+                if (run.event === 'push' && run.head_branch === 'preflight' &&
+                    run.head_repository?.full_name === repoFullName &&
+                    run.path === '.github/workflows/build.yml') {
+                  core.setOutput('run-id', String(run.id));
+                  core.setOutput('artifact-name', artifactName);
+                  core.info(`Using Mathlib build artifact from push run ${run.id}.`);
+                  return;
+                }
+              }
+
+              if (attempt % 5 === 0)
+                core.info(`Waiting for the matching preflight artifact (${attempt + 1}/40).`);
+              await pause(30_000);
+            }
+
+            core.notice('No preflight Mathlib artifact was found; continuing with the normal build path.');
+
+      - name: Download the preflight Mathlib build artifact
+        if: steps.mathlib-build-artifact.outputs.run-id != ''
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ steps.mathlib-build-artifact.outputs.artifact-name }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.mathlib-build-artifact.outputs.run-id }}
+          path: ${{ runner.temp }}/mathlib-build-artifact
+
+      - name: Restore the Mathlib build files
+        if: steps.mathlib-build-artifact.outputs.run-id != ''
+        run: |
+          mkdir -p Vendor/Mathlib/.lake
+          tar --zstd -xf "$RUNNER_TEMP/mathlib-build-artifact/mathlib-build.tar.zst" \
+            -C Vendor/Mathlib/.lake
+
       - name: Prepare pinned Lean workspace
         id: workspace
         uses: ./.github/actions/prepare-lean

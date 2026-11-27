@@ -26,8 +26,8 @@ automatic required full-check decision. No changes or only prose changes can
 legitimately produce no Lean build; this is reported as an empty plan, not a
 claim that production was rebuilt.
 
-Full checks execute tooling tests, visualizer-manifest validation, one default
-production build, required Lean regressions with axiom verification, import
+Full checks execute tooling tests, one default production build,
+visualizer-manifest validation (after its Lean dependencies are built), required Lean regressions with axiom verification, import
 boundaries and Mathlib style lint. Production globs include every production
 source root. There are no duplicate declaration lists or repeated groups of
 build targets in CI YAML. Related checks execute the affected build, selected
@@ -115,7 +115,8 @@ The advisory runner can reuse a completed required snapshot for the same source,
 then its own prior snapshot or another compatible dependency seed, without waiting
 for an in-progress required job. Seeds do not certify current proofs: Lake checks
 source traces and all selected builds, regression tests and axiom audits still run.
-Mathlib's separate build cache and the existing PR artifact bridge remain intact.
+Both workflows restore Mathlib's separate build cache and can use the same pinned
+preflight Mathlib artifact bridge for PR and main integration runs.
 
 Record the exact checked SHA, workflow/run URLs, individual step results and
 uploaded timing report when reporting CI status. Distinguish preparation, checks,

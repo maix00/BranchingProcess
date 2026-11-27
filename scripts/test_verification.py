@@ -175,6 +175,11 @@ class VerificationTests(unittest.TestCase):
         self.assertIn('scripts/check.py --scope literature', advisory)
         self.assertIn('continue-on-error: true', advisory)
 
+    def test_full_build_precedes_visualizer_validation(self):
+        _, _, steps = checks.make_plan(self.args(scope='full'), [], {}, {}, {})
+        names = [name for name, _ in steps]
+        self.assertLess(names.index('build'), names.index('visualizers'))
+
     def test_main_target_requires_full_checks(self):
         with patch.dict('os.environ', {'GITHUB_BASE_REF': 'main'}):
             scope, reasons, _ = checks.make_plan(self.args(), [], {}, {}, {})
