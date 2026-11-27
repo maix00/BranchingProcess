@@ -2,6 +2,7 @@
 """Check architectural import boundaries in the local Lean module graph."""
 
 from pathlib import Path
+import os
 import subprocess
 import sys
 import tempfile
@@ -617,16 +618,22 @@ def imported_modules(source: str) -> list[str]:
     return imports[path.resolve()]
 
 
+def project_source_paths(root: Path, include_advisory: bool = False) -> list[Path]:
+    """Do not descend into dependency, cache or excluded advisory directories."""
+    excluded = {"Vendor", ".lake", ".git", "__pycache__"}
+    if not include_advisory:
+        excluded.add("LiteratureProofTest")
+    paths = []
+    for directory, subdirectories, filenames in os.walk(root, followlinks=False):
+        subdirectories[:] = sorted(name for name in subdirectories if name not in excluded)
+        paths.extend(Path(directory) / name for name in filenames if name.endswith(".lean"))
+    return sorted(paths)
+
+
 def load_import_graph(root: Path, include_advisory: bool = False) -> tuple[dict[str, list[str]], list[str]]:
-    """Parse local headers; advisory parse failures stay out of required checks."""
+    """Parse owned headers; dependency imports remain terminal graph edges."""
     root = root.resolve()
-    paths = sorted(
-        path
-        for path in root.rglob("*.lean")
-        if not {".lake", ".git"}.intersection(path.relative_to(root).parts)
-        and (include_advisory or path.relative_to(root).parts[0] != "LiteratureProofTest")
-    )
-    parsed, issues = parse_imports_from_paths(paths)
+    parsed, issues = parse_imports_from_paths(project_source_paths(root, include_advisory))
     graph = {
         ".".join(path.relative_to(root).with_suffix("").parts): imports
         for path, imports in parsed.items()
