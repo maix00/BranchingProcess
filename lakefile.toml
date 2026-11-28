@@ -5,15 +5,25 @@ defaultTargets = ["BranchingProcess"]
 [[require]]
 name = "BrownianMotion"
 path = "Vendor/BrownianMotion"
-# This tracked snapshot of the fork is described in Vendor/BrownianMotion/UPSTREAM.md.
+# BrownianMotion is pinned by the Git submodule at Vendor/BrownianMotion.
 
 [[require]]
 name = "mathlib"
 path = "Vendor/Mathlib"
-# Pinned Git submodule of maix00/mathlib4 at 380f2aafb622cb2c1c93dac545b6389083c68c51.
+# Mathlib is pinned by the Git submodule at Vendor/Mathlib.
 
 [[lean_lib]]
 name = "BranchingProcess"
 # Keep every project source root in the build, including modules with no
 # importers. Omitting a root would let its files silently skip the build.
 globs = ["Algebra.+", "Analysis.+", "Combinatorics.+", "LinearAlgebra.+", "MeasureTheory.+", "Order.+", "Probability.+", "Topology.+"]
+
+# Test-only proof assemblies; these are not part of the public library.
+[[lean_lib]]
+name = "BranchingProcessTest"
+globs = ["BranchingProcessTest.+"]
+
+# Advisory reference-proof tests; excluded from defaultTargets.
+[[lean_lib]]
+name = "LiteratureProofTest"
+globs = ["LiteratureProofTest.+"]

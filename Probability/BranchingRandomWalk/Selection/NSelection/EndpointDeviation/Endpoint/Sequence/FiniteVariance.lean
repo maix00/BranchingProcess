@@ -4,16 +4,28 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Basic
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.Parameters
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.Sublevel
-import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.CountableRoots
-import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Theorems
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Basic
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.UpperTail.FullCapacity
+public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.Parameters
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.Sublevel
+public import Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Minimum.CountableRoots
+public import Probability.Process.RandomWalk.SmallDeviation.Drawdown.FiniteVarianceUpper.Theorems
 
 /-!
 # Polynomial endpoint tails under finite variance
 
 ## Public declarations
+
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_countableRootEndpointMinimum_abs_div_sub_le_polynomial_of_spinalWeightTail`:
+  for `0<a≤1` and the weak reproductive tail, the normalized endpoint has
+  `P(|M_n/log N_n-(-a+π²σ²t/2)|≥ε)≤2 N_n^(-p)` eventually.
+* `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.tendstoInMeasure_countableRootEndpointMinimum_div_of_spinalWeightTail`:
+  the same hypotheses give convergence in probability to `-a+π²σ²t/2`.
+  These two results require nonempty offspring, boundary normalization and
+  centered finite positive spinal variance, with no leftmost-child moment.
 
 - `ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.eventually_finiteRootStepFieldLaw_firstNSelectedEndpointBelow_le_polynomial_of_centeredFiniteVariance`:
   if $H_n/\log^3 N_n\to t$, $z_n/\log N_n\to\zeta$, and
@@ -40,6 +52,10 @@ Offspring*, Chapter 4, equation (4.16) (master's thesis, Fudan University,
 
 open Filter MeasureTheory
 open scoped ENNReal Topology
+
+@[expose] public section
+
+set_option backward.isDefEq.respectTransparency false
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation
 
@@ -337,5 +353,114 @@ theorem eventually_countableRootEndpointMinimum_le_polynomial_of_centeredFiniteV
               (m n) (N n) (H n)) measurableSet_Iic]
   rw [hmapMeasure, hminMeasure]
   exact hfiniteN
+
+/-- Both logarithmic endpoint tails under the original weak reproductive
+condition, for every `0<a≤1`. This combines the existing lower-tail theorem
+with the shared upper-tail entry, without a leftmost-child moment.
+The limit is the weak-tail version of Wang Yiyang, Chapter 4, Theorem 1.1,
+using Mallein's Theorem 1.1 (1.9), arXiv:1503.03762v2. -/
+theorem eventually_countableRootEndpointMinimum_abs_div_sub_le_polynomial_of_spinalWeightTail
+    {N H : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hb : HasBoundaryNormalization realPotential μ) (hne : μ nonemptySupport = 1)
+    (htail : HasSpinalWeightTail realPotential μ)
+    {σ a t : ℝ} (hσ : 0 < σ)
+    (hc : IsCenteredSecondMoment (tiltedPotentialLaw realPotential (-1) μ) (σ ^ 2))
+    (ha : 0 < a) (ha1 : a ≤ 1) (ht : 0 < t)
+    (hH : Tendsto (fun n => (H n : ℝ) / Real.log (N n : ℝ) ^ 3) atTop (𝓝 t))
+    {ε : ℝ} (hε : 0 < ε) :
+    let P := RootIndexed.stepFieldLaw (Root := ℕ) μ
+    let m n := ⌊(N n : ℝ) ^ a⌋₊
+    let endpoint n := @countableRootEndpointMinimum (m n) (N n) (H n)
+      (RootIndexed.addressLinearOrder (Fin (m n)) ℕ)
+    let c := -a + (Real.pi ^ 2 / 2) * σ ^ 2 * t
+    ∃ p : ℝ, 0 < p ∧ ∀ᶠ n in atTop,
+      P {field | ε ≤ |endpoint n field / Real.log (N n : ℝ) - c|} ≤
+        2 * ENNReal.ofReal (Real.exp (-p * Real.log (N n : ℝ))) := by
+  intro P m F c
+  let ℓ n := Real.log (N n : ℝ)
+  let : IsProbabilityMeasure (tiltedPotentialLaw realPotential (-1) μ) :=
+    tiltedPotentialLaw_isProbability realPotential μ hb
+  have hℓ : Tendsto ℓ atTop atTop := Real.tendsto_log_atTop.comp
+    (tendsto_natCast_atTop_atTop.comp hN)
+  have hsize : ∀ᶠ n in atTop, 0 < m n ∧ m n ≤ N n := by
+    filter_upwards [hN.eventually_ge_atTop 1] with n hn
+    have hr : (1 : ℝ) ≤ N n := by exact_mod_cast hn
+    refine ⟨Nat.floor_pos.mpr (Real.one_le_rpow hr ha.le), ?_⟩
+    apply Nat.floor_le_of_le
+    simpa only [Real.rpow_one] using Real.rpow_le_rpow_of_exponent_le hr ha1
+  have hscale : Tendsto (fun n => (c - ε) * ℓ n / ℓ n) atTop (𝓝 (c - ε)) := by
+    apply tendsto_const_nhds.congr'
+    filter_upwards [hℓ.eventually_gt_atTop 0] with n hn
+    exact (mul_div_cancel_right₀ _ hn.ne').symm
+  obtain ⟨pL, hpL, hlow⟩ :=
+    eventually_countableRootEndpointMinimum_le_polynomial_of_centeredFiniteVariance μ hb hne
+      _ rfl hσ hc (fun n => RootIndexed.addressLinearOrder (Fin (m n)) ℕ) hN hH hscale ht ha.le
+      (hsize.mono fun _ h => h.2) (hsize.mono fun _ h => h.1)
+      (Eventually.of_forall fun n => Nat.floor_le (Real.rpow_nonneg (Nat.cast_nonneg _) _))
+      (show c - ε < c by linarith)
+  obtain ⟨pU, hpU, hupp⟩ :=
+    eventually_countableRootEndpointMinimum_ge_le_polynomial_of_positiveExponent
+      hN μ hb hne htail hσ hc ha ha1 ht hH (show c < c + ε by linarith)
+  refine ⟨min pL pU, lt_min hpL hpU, ?_⟩
+  filter_upwards [hlow, hupp, hℓ.eventually_gt_atTop 0] with n hlo hup hpos
+  have he : {field | ε ≤ |F n field / ℓ n - c|} ⊆
+      {field | F n field ≤ (c - ε) * ℓ n} ∪
+      {field | (c + ε) * ℓ n ≤ F n field} := by
+    intro field hf
+    change ε ≤ |F n field / ℓ n - c| at hf
+    rcases (le_abs).mp hf with h | h
+    · right
+      apply (le_div_iff₀ hpos).mp
+      linarith
+    · left
+      apply (div_le_iff₀ hpos).mp
+      linarith
+  have hpow (p : ℝ) (hp : min pL pU ≤ p) :
+      ENNReal.ofReal (Real.exp (-p * ℓ n)) ≤
+        ENNReal.ofReal (Real.exp (-(min pL pU) * ℓ n)) :=
+    ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr
+      (mul_le_mul_of_nonneg_right (neg_le_neg hp) hpos.le))
+  exact (measure_mono he).trans ((measure_union_le _ _).trans
+    ((add_le_add (hlo.trans (hpow pL (min_le_left _ _)))
+      (hup.trans (hpow pU (min_le_right _ _)))).trans_eq (two_mul _).symm))
+
+/-- The two-sided polynomial bound yields convergence in probability on the
+common root field, with no moment assumption on the leftmost child.
+This is the probability part of Wang Yiyang, Chapter 4, Theorem 1.1,
+under Mallein's weak reproductive condition (1.9), arXiv:1503.03762v2. -/
+theorem tendstoInMeasure_countableRootEndpointMinimum_div_of_spinalWeightTail
+    {N H : ℕ → ℕ} (hN : Tendsto N atTop atTop)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hb : HasBoundaryNormalization realPotential μ) (hne : μ nonemptySupport = 1)
+    (htail : HasSpinalWeightTail realPotential μ)
+    {σ a t : ℝ} (hσ : 0 < σ)
+    (hc : IsCenteredSecondMoment (tiltedPotentialLaw realPotential (-1) μ) (σ ^ 2))
+    (ha : 0 < a) (ha1 : a ≤ 1) (ht : 0 < t)
+    (hH : Tendsto (fun n => (H n : ℝ) / Real.log (N n : ℝ) ^ 3) atTop (𝓝 t)) :
+    let P := RootIndexed.stepFieldLaw (Root := ℕ) μ
+    let m n := ⌊(N n : ℝ) ^ a⌋₊
+    let endpoint n := @countableRootEndpointMinimum (m n) (N n) (H n)
+      (RootIndexed.addressLinearOrder (Fin (m n)) ℕ)
+    TendstoInMeasure P (fun n field => endpoint n field / Real.log (N n : ℝ)) atTop
+      (fun _ => -a + (Real.pi ^ 2 / 2) * σ ^ 2 * t) := by
+  intro P m F
+  apply tendstoInMeasure_iff_measureReal_norm.mpr
+  intro ε hε
+  obtain ⟨p, hp, htail⟩ :=
+    eventually_countableRootEndpointMinimum_abs_div_sub_le_polynomial_of_spinalWeightTail
+      hN μ hb hne htail hσ hc ha ha1 ht hH hε
+  have hbound : ∀ᶠ n in atTop, P.real {field | ε ≤ ‖F n field / Real.log (N n : ℝ) -
+      (-a + (Real.pi ^ 2 / 2) * σ ^ 2 * t)‖} ≤ 2 * Real.exp (-p * Real.log (N n : ℝ)) := by
+    filter_upwards [htail] with n hn
+    rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)] at hn
+    simpa only [P, F, m, measureReal_def, Real.norm_eq_abs] using
+      ENNReal.toReal_le_of_le_ofReal (by positivity) hn
+  have hℓ : Tendsto (fun n => Real.log (N n : ℝ)) atTop atTop :=
+    Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop.comp hN)
+  have hlim := (Real.tendsto_exp_atBot.comp
+    ((tendsto_const_mul_atBot_of_neg (neg_neg_of_pos hp)).2 hℓ)).const_mul 2
+  simp only [Function.comp_def, mul_zero] at hlim
+  exact squeeze_zero' (Eventually.of_forall fun _ => measureReal_nonneg) hbound hlim
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.EndpointDeviation

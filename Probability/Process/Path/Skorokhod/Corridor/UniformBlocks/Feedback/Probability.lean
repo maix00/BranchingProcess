@@ -294,7 +294,7 @@ theorem measure_firstBlock_feedbackCorrection_eq_full
     rw [hfirstω]
     rw [hend]
     simp only [zero_add] at *
-    exact propext (and_congr hcorr.symm Iff.rfl)
+    exact and_congr hcorr.symm Iff.rfl
   exact measure_congr heq
 
 /-- Positive complete-path correction probabilities for one short block
@@ -374,7 +374,6 @@ theorem HasIndepIncrements.linearTube_probability_pos_of_feedbackBlocks
       {ω | ∀ t : unitInterval,
         |X (unitInterval.toNNReal t) ω - X 0 ω - v * (t : ℝ)| < η} ∩ success := by
     filter_upwards [hcadlag] with ω hω
-    apply propext
     constructor
     · intro hs
       refine ⟨?_, hs⟩

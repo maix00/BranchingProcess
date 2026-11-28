@@ -7,9 +7,11 @@ import re
 import sys
 
 
-ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
+from lean_test_registry import allowed_axioms
+
+ALLOWED_AXIOMS = allowed_axioms()
 AXIOM_REPORT = re.compile(
-    r"(?m)^'([^\r\n]+)' depends on axioms:\s*\[([^\]]*)\]"
+    r"(?m)^'([^\r\n]+)' (?:depends on axioms:\s*\[([^\]]*)\]|does not depend on any axioms)"
 )
 
 
@@ -19,7 +21,7 @@ def parse_axiom_reports(output: str) -> list[tuple[str, set[str]]]:
             match.group(1),
             {
                 item.strip()
-                for item in match.group(2).replace("\n", " ").split(",")
+                for item in (match.group(2) or "").replace("\n", " ").split(",")
                 if item.strip()
             },
         )
@@ -73,7 +75,7 @@ def check_output(output: str, expected: list[str] | tuple[str, ...]) -> list[str
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("output", type=Path)
-    parser.add_argument("--expected", nargs="+", required=True, metavar="DECLARATION")
+    parser.add_argument("--expected", nargs="*", required=True, metavar="DECLARATION")
     args = parser.parse_args()
     issues = check_output(args.output.read_text(), args.expected)
     if issues:

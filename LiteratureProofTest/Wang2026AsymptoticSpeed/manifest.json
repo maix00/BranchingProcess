@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "reference": {
+    "key": "Wang2026AsymptoticSpeed",
+    "author": "WANG Yiyang",
+    "title": "Asymptotic Speed of the N-Branching Random Walk with Infinite Offspring",
+    "kind": "Fudan University dissertation",
+    "year": 2026,
+    "results": [
+      "Chapter 4, Theorem 1.1",
+      "Chapter 4, Theorem 1.2"
+    ],
+    "original_endpoint_revision": "8dc63f9becc0268d53d20f60911c7f5d936c6814",
+    "original_L2_revision": "989e5ff9e4adedcd5fb4a00aab37d04cc639468a",
+    "source_checkout_revision": "d18ad22d6fea94234e4c617d65f27c69a407d02e",
+    "source_files_sha256": {
+      "contents/main-results/trajectory/right-tail-positive-a.tex": "567b6780837f2fddb59ab68e185d357825aa6f2ab47b6a6025e4ad53c6bf6786",
+      "contents/main-results/trajectory/right-tail-zero-a.tex": "65800abf7d6bf96e80d2bbaefff16c296d762534aa87585e7d1ad8e3d607e55c",
+      "contents/main-results/speed/proof.tex": "a2b82745fab38fe13e65236e008cbdc2c3541cbbf16c8880cc5118770b98a145"
+    },
+    "original_fourth_moment_revision": "c4e738a135add71ab6e6129f6cab3cad038a895c",
+    "replacement_production_entries": [
+      "Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.UpperTail.PositiveInitialExponent",
+      "Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.L2Limit",
+      "Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed.Limit.Speed"
+    ]
+  },
+  "entries": [
+    {
+      "module": "LiteratureProofTest.Wang2026AsymptoticSpeed.EndpointUpperTail.Theorem",
+      "source_correspondence": "Horizontal first-stage count; independent tilted-tube descendants; capacity estimate; endpoint comparison, matching the 0<a<1 argument.",
+      "source_review_status": "route_correspondence_checked"
+    },
+    {
+      "module": "LiteratureProofTest.Wang2026AsymptoticSpeed.EndpointConvergence",
+      "source_correspondence": "Historical L2 assembly; positive and full-capacity cases use the preserved two-stage argument. Single-root continuation is redirected to the preserved argument.",
+      "source_review_status": "route_correspondence_checked"
+    },
+    {
+      "module": "LiteratureProofTest.Wang2026AsymptoticSpeed.Speed.FourthMoment",
+      "source_review_status": "reference_fourth_moment_route_preserved",
+      "source_correspondence": "Preserved May 2026 fourth-moment/Cauchy-Schwarz speed argument, migrated from the required regression root. Remaining-horizon expectations now use the archived L2 endpoint argument, including its two-stage positive-start proof."
+    },
+    {
+      "module": "LiteratureProofTest.Wang2026AsymptoticSpeed.Speed.Limit",
+      "source_correspondence": "Historical first-moment speed assembly, with its positive-start continuation mean fed by the preserved two-stage proof. This is a historical strengthening of the result under first-moment assumptions; correspondence to every detail of the dissertation speed proof is not certified solely by compilation.",
+      "source_review_status": "historical_variant"
+    }
+  ]
+}

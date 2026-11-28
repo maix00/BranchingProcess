@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne.Identity
+public import Probability.BranchingRandomWalk.Spine.Path.FamilySelection
 public import Probability.BranchingRandomWalk.Spine.RandomWalk.Basic
 
 public import Mathlib.Basic.Countable.Defs
@@ -17,15 +18,20 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Defs
 
 This file records the many-to-one estimate for an arbitrary measurable
 finite-history corridor. It is the first-moment input used when bounding the
-number of particles in a killed branching random walk.
+number of particles whose ancestral paths satisfy the prescribed corridor
+condition in a branching random walk.
 
 ## Public declarations
 
-- `hasPathHistoryIn` is the event that some surviving generation-$n$ address
+- `ProbabilityTheory.BranchingRandomWalk.Spine.measure_hasPathHistoryIn_selectFamily_le`:
+  `P_(μ.map(selectFamily A))(H_C) ≤ P_μ(H_C)` for every measurable family
+  event `A` and finite-history corridor `C`, without moment assumptions.
+
+- `ProbabilityTheory.BranchingRandomWalk.Spine.hasPathHistoryIn` is the event that some surviving generation-$n$ address
   has its complete ancestral history in the specified set.
-- `measurableSet_hasPathHistoryIn` proves this event measurable when the
+- `ProbabilityTheory.BranchingRandomWalk.Spine.measurableSet_hasPathHistoryIn` proves this event measurable when the
   history set is measurable and the address type is countable.
-- `measure_hasPathHistoryIn_le_exp_mul_spineProbability` bounds its
+- `ProbabilityTheory.BranchingRandomWalk.Spine.measure_hasPathHistoryIn_le_exp_mul_spineProbability` bounds its
   probability by $e^{b-x}$ times the tilted-spine probability of the same
   history event, assuming every history in the event has terminal value at
   most $b$.
@@ -80,6 +86,28 @@ theorem measurableSet_hasPathHistoryIn
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, and_assoc]]
   exact (hlength.inter hsurvive).inter hcorridor'
+
+/-- Whole-family selection can only remove surviving paths; every retained
+ancestral position is unchanged. No normalization or moment assumption is used. -/
+theorem measure_hasPathHistoryIn_selectFamily_le
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ι X)) [IsProbabilityMeasure μ]
+    {accepted : Set (Step ι X)} (ha : MeasurableSet accepted)
+    (n : ℕ) (initial : ℝ) (corridor : Set (Fin (n + 1) → ℝ))
+    (hcorridor : MeasurableSet corridor) :
+    offspringFieldLaw (μ.map (Step.selectFamily accepted))
+      (hasPathHistoryIn (ι := ι) φ n initial corridor) ≤
+      offspringFieldLaw μ (hasPathHistoryIn (ι := ι) φ n initial corridor) := by
+  have hm : Measurable (fun field : StepField ι X =>
+      fun u => Step.selectFamily accepted (field u)) :=
+    measurable_pi_iff.mpr fun _ =>
+      (Step.selectFamily_measurable ha).comp (measurable_pi_apply _)
+  rw [← offspringFieldLaw_map_selectFamily μ ha,
+    Measure.map_apply hm (measurableSet_hasPathHistoryIn φ n initial corridor hcorridor)]
+  apply measure_mono
+  rintro field ⟨u, hu, hs, hp⟩
+  refine ⟨u, hu, (surviveAlong_selectFamily_iff accepted field [] u).mp hs |>.1, ?_⟩
+  rwa [pathHistory_selectFamily_eq_of_survive φ accepted n initial field u hs] at hp
 
 /-- A one-root many-to-one estimate for an arbitrary finite-history event.
 The terminal upper bound controls the reciprocal exponential weight in the

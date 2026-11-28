@@ -27,7 +27,10 @@ Public declarations: `blockCount`, `blockCount_mul_blockLength_le`,
 `blockCount_mul_blockLength_div_sub_one_abs_le`,
 `tendsto_blockCount_mul_blockLength_div_nat`,
 `tendsto_quotientBlockCount_mul_blockLength_div_nat`, and
-`tendsto_div_nat_mul_quotientBlockCount`.
+`tendsto_div_nat_mul_quotientBlockCount`, and
+`tendsto_succ_quotientBlockCount_mul_scale_div`: if `bₙ/sₙ→T>0` and
+`sₙ/Hₙ→0`, with nonnegative `sₙ` and positive `bₙ,Hₙ` eventually, then
+`(⌊Hₙ/bₙ⌋+1)sₙ/Hₙ→1/T`.
 
 For block length `\ell_n>0`, the count `c_n=\lfloor n/\ell_n\rfloor` obeys
 \[
@@ -224,4 +227,42 @@ theorem tendsto_div_nat_mul_quotientBlockCount
     push_cast
     field_simp [hnNe, hlenNe]
   simpa using hproduct.congr' heq.symm
+/-- Rounding a covering block count costs at most one additional block.
+The horizon need not equal the sequence index or be monotone. -/
+theorem tendsto_succ_quotientBlockCount_mul_scale_div
+    {horizon blockLength : ℕ → ℕ} {scale : ℕ → ℝ} {limit : ℝ}
+    (hscale : ∀ᶠ n in atTop, 0 ≤ scale n)
+    (hblock : ∀ᶠ n in atTop, 0 < blockLength n)
+    (horizonPos : ∀ᶠ n in atTop, 0 < horizon n)
+    (hratio : Tendsto (fun n => (blockLength n : ℝ) / scale n)
+      atTop (nhds limit)) (hlimit : 0 < limit)
+    (hsmall : Tendsto (fun n => scale n / (horizon n : ℝ)) atTop (nhds 0)) :
+    Tendsto (fun n => ((horizon n / blockLength n + 1 : ℕ) : ℝ) *
+      scale n / (horizon n : ℝ)) atTop (nhds (1 / limit)) := by
+  have hinv : Tendsto (fun n => scale n / (blockLength n : ℝ))
+      atTop (nhds (1 / limit)) := by
+    simpa only [inv_div, one_div] using hratio.inv₀ hlimit.ne'
+  apply tendsto_of_tendsto_of_tendsto_of_le_of_le' hinv
+    (by simpa only [add_zero] using hinv.add hsmall)
+  · filter_upwards [hscale, hblock, horizonPos] with n hs hb hh
+    have hbR : (0 : ℝ) < blockLength n := by exact_mod_cast hb
+    have hhR : (0 : ℝ) < horizon n := by exact_mod_cast hh
+    have hnat := (Nat.lt_mul_div_succ (horizon n) hb).le
+    have hcast : (horizon n : ℝ) ≤ (blockLength n : ℝ) *
+        ((horizon n / blockLength n + 1 : ℕ) : ℝ) := by exact_mod_cast hnat
+    have hq : (horizon n : ℝ) / (blockLength n : ℝ) ≤
+        ((horizon n / blockLength n + 1 : ℕ) : ℝ) :=
+      (div_le_iff₀ hbR).2 (by simpa only [mul_comm] using hcast)
+    have h := mul_le_mul_of_nonneg_right hq (div_nonneg hs hhR.le)
+    convert h using 1 <;> field_simp [hbR.ne', hhR.ne']
+  · filter_upwards [hscale, hblock, horizonPos] with n hs hb hh
+    have hbR : (0 : ℝ) < blockLength n := by exact_mod_cast hb
+    have hhR : (0 : ℝ) < horizon n := by exact_mod_cast hh
+    have hq : ((horizon n / blockLength n + 1 : ℕ) : ℝ) ≤
+        (horizon n : ℝ) / (blockLength n : ℝ) + 1 := by
+      push_cast
+      exact add_le_add Nat.cast_div_le le_rfl
+    have h := mul_le_mul_of_nonneg_right hq (div_nonneg hs hhR.le)
+    convert h using 1 <;> field_simp [hbR.ne', hhR.ne']
+
 end Asymptotics

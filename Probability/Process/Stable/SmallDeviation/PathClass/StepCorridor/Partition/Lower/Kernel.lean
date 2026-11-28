@@ -40,7 +40,7 @@ open Skorokhod.PathClass.StepCorridor
 
 /-- A normalized cell path, multiplied by a positive scale, belongs to a
 fixed open corridor with a left-open, right-closed terminal window. -/
-def scaledNormalizedCellIocReturnEvent
+noncomputable def scaledNormalizedCellIocReturnEvent
     {α : ℝ} (upper lower : StepBoundary)
     (i : Fin ((StepBoundary.commonKnots upper lower).card - 1))
     (scale lo hi coreLo coreHi : ℝ) : Set (CadlagPath unitInterval ℝ) :=
@@ -124,7 +124,7 @@ theorem measure_scaledNormalizedCellIocReturnEvent_eq
       simp [hω]
     change ((fun q => scale * X (RationalCoordinate.toNNReal q) ω) ∈
         Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
-          lo hi coreLo coreHi) =
+          lo hi coreLo coreHi) ↔
       ((fun q => scale * (X (RationalCoordinate.toNNReal q) ω - X 0 ω)) ∈
         Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
           lo hi coreLo coreHi)

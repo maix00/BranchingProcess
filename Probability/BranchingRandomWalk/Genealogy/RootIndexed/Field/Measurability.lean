@@ -10,6 +10,7 @@ public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Filtra
 public import Combinatorics.BranchingWalk.Step.Basic
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.Positions
 public import Combinatorics.BranchingWalk.Basic.Position.Basic
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field.State
 
 /-!
 # Measurability of realized nodes and positions, root by root
@@ -154,29 +155,10 @@ theorem displace_measurable
       (Root := Root) (α := α) (X := Mark) n]
       (fun ω : RootIndexed.StepField Root α Mark =>
         Combinatorics.Branching.displaceWith d (ω i) v p) := by
-  induction p generalizing v with
-  | nil => exact measurable_const
-  | cons j p ih =>
-      have hlen : (v ++ [j]).length = v.length + 1 := by simp
-      have hlen' : (j :: p).length = p.length + 1 := by simp
-      have hstep : Measurable[RootIndexed.stepFiltration
-          (Root := Root) (α := α) (X := Mark) n]
-          (fun ω : RootIndexed.StepField Root α Mark =>
-            value' ((ω i v).map d) j) :=
-        (value'_measurable (X := Position) j).comp
-          ((Step.map_measurable hd).comp
-            (RootIndexed.step_measurable (X := Mark) i v (by omega)))
-      have hrec : Measurable[RootIndexed.stepFiltration
-          (Root := Root) (α := α) (X := Mark) n]
-          (fun ω : RootIndexed.StepField Root α Mark =>
-            Combinatorics.Branching.displaceWith d (ω i) (v ++ [j]) p) :=
-        ih (v := v ++ [j]) (by omega)
-      change Measurable[RootIndexed.stepFiltration
-          (Root := Root) (α := α) (X := Mark) n]
-        ((fun ω : RootIndexed.StepField Root α Mark =>
-            value' ((ω i v).map d) j) +
-          fun ω => Combinatorics.Branching.displaceWith d (ω i) (v ++ [j]) p)
-      exact hstep.add hrec
+  have h := stateAlong_filtration_measurable
+    (fun (x : Position) (e : Mark) ↦ x + d e) (by fun_prop)
+    i v p n hn (fun _ ↦ 0) measurable_const
+  simpa only [stateAlong_add, zero_add] using h
 
 theorem position_measurable
     {Root α Mark Position : Type*}
@@ -188,15 +170,15 @@ theorem position_measurable
       (Root := Root) (α := α) (X := Mark) u.length]
       (fun ω : RootIndexed.StepField Root α Mark =>
         RootIndexed.position initial d ω i u) := by
-  change Measurable[RootIndexed.stepFiltration
-      (Root := Root) (α := α) (X := Mark) u.length]
-    ((fun _ : RootIndexed.StepField Root α Mark => initial i) +
-      fun ω => Combinatorics.Branching.displaceWith d (ω i) [] u)
-  exact (measurable_const : Measurable[
-      RootIndexed.stepFiltration
-        (Root := Root) (α := α) (X := Mark) u.length]
-      (fun _ : RootIndexed.StepField Root α Mark => initial i)).add
-    (RootIndexed.displace_measurable d hd i [] u u.length (by simp))
+  have hF : Measurable (Function.uncurry (fun s e : Position => s + e)) :=
+    measurable_fst.add measurable_snd
+  have hupdate : Measurable
+      (Function.uncurry (fun s (e : Mark) => s + d e)) :=
+    hF.comp (measurable_fst.prodMk (hd.comp measurable_snd))
+  simpa only [Combinatorics.Branching.stateAlong_add, RootIndexed.position,
+    RootIndexed.displace] using
+    RootIndexed.stateAlong_filtration_measurable (fun s e => s + d e) hupdate
+      i [] u u.length (by simp) (fun _ => initial i) measurable_const
 
 def positionAtGeneration
     {Root α Mark Position : Type*} [AddCommMonoid Position]

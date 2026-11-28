@@ -8,6 +8,7 @@ module
 
 public import Probability.BranchingRandomWalk.Spine.GenerationBranching.Decomposition
 public import Probability.Process.RandomWalk.Path.Basic
+public import Combinatorics.UlamHarris.Mark.Path
 
 /-!
 # Potential histories along branching paths
@@ -24,6 +25,8 @@ inside a branching realization.
   `pathHistory_joint_measurable`, and `pathHistory_cons`: identify the endpoint,
   prove measurability in the field and initial position, and give the
   one-step recursive decomposition.
+- `pathHistory_eq_finitePrefix_records` identifies the scalar history with
+  the partial sums of complete ancestral parent-family/child records.
 -/
 
 open MeasureTheory
@@ -94,5 +97,30 @@ theorem pathHistory_cons
   · simp [pathHistory]
   · simp [pathHistory, prependHistory, List.take_succ_cons,
       pathPotential_cons, add_assoc]
+
+/-- The original scalar history is the finite partial-sum path of the
+displacements read from the complete parent-family/child records. -/
+theorem pathHistory_eq_finitePrefix_records {ι X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (n : ℕ) (x : ℝ) (field : StepField ι X) (z : Fin n → ι) :
+    pathHistory φ n x field (List.ofFn z) =
+      AdditivePath.finitePrefix x (fun j =>
+        (Mark.pathRecords field z j).1.potentialValue' φ
+          (Mark.pathRecords field z j).2) := by
+  funext k
+  induction k using Fin.induction with
+  | zero => simp [pathHistory]
+  | succ k ih =>
+    rw [AdditivePath.finitePrefix_succ, ← ih]
+    have hk : k.val < (List.ofFn z).length := by simpa only [List.length_ofFn] using k.isLt
+    have ht := List.take_concat_get hk
+    simp only [List.getElem_ofFn] at ht
+    simp only [pathHistory, Fin.val_succ, Fin.val_castSucc, Mark.pathRecords]
+    rw [← ht]
+    simp only [List.concat_eq_append, pathPotential]
+    change x + displace (field.map φ) [] ((List.ofFn z).take k.val ++ [z k]) =
+      x + displace (field.map φ) [] ((List.ofFn z).take k.val) +
+        ((field ((List.ofFn z).take k.val)).potentialAt? φ (z k)).getD 0
+    rw [displace_append_singleton]
+    simp [StepField.map, Step.map, value', Step.potentialAt?, add_assoc]
 
 end ProbabilityTheory.BranchingRandomWalk.Spine

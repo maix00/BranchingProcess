@@ -2,6 +2,7 @@
 """Check architectural import boundaries in the local Lean module graph."""
 
 from pathlib import Path
+import os
 import subprocess
 import sys
 import tempfile
@@ -31,6 +32,187 @@ FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
 GENERAL_LAYER_BOUNDARIES = {
+    "Probability.BranchingRandomWalk.Population.Processes.Causal.Path.Survival": (
+        "Probability.Process.RandomWalk.SmallDeviation",
+        "Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation",
+    ),
+    "Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity.FamilySelection": (
+        "Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation",
+        "Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed",
+    ),
+    "Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.UpperTail.SpinalWeight": (
+        "Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.SecondStage",
+        "Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.UpperTail.PositiveInitialExponent",
+        "Probability.BranchingRandomWalk.Selection.NSelection.EndpointDeviation.Endpoint.Sequence.UpperTail.SingleRoot",
+        "Probability.BranchingRandomWalk.Selection.NSelection.Frontier.AsymptoticSpeed",
+    ),
+    "Analysis.Asymptotics.Scale.Power.Basic": (
+        "Probability", "MeasureTheory", "Combinatorics",
+    ),
+    "Probability.BranchingRandomWalk.Spine.Path.ManyToOne.FamilySelection": (
+        "Probability.Process.RandomWalk.SmallDeviation",
+        "Probability.BranchingRandomWalk.Selection.NSelection",
+    ),
+    "Probability.BranchingRandomWalk.Spine.Tube.Corridor.FamilySelection": (
+        "Probability.BranchingRandomWalk.Selection.NSelection",
+    ),
+    "Probability.Kernel.Step.Noise.QuadraticTail": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+        "Probability.Process.RandomWalk",
+    ),
+    "Combinatorics.BranchingWalk.Selection.Family.Path": (
+        "Probability",
+    ),
+    "Probability.Kernel.Step.Noise.Map": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+        "Probability.Process.RandomWalk",
+    ),
+    "Probability.Kernel.Step.Noise.Restriction": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+        "Probability.Process.RandomWalk",
+    ),
+    "Probability.Kernel.Survival.Return.NoiseRestriction": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+        "Probability.Process.RandomWalk",
+    ),
+    "Combinatorics.UlamHarris.Mark.Path": (
+        "Probability", "MeasureTheory",
+    ),
+    "MeasureTheory.Measure.Pi.WeightedPairs": (
+        "Probability", "Combinatorics",
+    ),
+    "Probability.Process.Tree.Path.WeightedRecords": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.Density.AdaptedPayoff": (
+        "Probability.BranchingRandomWalk", "Probability.Process.Tree.Line",
+    ),
+    "Probability.BranchingProcess.Spine.StoppingLine.ManyToOne": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.StoppingLine.Martingale": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.State.Observation.History": (
+        "Probability.BranchingProcess.Spine", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.State.StrongBranching": (
+        "Probability.BranchingProcess.Spine", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Process.Tree.Line.ConditionalExpectation": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Process.Tree.Line.Information.Boundary": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Process.Tree.Line.Information.Localization": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Kernel.ConditionalExpectation": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+        "Probability.Process.Tree",
+    ),
+    "MeasureTheory.Function.ConditionalExpectation.FiniteProduct": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+        "Probability.Process.Tree",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.Density.Conditional": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Process.Tree.Line.Information.Pasting": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+    ),
+    "Combinatorics.UlamHarris.Line.Supremum": (
+        "MeasureTheory", "Probability",
+    ),
+    "Probability.Process.Tree.Line.Supremum": (
+        "Probability.BranchingProcess", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.State.Descendants.Disintegration": (
+        "Probability.BranchingProcess.Spine", "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.BranchingProperty": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Kernel.IonescuTulcea.Map": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.State.Map": (
+        "Probability.BranchingProcess.Spine",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.Normal": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.State.Support": (
+        "Probability.BranchingProcess.Spine",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.Ray": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.FirstGeneration": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Kernel.DoobTransform.Basic": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Kernel.Sum": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.BranchingProcess.Spine.Tree.Construction": (
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Process.Tree.Line.FirstEntrance": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Process.Tree.Line.Truncation": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Process.Tree.Line.PathHitting": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Process.Tree.Line.Pasting": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Process.Tree.Line.Information.Observations": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Process.Tree.Line.Ancestral": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Process.Tree.Line.Information.Stopped": (
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Combinatorics.UlamHarris.Line.Order": (
+        "Combinatorics.BranchingWalk",
+        "MeasureTheory",
+        "Probability",
+    ),
+    "Combinatorics.UlamHarris.Ray": (
+        "Combinatorics.BranchingWalk",
+        "MeasureTheory",
+        "Probability",
+    ),
     "Order.Filter.SlowDiagonal": (
         "Analysis",
         "MeasureTheory",
@@ -436,15 +618,22 @@ def imported_modules(source: str) -> list[str]:
     return imports[path.resolve()]
 
 
-def load_import_graph(root: Path) -> tuple[dict[str, list[str]], list[str]]:
-    """Parse all local Lean headers once and return module-name adjacency lists."""
+def project_source_paths(root: Path, include_advisory: bool = False) -> list[Path]:
+    """Do not descend into dependency, cache or excluded advisory directories."""
+    excluded = {"Vendor", ".lake", ".git", "__pycache__"}
+    if not include_advisory:
+        excluded.add("LiteratureProofTest")
+    paths = []
+    for directory, subdirectories, filenames in os.walk(root, followlinks=False):
+        subdirectories[:] = sorted(name for name in subdirectories if name not in excluded)
+        paths.extend(Path(directory) / name for name in filenames if name.endswith(".lean"))
+    return sorted(paths)
+
+
+def load_import_graph(root: Path, include_advisory: bool = False) -> tuple[dict[str, list[str]], list[str]]:
+    """Parse owned headers; dependency imports remain terminal graph edges."""
     root = root.resolve()
-    paths = sorted(
-        path
-        for path in root.rglob("*.lean")
-        if not {".lake", ".git"}.intersection(path.relative_to(root).parts)
-    )
-    parsed, issues = parse_imports_from_paths(paths)
+    parsed, issues = parse_imports_from_paths(project_source_paths(root, include_advisory))
     graph = {
         ".".join(path.relative_to(root).with_suffix("").parts): imports
         for path, imports in parsed.items()
@@ -553,12 +742,26 @@ def inspect_general_layer_boundaries(
     return issues
 
 
+def inspect_literature_test_boundaries(import_graph: dict[str, list[str]]) -> list[str]:
+    """Required production and regression modules cannot depend on advisory proofs."""
+    required_roots = {"Algebra", "Analysis", "Combinatorics", "LinearAlgebra",
+                      "MeasureTheory", "Order", "Probability", "Topology", "BranchingProcessTest"}
+    return [
+        f"Required module imports advisory literature proof: {module} -> {imported}"
+        for module, dependencies in import_graph.items()
+        if module.split(".")[0] in required_roots
+        for imported in dependencies
+        if imported == "LiteratureProofTest" or imported.startswith("LiteratureProofTest.")
+    ]
+
+
 def main() -> int:
     import_graph, parse_issues = load_import_graph(LEAN_ROOT)
     counts, issues = inspect_entries(
         ENTRY_MODULES, import_graph=import_graph, parse_issues=parse_issues
     )
     issues.extend(inspect_general_layer_boundaries(import_graph=import_graph))
+    issues.extend(inspect_literature_test_boundaries(import_graph))
     module_count, module_issues = inspect_required_module_headers(LEAN_ROOT)
     issues.extend(module_issues)
     if issues:

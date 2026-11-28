@@ -46,7 +46,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
-namespace StepSelection
+namespace Selection.Stepwise
 namespace SplitSchedule
 
 open Combinatorics.UlamHarris Combinatorics.Branching
@@ -95,7 +95,7 @@ theorem component_eq_population_of_completion
     (ω : RootIndexed.StepField Root α X)
     (hcompletion : completion R root initial threshold duration i ω = n) :
     component (time R root initial threshold i) R root i n ω =
-      RootIndexed.StepSelection.population R duration ω (root i) := by
+      RootIndexed.Selection.Stepwise.population R duration ω (root i) := by
   let start := time R root initial threshold i ω
   have hfinite : start ≠ ⊤ := by
     intro htop
@@ -132,7 +132,7 @@ theorem mem_successTest_at_completion_iff
     (hcompletion : completion R root initial threshold duration i ω = n) :
     ω ∈ successTest R root initial threshold target i n ↔
       target ≤
-        (RootIndexed.StepSelection.population R duration ω (root i)).card := by
+        (RootIndexed.Selection.Stepwise.population R duration ω (root i)).card := by
   simp only [successTest, Set.mem_ofPred_eq]
   rw [component_eq_population_of_completion R root initial threshold duration
     i n ω hcompletion]
@@ -144,11 +144,11 @@ theorem mem_successAtCompletion_iff_population
     (threshold duration target i : ℕ)
     (ω : RootIndexed.StepField Root α X)
     (hfinite : completion R root initial threshold duration i ω ≠ ⊤) :
-    ω ∈ successAtCompletion
+    ω ∈ ProbabilityTheory.Trial.successAtCompletion
         (completion R root initial threshold duration i)
         (successTest R root initial threshold target i) ↔
       target ≤
-        (RootIndexed.StepSelection.population R duration ω (root i)).card := by
+        (RootIndexed.Selection.Stepwise.population R duration ω (root i)).card := by
   obtain ⟨n, hn⟩ := WithTop.ne_top_iff_exists.mp hfinite
   constructor
   · rintro ⟨k, hk, hsuccess⟩
@@ -179,9 +179,9 @@ theorem firstPopulationSuccess_isStoppingTime
     IsStoppingTime
       (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
       (firstDeclaredSuccess
-        (orderedCandidateDeclarationWithin
+        (ProbabilityTheory.Trial.orderedCandidateDeclarationWithin
           (completion R root initial threshold duration)
-          (fun i => successAtCompletion
+          (fun i => ProbabilityTheory.Trial.successAtCompletion
             (completion R root initial threshold duration i)
             (successTest R root initial threshold target i))
           candidates (fun j i => j < i))) := by
@@ -200,9 +200,9 @@ theorem firstPopulationSuccess_isStoppingTime_of_countable
     IsStoppingTime
       (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
       (firstDeclaredSuccess
-        (orderedCandidateDeclarationWithin
+        (ProbabilityTheory.Trial.orderedCandidateDeclarationWithin
           (completion R root initial threshold duration)
-          (fun i => successAtCompletion
+          (fun i => ProbabilityTheory.Trial.successAtCompletion
             (completion R root initial threshold duration i)
             (successTest R root initial threshold target i))
           candidates (fun j i => j < i))) := by
@@ -222,21 +222,21 @@ theorem mem_orderedPopulationDeclaration_iff
     (initial : RootIndexed.StepField Root α X → WithTop ℕ)
     (threshold duration target : ℕ) (candidates : Set ℕ)
     (n : ℕ) (ω : RootIndexed.StepField Root α X) :
-    ω ∈ orderedCandidateDeclarationWithin
+    ω ∈ ProbabilityTheory.Trial.orderedCandidateDeclarationWithin
         (completion R root initial threshold duration)
-        (fun i => successAtCompletion
+        (fun i => ProbabilityTheory.Trial.successAtCompletion
           (completion R root initial threshold duration i)
           (successTest R root initial threshold target i))
         candidates (fun j i => j < i) n ↔
       ∃ i ∈ candidates,
         completion R root initial threshold duration i ω = n ∧
         target ≤
-          (RootIndexed.StepSelection.population R duration ω (root i)).card ∧
+          (RootIndexed.Selection.Stepwise.population R duration ω (root i)).card ∧
         ∀ j ∈ candidates, j < i →
           ¬ target ≤
-            (RootIndexed.StepSelection.population R duration ω (root j)).card := by
+            (RootIndexed.Selection.Stepwise.population R duration ω (root j)).card := by
   rw [mem_orderedDeclaration_iff R root initial threshold duration
-    (fun i => successAtCompletion
+    (fun i => ProbabilityTheory.Trial.successAtCompletion
       (completion R root initial threshold duration i)
       (successTest R root initial threshold target i)) candidates n ω]
   constructor
@@ -278,6 +278,6 @@ theorem mem_orderedPopulationDeclaration_iff
       duration target j ω hfinitej).mp hsuccess
 
 end SplitSchedule
-end StepSelection
+end Selection.Stepwise
 end RootIndexed
 end ProbabilityTheory.BranchingRandomWalk

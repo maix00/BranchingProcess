@@ -64,7 +64,7 @@ noncomputable instance incrementKernel.instIsMarkovKernel
 
 /-- At `x`, the increment kernel is the pushforward of the increment law by
 translation by `x`. -/
-theorem incrementKernel_apply [MeasurableSingletonClass E]
+theorem incrementKernel_apply
     (ν : Measure E) [SFinite ν] (x : E) :
     incrementKernel ν x = ν.map (fun z => x + z) := by
   ext s hs

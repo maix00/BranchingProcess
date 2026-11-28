@@ -21,6 +21,46 @@ axioms = load_script("lean_axiom_check", "check-lean-axioms.py")
 
 
 class ImportBoundaryCheckTests(unittest.TestCase):
+    def test_vendor_and_cache_trees_are_not_parsed_but_external_edges_remain(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            owned = root / 'Probability/Owned.lean'
+            owned.parent.mkdir(parents=True)
+            owned.write_text('module\nimport Mathlib.Foo\n')
+            for folder in ['Vendor/Dependency', '.lake/packages/Dependency', '.git/cache']:
+                bad = root / folder / 'Broken.lean'
+                bad.parent.mkdir(parents=True)
+                bad.write_text('module\nimport\n')
+            graph, issues = imports.load_import_graph(root)
+        self.assertEqual(issues, [])
+        self.assertEqual(graph, {'Probability.Owned': ['Mathlib.Foo']})
+
+    def test_advisory_header_failure_is_not_a_required_parse_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            required = root / 'Probability/Valid.lean'
+            advisory = root / 'LiteratureProofTest/Citation/Broken.lean'
+            required.parent.mkdir(parents=True)
+            advisory.parent.mkdir(parents=True)
+            required.write_text('module\n')
+            advisory.write_text('module\nimport\n')
+            graph, issues = imports.load_import_graph(root)
+            self.assertIn('Probability.Valid', graph)
+            self.assertEqual(issues, [])
+            self.assertNotIn('LiteratureProofTest.Citation.Broken', graph)
+            _, advisory_issues = imports.load_import_graph(root, include_advisory=True)
+            self.assertTrue(advisory_issues)
+
+    def test_required_modules_cannot_import_advisory_proofs(self):
+        graph = {
+            "Probability.Example": ["LiteratureProofTest.Citation.Result"],
+            "BranchingProcessTest.Example": ["LiteratureProofTest.Citation.Result"],
+            "LiteratureProofTest.Citation.Result": ["Probability.Generic"],
+        }
+        issues = imports.inspect_literature_test_boundaries(graph)
+        self.assertEqual(len(issues), 2)
+        self.assertTrue(all("Required module" in issue for issue in issues))
+
     def test_feedback_module_stems_are_forbidden(self):
         for name in (
             "Probability.Process.Stable.SmallDeviation.Blocks.Lower.FeedbackEntrance",
@@ -452,6 +492,48 @@ class ImportBoundaryCheckTests(unittest.TestCase):
 
 
 class LeanAxiomCheckTests(unittest.TestCase):
+    def test_native_zero_axiom_report_is_accepted(self):
+        output = "'True.intro' does not depend on any axioms\n"
+        self.assertEqual(axioms.parse_axiom_reports(output), [('True.intro', set())])
+        self.assertEqual(axioms.check_output(output, ['True.intro']), [])
+        self.assertTrue(axioms.check_output(output, []))
+
+    def test_mixed_zero_and_nonzero_reports_remain_strict(self):
+        output = ("'True.intro' does not depend on any axioms\n"
+                  "'Example.bad' depends on axioms: [sorryAx]\n")
+        self.assertTrue(axioms.check_output(output, ['True.intro', 'Example.bad']))
+        duplicate = "'True.intro' does not depend on any axioms\n" * 2
+        self.assertTrue(axioms.check_output(duplicate, ['True.intro']))
+
+    def test_required_runner_checks_unexpected_zero_axiom_report(self):
+        import subprocess
+        import sys
+        import io
+        from contextlib import redirect_stdout, redirect_stderr
+        from unittest.mock import patch
+        runner = load_script('zero_axiom_runner', 'run-all-lean-tests.py')
+        with tempfile.TemporaryDirectory() as directory:
+            test = Path(directory) / 'EmptyInventory.lean'
+            test.write_text('#print axioms True.intro\n')
+
+            def run(command, **kwargs):
+                if command[:3] == ['lake', 'env', 'lean']:
+                    return subprocess.CompletedProcess(command, 0,
+                        "'True.intro' does not depend on any axioms\n")
+                if command[1] == 'scripts/check-lean-axioms.py':
+                    expected = command[command.index('--expected') + 1:]
+                    issues = axioms.check_output(Path(command[2]).read_text(), expected)
+                    return subprocess.CompletedProcess(command, int(bool(issues)))
+                self.fail(f'Unexpected command: {command}')
+
+            with patch.object(runner, 'working_tree_tests', return_value=[test]), \
+                 patch.object(runner, 'registry_entries', return_value={str(test): {'category': 'required'}}), \
+                 patch.object(runner, 'expected_declarations', return_value=()), \
+                 patch.object(runner.subprocess, 'run', side_effect=run), \
+                 patch.object(sys, 'argv', ['run-all-lean-tests.py']), \
+                 redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                self.assertEqual(runner.main(), 1)
+
     def test_allowlist_is_a_ceiling_not_an_exact_requirement(self):
         output = "'Example.theorem' depends on axioms: [Classical.choice]\n"
         self.assertEqual(axioms.check_output(output, ["Example.theorem"]), [])

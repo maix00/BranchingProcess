@@ -17,7 +17,10 @@ public import Probability.RandomMeasure.ExponentialTilt
 The offspring law in this file is a law on measures over an arbitrary
 measurable mark space.  One branching transition is expressed by integration
 against the sampled measure, so neither the mark space nor an auxiliary set
-of child slots is assumed countable.
+of child slots is assumed countable. The outer measure need not be a
+probability measure, and its values need not be counting measures. These
+mean-measure operator identities therefore retain weaker hypotheses than
+the indexed probability-tree theorem.
 
 For measurable `φ : E → ℝ`, measurable `f : ℝ → [0,∞]`, and a law `Q` on
 random measures, the weighted one-step operator satisfies the following
